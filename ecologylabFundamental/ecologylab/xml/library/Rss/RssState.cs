@@ -6,6 +6,9 @@ using ecologylabFundamental.ecologylab.atttributes;
 
 namespace ecologylabFundamental.ecologylab.xml.library
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RssState : ElementState
     {
         [xml_attribute]
@@ -14,11 +17,17 @@ namespace ecologylabFundamental.ecologylab.xml.library
         [xml_nested]
         private Channel channel;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public RssState()
         {
           
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public float Version
         {
             get
@@ -31,6 +40,9 @@ namespace ecologylabFundamental.ecologylab.xml.library
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Channel Channel
         {
             get

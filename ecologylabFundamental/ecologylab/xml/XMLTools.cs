@@ -8,13 +8,26 @@ using ecologylabFundamental.ecologylab.atttributes;
 
 namespace ecologylabFundamental.ecologylab.xml
 {
-    class XMLTools
+    /// <summary>
+    /// 
+    /// </summary>
+    public class XMLTools
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="textNode"></param>
         public static void EscapeXML(StringBuilder output, StringBuilder textNode)
         {
             //throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatReferenceObject"></param>
+        /// <returns></returns>
         public static ICollection GetCollection(Object thatReferenceObject)
         {
             ICollection result = null;
@@ -30,6 +43,12 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatClass"></param>
+        /// <param name="attributeType"></param>
+        /// <returns></returns>
         public static Boolean IsAnnotationPresent(Type thatClass, Type attributeType)
         {
             Object[] attributes = thatClass.GetCustomAttributes(attributeType, true);
@@ -37,6 +56,12 @@ namespace ecologylabFundamental.ecologylab.xml
             else return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatField"></param>
+        /// <param name="attributeType"></param>
+        /// <returns></returns>
         public static Boolean IsAnnotationPresent(FieldInfo thatField, Type attributeType)
         {
             Object[] attributes = thatField.GetCustomAttributes(attributeType, true);
@@ -44,6 +69,12 @@ namespace ecologylabFundamental.ecologylab.xml
             else return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatField"></param>
+        /// <param name="attributeType"></param>
+        /// <returns></returns>
         public static Attribute GetAnnotation(FieldInfo thatField, Type attributeType)
         {
             Object[] attributes = thatField.GetCustomAttributes(attributeType, true);
@@ -57,6 +88,12 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatClass"></param>
+        /// <param name="attributeType"></param>
+        /// <returns></returns>
         public static Attribute GetAnnotation(Type thatClass, Type attributeType)
         {
             Object[] attributes = thatClass.GetCustomAttributes(attributeType, false);
@@ -70,6 +107,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thisClass"></param>
+        /// <returns></returns>
         public static String[] OtherTags(Type thisClass)
         {
             xml_other_tags otherTagsAnnotation = null;
@@ -87,6 +129,11 @@ namespace ecologylabFundamental.ecologylab.xml
             return otherTagsAnnotation == null ? null : OtherTags(otherTagsAnnotation);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="otherTagsAttributes"></param>
+        /// <returns></returns>
         public static String[] OtherTags(xml_other_tags otherTagsAttributes)
         {
             String[] result = otherTagsAttributes == null ? null : otherTagsAttributes.OtherTags;
@@ -95,7 +142,13 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
-        internal static string GetXmlTagName(Type thatClass, String suffix)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatClass"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
+        public static string GetXmlTagName(Type thatClass, String suffix)
         {
             xml_tag tagAnnotation = (xml_tag) GetAnnotation(thatClass, typeof(xml_tag));
             String result = null;
@@ -110,9 +163,17 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         private static int DEFAULT_TAG_LENGTH 		= 15;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
         private static string GetXmlTagName(string className, string suffix)
         {
             if ((suffix != null) && (className.EndsWith(suffix)))
@@ -141,9 +202,21 @@ namespace ecologylabFundamental.ecologylab.xml
             return result.ToString();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         static Dictionary<String, String> classAbbrevNames = new Dictionary<String, String>();
+
+        /// <summary>
+        /// 
+        /// </summary>
         static Dictionary<String, String> packageNames = new Dictionary<String, String>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatClass"></param>
+        /// <returns></returns>
         private static String GetClassName(Type thatClass)
         {
             String fullName = thatClass.Name;
@@ -157,8 +230,12 @@ namespace ecologylabFundamental.ecologylab.xml
             return abbrevName;
         }
 
-
-        internal static string GetXmlTagName(FieldInfo field)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public static string GetXmlTagName(FieldInfo field)
         {
             xml_tag tagAnnotation = (xml_tag) GetAnnotation(field, typeof(xml_tag));
 
@@ -174,19 +251,34 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
-        internal static string[] GetFormatAnnotation(FieldInfo field)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public static string[] GetFormatAnnotation(FieldInfo field)
         {
             return null;
         }
 
-        internal static bool LeafIsCDATA(FieldInfo field)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public static bool LeafIsCDATA(FieldInfo field)
         {
             xml_leaf leafAnnotation = (xml_leaf) GetAnnotation(field, typeof(xml_tag));
             return ((leafAnnotation != null) && (leafAnnotation.Value == ElementState.CDATA));
 
         }
 
-        internal static ElementState GetInstance(Type describedClass)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="describedClass"></param>
+        /// <returns></returns>
+        public static ElementState GetInstance(Type describedClass)
         {
             return (ElementState) Activator.CreateInstance(describedClass);
         }

@@ -5,11 +5,19 @@ using System.Text;
 
 namespace ecologylabFundamental.ecologylab.xml.types.scalar
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class TypeRegistry
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
         private static Dictionary<String, ScalarType> allTypes = new Dictionary<String, ScalarType>();
         
+        /// <summary>
+        /// 
+        /// </summary>
         static Type[] BASIC_TYPES = 
         {
             typeof(StringType), 
@@ -18,11 +26,18 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
             typeof(FloatType)
         };
 
+        /// <summary>
+        /// 
+        /// </summary>
         static TypeRegistry()
         {
             Register(BASIC_TYPES);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="basicTypes"></param>
         private static void Register(Type[] basicTypes)
         {
             for (int i = 0; i < basicTypes.Length; i++)
@@ -31,6 +46,10 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatClass"></param>
         private static void Register(Type thatClass)
         {
             ScalarType scalarType = (ScalarType)Activator.CreateInstance(thatClass);
@@ -41,6 +60,11 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="scalarType"></param>
         private static void Register(String typeName, ScalarType scalarType)
         {
             if (!allTypes.ContainsKey(typeName))
@@ -49,6 +73,11 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
         private static ScalarType GetType(String className)
         {
             if (allTypes.ContainsKey(className))
@@ -56,13 +85,22 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
             else return null;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         public static ScalarType GetType(System.Reflection.FieldInfo field)
         {
             return GetType(field.FieldType);
         }
 
-        internal static ScalarType GetType(Type type)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static ScalarType GetType(Type type)
         {
             return GetType(type.Name);
         }

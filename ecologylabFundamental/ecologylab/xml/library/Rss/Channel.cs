@@ -6,6 +6,9 @@ using ecologylabFundamental.ecologylab.atttributes;
 
 namespace ecologylabFundamental.ecologylab.xml.library
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Channel : ElementState
     {
         [xml_leaf]
@@ -20,28 +23,43 @@ namespace ecologylabFundamental.ecologylab.xml.library
         [xml_collection("item")]
         private List<Item> items;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Channel()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String Title
         {
             get { return title; }
             set { title = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String Description
         {
             get { return description; }
             set { description = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<Item> Items
         {
             get { return items; }
             set { items = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Uri Link
         {
             get { return link; }

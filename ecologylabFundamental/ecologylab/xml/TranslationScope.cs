@@ -26,16 +26,28 @@ namespace ecologylabFundamental.ecologylab.xml
 
         public const String STATE = "State";
 
+        /// <summary>
+        /// 
+        /// </summary>
         public TranslationScope()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
         private TranslationScope(String name)
         {
             this.name = name;
             allTranslationScopes.Add(name, this);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inheritedTranslationScope"></param>
         private TranslationScope(String name, TranslationScope inheritedTranslationScope)
             : this(name)
         {
@@ -45,6 +57,11 @@ namespace ecologylabFundamental.ecologylab.xml
             this.inheritedTranslationScopes = inheritedTranslationScopes;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inheritedTranslationScopes"></param>
         private TranslationScope(String name, params TranslationScope[] inheritedTranslationScopes)
             : this(name)
         {
@@ -58,6 +75,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="baseTranslationsSet"></param>
         private TranslationScope(String name, List<TranslationScope> baseTranslationsSet)
             : this(name)
         {
@@ -66,15 +88,32 @@ namespace ecologylabFundamental.ecologylab.xml
              inheritedTranslationScopes		= (TranslationScope[]) baseTranslationsSet.ToArray();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="translations"></param>
         private TranslationScope(String name, params Type[] translations)
             : this(name, (TranslationScope[])null, translations)
         { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inheritedTranslationScopes"></param>
+        /// <param name="translations"></param>
         private TranslationScope(String name, TranslationScope[] inheritedTranslationScopes, Type[] translations) : this(name, inheritedTranslationScopes)
         {   
 	         AddTranslations(translations);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inheritedTranslationsSet"></param>
+        /// <param name="translations"></param>
         private TranslationScope(String name, List<TranslationScope> inheritedTranslationsSet, Type[] translations)
             : this(name, inheritedTranslationsSet)
         {
@@ -82,12 +121,24 @@ namespace ecologylabFundamental.ecologylab.xml
             AddTranslations(translations);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inheritedTranslationScope"></param>
+        /// <param name="translation"></param>
         private TranslationScope(String name, TranslationScope inheritedTranslationScope, Type translation)
             : this(name, inheritedTranslationScope)
         {
             AddTranslation(translation);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="inheritedTranslationScope"></param>
+        /// <param name="translations"></param>
         private TranslationScope(String name, TranslationScope inheritedTranslationScope, Type[] translations)
             : this(name, inheritedTranslationScope)
         {
@@ -95,6 +146,10 @@ namespace ecologylabFundamental.ecologylab.xml
             AddTranslations(translations);
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="classes"></param>
         private void AddTranslations(Type[] classes)
         {
             if (classes != null)
@@ -108,6 +163,10 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inheritedTranslationScope"></param>
         private void AddTranslations(TranslationScope inheritedTranslationScope)
         {
             if (inheritedTranslationScope != null)
@@ -130,6 +189,12 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inheritedMap"></param>
+        /// <param name="newMap"></param>
+        /// <param name="warn"></param>
         private void UpdateMapWithValues(Scope<ClassDescriptor> inheritedMap, Scope<ClassDescriptor> newMap, string warn)
         {
             foreach (String key in inheritedMap.Keys)
@@ -140,6 +205,13 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newMap"></param>
+        /// <param name="key"></param>
+        /// <param name="translationEntry"></param>
+        /// <param name="warn"></param>
         private void UpdateMapWithEntry(Scope<ClassDescriptor> newMap, string key, ClassDescriptor translationEntry, string warn)
         {
             ClassDescriptor existingEntry = null;
@@ -156,6 +228,10 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="thatClass"></param>
         private void AddTranslation(Type thatClass)
         {
             ClassDescriptor entry = ClassDescriptor.GetClassDescriptor(thatClass);
@@ -174,6 +250,12 @@ namespace ecologylabFundamental.ecologylab.xml
                 }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="translations"></param>
+        /// <returns></returns>
         public static TranslationScope Get(string name, params Type[] translations)
         {
             TranslationScope result = null;
@@ -184,6 +266,9 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ClassDescriptor> ClassDescriptors
         {
             get
@@ -198,6 +283,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         internal ClassDescriptor GetClassDescriptorByTag(string tagName)
         {
             return entriesByTag[tagName];

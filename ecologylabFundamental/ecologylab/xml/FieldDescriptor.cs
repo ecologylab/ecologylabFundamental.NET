@@ -11,13 +11,16 @@ using System.Collections;
 
 namespace ecologylabFundamental.ecologylab.xml
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class FieldDescriptor : FieldTypes
     {
         private FieldInfo field;
         private String tagName;
-        List<String> otherTags;
+        private List<String> otherTags;
 
-        protected ClassDescriptor declaringClassDescriptor;
+        private ClassDescriptor declaringClassDescriptor;
         private int type;
         private ScalarType scalarType;
 
@@ -37,19 +40,26 @@ namespace ecologylabFundamental.ecologylab.xml
 
         private FieldInfo xmlTextScalarField;
         
-        private Boolean isCDATA;
-        const String START_CDATA = "<![CDATA[";
-        const String END_CDATA = "]]>";
+        private Boolean isCDATA;       
         private ClassDescriptor classDescriptor;
         private FieldInfo thatField;
         private FieldDescriptor fieldDescriptor;
-        private string fieldTagName;
-        private string p;
 
+        const String START_CDATA = "<![CDATA[";
+        const String END_CDATA = "]]>";
+
+        /// <summary>
+        /// 
+        /// </summary>
         public FieldDescriptor()
         {
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseClassDescriptor"></param>
         public FieldDescriptor(ClassDescriptor baseClassDescriptor)
         {
             this.declaringClassDescriptor = baseClassDescriptor;
@@ -59,6 +69,12 @@ namespace ecologylabFundamental.ecologylab.xml
             this.scalarType = null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="declaringClassDescriptor"></param>
+        /// <param name="field"></param>
+        /// <param name="annotationType"></param>
         public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldInfo field, int annotationType)
         {
             this.declaringClassDescriptor = declaringClassDescriptor;
@@ -81,6 +97,12 @@ namespace ecologylabFundamental.ecologylab.xml
             //setValueMethod = ReflectionTools.getMethod(field.getType(), "setValue", SET_METHOD_ARG);
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseClassDescriptor"></param>
+        /// <param name="wrappedFD"></param>
+        /// <param name="wrapperTag"></param>
         public FieldDescriptor(ClassDescriptor baseClassDescriptor, FieldDescriptor wrappedFD, string wrapperTag)
         {
             this.declaringClassDescriptor = baseClassDescriptor;
@@ -89,6 +111,10 @@ namespace ecologylabFundamental.ecologylab.xml
             this.tagName = wrapperTag;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tag"></param>
         public FieldDescriptor(String tag)
         {
             this.tagName = tag;
@@ -97,6 +123,11 @@ namespace ecologylabFundamental.ecologylab.xml
             this.declaringClassDescriptor = null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         private ScalarType DeriveScalar(FieldInfo field)
         {
             ScalarType result = TypeRegistry.GetType(field);
@@ -112,6 +143,12 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="annotationType"></param>
+        /// <returns></returns>
         private int DeriveTypeFromField(FieldInfo field, int annotationType)
         {
             int result = annotationType;
@@ -268,6 +305,14 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targetClass"></param>
+        /// <param name="field"></param>
+        /// <param name="fieldClass"></param>
+        /// <param name="annotationDescription"></param>
+        /// <returns></returns>
         private bool CheckAssignableFrom(Type targetClass, FieldInfo field, Type fieldClass, string annotationDescription)
         {
             Boolean result = targetClass.IsAssignableFrom(fieldClass);
@@ -280,7 +325,12 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="collectionScalarClass"></param>
+        /// <param name="field"></param>
+        /// <returns></returns>
         private ScalarType DeriveCollectionScalar(Type collectionScalarClass, FieldInfo field)
         {
             ScalarType result = TypeRegistry.GetType(collectionScalarClass);
@@ -292,6 +342,12 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
         private Type GetTypeArgClass(FieldInfo field, int p)
         {
             Type result = null;
@@ -317,6 +373,10 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
         private void DeriveTagClassDescriptors(FieldInfo field)
         {   
 		    if (XMLTools.IsAnnotationPresent(field, typeof(xml_scope)))
@@ -370,11 +430,20 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffy"></param>
         public void WriteElementStart(StringBuilder buffy)
         {
             buffy.Append('<').Append(ElementStart);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffy"></param>
+        /// <param name="context"></param>
         public void AppendValueAsAttribute(StringBuilder buffy, ElementState context)
         {
             if (context != null)
@@ -399,6 +468,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Boolean HasXmlText
         {
             get
@@ -407,6 +479,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Boolean IsXmlNsDecl
         {
             get
@@ -415,6 +490,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="elementState"></param>
         public void AppendXmlText(StringBuilder output, ElementState elementState)
         {
             if (elementState != null)
@@ -431,6 +511,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="elementState"></param>
         public void AppendLeaf(StringBuilder output, ElementState elementState)
         {
             if (elementState != null)
@@ -453,16 +538,27 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
         private void WriteOpenTag(StringBuilder output)
         {
             output.Append('<').Append(ElementStart).Append('>');
         }              
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
         public void WriteCloseTag(StringBuilder output)
         {
             output.Append('<').Append('/').Append(ElementStart).Append('>');
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Boolean IsWrapped
         {
             get
@@ -471,6 +567,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="close"></param>
         public void WriteWrap(StringBuilder output, bool close)
         {
             output.Append('<');
@@ -479,6 +580,9 @@ namespace ecologylabFundamental.ecologylab.xml
             output.Append(tagName).Append('>');
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsPolymorphic
         {
             get
@@ -487,6 +591,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffy"></param>
+        /// <param name="instance"></param>
         public void AppendCollectionLeaf(StringBuilder buffy, object instance)
         {
             if (instance != null)
@@ -504,11 +613,18 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public int GetTypeId()
         {
             return type;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String ElementStart
         {
             get
@@ -517,6 +633,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsCollection
         {
             get
@@ -534,6 +653,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String CollectionOrMapTagName
         { 
             get 
@@ -542,6 +664,9 @@ namespace ecologylabFundamental.ecologylab.xml
             } 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Int32 Type
         {
             get
@@ -550,6 +675,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String TagName
         {
             get
@@ -558,6 +686,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public FieldInfo Field
         {
              get
@@ -566,6 +697,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsMarshallOnly
         {
             get
@@ -574,6 +708,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<ClassDescriptor> TagClassDescriptors
         {
             get
@@ -582,6 +719,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string FieldName
         {
             get
@@ -590,6 +730,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsCDATA
         {
             get
@@ -598,18 +741,35 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public FieldDescriptor WrappedFieldDescriptor
         {
             get { return wrappedFD; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static FieldDescriptor IGNORED_ELEMENT_FIELD_DESCRIPTOR { get { return new FieldDescriptor("IGNORED"); } }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="nestedObject"></param>
         public void SetFieldToNestedObject(ElementState context, ElementState nestedObject)
         {
             this.field.SetValue(context, nestedObject);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
         public ElementState ConstructChildElementState(ElementState parent, String tagName)
         {
             ClassDescriptor childClassDescriptor = !IsPolymorphic ? elementClassDescriptor : tagClassDescriptors[tagName];
@@ -627,6 +787,11 @@ namespace ecologylabFundamental.ecologylab.xml
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentElementState"></param>
+        /// <returns></returns>
         public Object AutomaticLazyGetCollectionOrDict(ElementState currentElementState)
         {
             Object collection = null;
@@ -643,7 +808,13 @@ namespace ecologylabFundamental.ecologylab.xml
             return collection; 
         }
 
-        internal void SetFieldToScalar(ElementState context, String value, ElementStateSAXHandler scalarUnMarshallingContext)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="value"></param>
+        /// <param name="scalarUnMarshallingContext"></param>
+        public void SetFieldToScalar(ElementState context, String value, ElementStateSAXHandler scalarUnMarshallingContext)
         {
             if ((value == null))
             {
@@ -662,7 +833,13 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
-        internal void AddLeafNodeToCollection(ElementState activeElementState, String leafNodeValue, ElementStateSAXHandler scalarUnmarshallingContext)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="activeElementState"></param>
+        /// <param name="leafNodeValue"></param>
+        /// <param name="scalarUnmarshallingContext"></param>
+        public void AddLeafNodeToCollection(ElementState activeElementState, String leafNodeValue, ElementStateSAXHandler scalarUnmarshallingContext)
         {
             if (leafNodeValue != null)
             {

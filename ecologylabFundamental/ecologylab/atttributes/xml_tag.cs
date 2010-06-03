@@ -6,7 +6,7 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    class xml_tag : Attribute
+    public class xml_tag : Attribute
     {
         private String tagName;
 

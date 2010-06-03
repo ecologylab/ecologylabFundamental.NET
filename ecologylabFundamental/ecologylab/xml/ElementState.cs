@@ -7,27 +7,56 @@ using System.Collections;
 
 namespace ecologylabFundamental.ecologylab.xml
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ElementState : FieldTypes
     {
         private ClassDescriptor elementClassDescriptor;
         private Dictionary<String, ElementState> elementById;
         
+        /// <summary>
+        /// 
+        /// </summary>
         public static int CDATA = 1;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static int NORMAL = 0;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ElementState parent;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="output"></param>
         public void translateToXMLStringBuilder(StringBuilder output)
         {
             if (output == null) throw new Exception("null : output object");
             else translateToXMLStringBuilder(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
         }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="translationScope"></param>
+        /// <returns></returns>
         public static ElementState translateFromXML(String filePath, TranslationScope translationScope)
         {
             ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, translationScope);
             return saxHandler.Parse();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fieldDescriptor"></param>
+        /// <param name="output"></param>
         public void translateToXMLStringBuilder(FieldDescriptor fieldDescriptor, StringBuilder output)
         {
             this.preTranslationProcessingHook();
@@ -192,6 +221,9 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ClassDescriptor ElementClassDescriptor
         {
             get
@@ -206,11 +238,17 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void preTranslationProcessingHook()
         {
             //Inheriting class can override to execute custom functionality.
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public StringBuilder textNodeBuffy
         {
             get
@@ -220,12 +258,22 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void SetupRoot()
         {
             this.elementById = new Dictionary<string, ElementState>();
         }
 
-        internal void TranslateAttributes(TranslationScope translationScope, sax.Attributes atts, ElementStateSAXHandler marshallingContext, ElementState context)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="translationScope"></param>
+        /// <param name="atts"></param>
+        /// <param name="marshallingContext"></param>
+        /// <param name="context"></param>
+        public void TranslateAttributes(TranslationScope translationScope, sax.Attributes atts, ElementStateSAXHandler marshallingContext, ElementState context)
         {
             int numAttributes = atts.attArray.Count;
 
@@ -263,7 +311,11 @@ namespace ecologylabFundamental.ecologylab.xml
             }
         }
 
-        internal void SetupChildElementState(ElementState newChildElementState)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newChildElementState"></param>
+        public void SetupChildElementState(ElementState newChildElementState)
         {
             newChildElementState.elementById = elementById;
             newChildElementState.parent = this;
@@ -271,6 +323,9 @@ namespace ecologylabFundamental.ecologylab.xml
             newChildElementState.elementClassDescriptor = ClassDescriptor.GetClassDescriptor(newChildElementState);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool HasScalarTextField 
         {
             get

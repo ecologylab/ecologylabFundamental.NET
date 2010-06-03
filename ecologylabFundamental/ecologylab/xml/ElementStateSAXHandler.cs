@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace ecologylabFundamental.ecologylab.xml
 {
-    class ElementStateSAXHandler : FieldTypes, ISAXContentHandler, ISAXErrorHandler
+    public class ElementStateSAXHandler : FieldTypes, ISAXContentHandler, ISAXErrorHandler
     {
         private SaxParser parser;
         private FileStream inputFileStream;

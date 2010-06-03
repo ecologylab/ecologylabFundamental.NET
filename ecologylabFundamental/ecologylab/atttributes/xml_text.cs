@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ecologylabFundamental.ecologylab.atttributes
 {
-    class xml_text
+    public class xml_text
     {
     }
 }

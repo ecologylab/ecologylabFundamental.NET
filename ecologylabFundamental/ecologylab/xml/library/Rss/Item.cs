@@ -4,6 +4,9 @@ using ecologylabFundamental.ecologylab.atttributes;
 
 namespace ecologylabFundamental.ecologylab.xml.library
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Item : ElementState
     {
         [xml_leaf]
@@ -18,28 +21,43 @@ namespace ecologylabFundamental.ecologylab.xml.library
         [xml_collection("category")]
         private List<String> categorySet;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Item()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String Title
         {
             get { return title; }
             set { title = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String Description
         {
             get { return description; }
             set { description = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<String> CategorySet
         {
             get { return categorySet; }
             set { categorySet = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Uri Link
         {
             get { return link; }

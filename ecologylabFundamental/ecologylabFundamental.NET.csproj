@@ -57,7 +57,6 @@
     <Compile Include="ecologylab\atttributes\xml_wrap.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
-    <Compile Include="ecologylab\xml\CharacterConstants.cs" />
     <Compile Include="ecologylab\xml\ClassDescriptor.cs" />
     <Compile Include="ecologylab\xml\ElementState.cs" />
     <Compile Include="ecologylab\xml\ElementStateSAXHandler.cs" />
@@ -84,9 +83,6 @@
   <ItemGroup>
     <Folder Include="ecologylab\xml\library\Schmannel\" />
     <Folder Include="ecologylab\xml\types\element\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ecologylab\xml\monomorphic_output.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
