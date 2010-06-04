@@ -12,10 +12,16 @@ using System.Collections;
 namespace ecologylabFundamental.ecologylab.xml
 {
     /// <summary>
-    /// 
+    ///     <c>FieldDescriptors</c> are abstract data strucutres which defines a field in a 
+    ///     <see cref="ClassDescriptor"/>. Holds the binding information for marshalling 
+    ///     and unmarshalling of fields to their XML representation.
+    ///     <para>
+    ///         <author>Nabeel Shahzad (Interface Ecology Lab)</author>
+    ///     </para>
     /// </summary>
     public class FieldDescriptor : FieldTypes
     {
+
         private FieldInfo field;
         private String tagName;
         private List<String> otherTags;
@@ -49,7 +55,7 @@ namespace ecologylabFundamental.ecologylab.xml
         const String END_CDATA = "]]>";
 
         /// <summary>
-        /// 
+        ///     Default constructor
         /// </summary>
         public FieldDescriptor()
         {
@@ -57,25 +63,37 @@ namespace ecologylabFundamental.ecologylab.xml
 
 
         /// <summary>
-        /// 
+        ///     Constructing which a declaring class descriptor and initializes internal
+        ///     data structure for the field descriptor. This constructor creates a 
+        ///     Pseudo <c>FieldDescriptor</c>. This is used for polymorphic types.
         /// </summary>
-        /// <param name="baseClassDescriptor"></param>
-        public FieldDescriptor(ClassDescriptor baseClassDescriptor)
+        /// <param name="declaringClassDescriptor">
+        ///     The <c>ClassDescriptor</c> for the class which defines the field
+        ///     described by this <c>FieldDescriptor</c>.
+        /// </param>
+        public FieldDescriptor(ClassDescriptor declaringClassDescriptor)
         {
-            this.declaringClassDescriptor = baseClassDescriptor;
+            this.declaringClassDescriptor = declaringClassDescriptor;
             this.field = null;
-            this.tagName = baseClassDescriptor.TagName;
+            this.tagName = declaringClassDescriptor.TagName;
             this.type = PSEUDO_FIELD_DESCRIPTOR;
             this.scalarType = null;
         }
 
-        /// <summary>
-        /// 
+        /// <summary>   
+        ///     Creates a <c>FieldDescriptor</c> object from the field and annotation type
         /// </summary>
-        /// <param name="declaringClassDescriptor"></param>
-        /// <param name="field"></param>
-        /// <param name="annotationType"></param>
-        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldInfo field, int annotationType)
+        /// <param name="declaringClassDescriptor">
+        ///     The <c>ClassDescriptor</c> for the class which defines the field
+        ///     described by this <c>FieldDescriptor</c>.
+        /// </param>
+        /// <param name="field">
+        ///     <c>FieldInfo</c> contains the reflected information about a field.
+        /// </param>
+        /// <param name="annotationType">
+        ///     <c>Int16</c> type id of the annotation.
+        /// </param>
+        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldInfo field, Int16 annotationType)
         {
             this.declaringClassDescriptor = declaringClassDescriptor;
             this.field = field;
@@ -94,18 +112,26 @@ namespace ecologylabFundamental.ecologylab.xml
                     scalarType = DeriveScalar(field); break;                
             }
 
+            //TODO: if we case use the set method in there? 
             //setValueMethod = ReflectionTools.getMethod(field.getType(), "setValue", SET_METHOD_ARG);
         }
         
         /// <summary>
-        /// 
+        ///     Creates a <c>FieldDescriptor</c> for wrapping tag names in XML files.
         /// </summary>
-        /// <param name="baseClassDescriptor"></param>
-        /// <param name="wrappedFD"></param>
-        /// <param name="wrapperTag"></param>
-        public FieldDescriptor(ClassDescriptor baseClassDescriptor, FieldDescriptor wrappedFD, string wrapperTag)
+        /// <param name="declaringClassDescriptor">
+        ///     The <c>ClassDescriptor</c> for the class which defines the field
+        ///     described by this <c>FieldDescriptor</c>.
+        /// </param>
+        /// <param name="wrappedFD">
+        ///     <c>FieldDescriptor</c> for the wrapping tag
+        /// </param>
+        /// <param name="wrapperTag">
+        ///     <c>String</c> wrapper tag name
+        /// </param>
+        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldDescriptor wrappedFD, String wrapperTag)
         {
-            this.declaringClassDescriptor = baseClassDescriptor;
+            this.declaringClassDescriptor = declaringClassDescriptor;
             this.wrappedFD = wrappedFD;
             this.type = WRAPPER;
             this.tagName = wrapperTag;

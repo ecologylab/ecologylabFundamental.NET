@@ -9,16 +9,21 @@ using ecologylabFundamental.ecologylab.atttributes;
 namespace ecologylabFundamental.ecologylab.xml
 {
     /// <summary>
+    ///     <para>
     ///     <c>ClassDescriptors</c> are created once for each class.
     ///     They store the optimized data structures for marshalling and 
     ///     unmarshalling of classes to their XML representation. It provides
     ///     functionality to create class descriptors for iiBAM annotated C# 
     ///     class files. 
+    ///     </para>
+    ///     <para>
     ///     It also provides static methods to get class descriptors from the
     ///     global association for each class descriptor. It does lazy evaluation
     ///     of annotation meta-language.
-    ///     
+    ///     </para>
+    ///     <para>
     ///     <author>Nabeel Shahzad (Interface Ecology Lab)</author>
+    ///     </para>
     /// </summary>
     public class ClassDescriptor : FieldTypes
     {       
