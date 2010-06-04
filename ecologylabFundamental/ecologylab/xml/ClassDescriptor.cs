@@ -9,33 +9,103 @@ using ecologylabFundamental.ecologylab.atttributes;
 namespace ecologylabFundamental.ecologylab.xml
 {
     /// <summary>
-    /// 
+    ///     <c>ClassDescriptors</c> are created once for each class.
+    ///     They store the optimized data structures for marshalling and 
+    ///     unmarshalling of classes to their XML representation. It provides
+    ///     functionality to create class descriptors for iiBAM annotated C# 
+    ///     class files. 
+    ///     It also provides static methods to get class descriptors from the
+    ///     global association for each class descriptor. It does lazy evaluation
+    ///     of annotation meta-language.
+    ///     
+    ///     <author>Nabeel Shahzad (Interface Ecology Lab)</author>
     /// </summary>
     public class ClassDescriptor : FieldTypes
-    {
+    {       
         #region Private Fields
 
+        /// <summary>
+        ///     Holds the <c>Type</c> of the class described by this 
+        ///     <c>ClassDescriptor</c>
+        /// </summary>
         private Type describedClass;
+
+        /// <summary>
+        ///     Holds the <c>String</c> tagName of the class described by this
+        ///     <c>ClassDescriptor</c>
+        /// </summary>
         private String tagName;
+
+        /// <summary>
+        ///     Holds the <c>String</c> simple name of the described class.
+        /// </summary>
         private String describedClassSimpleName;
+
+        /// <summary>
+        ///     Holds the <c>String</c> package name of the described class.
+        ///     This comes from Java version. 
+        ///     TODO: see if this can be removed or add namespace name here.
+        /// </summary>
         private String describedClassPackageName;
 
+        /// <summary>
+        ///     An abstract <c>FieldDescriptor</c> for wrapped collections. This
+        ///     only holds the tag name for the field since there is no field 
+        ///     associated with the <c>FieldDescriptor</c>.
+        /// </summary>
         private FieldDescriptor pseudoFieldDescriptor;
+
+        /// <summary>
+        ///     Not sure if this being used. Comes from Java version.
+        ///     TODO: figure out and remove if necessary
+        /// </summary>
         private FieldDescriptor scalarTextFD;
+
+        /// <summary>
+        ///     This flag indicates if the framework has completed resolving  
+        ///     annotations for the class described by this <c>ClassDescriptor</c> 
+        ///     or its super classes.
+        /// </summary>
         private Boolean isGetAndOrganizeComplete;
 
+        /// <summary>
+        ///     This dictionary holds the association of field descriptors to
+        ///     field names.
+        ///     Does this contains all field descriptors for this class descriptor??.
+        /// </summary>
         private DictionaryList<String, FieldDescriptor>
             fieldDescriptorsByFieldName = new DictionaryList<string, FieldDescriptor>();
 
+        /// <summary>
+        ///     This dictionary holds the association of field descriptors to
+        ///     tagNames. Should contain all field descriptors associated with this
+        ///     <c>ClassDescriptor</c>.
+        /// </summary>
         private Dictionary<String, FieldDescriptor>
             allFieldDescriptorsByTagNames = new Dictionary<String, FieldDescriptor>();
 
+        /// <summary>
+        ///     List of <c>FieldDescriptors</c>, which are represented as attributes 
+        ///     when marshalled.
+        /// </summary>
         private List<FieldDescriptor> attributeFieldDescriptors = new List<FieldDescriptor>();
+
+        /// <summary>
+        ///     List of <c>FieldDescriptors</c>, which are represented as leaf nodes 
+        ///     when marshalled.
+        /// </summary>
         private List<FieldDescriptor> elementFieldDescriptors = new List<FieldDescriptor>();
 
+        /// <summary>
+        ///     Static dictionary containing all the <c>ClassDescriptors</c>, with their 
+        ///     tagNames. This is used for fast access to class descriptors.
+        /// </summary>
         private static Dictionary<String, ClassDescriptor>
             globalClassDescriptorsMap = new Dictionary<String, ClassDescriptor>();
 
+        /// <summary>
+        ///     TODO: why we need this? remove if not required.
+        /// </summary>
         private ElementState thatClass;
 
         #endregion
@@ -43,9 +113,15 @@ namespace ecologylabFundamental.ecologylab.xml
         #region Constructors
 
         /// <summary>
-        /// 
+        ///     Constructor for <c>ClassDescriptor</c> takes
+        ///     <c>Type</c> as the input parameter. Initializes
+        ///     internal variables and resovles the tagName for 
+        ///     class.
         /// </summary>
-        /// <param name="thatClass"></param>
+        /// <param name="thatClass">
+        ///     <c>Type</c> of the class defined by this  
+        ///     <c>ClassDescriptor</c>
+        /// </param>
         public ClassDescriptor(Type thatClass)
         {
             this.describedClass = thatClass;
@@ -55,12 +131,15 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Constructor for initializing the 
+        ///     <c>ClassDescriptor</c> with the <c>tag</c>
         /// </summary>
-        /// <param name="tag"></param>
-        public ClassDescriptor(String tag)
+        /// <param name="tag">
+        ///     <c>String</c> tagName for the <c>ClassDescriptor</c>
+        /// </param>
+        public ClassDescriptor(String tagName)
         {
-            this.tagName = tag;
+            this.tagName = tagName;
         }
 
         #endregion
@@ -68,8 +147,7 @@ namespace ecologylabFundamental.ecologylab.xml
         #region Static Methods
 
         /// <summary>
-        ///     Returns the <c>ClassDescriptor</c> 
-        ///     associated with the class type.
+        ///     Returns the <c>ClassDescriptor</c> associated with the class type.
         ///     Uses the global class descriptor map to fetch the <c>ClassDescriptor</c>.
         ///     If it is being for the first time it recusively generate <c>ClassDescriptors</c>
         ///     and resolve annotations.
@@ -101,14 +179,18 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Returns the <c>ClassDescriptor</c> associated with the type of parameter class
+        ///     Uses the global class descriptor map to fetch the <c>ClassDescriptor</c>.
+        ///     If it is being for the first time it recusively generate <c>ClassDescriptors</c>
         /// </summary>
         /// <param name="elementState"></param>
-        /// <returns></returns>
+        /// <returns>
+        ///     <c>ClassDescripor</c> for the paramater class type or <c>null</c> 
+        ///     if there is no associated class descriptor.
+        /// </returns>
         public static ClassDescriptor GetClassDescriptor(ElementState elementState)
         {
-            Type thatClass = elementState.GetType();
-            return GetClassDescriptor(thatClass);
+            return GetClassDescriptor(typeof(ElementState));
         }
 
         #endregion
@@ -116,12 +198,19 @@ namespace ecologylabFundamental.ecologylab.xml
         #region Public Methods
 
         /// <summary>
-        /// 
+        ///     Recursive method to resolve annotations in parameter class and its super classes.
+        ///     This mehthod creates field descriptors and other optimized datastructures, which 
+        ///     is used for marshalling and ummarshalling of runtime objects.
         /// </summary>
-        /// <param name="thatClass">Testing </param>
-        /// <param name="fieldDescriptorClass">testing</param>
+        /// <param name="thatClass">
+        ///     The parameter class <c>Type</c> to resolve any defined annotations.
+        /// </param>
+        /// <param name="fieldDescriptorClass">
+        ///     Used by recursive call from inside the function. Can be null if being called 
+        ///     for the first time. 
+        /// </param>
         public void DeriveAndOrganizeFieldsRecursive(Type thatClass, Type fieldDescriptorClass)
-        {
+        {            
             if (XMLTools.IsAnnotationPresent(thatClass, typeof(xml_inherit)))
             {
                 Type superClass = thatClass.BaseType;
@@ -210,13 +299,16 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Public method to get the field descriptor from its tagName.
+        ///     TODO: why this function takes all these parameters. Remove them!
         /// </summary>
-        /// <param name="tagName"></param>
+        /// <param name="tagName">
+        ///     <c>String</c> tagName for to find the associated <c>FieldDescriptor</c>
+        /// </param>
         /// <param name="translationScope"></param>
         /// <param name="currentElementState"></param>
         /// <returns></returns>
-        public FieldDescriptor GetFieldDescriptorByTag(string tagName, TranslationScope translationScope, ElementState currentElementState)
+        public FieldDescriptor GetFieldDescriptorByTag(String tagName, TranslationScope translationScope, ElementState currentElementState)
         {
             if (allFieldDescriptorsByTagNames.ContainsKey(tagName))
                 return allFieldDescriptorsByTagNames[tagName];
@@ -228,6 +320,13 @@ namespace ecologylabFundamental.ecologylab.xml
 
         #region Private Methods
 
+        /// <summary>
+        ///     Method to map tags to their fieldDescriptors in the 
+        ///     global mapping. 
+        ///     This optimized datastructure is mainly used for translating from XML.
+        /// </summary>
+        /// <param name="tagName"><c>String</c> tagName of the FieldDescriptor</param>
+        /// <param name="fdToMap"><c>FieldDescriptor</c> fdToMap to be added to the dictionary</param>
         private void MapTagToFdForTranslateFrom(String tagName, FieldDescriptor fdToMap)
         {
             FieldDescriptor previousMapping = null;
@@ -237,12 +336,17 @@ namespace ecologylabFundamental.ecologylab.xml
                 Console.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
 
             }
+
             allFieldDescriptorsByTagNames.Add(tagName, fdToMap);
         }
         
+        /// <summary>
+        ///     TODO: implement or remove this functions :) 
+        /// </summary>
+        /// <param name="thatClass"></param>
+        /// <returns></returns>
         private Type FieldDescriptorAnnotationValue(Type thatClass)
         {
-            // TODO: complete implementation (skipping implementation for now) 
             throw new NotImplementedException();
         }
 
@@ -251,7 +355,8 @@ namespace ecologylabFundamental.ecologylab.xml
         #region Properties
 
         /// <summary>
-        /// 
+        ///     Gets the <c>FieldDescriptors</c> for fields represeted as
+        ///      attributes in XML.
         /// </summary>
         public List<FieldDescriptor> AttributeFieldDescriptors
         {
@@ -262,9 +367,10 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Gets the <c>FieldDescriptors</c> for fields represented as 
+        ///     leafs in XML
         /// </summary>
-        public List<FieldDescriptor> ElementFieldOptimizations
+        public List<FieldDescriptor> ElementFieldDescriptors
         {
             get
             {
@@ -273,7 +379,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Gets the type of the class described by this <c>ClassDescriptor</c>
         /// </summary>
         public Type DescribedClass
         {
@@ -284,7 +390,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Gets the tagName of the class
         /// </summary>
         public string TagName
         {
@@ -295,7 +401,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Gets the Pseudo FieldDescriptor
         /// </summary>
         public FieldDescriptor PseudoFieldDescriptor
         {
@@ -312,7 +418,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Gets the <c>String</c> simple name of the described class.
         /// </summary>
         public string DescribedClassSimpleName
         {
@@ -323,7 +429,8 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Creates and returns the instance of the class described
+        ///     by this <c>ClassDescriptor</c>
         /// </summary>
         public ElementState Instance
         {
@@ -334,7 +441,9 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Don't know what this is :| 
+        ///     comes from the java version
+        ///     TODO: remove if not required.
         /// </summary>
         public bool HasScalarTextField
         {

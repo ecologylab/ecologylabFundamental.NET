@@ -83,7 +83,7 @@ namespace ecologylabFundamental.ecologylab.xml
                 }
             }
 
-            List<FieldDescriptor> elementFieldDescriptors = ElementClassDescriptor.ElementFieldOptimizations;
+            List<FieldDescriptor> elementFieldDescriptors = ElementClassDescriptor.ElementFieldDescriptors;
             int numElements = elementFieldDescriptors.Count;
 
             //FIXME -- get rid of old textNode stuff. it doesnt even work
