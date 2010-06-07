@@ -7,7 +7,7 @@ using ecologylabFundamental.ecologylab.xml;
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     /// <summary>
-    /// 
+    /// Defines a field is represented as XML leaf when marshalled.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class xml_leaf : Attribute

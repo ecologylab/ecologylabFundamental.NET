@@ -66,6 +66,9 @@
     <Compile Include="ecologylab\xml\library\Rss\Item.cs" />
     <Compile Include="ecologylab\xml\library\Rss\RssState.cs" />
     <Compile Include="ecologylab\xml\library\Rss\RssTranslations.cs" />
+    <Compile Include="ecologylab\xml\library\Schmannel\BItem.cs" />
+    <Compile Include="ecologylab\xml\library\Schmannel\Schmannel.cs" />
+    <Compile Include="ecologylab\xml\library\Schmannel\SchmItem.cs" />
     <Compile Include="ecologylab\xml\sax\ISAXContentHandler.cs" />
     <Compile Include="ecologylab\xml\sax\ISAXErrorHandler.cs" />
     <Compile Include="ecologylab\xml\sax\SAXHelpers.cs" />
@@ -81,7 +84,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ecologylab\xml\library\Schmannel\" />
     <Folder Include="ecologylab\xml\types\element\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

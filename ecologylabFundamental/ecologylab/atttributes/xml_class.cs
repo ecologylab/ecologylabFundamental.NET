@@ -6,7 +6,8 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     /// <summary>
-    /// 
+    /// Annotation to bind the class with type of the field. 
+    /// Used for generic types
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class xml_class : Attribute

@@ -6,7 +6,8 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     /// <summary>
-    /// 
+    /// An array of classes used to bind the type of classes 
+    /// the annotated attribute can hold. 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class xml_classes : Attribute

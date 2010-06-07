@@ -11,6 +11,12 @@ namespace ecologylabXMLTesterApp
     {
         static void Main(string[] args)
         {
+
+            /**
+             * 
+             * Simple test case mono-morphic collection 
+             *             
+             */
             RssState rssState = new RssState();
             Channel channel = new Channel();
             Item item1 = new Item();
@@ -56,10 +62,10 @@ namespace ecologylabXMLTesterApp
 
             output.Clear();
             es.translateToXMLStringBuilder(output);
-
             Console.WriteLine(output);
-
             Console.ReadLine();
+
+
         }
     }
 }

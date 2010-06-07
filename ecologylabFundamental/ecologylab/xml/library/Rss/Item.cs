@@ -31,6 +31,15 @@ namespace ecologylabFundamental.ecologylab.xml.library
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="title"></param>
+        public Item(String title)
+        {
+            this.title = title;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public String Title
         {
             get { return title; }
