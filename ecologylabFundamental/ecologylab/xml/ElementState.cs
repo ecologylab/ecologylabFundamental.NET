@@ -8,13 +8,38 @@ using System.Collections;
 namespace ecologylabFundamental.ecologylab.xml
 {
     /// <summary>
-    /// 
+    ///     This class is the heart of the <code>ecologylab.xml</code>
+    ///     translation framework.
+    ///
+    ///     <p/>
+    ///     To use the framework, the programmer must define a tree of objects derived
+    ///     from this class. The public fields in each of these derived objects 
+    ///     correspond to the XML DOM. The declarations of attribute fields  must 
+    ///     preceed thos for nested XML elements. Attributes are built directly from
+    ///     Strings, using classes derived from <code>ScalarType</code>    
+    ///
+    ///     <p/>
+    ///     The framework proceeds automatically through the application of rules.
+    ///     In the standard case, the rules are based on the automatic mapping of
+    ///     XML element names (aka tags), to ElementState class names.
+    ///     An mechanism for supplying additional translations may also be provided.
+    ///
+    ///     <p/>
+    ///     <code>ElementState</code> is based on 2 methods, each of which employs 
+    ///     .NET reflection and recursive descent.
+    ///
+    ///     <li><code>translateToXML(...)</code> translates a tree of these 
+    ///     <code>ElementState</code> objects into XML.</li>
+    ///
+    ///    <li><code>translateFromXML(...)</code> translates an XML DOM into a tree of these
+    ///    <code>ElementState</code> objects</li>
     /// </summary>
     public class ElementState : FieldTypes
     {
-        private ClassDescriptor elementClassDescriptor = null;
-        private Dictionary<String, ElementState> elementById;
-        
+
+        #region Private & Public Fields
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -23,12 +48,19 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <summary>
         /// 
         /// </summary>
-        public static int NORMAL = 0;
+        public static int NORMAL = 0;        
+
+        private ClassDescriptor elementClassDescriptor = null;
+        private Dictionary<String, ElementState> elementById;
 
         /// <summary>
         /// 
         /// </summary>
-        public ElementState parent;
+        public ElementState parent;        
+
+        #endregion
+
+        #region Translation To & From functions
 
         /// <summary>
         /// 
@@ -39,18 +71,7 @@ namespace ecologylabFundamental.ecologylab.xml
             if (output == null) throw new Exception("null : output object");
             else translateToXMLStringBuilder(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="translationScope"></param>
-        /// <returns></returns>
-        public static ElementState translateFromXML(String filePath, TranslationScope translationScope)
-        {
-            ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, translationScope);
-            return saxHandler.Parse();
-        }
+
 
         /// <summary>
         /// 
@@ -98,11 +119,6 @@ namespace ecologylabFundamental.ecologylab.xml
                 if (!fieldDescriptor.IsXmlNsDecl)
                     output.Append('>');
 
-                //FIXME get rid of this block, because this method of dealing with text nodes is obsolete
-                if (textNode != null)
-                {
-                    XMLTools.EscapeXML(output, textNode);
-                }
 
                 if (hasXmlText)
                 {
@@ -149,6 +165,7 @@ namespace ecologylabFundamental.ecologylab.xml
                             }
                             catch (Exception e1)
                             {
+                                Console.WriteLine(e1.ToString());
                                 System.Console.WriteLine("Can't access " + childField.Name);
                             }
                         }
@@ -192,7 +209,7 @@ namespace ecologylabFundamental.ecologylab.xml
                                 else if (next is ElementState)
                                 {
                                     ElementState collectionSubElementState = (ElementState)next;
-                                   // Type collectionElementClass = collectionSubElementState.GetClass();
+                                    // Type collectionElementClass = collectionSubElementState.GetClass();
 
                                     FieldDescriptor collectionElementFD = childFD.IsPolymorphic ?
                                             collectionSubElementState.ElementClassDescriptor.PseudoFieldDescriptor :
@@ -224,27 +241,31 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <summary>
         /// 
         /// </summary>
-        public ClassDescriptor ElementClassDescriptor
+        /// <param name="filePath"></param>
+        /// <param name="translationScope"></param>
+        /// <returns></returns>
+        public static ElementState translateFromXML(String filePath, TranslationScope translationScope)
         {
-            get
-            {
-                ClassDescriptor result = elementClassDescriptor;
-                if (result == null)
-                {
-                    result = ClassDescriptor.GetClassDescriptor(this.GetType());
-                    this.elementClassDescriptor = result;
-                }
-                return result;
-            }
+            ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, translationScope);
+            return saxHandler.Parse();
         }
+
+        #endregion
+
+        #region Hook Methods
 
         /// <summary>
         /// 
         /// </summary>
-        private void preTranslationProcessingHook()
+        public void preTranslationProcessingHook()
         {
             //Inheriting class can override to execute custom functionality.
         }
+
+
+        #endregion
+
+        #region Public Utility Functions
 
         /// <summary>
         /// 
@@ -323,6 +344,27 @@ namespace ecologylabFundamental.ecologylab.xml
             newChildElementState.elementClassDescriptor = ClassDescriptor.GetClassDescriptor(newChildElementState);
         }
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ClassDescriptor ElementClassDescriptor
+        {
+            get
+            {
+                ClassDescriptor result = elementClassDescriptor;
+                if (result == null)
+                {
+                    result = ClassDescriptor.GetClassDescriptor(this.GetType());
+                    this.elementClassDescriptor = result;
+                }
+                return result;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -333,5 +375,7 @@ namespace ecologylabFundamental.ecologylab.xml
                 return ElementClassDescriptor.HasScalarTextField;
             }
         }
+
+        #endregion
     }
 }

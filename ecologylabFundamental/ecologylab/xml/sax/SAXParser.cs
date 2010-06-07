@@ -15,22 +15,39 @@ namespace ecologylabFundamental.ecologylab.xml.sax
     {
         private ISAXContentHandler Handler = null;
         private ISAXErrorHandler errorHandler = null;
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="errorHandler"></param>
         public void setErrorHandler(ISAXErrorHandler errorHandler)
         {
             this.errorHandler = errorHandler;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="handler"></param>
         public void setContentHandler(ISAXContentHandler handler)
         {
             this.Handler = handler;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
         public void parse(String url)
         {
             FileStream fileStream = File.OpenRead(url);
             parse(fileStream);
         }       
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputStream"></param>
         public void parse(Stream inputStream)
         {
             int buflen = 500;
@@ -47,7 +64,6 @@ namespace ecologylabFundamental.ecologylab.xml.sax
                 Handler.startDocument();
                 while (reader.Read())
                 {
-                    int len = 0;
                     string prefix;
                     locator.LineNumber = reader.LineNumber;
                     locator.ColumnNumber = reader.LinePosition;
@@ -66,6 +82,7 @@ namespace ecologylabFundamental.ecologylab.xml.sax
                                     {
                                         prefix = reader.LocalName;
                                     }
+
                                     nsstack.Push(prefix);
                                     Handler.startPrefixMapping(prefix, reader.Value);
                                 }

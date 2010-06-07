@@ -21,9 +21,6 @@ namespace ecologylabFundamental.ecologylab.xml
     ///     global association for each class descriptor. It does lazy evaluation
     ///     of annotation meta-language.
     ///     </para>
-    ///     <para>
-    ///     <author>Nabeel Shahzad (Interface Ecology Lab)</author>
-    ///     </para>
     /// </summary>
     public class ClassDescriptor : FieldTypes
     {       
@@ -108,10 +105,6 @@ namespace ecologylabFundamental.ecologylab.xml
         private static Dictionary<String, ClassDescriptor>
             globalClassDescriptorsMap = new Dictionary<String, ClassDescriptor>();
 
-        /// <summary>
-        ///     TODO: why we need this? remove if not required.
-        /// </summary>
-        private ElementState thatClass;
 
         #endregion
 
@@ -139,7 +132,7 @@ namespace ecologylabFundamental.ecologylab.xml
         ///     Constructor for initializing the 
         ///     <c>ClassDescriptor</c> with the <c>tag</c>
         /// </summary>
-        /// <param name="tag">
+        /// <param name="tagName">
         ///     <c>String</c> tagName for the <c>ClassDescriptor</c>
         /// </param>
         public ClassDescriptor(String tagName)
@@ -361,7 +354,7 @@ namespace ecologylabFundamental.ecologylab.xml
 
         /// <summary>
         ///     Gets the <c>FieldDescriptors</c> for fields represeted as
-        ///      attributes in XML.
+        ///     attributes in XML.
         /// </summary>
         public List<FieldDescriptor> AttributeFieldDescriptors
         {

@@ -13,8 +13,6 @@ namespace ecologylabFundamental.ecologylab.xml
     ///     and unmarshall it into C# rumtime objects. It takes <see cref="TranslationScope"/>
     ///     which is an abstract representation of the translation semantics. TranslationScopes 
     ///     defines which classes bind to which tags in the XML representation.
-    ///     
-    ///     <author>Nabeel Shahzad (Interface Ecology Lab)</author>
     /// </summary>
     public class ElementStateSAXHandler : FieldTypes, ISAXContentHandler, ISAXErrorHandler
     {
@@ -164,7 +162,7 @@ namespace ecologylabFundamental.ecologylab.xml
         #region SAX Events (used for parsing by SAXHandler)
 
         /// <summary>
-        ///     implementation start element methods from <see cref="SAXParser"/>.
+        ///     implementation start element methods from <c>SAXParser</c>
         ///     This method is invoked for any opening tag in XML file.
         /// </summary>
         /// <param name="namespaceURI"></param>
@@ -244,7 +242,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        ///     implementation end element methods from <see cref="SAXParser"/>
+        ///     implementation end element methods from <c></c>
         ///     This method is invoked for any closing tag in XML file.
         /// </summary>
         /// <param name="namespaceURI"></param>
@@ -270,7 +268,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        ///     implementation end characters methods from <see cref="SAXParser"/>
+        ///     implementation end characters methods from <c>SAXParser</c>
         ///     This methods is invoked for text between leaf nodes
         /// </summary>
         /// <param name="ch"></param>
@@ -413,7 +411,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </summary>
         public void startDocument()
         {
-            Console.WriteLine("START DOCUMENT");
+            //Do Nothing
         }
 
         /// <summary>
@@ -421,7 +419,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </summary>
         public void endDocument()
         {
-            Console.WriteLine("END DOCUMENT");
+            //Do Nothing
         }
 
         /// <summary>
@@ -431,7 +429,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="data"></param>
         public void processingInstruction(string target, string data)
         {
-            Console.WriteLine("processingInstruction");
+            //Do Nothing
         }
 
         /// <summary>
@@ -441,7 +439,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="uri"></param>
         public void startPrefixMapping(string prefix, string uri)
         {
-            Console.WriteLine("startPrefixMapping");
+            //Do Nothing
         }
         
         /// <summary>
@@ -450,7 +448,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="prefix"></param>
         public void endPrefixMapping(string prefix)
         {
-            Console.WriteLine("endPrefixMapping");
+            //Do Nothing
         }
 
         /// <summary>
@@ -461,7 +459,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="end"></param>
         public void ignorableWhitespace(char[] ch, int start, int end)
         {
-            Console.WriteLine("ignorableWhitespace");
+            //Do Nothing
         }
 
         /// <summary>
@@ -470,7 +468,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="name"></param>
         public void skippedEntity(string name)
         {
-            Console.WriteLine(name);
+            //Do Nothing
         }
 
         #endregion
@@ -483,7 +481,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="exception"></param>
         public void warning(sax.SAXParseException exception)
         {
-            Console.WriteLine("warning");
+            Console.WriteLine(exception.getMessage().ToString());
         }
 
         /// <summary>
@@ -501,7 +499,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="exception"></param>
         public void fatalError(sax.SAXParseException exception)
         {
-            Console.WriteLine("fatalError");
+            Console.WriteLine(exception.getMessage().ToString());
         }
 
         #endregion

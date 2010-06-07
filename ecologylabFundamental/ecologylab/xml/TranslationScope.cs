@@ -7,24 +7,26 @@ using System.Reflection;
 
 namespace ecologylabFundamental.ecologylab.xml
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class TranslationScope
     {
-        private String name;
-        private TranslationScope[] inheritedTranslationScopes;
-
-        private Scope<ClassDescriptor> entriesByClassSimpleName = new Scope<ClassDescriptor>();
-
-        private Scope<ClassDescriptor> entriesByClassName = new Scope<ClassDescriptor>();
-        private Scope<ClassDescriptor> entriesByTag = new Scope<ClassDescriptor>();
-
-        private Scope<Type> nameSpaceClassesByURN = new Scope<Type>();
+        /// <summary>
+        /// 
+        /// </summary>
+        public const String STATE = "State";
 
         private static Dictionary<String, TranslationScope> allTranslationScopes = new Dictionary<String, TranslationScope>();
-        private TranslationScope[] translationScope;
-        private Type[] translations;
-        private List<ClassDescriptor> classDescriptors;
 
-        public const String STATE = "State";
+        private String name;
+        private TranslationScope[] inheritedTranslationScopes;
+        private Scope<ClassDescriptor> entriesByClassSimpleName = new Scope<ClassDescriptor>();
+        private Scope<ClassDescriptor> entriesByClassName = new Scope<ClassDescriptor>();
+        private Scope<ClassDescriptor> entriesByTag = new Scope<ClassDescriptor>();
+        private Scope<Type> nameSpaceClassesByURN = new Scope<Type>();
+
+        private List<ClassDescriptor> classDescriptors;
 
         /// <summary>
         /// 

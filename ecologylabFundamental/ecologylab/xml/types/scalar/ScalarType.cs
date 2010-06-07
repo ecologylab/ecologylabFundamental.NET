@@ -12,8 +12,6 @@ namespace ecologylabFundamental.ecologylab.xml.types
     abstract class ScalarType
     {
         Type thatClass;
-        Type alternativeClass;
-
         Boolean isPrimitive;
 
         /// <summary>

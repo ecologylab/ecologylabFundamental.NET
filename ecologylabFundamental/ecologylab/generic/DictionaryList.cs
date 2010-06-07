@@ -12,6 +12,9 @@ namespace ecologylabFundamental.ecologylab.generic
     /// <typeparam name="V"></typeparam>
     public class DictionaryList<K, V> : Dictionary<K, V>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected List<V> arrayList;
 
         /// <summary>

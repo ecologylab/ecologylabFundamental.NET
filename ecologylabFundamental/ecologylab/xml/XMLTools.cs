@@ -12,17 +12,7 @@ namespace ecologylabFundamental.ecologylab.xml
     /// 
     /// </summary>
     public class XMLTools
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="output"></param>
-        /// <param name="textNode"></param>
-        public static void EscapeXML(StringBuilder output, StringBuilder textNode)
-        {
-            //throw new NotImplementedException();
-        }
-
+    {       
         /// <summary>
         /// 
         /// </summary>
