@@ -195,7 +195,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </returns>
         public static ClassDescriptor GetClassDescriptor(ElementState elementState)
         {
-            return GetClassDescriptor(typeof(ElementState));
+            return GetClassDescriptor(elementState.GetType());
         }
 
         #endregion

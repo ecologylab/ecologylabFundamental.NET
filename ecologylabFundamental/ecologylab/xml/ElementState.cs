@@ -12,7 +12,7 @@ namespace ecologylabFundamental.ecologylab.xml
     /// </summary>
     public class ElementState : FieldTypes
     {
-        private ClassDescriptor elementClassDescriptor;
+        private ClassDescriptor elementClassDescriptor = null;
         private Dictionary<String, ElementState> elementById;
         
         /// <summary>
