@@ -8,8 +8,10 @@ namespace ecologylabFundamental.ecologylab.xml.library.Schmannel
     /// <summary>
     /// 
     /// </summary>
-    class SchmItem : Item
+    public class SchmItem : Item
     {
+        private string p;
+
         /// <summary>
         /// 
         /// </summary>
@@ -26,6 +28,6 @@ namespace ecologylabFundamental.ecologylab.xml.library.Schmannel
         { 
         
         }
-
+      
     }
 }

@@ -68,6 +68,7 @@
     <Compile Include="ecologylab\xml\library\Rss\RssTranslations.cs" />
     <Compile Include="ecologylab\xml\library\Schmannel\BItem.cs" />
     <Compile Include="ecologylab\xml\library\Schmannel\Schmannel.cs" />
+    <Compile Include="ecologylab\xml\library\Schmannel\SchmannelTranslations.cs" />
     <Compile Include="ecologylab\xml\library\Schmannel\SchmItem.cs" />
     <Compile Include="ecologylab\xml\sax\ISAXContentHandler.cs" />
     <Compile Include="ecologylab\xml\sax\ISAXErrorHandler.cs" />

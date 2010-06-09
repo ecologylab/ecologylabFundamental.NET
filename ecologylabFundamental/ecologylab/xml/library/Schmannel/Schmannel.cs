@@ -9,13 +9,17 @@ namespace ecologylabFundamental.ecologylab.xml.library.Schmannel
     /// <summary>
     /// 
     /// </summary>
-    class Schmannel : ElementState
+    public class Schmannel : ElementState
     {
         /// <summary>
         /// 
         /// </summary>
         [xml_classes(new Type[] {typeof(Item), typeof(SchmItem)})]
         List<Item> schmItems;
+
+        [xml_classes(new Type[] { typeof(BItem) })]
+        [xml_nested]
+        public Item polyItem;
 
         /// <summary>
         /// 

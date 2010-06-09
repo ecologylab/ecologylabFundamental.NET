@@ -21,7 +21,8 @@ namespace ecologylabFundamental.ecologylab.xml.library.Schmannel
         /// 
         /// </summary>
         /// <param name="title"></param>
-        public BItem(String title) : base(title)
+        public BItem(String title)
+            : base(title)
         {
 
         }
