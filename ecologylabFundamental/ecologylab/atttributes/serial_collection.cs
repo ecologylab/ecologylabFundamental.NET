@@ -2,43 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.xml;
 
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     /// <summary>
-    /// Defines a field is represented as XML leaf when marshalled.
+    /// Annotation describes a class field as a collection. 
+    /// This includes Lists which can be both mono-morphic and 
+    /// poly-morphic
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_leaf : Attribute
+    public class serial_collection : Attribute
     {
-        private int m_value;
+        private String tagName;
 
         /// <summary>
         /// 
         /// </summary>
-        public xml_leaf()
+        public serial_collection()
         {
-            this.m_value = ElementState.NORMAL;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="p_value"></param>
-        public xml_leaf(int p_value)
+        /// <param name="tagName"></param>
+        public serial_collection(String tagName)
         {
-            this.m_value = p_value;
+            this.tagName = tagName;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public int Value
+        public String TagName
         {
             get
             {
-                return m_value;
+                return tagName;
             }
         }
     }

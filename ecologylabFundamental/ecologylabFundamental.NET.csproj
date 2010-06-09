@@ -41,20 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ecologylab\atttributes\xml_attribute.cs" />
-    <Compile Include="ecologylab\atttributes\xml_class.cs" />
-    <Compile Include="ecologylab\atttributes\xml_classes.cs" />
-    <Compile Include="ecologylab\atttributes\xml_collection.cs" />
-    <Compile Include="ecologylab\atttributes\xml_inherit.cs" />
-    <Compile Include="ecologylab\atttributes\xml_leaf.cs" />
-    <Compile Include="ecologylab\atttributes\xml_map.cs" />
-    <Compile Include="ecologylab\atttributes\xml_nested.cs" />
-    <Compile Include="ecologylab\atttributes\xml_nowrap.cs" />
-    <Compile Include="ecologylab\atttributes\xml_other_tags.cs" />
-    <Compile Include="ecologylab\atttributes\xml_scope.cs" />
-    <Compile Include="ecologylab\atttributes\xml_tag.cs" />
-    <Compile Include="ecologylab\atttributes\xml_text.cs" />
-    <Compile Include="ecologylab\atttributes\xml_wrap.cs" />
+    <Compile Include="ecologylab\atttributes\serial_descriptors_classes.cs" />
+    <Compile Include="ecologylab\atttributes\serial_attribute.cs" />
+    <Compile Include="ecologylab\atttributes\serial_class.cs" />
+    <Compile Include="ecologylab\atttributes\serial_classes.cs" />
+    <Compile Include="ecologylab\atttributes\serial_collection.cs" />
+    <Compile Include="ecologylab\atttributes\serial_inherit.cs" />
+    <Compile Include="ecologylab\atttributes\serial_leaf.cs" />
+    <Compile Include="ecologylab\atttributes\serial_map.cs" />
+    <Compile Include="ecologylab\atttributes\serial_nested.cs" />
+    <Compile Include="ecologylab\atttributes\serial_nowrap.cs" />
+    <Compile Include="ecologylab\atttributes\serial_other_tags.cs" />
+    <Compile Include="ecologylab\atttributes\serial_scope.cs" />
+    <Compile Include="ecologylab\atttributes\serial_tag.cs" />
+    <Compile Include="ecologylab\atttributes\serial_text.cs" />
+    <Compile Include="ecologylab\atttributes\serial_wrap.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
     <Compile Include="ecologylab\xml\ClassDescriptor.cs" />

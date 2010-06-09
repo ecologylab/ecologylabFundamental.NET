@@ -11,16 +11,16 @@ namespace ecologylabFundamental.ecologylab.xml.library
     /// </summary>
     public class Channel : ElementState
     {
-        [xml_leaf]
+        [serial_leaf]
         private String title;
 
-        [xml_leaf]
+        [serial_leaf]
         private String description;
 
-        [xml_leaf]
+        [serial_leaf]
         private Uri link;
 
-        [xml_collection("item")]
+        [serial_collection("item")]
         private List<Item> items;
 
         /// <summary>

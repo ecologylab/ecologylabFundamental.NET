@@ -14,11 +14,12 @@ namespace ecologylabFundamental.ecologylab.xml.library.Schmannel
         /// <summary>
         /// 
         /// </summary>
-        [xml_classes(new Type[] {typeof(Item), typeof(SchmItem)})]
+        [serial_classes(new Type[] {typeof(Item), typeof(SchmItem)})]
+        [serial_collection]
         List<Item> schmItems;
 
-        [xml_classes(new Type[] { typeof(BItem) })]
-        [xml_nested]
+        [serial_classes(new Type[] { typeof(BItem) })]
+        [serial_nested]
         public Item polyItem;
 
         /// <summary>

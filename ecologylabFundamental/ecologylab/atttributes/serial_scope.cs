@@ -9,31 +9,27 @@ namespace ecologylabFundamental.ecologylab.atttributes
     /// 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_other_tags : Attribute
+    public class serial_scope : Attribute
     {
-        private String[] otherTags;
+        private String translationScope;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="otherTags"></param>
-        public xml_other_tags(String[] otherTags)
+        /// <param name="translationScope"></param>
+        public serial_scope(String translationScope)
         {
-            this.otherTags = otherTags;
+            this.translationScope = translationScope;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String[] OtherTags
+        public String TranslationScope
         {
             get
             {
-                return otherTags;
-            }
-            set
-            {
-                otherTags = value;
+                return translationScope;
             }
         }
     }

@@ -104,14 +104,14 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <returns></returns>
         public static String[] OtherTags(Type thisClass)
         {
-            xml_other_tags otherTagsAnnotation = null;
+            serial_other_tags otherTagsAnnotation = null;
             object[] attributes = thisClass.GetCustomAttributes(false);
 
             foreach (Attribute attribute in attributes)
             {
-                if (attribute is xml_other_tags)
+                if (attribute is serial_other_tags)
                 {
-                    otherTagsAnnotation = (xml_other_tags)attribute;
+                    otherTagsAnnotation = (serial_other_tags)attribute;
                     break;
                 }
             }
@@ -124,7 +124,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </summary>
         /// <param name="otherTagsAttributes"></param>
         /// <returns></returns>
-        public static String[] OtherTags(xml_other_tags otherTagsAttributes)
+        public static String[] OtherTags(serial_other_tags otherTagsAttributes)
         {
             String[] result = otherTagsAttributes == null ? null : otherTagsAttributes.OtherTags;
             if ((result != null) && (result.Length == 0))
@@ -140,7 +140,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <returns></returns>
         public static string GetXmlTagName(Type thatClass, String suffix)
         {
-            xml_tag tagAnnotation = (xml_tag) GetAnnotation(thatClass, typeof(xml_tag));
+            serial_tag tagAnnotation = (serial_tag) GetAnnotation(thatClass, typeof(serial_tag));
             String result = null;
 
             if(tagAnnotation != null)
@@ -227,7 +227,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <returns></returns>
         public static string GetXmlTagName(FieldInfo field)
         {
-            xml_tag tagAnnotation = (xml_tag) GetAnnotation(field, typeof(xml_tag));
+            serial_tag tagAnnotation = (serial_tag) GetAnnotation(field, typeof(serial_tag));
 
             String result = null;
 
@@ -258,7 +258,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <returns></returns>
         public static bool LeafIsCDATA(FieldInfo field)
         {
-            xml_leaf leafAnnotation = (xml_leaf) GetAnnotation(field, typeof(xml_tag));
+            serial_leaf leafAnnotation = (serial_leaf) GetAnnotation(field, typeof(serial_tag));
             return ((leafAnnotation != null) && (leafAnnotation.Value == ElementState.CDATA));
 
         }

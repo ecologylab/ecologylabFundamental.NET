@@ -6,32 +6,34 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     /// <summary>
-    /// Annotation describes a class field as a collection. 
-    /// This includes Lists which can be both mono-morphic and 
-    /// poly-morphic
+    /// 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_collection : Attribute
+    public class serial_other_tags : Attribute
     {
-        private String tagName;
+        private String[] otherTags;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="tagName"></param>
-        public xml_collection(String tagName)
+        /// <param name="otherTags"></param>
+        public serial_other_tags(String[] otherTags)
         {
-            this.tagName = tagName;
+            this.otherTags = otherTags;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String TagName
+        public String[] OtherTags
         {
             get
             {
-                return tagName;
+                return otherTags;
+            }
+            set
+            {
+                otherTags = value;
             }
         }
     }

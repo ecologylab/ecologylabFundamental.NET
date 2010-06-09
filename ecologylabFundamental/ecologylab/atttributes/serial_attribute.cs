@@ -9,7 +9,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
     /// Annotation to describe a class field as an XML attribute
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_attribute : Attribute
+    public class serial_attribute : Attribute
     {
        
     }

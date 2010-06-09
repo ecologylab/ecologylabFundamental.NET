@@ -209,7 +209,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </param>
         public void DeriveAndOrganizeFieldsRecursive(Type thatClass, Type fieldDescriptorClass)
         {            
-            if (XMLTools.IsAnnotationPresent(thatClass, typeof(xml_inherit)))
+            if (XMLTools.IsAnnotationPresent(thatClass, typeof(serial_inherit)))
             {
                 Type superClass = thatClass.BaseType;
 
@@ -229,28 +229,28 @@ namespace ecologylabFundamental.ecologylab.xml
 
                 FieldDescriptor fieldDescriptor = null;
                 Boolean isElement = true;
-                if (XMLTools.IsAnnotationPresent(thatField, typeof(xml_attribute)))
+                if (XMLTools.IsAnnotationPresent(thatField, typeof(serial_attribute)))
                 {
                     isElement = false;
                     fieldDescriptor = new FieldDescriptor(this, thatField, ATTRIBUTE);
                 }
-                else if (XMLTools.IsAnnotationPresent(thatField, typeof(xml_leaf)))
+                else if (XMLTools.IsAnnotationPresent(thatField, typeof(serial_leaf)))
                 {
                     fieldDescriptor = new FieldDescriptor(this, thatField, LEAF);
                 }
-                else if (XMLTools.IsAnnotationPresent(thatField, typeof(xml_text)))
+                else if (XMLTools.IsAnnotationPresent(thatField, typeof(serial_text)))
                 {
                     fieldDescriptor = new FieldDescriptor(this, thatField, TEXT_ELEMENT);
                 }
-                else if (XMLTools.IsAnnotationPresent(thatField, typeof(xml_nested)))
+                else if (XMLTools.IsAnnotationPresent(thatField, typeof(serial_nested)))
                 {
                     fieldDescriptor = new FieldDescriptor(this, thatField, NESTED_ELEMENT);
                 }
-                else if (XMLTools.IsAnnotationPresent(thatField, typeof(xml_collection)))
+                else if (XMLTools.IsAnnotationPresent(thatField, typeof(serial_collection)))
                 {
                     fieldDescriptor = new FieldDescriptor(this, thatField, COLLECTION_ELEMENT);
                 }
-                else if (XMLTools.IsAnnotationPresent(thatField, typeof(xml_map)))
+                else if (XMLTools.IsAnnotationPresent(thatField, typeof(serial_map)))
                 {
                     fieldDescriptor = new FieldDescriptor(this, thatField, MAP_ELEMENT);
                 }
@@ -278,7 +278,7 @@ namespace ecologylabFundamental.ecologylab.xml
                     String tag = fieldDescriptor.IsCollection ? fieldDescriptor.CollectionOrMapTagName : fieldTagName;
                     MapTagToFdForTranslateFrom(tag, fieldDescriptor);
 
-                    xml_other_tags otherTagsAttributes = (xml_other_tags)XMLTools.GetAnnotation(thatField, typeof(xml_other_tags));
+                    serial_other_tags otherTagsAttributes = (serial_other_tags)XMLTools.GetAnnotation(thatField, typeof(serial_other_tags));
                     String[] otherTags = XMLTools.OtherTags(otherTagsAttributes);
                     if (otherTags != null && otherTags.Length > 0)
                     {
@@ -345,7 +345,17 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <returns></returns>
         private Type FieldDescriptorAnnotationValue(Type thatClass)
         {
-            throw new NotImplementedException();
+            serial_descriptors_classes fieldDescriptorsClassAnnotation = (serial_descriptors_classes)XMLTools.GetAnnotation(thatClass, typeof(serial_descriptors_classes));
+
+            Type result = null;
+            if (fieldDescriptorsClassAnnotation != null)
+            {
+                Type annotatedFieldDescriptorClass = fieldDescriptorsClassAnnotation.Classes[1];
+                if (annotatedFieldDescriptorClass != null && typeof(FieldDescriptor).IsAssignableFrom(annotatedFieldDescriptorClass))
+                    result = annotatedFieldDescriptorClass;
+            }
+
+            return result;
         }
 
         #endregion

@@ -9,7 +9,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
     /// 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_tag : Attribute
+    public class serial_tag : Attribute
     {
         private String tagName;
 
@@ -17,7 +17,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
         /// 
         /// </summary>
         /// <param name="tagName"></param>
-        public xml_tag(String tagName)
+        public serial_tag(String tagName)
         {
             this.tagName = tagName;
         }

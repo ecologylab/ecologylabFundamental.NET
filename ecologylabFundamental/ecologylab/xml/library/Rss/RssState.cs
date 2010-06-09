@@ -11,10 +11,10 @@ namespace ecologylabFundamental.ecologylab.xml.library
     /// </summary>
     public class RssState : ElementState
     {
-        [xml_attribute]
+        [serial_attribute]
         private float version;
 
-        [xml_nested]
+        [serial_nested]
         private Channel channel;
 
         /// <summary>

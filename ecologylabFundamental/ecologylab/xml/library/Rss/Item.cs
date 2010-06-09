@@ -9,16 +9,16 @@ namespace ecologylabFundamental.ecologylab.xml.library
     /// </summary>
     public class Item : ElementState
     {
-        [xml_leaf]
+        [serial_leaf]
         private String title;
 
-        [xml_leaf]
+        [serial_leaf]
         private String description;
 
-        [xml_leaf]
+        [serial_leaf]
         private Uri link;
 
-        [xml_collection("category")]
+        [serial_collection("category")]
         private List<String> categorySet;
 
         /// <summary>

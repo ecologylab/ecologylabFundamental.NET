@@ -10,7 +10,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
     /// contains the annotation meta-language which needs to be resolved. 
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class xml_inherit : Attribute
+    public class serial_inherit : Attribute
     {
 
     }

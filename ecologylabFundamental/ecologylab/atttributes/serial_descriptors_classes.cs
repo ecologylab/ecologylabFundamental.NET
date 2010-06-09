@@ -5,31 +5,28 @@ using System.Text;
 
 namespace ecologylabFundamental.ecologylab.atttributes
 {
-    /// <summary>
-    /// 
-    /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_scope : Attribute
+    public class serial_descriptors_classes : Attribute
     {
-        private String translationScope;
+        private Type[] classes;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="translationScope"></param>
-        public xml_scope(String translationScope)
+        /// <param name="classes"></param>
+        public serial_descriptors_classes(Type[] classes)
         {
-            this.translationScope = translationScope;
+            this.classes = classes;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String TranslationScope
+        public Type[] Classes
         {
             get
             {
-                return translationScope;
+                return classes;
             }
         }
     }

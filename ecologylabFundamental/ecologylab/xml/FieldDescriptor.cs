@@ -468,10 +468,10 @@ namespace ecologylabFundamental.ecologylab.xml
                     }
                     break;
                 case COLLECTION_ELEMENT:
-                    if (XMLTools.IsAnnotationPresent(field, typeof(xml_collection)))
+                    if (XMLTools.IsAnnotationPresent(field, typeof(serial_collection)))
                     {
-                        xml_collection collectionAttribute = null;
-                        collectionAttribute = (xml_collection)XMLTools.GetAnnotation(field, typeof(xml_collection));
+                        serial_collection collectionAttribute = null;
+                        collectionAttribute = (serial_collection)XMLTools.GetAnnotation(field, typeof(serial_collection));
                         String collectionTag = collectionAttribute.TagName;
 
                         if (!CheckAssignableFrom(typeof(IList), field, fieldClass, "xml_collection"))
@@ -521,10 +521,10 @@ namespace ecologylabFundamental.ecologylab.xml
                         return IGNORED_ATTRIBUTE;
                     break;
                 case MAP_ELEMENT:
-                    if (XMLTools.IsAnnotationPresent(field, typeof(xml_map)))
+                    if (XMLTools.IsAnnotationPresent(field, typeof(serial_map)))
                     {
-                        xml_map mapAttribute = null;
-                        mapAttribute = (xml_map)XMLTools.GetAnnotation(field, typeof(xml_map));
+                        serial_map mapAttribute = null;
+                        mapAttribute = (serial_map)XMLTools.GetAnnotation(field, typeof(serial_map));
                         String mapTag = mapAttribute.TagName;
 
                         if (!CheckAssignableFrom(typeof(IList), field, fieldClass, "xml_collection"))
@@ -579,7 +579,7 @@ namespace ecologylabFundamental.ecologylab.xml
 
             if (annotationType == COLLECTION_ELEMENT || annotationType == MAP_ELEMENT)
             {
-                if (!XMLTools.IsAnnotationPresent(field, typeof(xml_nowrap)))
+                if (!XMLTools.IsAnnotationPresent(field, typeof(serial_nowrap)))
                     wrapped = true;
             }
             if (result == UNSET_TYPE)
@@ -665,9 +665,9 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="field"></param>
         private void DeriveTagClassDescriptors(FieldInfo field)
         {
-            if (XMLTools.IsAnnotationPresent(field, typeof(xml_scope)))
+            if (XMLTools.IsAnnotationPresent(field, typeof(serial_scope)))
             {
-                xml_scope scopeAnnotationObj = (xml_scope)XMLTools.GetAnnotation(field, typeof(xml_scope));
+                serial_scope scopeAnnotationObj = (serial_scope)XMLTools.GetAnnotation(field, typeof(serial_scope));
                 String scopeAnnotation = scopeAnnotationObj.TranslationScope;
                 TranslationScope scope = TranslationScope.Get(scopeAnnotation);
                 if (scope != null)
@@ -682,9 +682,9 @@ namespace ecologylabFundamental.ecologylab.xml
 
                 }
             }
-            else if (XMLTools.IsAnnotationPresent(field, typeof(xml_classes)))
+            else if (XMLTools.IsAnnotationPresent(field, typeof(serial_classes)))
             {
-                xml_classes classesAnnotationObj = (xml_classes)XMLTools.GetAnnotation(field, typeof(xml_classes));
+                serial_classes classesAnnotationObj = (serial_classes)XMLTools.GetAnnotation(field, typeof(serial_classes));
                 Type[] classesAnnotation = classesAnnotationObj.Classes;
                 InitTagClassDescriptorsArrayList(classesAnnotation.Length);
                 foreach (Type thatClass in classesAnnotation)
@@ -695,9 +695,9 @@ namespace ecologylabFundamental.ecologylab.xml
                         tagClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);
                     }
             }
-            else if (XMLTools.IsAnnotationPresent(field, typeof(xml_class)))
+            else if (XMLTools.IsAnnotationPresent(field, typeof(serial_class)))
             {
-                xml_class classAnnotationObj = (xml_class)XMLTools.GetAnnotation(field, typeof(xml_class));
+                serial_class classAnnotationObj = (serial_class)XMLTools.GetAnnotation(field, typeof(serial_class));
                 Type classAnnotation = classAnnotationObj.Class;
                 tagClassDescriptors.Add(classDescriptor.TagName, classDescriptor);
                 tagClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);

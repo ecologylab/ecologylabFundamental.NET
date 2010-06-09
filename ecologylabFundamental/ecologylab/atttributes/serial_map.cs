@@ -6,31 +6,30 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.atttributes
 {
     /// <summary>
-    /// Annotation to bind the class with type of the field. 
-    /// Used for generic types
+    /// 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_class : Attribute
+    public class serial_map : Attribute
     {
-         private Type m_class;
+        private String tagName;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="p_class"></param>
-        public xml_class(Type p_class)
+        /// <param name="tagName"></param>
+        public serial_map(String tagName)
         {
-            this.m_class = p_class;
+            this.tagName = tagName;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public Type Class
+        public String TagName
         {
             get
             {
-                return m_class;
+                return tagName;
             }
         }
     }

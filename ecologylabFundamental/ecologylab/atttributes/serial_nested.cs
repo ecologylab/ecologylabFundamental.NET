@@ -9,7 +9,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
     /// 
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class xml_wrap : Attribute
+    public class serial_nested : Attribute
     {
 
     }

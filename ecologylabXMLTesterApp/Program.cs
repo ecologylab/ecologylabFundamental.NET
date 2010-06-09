@@ -12,10 +12,13 @@ namespace ecologylabXMLTesterApp
     {
         static void Main(string[] args)
         {
-
+            Console.WriteLine("testing polymorphic collection");
+            Console.WriteLine();
             PolymorphicTest();
 
-
+            Console.WriteLine("testing monomorphic colleciton");
+            Console.WriteLine();
+            MonomorphicTest();
         }
 
         private static void PolymorphicTest()
@@ -60,7 +63,6 @@ namespace ecologylabXMLTesterApp
         private static void MonomorphicTest()
         {
             /**
-             * 
              * Simple test case mono-morphic collection 
              *             
              */
