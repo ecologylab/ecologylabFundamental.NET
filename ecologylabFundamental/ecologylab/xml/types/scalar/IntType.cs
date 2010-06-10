@@ -6,24 +6,27 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.xml.types.scalar
 {
     /// <summary>
-    /// 
+    ///     Class abstracting C# int type
     /// </summary>
     class IntType : ScalarType
     {
         /// <summary>
-        /// 
+        ///      Calls the parent constructor for int type
         /// </summary>
         public IntType()
             : base(typeof(int))
         { }
 
         /// <summary>
-        /// 
+        ///     Creates and returns an instance of int type for the given
+        ///     input value. 
         /// </summary>
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
-        /// <returns></returns>
+        /// <returns>int</returns>
         public override Object GetInstance(String value, String[] formatStrings)
-        { return null; }
+        {
+            return int.Parse(value);
+        }
     }
 }

@@ -9,12 +9,13 @@ using ecologylabFundamental.ecologylab.atttributes;
 namespace ecologylabFundamental.ecologylab.xml
 {
     /// <summary>
-    /// 
+    ///     Class with static utility methods. These methods encapsulate some repeated 
+    ///     tasks during marshalling and unmarshalling processes. 
     /// </summary>
     public class XMLTools
     {       
         /// <summary>
-        /// 
+        ///     
         /// </summary>
         /// <param name="thatReferenceObject"></param>
         /// <returns></returns>
@@ -34,7 +35,8 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Returns true if the given type of annotation is present
+        ///     on the specified class
         /// </summary>
         /// <param name="thatClass"></param>
         /// <param name="attributeType"></param>
@@ -47,7 +49,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     
         /// </summary>
         /// <param name="thatField"></param>
         /// <param name="attributeType"></param>

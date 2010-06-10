@@ -162,7 +162,7 @@ namespace ecologylabFundamental.ecologylab.xml
         #region SAX Events (used for parsing by SAXHandler)
 
         /// <summary>
-        ///     implementation start element methods from <c>SAXParser</c>
+        ///     Implementation start element methods from <c>SAXParser</c>
         ///     This method is invoked for any opening tag in XML file.
         /// </summary>
         /// <param name="namespaceURI"></param>
@@ -242,7 +242,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        ///     implementation end element methods from <c></c>
+        ///     Implementation end element methods from <c></c>
         ///     This method is invoked for any closing tag in XML file.
         /// </summary>
         /// <param name="namespaceURI"></param>
@@ -268,7 +268,7 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        ///     implementation end characters methods from <c>SAXParser</c>
+        ///     Implementation end characters methods from <c>SAXParser</c>
         ///     This methods is invoked for text between leaf nodes
         /// </summary>
         /// <param name="ch"></param>

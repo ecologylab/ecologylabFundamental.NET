@@ -6,17 +6,19 @@ using System.Text;
 namespace ecologylabFundamental.ecologylab.xml.types.scalar
 {
     /// <summary>
-    /// 
+    ///     Class to hold the mappings of different datatypes 
+    ///     supported by the serialization framework. This objects 
+    ///     returns the right abstraction for the supported types. 
     /// </summary>
     class TypeRegistry
     {
         /// <summary>
-        /// 
+        ///     Maps to hold the Type with their right abstraction
         /// </summary>
         private static Dictionary<String, ScalarType> allTypes = new Dictionary<String, ScalarType>();
-        
+
         /// <summary>
-        /// 
+        ///     Array of supported types
         /// </summary>
         static Type[] BASIC_TYPES = 
         {
@@ -27,7 +29,7 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         };
 
         /// <summary>
-        /// 
+        ///     Static constructor register basic types 
         /// </summary>
         static TypeRegistry()
         {
@@ -35,7 +37,7 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         }
 
         /// <summary>
-        /// 
+        ///     Maps basic types 
         /// </summary>
         /// <param name="basicTypes"></param>
         private static void Register(Type[] basicTypes)
@@ -47,7 +49,7 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         }
 
         /// <summary>
-        /// 
+        ///     Maps basic types with their simple and type names. 
         /// </summary>
         /// <param name="thatClass"></param>
         private static void Register(Type thatClass)
@@ -61,7 +63,7 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         }
 
         /// <summary>
-        /// 
+        ///     Adds the mapping if one doesn't exists. 
         /// </summary>
         /// <param name="typeName"></param>
         /// <param name="scalarType"></param>
@@ -74,7 +76,8 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         }
 
         /// <summary>
-        /// 
+        ///     Gets the type of the input class name from the registry.
+        ///     Returns null if the object is not present in registry or not supported. 
         /// </summary>
         /// <param name="className"></param>
         /// <returns></returns>
@@ -86,7 +89,8 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         }
 
         /// <summary>
-        /// 
+        ///     Gets the scalar type of the field from registry.
+        ///     Returns null if the object is not present in registry or not supported. 
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
@@ -96,7 +100,8 @@ namespace ecologylabFundamental.ecologylab.xml.types.scalar
         }
 
         /// <summary>
-        /// 
+        ///     Gets the scalar type of the field from registry.
+        ///     Returns null if the object is not present in registry or not supported. 
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

@@ -7,25 +7,28 @@ using System.Reflection;
 namespace ecologylabFundamental.ecologylab.xml.types
 {
     /// <summary>
-    /// 
+    ///     Abstract class encapsulating all the scalar type fields 
+    ///     in C#. String is also considered as scalar type because it 
+    ///     beharves as value type objects. 
     /// </summary>
     abstract class ScalarType
     {
-        Type thatClass;
-        Boolean isPrimitive;
+        protected Type thatClass;
+        protected Boolean isPrimitive;
 
         /// <summary>
-        /// 
+        ///     Default value for reference type objects is considered to be null
         /// </summary>
         public static Object DEFAULT_VALUE = null;
 
         /// <summary>
-        /// 
+        ///     When translating null objects the serialized value is String null
         /// </summary>
         public static String DEFAULT_VALUE_STRING = "null";
 
         /// <summary>
-        /// 
+        ///     Constructor initialzes protected members. Takes input the 
+        ///     class this scalar tyep object represents. 
         /// </summary>
         /// <param name="thatClass"></param>
         protected ScalarType(Type thatClass)
@@ -35,7 +38,8 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Abstract method to create the instance of the class type this object
+        ///     represents. 
         /// </summary>
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
@@ -43,7 +47,8 @@ namespace ecologylabFundamental.ecologylab.xml.types
         abstract public Object GetInstance(String value, String[] formatStrings);
 
         /// <summary>
-        /// 
+        ///     Abstract method to create the instance of the class type this object
+        ///     represents. 
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -53,7 +58,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Sets the value of the field in the context 
         /// </summary>
         /// <param name="context"></param>
         /// <param name="field"></param>
@@ -85,19 +90,19 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Sets the value of the field in the context 
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="field"></param>
         /// <param name="value"></param>
-        /// <returns></returns>
+        /// <returns>Boolean</returns>
         public Boolean SetField(Object obj, FieldInfo field, String value)
         {
             return SetField(obj, field, value, null);
         }
 
         /// <summary>
-        /// 
+        ///     Outputs the erorr message for the raised exception. 
         /// </summary>
         /// <param name="field"></param>
         /// <param name="value"></param>
@@ -108,7 +113,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     True if the abstracted type is a primitive type
         /// </summary>
         public Boolean IsPrimitive
         {
@@ -119,7 +124,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     True if the abstracted type is a reference type
         /// </summary>
         public Boolean IsReference
         {
@@ -130,7 +135,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     True if the abstracted type needs escaping. 
         /// </summary>
         public Boolean NeedsEscaping
         {
@@ -141,7 +146,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Gets the type encapsulated by this class. 
         /// </summary>
         public Type EncapsulatedType
         {
@@ -152,7 +157,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Checks if the value of the field in context is equal to its default value. 
         /// </summary>
         /// <param name="field"></param>
         /// <param name="context"></param>
@@ -163,7 +168,8 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Appends the value of the field represented by the field descriptor to
+        ///     the output buffer. 
         /// </summary>
         /// <param name="buffy"></param>
         /// <param name="fieldDescriptor"></param>
@@ -175,7 +181,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }        
 
         /// <summary>
-        /// 
+        ///     Serializes the objects to its string value 
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
@@ -185,7 +191,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        ///     Appends the marshalled value of the object to output buffer
         /// </summary>
         /// <param name="instance"></param>
         /// <param name="buffy"></param>
@@ -196,7 +202,7 @@ namespace ecologylabFundamental.ecologylab.xml.types
         }
 
         /// <summary>
-        /// 
+        /// TODO: if not required then remove.
         /// </summary>
         public bool IsMarshallOnly { get; set; }
     }
