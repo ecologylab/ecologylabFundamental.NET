@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections;
+using System.IO;
 
 namespace ecologylabFundamental.ecologylab.xml
 {
@@ -50,7 +51,14 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </summary>
         public static int NORMAL = 0;        
 
+        /// <summary>
+        /// 
+        /// </summary>
         private ClassDescriptor elementClassDescriptor = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
         private Dictionary<String, ElementState> elementById;
 
         /// <summary>
@@ -63,9 +71,14 @@ namespace ecologylabFundamental.ecologylab.xml
         #region Translation To & From functions
 
         /// <summary>
-        /// 
+        ///     Translates to XML file representation of the object. 
+        ///     Uses <c>ClassDescriptors</c> and <c>FieldDescriptors</c> to 
+        ///     marshall the object to its XML representation. 
         /// </summary>
-        /// <param name="output"></param>
+        /// <param name="output">
+        ///     The output buffer which contains the marshalled representation of the
+        ///     run-time object.
+        /// </param>
         public void translateToXMLStringBuilder(StringBuilder output)
         {
             if (output == null) throw new Exception("null : output object");
@@ -74,11 +87,12 @@ namespace ecologylabFundamental.ecologylab.xml
 
 
         /// <summary>
-        /// 
+        ///     Internal recursive function to marshall the <c>ElementState</c> object to its
+        ///     XML representation.
         /// </summary>
         /// <param name="fieldDescriptor"></param>
         /// <param name="output"></param>
-        public void translateToXMLStringBuilder(FieldDescriptor fieldDescriptor, StringBuilder output)
+        private void translateToXMLStringBuilder(FieldDescriptor fieldDescriptor, StringBuilder output)
         {
             this.preTranslationProcessingHook();
 
@@ -239,10 +253,10 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Unmarshall the serialized representation of the objects. 
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="translationScope"></param>
+        /// <param name="filePath">Location of the XML file.</param>
+        /// <param name="translationScope">Translation Scopes binds the mapping of classes to their XML representation.</param>
         /// <returns></returns>
         public static ElementState translateFromXML(String filePath, TranslationScope translationScope)
         {
@@ -255,7 +269,7 @@ namespace ecologylabFundamental.ecologylab.xml
         #region Hook Methods
 
         /// <summary>
-        /// 
+        ///     
         /// </summary>
         public void preTranslationProcessingHook()
         {
@@ -288,13 +302,11 @@ namespace ecologylabFundamental.ecologylab.xml
         }
 
         /// <summary>
-        /// 
+        ///     Translates fields to attributes in XML
         /// </summary>
         /// <param name="translationScope"></param>
         /// <param name="atts"></param>
-        /// <param name="marshallingContext"></param>
-        /// <param name="context"></param>
-        public void TranslateAttributes(TranslationScope translationScope, sax.Attributes atts, ElementStateSAXHandler marshallingContext, ElementState context)
+        public void TranslateAttributes(sax.Attributes atts)
         {
             int numAttributes = atts.attArray.Count;
 
@@ -306,7 +318,7 @@ namespace ecologylabFundamental.ecologylab.xml
                 if (value != null)
                 {
                     ClassDescriptor classDescriptor = this.ElementClassDescriptor;
-                    FieldDescriptor fieldDescriptor = classDescriptor.GetFieldDescriptorByTag(tag, translationScope, context);
+                    FieldDescriptor fieldDescriptor = classDescriptor.GetFieldDescriptorByTag(tag);
 
                     if (fieldDescriptor == null)
                     {
@@ -317,7 +329,7 @@ namespace ecologylabFundamental.ecologylab.xml
                         switch (fieldDescriptor.Type)
                         {
                             case ATTRIBUTE:
-                                fieldDescriptor.SetFieldToScalar(this, value, marshallingContext);
+                                fieldDescriptor.SetFieldToScalar(this, value);
                                 if ("id".Equals(fieldDescriptor.TagName))
                                     this.elementById.Add(value, this);
                                 break;

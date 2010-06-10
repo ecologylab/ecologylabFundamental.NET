@@ -358,7 +358,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="context"></param>
         /// <param name="value"></param>
         /// <param name="scalarUnMarshallingContext"></param>
-        public void SetFieldToScalar(ElementState context, String value, ElementStateSAXHandler scalarUnMarshallingContext)
+        public void SetFieldToScalar(ElementState context, String value)
         {
             if ((value == null))
             {

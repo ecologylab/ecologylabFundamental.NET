@@ -167,16 +167,16 @@ namespace ecologylabFundamental.ecologylab.xml
         /// </summary>
         /// <param name="namespaceURI"></param>
         /// <param name="localName"></param>
-        /// <param name="rawName"></param>
+        /// <param name="tagName"></param>
         /// <param name="atts"></param>
-        public void startElement(string namespaceURI, string localName, string rawName, sax.Attributes atts)
+        public void startElement(String namespaceURI, String localName, String tagName, sax.Attributes atts)
         {
             FieldDescriptor activeFieldDescriptor = null;
             Boolean isRoot = (root == null);
 
             if (isRoot)
             {
-                ClassDescriptor rootClassDescriptor = translationScope.GetClassDescriptorByTag(rawName);
+                ClassDescriptor rootClassDescriptor = translationScope.GetClassDescriptorByTag(tagName);
                 if (rootClassDescriptor != null)
                 {
                     ElementState tempRoot;
@@ -185,7 +185,7 @@ namespace ecologylabFundamental.ecologylab.xml
                     {
                         tempRoot.SetupRoot();
                         SetRoot(tempRoot);
-                        tempRoot.TranslateAttributes(translationScope, atts, this, tempRoot);
+                        tempRoot.TranslateAttributes(atts);
                         activeFieldDescriptor = rootClassDescriptor.PseudoFieldDescriptor;
                     }
                     else
@@ -204,7 +204,7 @@ namespace ecologylabFundamental.ecologylab.xml
                 ClassDescriptor currentClassDescriptor = CurrentClassDescriptor;
                 activeFieldDescriptor = ((currentFieldDescriptor != null) && (currentFieldDescriptor.Type == IGNORED_ELEMENT)) ?
                     FieldDescriptor.IGNORED_ELEMENT_FIELD_DESCRIPTOR : (currentFieldDescriptor.Type == WRAPPER) ?
-                    currentFieldDescriptor.WrappedFieldDescriptor : currentClassDescriptor.GetFieldDescriptorByTag(rawName, translationScope, currentElementState);
+                    currentFieldDescriptor.WrappedFieldDescriptor : currentClassDescriptor.GetFieldDescriptorByTag(tagName);
             }
 
             this.currentFieldDescriptor = activeFieldDescriptor;
@@ -218,14 +218,14 @@ namespace ecologylabFundamental.ecologylab.xml
             switch (activeFieldDescriptor.Type)
             {
                 case NESTED_ELEMENT:
-                    childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, rawName);
+                    childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, tagName);
                     activeFieldDescriptor.SetFieldToNestedObject(currentElementState, childES);
                     break;
                 case COLLECTION_ELEMENT:
                     IList collection = (IList)activeFieldDescriptor.AutomaticLazyGetCollectionOrDict(currentElementState);
                     if (collection != null)
                     {
-                        childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, rawName);
+                        childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, tagName);
                         collection.Add(childES);
                     }
                     break;
@@ -235,7 +235,7 @@ namespace ecologylabFundamental.ecologylab.xml
 
             if (childES != null)
             {
-                childES.TranslateAttributes(translationScope, atts, this, currentElementState);
+                childES.TranslateAttributes(atts);
                 this.currentElementState = childES;
                 this.currentFieldDescriptor = activeFieldDescriptor;
             }
@@ -335,7 +335,7 @@ namespace ecologylabFundamental.ecologylab.xml
                 {
                     case LEAF:
                         value = currentTextValue.ToString().Substring(0, length);
-                        currentFieldDescriptor.SetFieldToScalar(currentElementState, value, this);
+                        currentFieldDescriptor.SetFieldToScalar(currentElementState, value);
                         break;
                     case COLLECTION_SCALAR:
                         value = currentTextValue.ToString().Substring(0, length);

@@ -306,7 +306,7 @@ namespace ecologylabFundamental.ecologylab.xml
         /// <param name="translationScope"></param>
         /// <param name="currentElementState"></param>
         /// <returns></returns>
-        public FieldDescriptor GetFieldDescriptorByTag(String tagName, TranslationScope translationScope, ElementState currentElementState)
+        public FieldDescriptor GetFieldDescriptorByTag(String tagName)
         {
             if (allFieldDescriptorsByTagNames.ContainsKey(tagName))
                 return allFieldDescriptorsByTagNames[tagName];
