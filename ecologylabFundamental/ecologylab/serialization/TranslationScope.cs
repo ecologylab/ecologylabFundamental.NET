@@ -290,9 +290,22 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// </summary>
         /// <param name="tagName"></param>
         /// <returns></returns>
-        internal ClassDescriptor GetClassDescriptorByTag(string tagName)
+        public ClassDescriptor GetClassDescriptorByTag(string tagName)
         {
             return entriesByTag[tagName];
         }
+
+
+        /// <summary>
+        ///     Unmarshall the serialized representation of the objects. 
+        /// </summary>
+        /// <param name="filePath">Location of the XML file.</param>
+        /// <returns></returns>
+        public ElementState deserialize(String filePath)
+        {
+            ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this);
+            return saxHandler.Parse();
+        }
+
     }   
 }

@@ -41,7 +41,7 @@ namespace ecologylabXMLTesterApp
 
             StringBuilder output = new StringBuilder();
 
-            schmannel.translateToXMLStringBuilder(output);
+            schmannel.serialize(output);
 
             // create a writer and open the file
             TextWriter tw = new StreamWriter("polymorphic_output.xml");
@@ -52,10 +52,10 @@ namespace ecologylabXMLTesterApp
             Console.WriteLine(output);
             Console.ReadLine();
 
-            ElementState es = ElementState.translateFromXML("polymorphic_output.xml", SchmannelTranslations.Get());
+            ElementState es = SchmannelTranslations.Get().deserialize("polymorphic_output.xml");
 
             output.Clear();
-            es.translateToXMLStringBuilder(output);
+            es.serialize(output);
             Console.WriteLine(output);
             Console.ReadLine();
         }
@@ -97,7 +97,7 @@ namespace ecologylabXMLTesterApp
 
             StringBuilder output = new StringBuilder();
 
-            rssState.translateToXMLStringBuilder(output);
+            rssState.serialize(output);
 
             // create a writer and open the file
             TextWriter tw = new StreamWriter("monomorphic_output.xml");
@@ -108,10 +108,10 @@ namespace ecologylabXMLTesterApp
             Console.WriteLine(output);
             Console.ReadLine();
 
-            ElementState es = ElementState.translateFromXML("monomorphic_output.xml", RssTranslations.Get());
+            ElementState es =  RssTranslations.Get().deserialize("monomorphic_output.xml");
 
             output.Clear();
-            es.translateToXMLStringBuilder(output);
+            es.serialize(output);
             Console.WriteLine(output);
             Console.ReadLine();
         }

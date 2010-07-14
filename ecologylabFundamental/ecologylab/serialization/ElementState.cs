@@ -68,7 +68,7 @@ namespace ecologylabFundamental.ecologylab.serialization
 
         #endregion
 
-        #region Translation To & From functions
+        #region Translation To functions
 
         /// <summary>
         ///     Translates to XML file representation of the object. 
@@ -79,10 +79,10 @@ namespace ecologylabFundamental.ecologylab.serialization
         ///     The output buffer which contains the marshalled representation of the
         ///     run-time object.
         /// </param>
-        public void translateToXMLStringBuilder(StringBuilder output)
+        public void serialize(StringBuilder output)
         {
             if (output == null) throw new Exception("null : output object");
-            else translateToXMLStringBuilder(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
+            else serialize(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
         }
 
 
@@ -92,7 +92,7 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// </summary>
         /// <param name="fieldDescriptor"></param>
         /// <param name="output"></param>
-        private void translateToXMLStringBuilder(FieldDescriptor fieldDescriptor, StringBuilder output)
+        private void serialize(FieldDescriptor fieldDescriptor, StringBuilder output)
         {
             this.preTranslationProcessingHook();
 
@@ -229,7 +229,7 @@ namespace ecologylabFundamental.ecologylab.serialization
                                             collectionSubElementState.ElementClassDescriptor.PseudoFieldDescriptor :
                                             childFD;
 
-                                    collectionSubElementState.translateToXMLStringBuilder(collectionElementFD, output);
+                                    collectionSubElementState.serialize(collectionElementFD, output);
                                 }
                                 else
                                     throw new Exception("thrown");
@@ -243,7 +243,7 @@ namespace ecologylabFundamental.ecologylab.serialization
                             FieldDescriptor nestedF2XO = childFD.IsPolymorphic ?
                                     nestedES.ElementClassDescriptor.PseudoFieldDescriptor : childFD;
 
-                            nestedES.translateToXMLStringBuilder(nestedF2XO, output);
+                            nestedES.serialize(nestedF2XO, output);
                         }
                     }
                 }
@@ -252,18 +252,7 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
         }
 
-        /// <summary>
-        ///     Unmarshall the serialized representation of the objects. 
-        /// </summary>
-        /// <param name="filePath">Location of the XML file.</param>
-        /// <param name="translationScope">Translation Scopes binds the mapping of classes to their XML representation.</param>
-        /// <returns></returns>
-        public static ElementState translateFromXML(String filePath, TranslationScope translationScope)
-        {
-            ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, translationScope);
-            return saxHandler.Parse();
-        }
-
+        
         #endregion
 
         #region Hook Methods
