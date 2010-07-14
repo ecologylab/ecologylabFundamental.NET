@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ecologylabFundamental.ecologylab.xml.library;
+using ecologylabFundamental.ecologylab.serialization.library;
 using System.IO;
-using ecologylabFundamental.ecologylab.xml;
-using ecologylabFundamental.ecologylab.xml.library.Schmannel;
+using ecologylabFundamental.ecologylab.serialization;
+using ecologylabFundamental.ecologylab.serialization.library.Schmannel;
 
 namespace ecologylabXMLTesterApp
 {
@@ -76,6 +76,7 @@ namespace ecologylabXMLTesterApp
 
             channel.Title = "testTile";
             channel.Description = "testDescription";
+            channel.Link = new Uri("http://www.google.com");
 
             categorySet.Add("category1");
             categorySet.Add("category2");
