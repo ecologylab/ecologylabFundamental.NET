@@ -31,7 +31,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
             get
             {
                 return tagName;
-            }
+            } 
         }
     }
 }
