@@ -41,53 +41,53 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ecologylab\atttributes\serial_descriptors_classes.cs" />
-    <Compile Include="ecologylab\atttributes\serial_attribute.cs" />
-    <Compile Include="ecologylab\atttributes\serial_class.cs" />
-    <Compile Include="ecologylab\atttributes\serial_classes.cs" />
-    <Compile Include="ecologylab\atttributes\serial_collection.cs" />
-    <Compile Include="ecologylab\atttributes\serial_inherit.cs" />
-    <Compile Include="ecologylab\atttributes\serial_leaf.cs" />
-    <Compile Include="ecologylab\atttributes\serial_map.cs" />
-    <Compile Include="ecologylab\atttributes\serial_nested.cs" />
-    <Compile Include="ecologylab\atttributes\serial_nowrap.cs" />
-    <Compile Include="ecologylab\atttributes\serial_other_tags.cs" />
-    <Compile Include="ecologylab\atttributes\serial_scope.cs" />
-    <Compile Include="ecologylab\atttributes\serial_tag.cs" />
-    <Compile Include="ecologylab\atttributes\serial_text.cs" />
-    <Compile Include="ecologylab\atttributes\serial_wrap.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_classes.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_collection.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_hints.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_inherit.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_scalar.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_map.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_composite.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_nowrap.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_other_tags.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_scope.cs" />
+    <Compile Include="ecologylab\atttributes\xml_other_tags.cs" />
+    <Compile Include="ecologylab\atttributes\xml_tag.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_text.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_wrap.cs" />
+    <Compile Include="ecologylab\atttributes\Hint.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
-    <Compile Include="ecologylab\xml\ClassDescriptor.cs" />
-    <Compile Include="ecologylab\xml\ElementState.cs" />
-    <Compile Include="ecologylab\xml\ElementStateSAXHandler.cs" />
-    <Compile Include="ecologylab\xml\FieldDescriptor.cs" />
-    <Compile Include="ecologylab\xml\FieldTypes.cs" />
-    <Compile Include="ecologylab\xml\library\Rss\Channel.cs" />
-    <Compile Include="ecologylab\xml\library\Rss\Item.cs" />
-    <Compile Include="ecologylab\xml\library\Rss\RssState.cs" />
-    <Compile Include="ecologylab\xml\library\Rss\RssTranslations.cs" />
-    <Compile Include="ecologylab\xml\library\Schmannel\BItem.cs" />
-    <Compile Include="ecologylab\xml\library\Schmannel\Schmannel.cs" />
-    <Compile Include="ecologylab\xml\library\Schmannel\SchmannelTranslations.cs" />
-    <Compile Include="ecologylab\xml\library\Schmannel\SchmItem.cs" />
-    <Compile Include="ecologylab\xml\sax\ISAXContentHandler.cs" />
-    <Compile Include="ecologylab\xml\sax\ISAXErrorHandler.cs" />
-    <Compile Include="ecologylab\xml\sax\SAXHelpers.cs" />
-    <Compile Include="ecologylab\xml\sax\SAXParser.cs" />
-    <Compile Include="ecologylab\xml\TranslationScope.cs" />
-    <Compile Include="ecologylab\xml\types\scalar\DoubleType.cs" />
-    <Compile Include="ecologylab\xml\types\scalar\FloatType.cs" />
-    <Compile Include="ecologylab\xml\types\scalar\IntType.cs" />
-    <Compile Include="ecologylab\xml\types\scalar\ScalarType.cs" />
-    <Compile Include="ecologylab\xml\types\scalar\StringType.cs" />
-    <Compile Include="ecologylab\xml\types\scalar\TypeRegistry.cs" />
-    <Compile Include="ecologylab\xml\XMLTools.cs" />
+    <Compile Include="ecologylab\serialization\ClassDescriptor.cs" />
+    <Compile Include="ecologylab\serialization\ElementState.cs" />
+    <Compile Include="ecologylab\serialization\ElementStateSAXHandler.cs" />
+    <Compile Include="ecologylab\serialization\FieldDescriptor.cs" />
+    <Compile Include="ecologylab\serialization\FieldTypes.cs" />
+    <Compile Include="ecologylab\serialization\library\Rss\Channel.cs" />
+    <Compile Include="ecologylab\serialization\library\Rss\Item.cs" />
+    <Compile Include="ecologylab\serialization\library\Rss\RssState.cs" />
+    <Compile Include="ecologylab\serialization\library\Rss\RssTranslations.cs" />
+    <Compile Include="ecologylab\serialization\library\Schmannel\BItem.cs" />
+    <Compile Include="ecologylab\serialization\library\Schmannel\Schmannel.cs" />
+    <Compile Include="ecologylab\serialization\library\Schmannel\SchmannelTranslations.cs" />
+    <Compile Include="ecologylab\serialization\library\Schmannel\SchmItem.cs" />
+    <Compile Include="ecologylab\serialization\sax\ISAXContentHandler.cs" />
+    <Compile Include="ecologylab\serialization\sax\ISAXErrorHandler.cs" />
+    <Compile Include="ecologylab\serialization\sax\SAXHelpers.cs" />
+    <Compile Include="ecologylab\serialization\sax\SAXParser.cs" />
+    <Compile Include="ecologylab\serialization\TranslationScope.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\DoubleType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\FloatType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\IntType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\ReferenceType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\ScalarType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\StringType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\TypeRegistry.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\UriType.cs" />
+    <Compile Include="ecologylab\serialization\XMLTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ecologylab\xml\types\element\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
