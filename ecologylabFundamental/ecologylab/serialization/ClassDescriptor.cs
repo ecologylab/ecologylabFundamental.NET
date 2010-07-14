@@ -280,7 +280,7 @@ namespace ecologylabFundamental.ecologylab.serialization
                     String tag = fieldDescriptor.IsCollection ? fieldDescriptor.CollectionOrMapTagName : fieldTagName;
                     MapTagToFdForTranslateFrom(tag, fieldDescriptor);
 
-                    simpl_other_tags otherTagsAttributes = (simpl_other_tags)XMLTools.GetAnnotation(thatField, typeof(simpl_other_tags));
+                    xml_other_tags otherTagsAttributes = (xml_other_tags)XMLTools.GetAnnotation(thatField, typeof(xml_other_tags));
                     String[] otherTags = XMLTools.OtherTags(otherTagsAttributes);
                     if (otherTags != null && otherTags.Length > 0)
                     {

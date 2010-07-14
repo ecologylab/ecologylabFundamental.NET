@@ -49,9 +49,8 @@
     <Compile Include="ecologylab\atttributes\simpl_map.cs" />
     <Compile Include="ecologylab\atttributes\simpl_composite.cs" />
     <Compile Include="ecologylab\atttributes\simpl_nowrap.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_other_tags.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_scope.cs" />
     <Compile Include="ecologylab\atttributes\xml_other_tags.cs" />
+    <Compile Include="ecologylab\atttributes\simpl_scope.cs" />
     <Compile Include="ecologylab\atttributes\xml_tag.cs" />
     <Compile Include="ecologylab\atttributes\simpl_text.cs" />
     <Compile Include="ecologylab\atttributes\simpl_wrap.cs" />

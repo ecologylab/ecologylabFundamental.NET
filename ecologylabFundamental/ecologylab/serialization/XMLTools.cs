@@ -141,14 +141,14 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// <returns></returns>
         public static String[] OtherTags(Type thisClass)
         {
-            simpl_other_tags otherTagsAnnotation = null;
+            xml_other_tags otherTagsAnnotation = null;
             object[] attributes = thisClass.GetCustomAttributes(false);
 
             foreach (Attribute attribute in attributes)
             {
-                if (attribute is simpl_other_tags)
+                if (attribute is xml_other_tags)
                 {
-                    otherTagsAnnotation = (simpl_other_tags)attribute;
+                    otherTagsAnnotation = (xml_other_tags)attribute;
                     break;
                 }
             }
@@ -161,7 +161,7 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// </summary>
         /// <param name="otherTagsAttributes"></param>
         /// <returns></returns>
-        public static String[] OtherTags(simpl_other_tags otherTagsAttributes)
+        public static String[] OtherTags(xml_other_tags otherTagsAttributes)
         {
             String[] result = otherTagsAttributes == null ? null : otherTagsAttributes.OtherTags;
             if ((result != null) && (result.Length == 0))
