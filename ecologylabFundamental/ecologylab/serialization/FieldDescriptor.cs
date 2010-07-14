@@ -922,8 +922,6 @@ namespace ecologylabFundamental.ecologylab.serialization
         }
 
         #endregion
-
-
-       
+              
     }
 }
