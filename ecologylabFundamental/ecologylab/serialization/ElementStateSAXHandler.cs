@@ -230,6 +230,12 @@ namespace ecologylabFundamental.ecologylab.serialization
                     }
                     break;
                 case MAP_ELEMENT:
+                    IDictionary dict = (IDictionary)activeFieldDescriptor.AutomaticLazyGetCollectionOrDict(currentElementState);
+                    if (dict != null)
+                    {
+                        childES = activeFieldDescriptor.ConstructChildElementState(
+                                currentElementState, tagName);
+                    }
                     break;
             }
 
@@ -256,6 +262,15 @@ namespace ecologylabFundamental.ecologylab.serialization
 
             switch (currentFieldDescriptor.Type)
             {
+                case MAP_ELEMENT:
+                    if (currentElementState is IMappable)
+                    {
+                        Object key = ((IMappable)currentElementState).key();
+                        IDictionary dict = (IDictionary)currentFieldDescriptor.AutomaticLazyGetCollectionOrDict(parentElementState);
+                        dict.Add(key, currentElementState);
+                    }
+                    this.currentElementState = this.currentElementState.parent;
+                    break;
                 case COMPOSITE_ELEMENT:
                 case COLLECTION_ELEMENT:
                     this.currentElementState = this.currentElementState.parent;

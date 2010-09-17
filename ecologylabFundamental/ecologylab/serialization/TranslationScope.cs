@@ -306,6 +306,5 @@ namespace ecologylabFundamental.ecologylab.serialization
             ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this);
             return saxHandler.Parse();
         }
-
     }   
 }

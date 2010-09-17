@@ -536,12 +536,12 @@ namespace ecologylabFundamental.ecologylab.serialization
                         mapAttribute = (simpl_map)XMLTools.GetAnnotation(field, typeof(simpl_map));
                         String mapTag = mapAttribute.TagName;
 
-                        if (!CheckAssignableFrom(typeof(IList), field, fieldClass, "xml_collection"))
+                        if (!CheckAssignableFrom(typeof(IDictionary), field, fieldClass, "xml_collection"))
                             return IGNORED_ATTRIBUTE;
 
                         if (!IsPolymorphic)
                         {
-                            Type mapElementClass = GetTypeArgClass(field, 0); // 0th type arg for Collection<FooState>
+                            Type mapElementClass = GetTypeArgClass(field, 1); // 0th type arg for Collection<FooState>
 
                             if (mapTag == null || mapTag.Length < 0)
                             {

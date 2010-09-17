@@ -62,6 +62,7 @@
     <Compile Include="ecologylab\serialization\ElementStateSAXHandler.cs" />
     <Compile Include="ecologylab\serialization\FieldDescriptor.cs" />
     <Compile Include="ecologylab\serialization\FieldTypes.cs" />
+    <Compile Include="ecologylab\serialization\types\element\IMappable.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\Channel.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\Item.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\RssState.cs" />

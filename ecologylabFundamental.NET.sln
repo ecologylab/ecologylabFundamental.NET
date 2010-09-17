@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ecologylabFundamental.NET",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ecologylabXML.NETTesterApp", "ecologylabXMLTesterApp\ecologylabXML.NETTesterApp.csproj", "{51240E7E-C00E-48E1-B042-9BCD158AA68B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ecologylabFundamentalTestCases", "ecologylabFundamentalTestCases\ecologylabFundamentalTestCases.csproj", "{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -39,6 +41,16 @@ Global
 		{51240E7E-C00E-48E1-B042-9BCD158AA68B}.Release|Mixed Platforms.Build.0 = Release|x86
 		{51240E7E-C00E-48E1-B042-9BCD158AA68B}.Release|x86.ActiveCfg = Release|x86
 		{51240E7E-C00E-48E1-B042-9BCD158AA68B}.Release|x86.Build.0 = Release|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Debug|x86.ActiveCfg = Debug|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Debug|x86.Build.0 = Debug|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Release|Any CPU.ActiveCfg = Release|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Release|Mixed Platforms.Build.0 = Release|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Release|x86.ActiveCfg = Release|x86
+		{278FDD69-C561-4E34-8D3F-E36F9E30BEF9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
