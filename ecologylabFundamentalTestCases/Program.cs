@@ -16,13 +16,11 @@ namespace ecologylabFundamentalTestCases
 
             test.fillDictionary();
 
-
             StringBuilder output = new StringBuilder();
             test.serialize(output);
 
             Console.WriteLine(output);
             Console.ReadLine();
-
 
             // create a writer and open the file
             TextWriter tw = new StreamWriter("dict_output.xml");

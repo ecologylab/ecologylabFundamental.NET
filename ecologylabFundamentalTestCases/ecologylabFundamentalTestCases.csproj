@@ -45,7 +45,9 @@
   <ItemGroup>
     <Compile Include="Maps\SimplContainer.cs" />
     <Compile Include="Maps\SimplData.cs" />
-    <Compile Include="Polymorphic\Class1.cs" />
+    <Compile Include="Polymorphic\Configuration.cs" />
+    <Compile Include="Polymorphic\Pref.cs" />
+    <Compile Include="Polymorphic\PrefDouble.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

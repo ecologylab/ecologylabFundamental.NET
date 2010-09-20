@@ -12,6 +12,7 @@ namespace ecologylabFundamentalTestCases.Maps
     {
 
         [simpl_map("items")]
+        [simpl_nowrap]
         public Dictionary<String, SimplData> dictSimplData = new Dictionary<String, SimplData>();
 
         public void fillDictionary()
