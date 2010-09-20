@@ -15,6 +15,13 @@ namespace ecologylabFundamental.ecologylab.atttributes
     {
         private String tagName;
 
+         /// <summary>
+        /// 
+        /// </summary>
+        public simpl_map()
+        {
+        }
+
         /// <summary>
         /// 
         /// </summary>

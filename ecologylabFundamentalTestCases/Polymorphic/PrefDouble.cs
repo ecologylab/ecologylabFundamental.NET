@@ -7,14 +7,11 @@ using ecologylabFundamental.ecologylab.atttributes;
 
 namespace ecologylabFundamentalTestCases.Polymorphic
 {
-    public class PrefDouble : IMappable // : Pref
+    public class PrefDouble : Pref // : Pref
     {
         [simpl_scalar]
-        double value;
-
-        [simpl_scalar]
-        public String name;
-
+        public double value;
+        
         public PrefDouble() { }
 
         public double Value
@@ -23,16 +20,9 @@ namespace ecologylabFundamentalTestCases.Polymorphic
             set { this.value = value; }
         }
 
-        public String Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
         public object key()
         {
             return name;
         }
-
     }
 }
