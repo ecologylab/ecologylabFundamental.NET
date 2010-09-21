@@ -79,6 +79,7 @@
     <Compile Include="ecologylab\serialization\types\scalar\DoubleType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\FloatType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\IntType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\LongType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ReferenceType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ScalarType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\StringType.cs" />
