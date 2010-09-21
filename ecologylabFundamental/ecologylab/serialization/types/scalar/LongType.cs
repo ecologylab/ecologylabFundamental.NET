@@ -12,14 +12,14 @@ namespace ecologylabFundamental.ecologylab.serialization.types.scalar
     class LongType : ScalarType
     {
         /// <summary>
-        ///      Calls the parent constructor for int type
+        ///      Calls the parent constructor for long type
         /// </summary>
         public LongType()
             : base(typeof(long))
         { }
 
         /// <summary>
-        ///     Creates and returns an instance of int type for the given
+        ///     Creates and returns an instance of long type for the given
         ///     input value. 
         /// </summary>
         /// <param name="value"></param>
