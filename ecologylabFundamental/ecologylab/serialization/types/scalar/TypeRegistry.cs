@@ -28,6 +28,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types.scalar
             typeof(FloatType),
             typeof(LongType),
             typeof(UriType),
+            typeof(BooleanType),
 
         };
 
