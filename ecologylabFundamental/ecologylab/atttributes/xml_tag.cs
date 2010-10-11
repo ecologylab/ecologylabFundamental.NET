@@ -9,7 +9,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
     ///     Defines a new tag on a field. By default the field name is taken as 
     ///     the attribute of the field
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class xml_tag : Attribute
     {
         private String tagName;

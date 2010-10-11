@@ -169,7 +169,7 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// 
         /// </summary>
         /// <param name="inheritedTranslationScope"></param>
-        private void AddTranslations(TranslationScope inheritedTranslationScope)
+        public void AddTranslations(TranslationScope inheritedTranslationScope)
         {
             if (inheritedTranslationScope != null)
             {

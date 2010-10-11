@@ -9,7 +9,7 @@ namespace ecologylabFundamental.ecologylab.atttributes
     ///     Defines a field is represented as XML leaf when marshalled.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    class simpl_hints : Attribute
+    public class simpl_hints : Attribute
     {
         /// <summary>
         /// 

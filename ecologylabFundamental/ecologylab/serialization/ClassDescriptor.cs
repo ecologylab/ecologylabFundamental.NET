@@ -332,10 +332,11 @@ namespace ecologylabFundamental.ecologylab.serialization
             if (allFieldDescriptorsByTagNames.TryGetValue(tagName, out previousMapping))
             {
                 Console.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
-
+                allFieldDescriptorsByTagNames.Remove(tagName);
             }
 
             allFieldDescriptorsByTagNames.Add(tagName, fdToMap);
+            
         }
 
         #endregion

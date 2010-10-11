@@ -883,7 +883,7 @@ namespace ecologylabFundamental.ecologylab.serialization
         {
             get
             {
-                return field.Name;
+                return field == null ? null : field.Name;
             }
         }
 

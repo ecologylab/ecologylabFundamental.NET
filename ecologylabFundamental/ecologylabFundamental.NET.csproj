@@ -83,6 +83,7 @@
     <Compile Include="ecologylab\serialization\types\scalar\LongType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ReferenceType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ScalarType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\ScalarTypeType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\StringType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\TypeRegistry.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\UriType.cs" />

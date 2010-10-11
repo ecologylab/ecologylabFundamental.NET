@@ -29,7 +29,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types.scalar
             typeof(LongType),
             typeof(UriType),
             typeof(BooleanType),
-
+            typeof(ScalarTypeType),
         };
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types.scalar
         /// </summary>
         /// <param name="className"></param>
         /// <returns></returns>
-        private static ScalarType GetType(String className)
+        public static ScalarType GetType(String className)
         {
             if (allTypes.ContainsKey(className))
                 return allTypes[className];

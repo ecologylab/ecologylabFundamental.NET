@@ -11,7 +11,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types
     ///     in C#. String is also considered as scalar type because it 
     ///     beharves as value type objects. 
     /// </summary>
-    abstract class ScalarType
+    public abstract class ScalarType
     {
         protected Type thatClass;
         protected Boolean isPrimitive;
