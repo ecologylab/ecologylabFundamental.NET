@@ -353,7 +353,7 @@ namespace ecologylabFundamental.ecologylab.serialization
                         break;
                     case COLLECTION_SCALAR:
                         value = currentTextValue.ToString().Substring(0, length);
-                        currentFieldDescriptor.AddLeafNodeToCollection(currentElementState, value, this);
+                        currentFieldDescriptor.AddLeafNodeToCollection(currentElementState, value);
                         break;
                     default:
                         break;

@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LitJson">
+      <HintPath>..\..\..\..\..\Desktop\LitJson.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,9 +62,13 @@
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
     <Compile Include="ecologylab\serialization\ClassDescriptor.cs" />
     <Compile Include="ecologylab\serialization\ElementState.cs" />
+    <Compile Include="ecologylab\serialization\ElementStateJSONHandler.cs" />
     <Compile Include="ecologylab\serialization\ElementStateSAXHandler.cs" />
     <Compile Include="ecologylab\serialization\FieldDescriptor.cs" />
     <Compile Include="ecologylab\serialization\FieldTypes.cs" />
+    <Compile Include="ecologylab\serialization\json\IJSONContentHandler.cs" />
+    <Compile Include="ecologylab\serialization\json\IJSONErrorHandler.cs" />
+    <Compile Include="ecologylab\serialization\json\JSONParser.cs" />
     <Compile Include="ecologylab\serialization\types\element\IMappable.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\Channel.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\Item.cs" />

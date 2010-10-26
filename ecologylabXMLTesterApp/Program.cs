@@ -12,13 +12,21 @@ namespace ecologylabXMLTesterApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("testing polymorphic collection");
-            Console.WriteLine();
+
+            //String jsonString = @"{""circle"":{""radius"":""10"", ""center"":{""x"":""2"", ""y"":""3""}, ""area"":""100""}}";
+            //String antherString = "{\"container\":{\"a_objects\":{\"objectsA\":[{\"u\":\"1\", \"w\":\"2\"},{\"u\":\"2\", \"w\":\"4\"},{\"u\":\"3\", \"w\":\"6\"},{\"u\":\"4\", \"w\":\"8\"},{\"u\":\"5\", \"w\":\"10\"},{\"u\":\"6\", \"w\":\"12\"},{\"u\":\"7\", \"w\":\"14\"},{\"u\":\"8\", \"w\":\"16\"},{\"u\":\"9\", \"w\":\"18\"},{\"u\":\"10\", \"w\":\"20\"}]}, \"my_integers\":{\"myints\":[\"10\",\"11\",\"12\",\"13\",\"14\",\"15\",\"16\",\"17\",\"18\",\"19\"]}}}";
+            //String oneMoreString = "{\"configuration\":{\"pref_integer\":{\"name\":\"integer_pref\", \"int_value\":\"2\"}, \"prefs\":[{\"pref\":{\"name\":\"only_pref\"}},{\"pref_integer\":{\"name\":\"integer_pref\", \"int_value\":\"2\"}},{\"pref_double\":{\"name\":\"double_pref\", \"double_value\":\"5.0\"}}]}}";
+            //ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler();
+            ////jsonHandler.parse(oneMoreString);
+            //Console.ReadLine();
+
+           // Console.WriteLine("testing polymorphic collection");
+            //Console.WriteLine();
             PolymorphicTest();
 
-            Console.WriteLine("testing monomorphic colleciton");
-            Console.WriteLine();
-            MonomorphicTest();
+            //Console.WriteLine("testing monomorphic colleciton");
+            //Console.WriteLine();
+            //MonomorphicTest();
         }
 
         private static void PolymorphicTest()
@@ -40,22 +48,33 @@ namespace ecologylabXMLTesterApp
             schmannel.PolyAdd(schmItem);
 
             StringBuilder output = new StringBuilder();
+            StringBuilder jsonOutput = new StringBuilder();
 
-            schmannel.serialize(output);
+            schmannel.serializeToXML(output);
+
+            schmannel.serializeToJSON(jsonOutput);
 
             // create a writer and open the file
             TextWriter tw = new StreamWriter("polymorphic_output.xml");
             tw.WriteLine(output);
             tw.Close();
 
+            // create a writer and open the file
+            TextWriter jtw = new StreamWriter("json_polymorphic_output.xml");
+            jtw.WriteLine(jsonOutput);
+            jtw.Close();
+
 
             Console.WriteLine(output);
             Console.ReadLine();
 
-            ElementState es = SchmannelTranslations.Get().deserialize("polymorphic_output.xml");
+            Console.WriteLine(jsonOutput);
+            Console.ReadLine();
+
+            ElementState es = SchmannelTranslations.Get().deserialize("json_polymorphic_output.xml", Format.JSON);
 
             output.Clear();
-            es.serialize(output);
+            es.serializeToXML(output);
             Console.WriteLine(output);
             Console.ReadLine();
         }
@@ -96,22 +115,31 @@ namespace ecologylabXMLTesterApp
             rssState.Channel = channel;
 
             StringBuilder output = new StringBuilder();
+            StringBuilder jsonOutput = new StringBuilder();
 
-            rssState.serialize(output);
-
+            rssState.serializeToXML(output);
+            rssState.serializeToJSON(jsonOutput);
+            
             // create a writer and open the file
             TextWriter tw = new StreamWriter("monomorphic_output.xml");
             tw.WriteLine(output);
             tw.Close();
 
-
+            // create a writer and open the file
+            TextWriter jtw = new StreamWriter("json_monomorphic_output.xml");
+            jtw.WriteLine(jsonOutput);
+            jtw.Close();
+            
             Console.WriteLine(output);
             Console.ReadLine();
 
-            ElementState es =  RssTranslations.Get().deserialize("monomorphic_output.xml");
+            Console.WriteLine(jsonOutput);
+            Console.ReadLine();
+
+            ElementState es = RssTranslations.Get().deserialize("json_monomorphic_output.xml", Format.JSON);
 
             output.Clear();
-            es.serialize(output);
+            es.serializeToXML(output);
             Console.WriteLine(output);
             Console.ReadLine();
         }

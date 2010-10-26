@@ -301,10 +301,17 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// </summary>
         /// <param name="filePath">Location of the XML file.</param>
         /// <returns></returns>
-        public ElementState deserialize(String filePath)
+        public ElementState deserialize(String filePath, Format format)
         {
-            ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this);
-            return saxHandler.Parse();
+            switch (format)
+            {
+                case Format.XML :  ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this);
+                                   return saxHandler.Parse();
+                case Format.JSON: ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(filePath, this);
+                                   return jsonHandler.Parse();
+                default: Console.WriteLine("invalid format");
+                                   return null;
+            }
         }
     }   
 }

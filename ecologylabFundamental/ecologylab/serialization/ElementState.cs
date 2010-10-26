@@ -8,6 +8,11 @@ using System.IO;
 
 namespace ecologylabFundamental.ecologylab.serialization
 {
+    public enum Format
+    {
+        XML, JSON
+    }
+
     /// <summary>
     ///     This class is the heart of the <code>ecologylab.xml</code>
     ///     translation framework.
@@ -37,7 +42,6 @@ namespace ecologylabFundamental.ecologylab.serialization
     /// </summary>
     public class ElementState : FieldTypes
     {
-
         #region Private & Public Fields
 
 
@@ -70,6 +74,18 @@ namespace ecologylabFundamental.ecologylab.serialization
 
         #region Translation To functions
 
+        public void serialize(StringBuilder output, Format format)
+        {
+            switch (format)
+            {
+                case Format.XML  : 
+                    serializeToXML(output);
+                    break;
+                case Format.JSON : serializeToJSON(output);
+                    break;
+            }
+        }
+
         /// <summary>
         ///     Translates to XML file representation of the object. 
         ///     Uses <c>ClassDescriptors</c> and <c>FieldDescriptors</c> to 
@@ -79,12 +95,11 @@ namespace ecologylabFundamental.ecologylab.serialization
         ///     The output buffer which contains the marshalled representation of the
         ///     run-time object.
         /// </param>
-        public void serialize(StringBuilder output)
+        public void serializeToXML(StringBuilder output)
         {
             if (output == null) throw new Exception("null : output object");
-            else serialize(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
+            else serializeToXML(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
         }
-
 
         /// <summary>
         ///     Internal recursive function to marshall the <c>ElementState</c> object to its
@@ -92,7 +107,7 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// </summary>
         /// <param name="fieldDescriptor"></param>
         /// <param name="output"></param>
-        private void serialize(FieldDescriptor fieldDescriptor, StringBuilder output)
+        private void serializeToXML(FieldDescriptor fieldDescriptor, StringBuilder output)
         {
             this.preTranslationProcessingHook();
 
@@ -229,7 +244,7 @@ namespace ecologylabFundamental.ecologylab.serialization
                                             collectionSubElementState.ElementClassDescriptor.PseudoFieldDescriptor :
                                             childFD;
 
-                                    collectionSubElementState.serialize(collectionElementFD, output);
+                                    collectionSubElementState.serializeToXML(collectionElementFD, output);
                                 }
                                 else
                                     throw new Exception("thrown");
@@ -243,7 +258,7 @@ namespace ecologylabFundamental.ecologylab.serialization
                             FieldDescriptor nestedF2XO = childFD.IsPolymorphic ?
                                     nestedES.ElementClassDescriptor.PseudoFieldDescriptor : childFD;
 
-                            nestedES.serialize(nestedF2XO, output);
+                            nestedES.serializeToXML(nestedF2XO, output);
                         }
                     }
                 }
@@ -252,6 +267,217 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
         }
 
+
+        /// <summary>
+        ///     Translates to XML file representation of the object. 
+        ///     Uses <c>ClassDescriptors</c> and <c>FieldDescriptors</c> to 
+        ///     marshall the object to its XML representation. 
+        /// </summary>
+        /// <param name="output">
+        ///     The output buffer which contains the marshalled representation of the
+        ///     run-time object.
+        /// </param>
+        public void serializeToJSON(StringBuilder output)
+        {
+            if (output == null) throw new Exception("null : output object");
+            else serializeToJSON(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
+        }
+        private void serializeToJSON(FieldDescriptor fieldDescriptor, StringBuilder output)
+        {
+            output.Append('{');
+            serializeToJSONRecursive(fieldDescriptor, output, true);
+            output.Append('}');
+        }
+        private void serializeToJSONRecursive(FieldDescriptor fieldDescriptor, StringBuilder output, bool withTag)
+        {
+            fieldDescriptor.WriteJSONElementStart(output, withTag);
+
+            List<FieldDescriptor> elementFieldDescriptors = ElementClassDescriptor.ElementFieldDescriptors;
+            List<FieldDescriptor> attributeFieldDescriptors = ElementClassDescriptor.AttributeFieldDescriptors;
+
+            int numAttributes = attributeFieldDescriptors.Count;
+            int numElements = elementFieldDescriptors.Count;
+
+            bool attributesSerialized = false;
+
+            if (numAttributes > 0)
+            {
+                try
+                {
+                    for (int i = 0; i < numAttributes; i++)
+                    {
+                        // iterate through fields
+                        FieldDescriptor childFD = attributeFieldDescriptors[i];
+                        bool isDefaultValue = childFD.IsDefaultValue(this);
+                        if (!isDefaultValue)
+                        {
+                            childFD.AppendValueAsJSONAttribute(output, this, !attributesSerialized);
+                            if (!attributesSerialized)
+                            {
+                                attributesSerialized = true;
+                            }
+                        }
+
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    throw (ex);
+                }
+            }
+
+            bool elementsSerialized = false;
+		for (int i = 0; i < numElements; i++)
+		{
+			FieldDescriptor childFD = elementFieldDescriptors[i];
+			int childFdType = childFD.Type;
+			if (childFdType == SCALAR)
+			{
+				try
+				{
+					bool isDefaultValue = childFD.IsDefaultValue(this);
+					if (!isDefaultValue)
+					{
+						childFD.AppendValueAsJSONAttribute(output, this, !elementsSerialized);
+						if (!elementsSerialized)
+						{
+							elementsSerialized = true;
+						}
+					}
+				}
+				catch (Exception e)
+				{
+                    Console.WriteLine(e.ToString());
+					throw e;
+				}
+			}
+			else
+			{
+				// if (attributesSerialized || i > 0)
+				// appendable.append(", ");
+
+				Object thatReferenceObject = null;
+				FieldInfo childField = childFD.Field;
+                    
+				try
+				{
+					thatReferenceObject = childField.GetValue(this);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.ToString());
+				}
+				// ignore null reference objects
+				if (thatReferenceObject == null)
+					continue;
+
+				bool isScalar = (childFdType == COLLECTION_SCALAR) || (childFdType == MAP_SCALAR);
+				// gets Collection object directly or through Map.values()
+				ICollection thatCollection;
+				switch (childFdType)
+				{
+				case COLLECTION_ELEMENT:
+				case COLLECTION_SCALAR:
+				case MAP_ELEMENT:
+				case MAP_SCALAR:
+					thatCollection = XMLTools.GetCollection(thatReferenceObject);
+					break;
+				default:
+					thatCollection = null;
+					break;
+				}
+
+				if (thatCollection != null && (thatCollection.Count > 0))
+				{
+					if (attributesSerialized || elementsSerialized)
+						output.Append(", ");
+
+					elementsSerialized = true;
+
+					if (!childFD.IsPolymorphic)
+					{
+						if (childFD.IsWrapped)
+							childFD.WriteJSONWrap(output, false);
+
+						childFD.WriteJSONCollectionStart(output);
+
+                        int j = 0;
+                        foreach(Object next in thatCollection)
+                        {
+                            if (isScalar) // leaf node!
+                            {
+                                try
+                                {
+                                    childFD.AppendJSONCollectionAttribute(output, next, j == 0);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e.ToString());
+                                    throw e;
+                                }
+                            }
+                            else if (next is ElementState && !childFD.IsPolymorphic)
+                            {
+                                if (j != 0)
+                                    output.Append(',');
+
+                                ElementState collectionSubElementState = (ElementState)next;
+                                collectionSubElementState.serializeToJSONRecursive(childFD, output, false);
+                            }
+                            j++;
+                        }
+
+						childFD.WriteJSONCollectionClose(output);
+
+						if (childFD.IsWrapped)
+							childFD.WriteJSONWrap(output, true);
+					}
+					else
+					{
+						childFD.WriteJSONPolymorphicCollectionStart(output);
+
+                        int j = 0;
+                        foreach (Object next in thatCollection)
+                        {
+                            if (j != 0)
+                                output.Append(',');
+
+                            ElementState collectionSubElementState = (ElementState)next;
+
+                            FieldDescriptor collectionElementFD = collectionSubElementState.ElementClassDescriptor
+                                    .PseudoFieldDescriptor;
+
+                            output.Append('{');
+                            collectionSubElementState.serializeToJSONRecursive(collectionElementFD, output,
+                                    true);
+                            output.Append('}');
+
+                            j++;
+                        }
+
+						childFD.WriteJSONCollectionClose(output);
+					}
+
+				}
+				else if (thatReferenceObject is ElementState)
+				{
+					if (attributesSerialized || elementsSerialized)
+						output.Append(", ");
+
+					elementsSerialized = true;
+
+					ElementState nestedES = (ElementState) thatReferenceObject;
+					FieldDescriptor nestedFD = childFD.IsPolymorphic ? nestedES.ElementClassDescriptor.PseudoFieldDescriptor : childFD;
+
+                    nestedES.serializeToJSONRecursive(nestedFD, output, true);
+
+				}
+			}
+		}
+
+		fieldDescriptor.WriteJSONCloseTag(output);
+        }
         
         #endregion
 

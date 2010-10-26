@@ -383,8 +383,8 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// </summary>
         /// <param name="activeElementState"></param>
         /// <param name="leafNodeValue"></param>
-        /// <param name="scalarUnmarshallingContext"></param>
-        public void AddLeafNodeToCollection(ElementState activeElementState, String leafNodeValue, ElementStateSAXHandler scalarUnmarshallingContext)
+        /// 
+        public void AddLeafNodeToCollection(ElementState activeElementState, String leafNodeValue)
         {
             if (leafNodeValue != null)
             {
@@ -922,6 +922,103 @@ namespace ecologylabFundamental.ecologylab.serialization
         }
 
         #endregion
-              
+
+
+        public void WriteJSONElementStart(StringBuilder output, bool withTag)
+        {
+            if (withTag)
+            {
+                output.Append('"').Append(ElementStart).Append('"');
+                output.Append(':');
+            }
+            output.Append('{');
+        }
+
+        public bool IsDefaultValue(ElementState context)
+        {
+            if (context != null)
+                return scalarType.IsDefaultValue(this.field, context);
+            return false;
+        }
+
+        public void AppendValueAsJSONAttribute(StringBuilder output, ElementState context, bool isFirst)
+        {
+            if (context != null)
+            {
+                ScalarType scalarType = this.scalarType;
+                FieldInfo field = this.field;
+
+                if (!scalarType.IsDefaultValue(field, context))
+                {
+                    if (!isFirst)
+                        output.Append(", ");
+
+                    output.Append('"');
+                    output.Append(tagName);
+                    output.Append('"');
+                    output.Append(':');
+                    output.Append('"');
+
+                    scalarType.AppendValue(output, this, context);
+                    output.Append('"');
+
+                }
+            }
+        }
+
+        public void WriteJSONWrap(StringBuilder output, bool close)
+        {
+            if (!close)
+            {
+                output.Append('"');
+                output.Append(tagName);
+                output.Append('"').Append(':');
+                output.Append('{');
+            }
+            else
+            {
+                output.Append('}');
+            }
+        }
+
+        public void WriteJSONCollectionStart(StringBuilder output)
+        {
+            output.Append('"').Append(ElementStart).Append('"');
+            output.Append(':');
+            output.Append('[');
+        }
+
+        public void WriteJSONCollectionClose(StringBuilder output)
+        {
+            output.Append(']');
+        }
+
+        public void AppendJSONCollectionAttribute(StringBuilder output, object instance, bool isFirst)
+        {
+            if (instance != null)
+            {
+                if (!isFirst)
+                {
+                    output.Append(',');
+                }
+
+                ScalarType scalarType = this.scalarType;
+                output.Append('"');
+                scalarType.AppendValue(instance, output, false);
+                output.Append('"');
+            }
+        }
+
+        public void WriteJSONPolymorphicCollectionStart(StringBuilder output)
+        {
+            output.Append('"').Append(tagName).Append('"');
+            output.Append(':');
+            output.Append('[');
+        }
+
+        public void WriteJSONCloseTag(StringBuilder output)
+        {
+            output.Append('}');
+        }
     }
 }

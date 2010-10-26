@@ -15,7 +15,7 @@ namespace ecologylabFundamentalTestCases
         {
             //MapTest();
 
-            PolyMorphicMapTest();
+            //PolyMorphicMapTest();
         }
 
         private static void PolyMorphicMapTest()
@@ -25,7 +25,7 @@ namespace ecologylabFundamentalTestCases
             test.fillDictionary();
 
             StringBuilder output = new StringBuilder();
-            test.serialize(output);
+            test.serializeToXML(output);
 
             Console.WriteLine(output);
             Console.ReadLine();
@@ -35,9 +35,9 @@ namespace ecologylabFundamentalTestCases
             tw.WriteLine(output);
             tw.Close();
 
-            Configuration outputData = (Configuration)TranslationScope.Get("test", typeof(Configuration), typeof(Pref), typeof(PrefDouble)).deserialize("dict_output.xml");
+            Configuration outputData = (Configuration)TranslationScope.Get("test", typeof(Configuration), typeof(Pref), typeof(PrefDouble)).deserialize("dict_output.xml", Format.XML);
             output.Clear();
-            outputData.serialize(output);
+            outputData.serializeToXML(output);
             Console.WriteLine(output);
             Console.ReadLine();
         }
@@ -49,7 +49,7 @@ namespace ecologylabFundamentalTestCases
             test.fillDictionary();
 
             StringBuilder output = new StringBuilder();
-            test.serialize(output);
+            test.serializeToXML(output);
 
             Console.WriteLine(output);
             Console.ReadLine();
@@ -59,9 +59,9 @@ namespace ecologylabFundamentalTestCases
             tw.WriteLine(output);
             tw.Close();
 
-            SimplContainer outputData = (SimplContainer)TranslationScope.Get("test", typeof(SimplContainer), typeof(SimplData)).deserialize("dict_output.xml");
+            SimplContainer outputData = (SimplContainer)TranslationScope.Get("test", typeof(SimplContainer), typeof(SimplData)).deserialize("dict_output.xml", Format.XML);
             output.Clear();
-            outputData.serialize(output);
+            outputData.serializeToXML(output);
             Console.WriteLine(output);
             Console.ReadLine();
         }
