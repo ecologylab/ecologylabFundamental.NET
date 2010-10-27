@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ecologylabFundamental.ecologylab.serialization;
-using ecologylabFundamental.ecologylab.atttributes;
+using ecologylabFundamental.ecologylab.attributes;
 namespace ecologylabFundamentalTestCases.Maps
 {
     class SimplData : ElementState, IMappable

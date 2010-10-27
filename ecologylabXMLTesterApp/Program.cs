@@ -22,11 +22,11 @@ namespace ecologylabXMLTesterApp
 
            // Console.WriteLine("testing polymorphic collection");
             //Console.WriteLine();
-            PolymorphicTest();
+            //PolymorphicTest();
 
             //Console.WriteLine("testing monomorphic colleciton");
             //Console.WriteLine();
-            //MonomorphicTest();
+            MonomorphicTest();
         }
 
         private static void PolymorphicTest()
