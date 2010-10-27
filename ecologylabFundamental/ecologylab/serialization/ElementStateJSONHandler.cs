@@ -316,11 +316,19 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="num"></param>
         public void pushNumber(Int32 num)
         {
             this.numOfCollectionElements.Add(num);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Int32 popNumber()
         {
             int num = 0;
@@ -333,6 +341,10 @@ namespace ecologylabFundamental.ecologylab.serialization
             return num;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Int32 topNumber()
         {
             int num = 0;
@@ -344,12 +356,13 @@ namespace ecologylabFundamental.ecologylab.serialization
             return num;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void incrementTop()
         {
-            if (numOfCollectionElements.Count > 0)
-            {
-               this.numOfCollectionElements[numOfCollectionElements.Count - 1]++;
-            }
+            int num = popNumber();
+            pushNumber(++num);
         }
 
 
@@ -391,11 +404,17 @@ namespace ecologylabFundamental.ecologylab.serialization
         
         #region JSON Parser Events (used for parsing by JSONHandler)
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void StartJSON()
         {
             // do nothing
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void StartObject()
         {
            // same hack as in java
@@ -422,6 +441,10 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
         public void StartObjectEntry(string key)
         {
             FieldDescriptor activeFieldDescriptor = null;
@@ -480,7 +503,6 @@ namespace ecologylabFundamental.ecologylab.serialization
                         childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, key);
                         collection.Add(childES);
                     }
-                    pushNumber(0);
                     break;
                 case MAP_ELEMENT:
                     IDictionary dict = (IDictionary)activeFieldDescriptor.AutomaticLazyGetCollectionOrDict(currentElementState);
@@ -489,7 +511,6 @@ namespace ecologylabFundamental.ecologylab.serialization
                         childES = activeFieldDescriptor.ConstructChildElementState(
                                 currentElementState, key);
                     }
-                    pushNumber(0);
                     break;
             }
 
@@ -500,11 +521,18 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void StartArray()
         {
-            //do nothing
+            pushNumber(0);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public void Primitive(object value)
         {
             if (currentFieldDescriptor != null)
@@ -528,16 +556,25 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void EndJSON()
         {
             //do nothing or some cleanup 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void EndObject()
         {
             //do nothing
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void EndObjectEntry()
         {
             ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState);
@@ -566,6 +603,9 @@ namespace ecologylabFundamental.ecologylab.serialization
             PopAndPeekFieldDescriptor();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void EndArray()
         {
             popNumber();
