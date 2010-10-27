@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylabFundamental.ecologylab.atttributes
+namespace ecologylabFundamental.ecologylab.attributes
 {
     /// <summary>
     ///     Annotation which describes a class whose super classes also

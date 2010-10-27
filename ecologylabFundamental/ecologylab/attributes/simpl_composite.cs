@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylabFundamental.ecologylab.atttributes
+namespace ecologylabFundamental.ecologylab.attributes
 {
     /// <summary>
-    ///     Annotation which describes the collection as wrapped 
-    ///     collection.
+    ///     Annotation describes a field which is composed
+    ///     of further fields inside which are also serializable.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class simpl_wrap : Attribute
+    public class simpl_composite : Attribute
     {
 
     }

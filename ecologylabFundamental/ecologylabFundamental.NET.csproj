@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="LitJson, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -45,20 +48,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ecologylab\atttributes\simpl_classes.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_collection.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_hints.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_inherit.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_scalar.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_map.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_composite.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_nowrap.cs" />
-    <Compile Include="ecologylab\atttributes\xml_other_tags.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_scope.cs" />
-    <Compile Include="ecologylab\atttributes\xml_tag.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_text.cs" />
-    <Compile Include="ecologylab\atttributes\simpl_wrap.cs" />
-    <Compile Include="ecologylab\atttributes\Hint.cs" />
+    <Compile Include="ecologylab\attributes\simpl_classes.cs" />
+    <Compile Include="ecologylab\attributes\simpl_collection.cs" />
+    <Compile Include="ecologylab\attributes\simpl_hints.cs" />
+    <Compile Include="ecologylab\attributes\simpl_inherit.cs" />
+    <Compile Include="ecologylab\attributes\simpl_scalar.cs" />
+    <Compile Include="ecologylab\attributes\simpl_map.cs" />
+    <Compile Include="ecologylab\attributes\simpl_composite.cs" />
+    <Compile Include="ecologylab\attributes\simpl_nowrap.cs" />
+    <Compile Include="ecologylab\attributes\xml_other_tags.cs" />
+    <Compile Include="ecologylab\attributes\simpl_scope.cs" />
+    <Compile Include="ecologylab\attributes\xml_tag.cs" />
+    <Compile Include="ecologylab\attributes\simpl_text.cs" />
+    <Compile Include="ecologylab\attributes\simpl_wrap.cs" />
+    <Compile Include="ecologylab\attributes\Hint.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
     <Compile Include="ecologylab\serialization\ClassDescriptor.cs" />

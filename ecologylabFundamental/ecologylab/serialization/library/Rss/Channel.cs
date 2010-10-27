@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.atttributes;
+using ecologylabFundamental.ecologylab.attributes;
 
 namespace ecologylabFundamental.ecologylab.serialization.library
 {

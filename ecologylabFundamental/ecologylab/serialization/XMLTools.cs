@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections;
-using ecologylabFundamental.ecologylab.atttributes;
+using ecologylabFundamental.ecologylab.attributes;
 
 namespace ecologylabFundamental.ecologylab.serialization
 {

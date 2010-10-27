@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ecologylabFundamental.ecologylab.serialization;
 
-namespace ecologylabFundamental.ecologylab.atttributes
+namespace ecologylabFundamental.ecologylab.attributes
 {
     /// <summary>
-    ///     Annotation describes a field which is composed
-    ///     of further fields inside which are also serializable.
+    ///     Defines a field is represented as XML leaf when marshalled.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class simpl_composite : Attribute
+    public class simpl_scalar : Attribute
     {
-
+       
     }
 }

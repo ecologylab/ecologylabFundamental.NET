@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ecologylabFundamental.ecologylab.atttributes;
+using ecologylabFundamental.ecologylab.attributes;
 
 namespace ecologylabFundamental.ecologylab.serialization.library
 {

@@ -297,6 +297,16 @@ namespace ecologylabFundamental.ecologylab.serialization
 
 
         /// <summary>
+        ///     Default to deserialization from XML
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public ElementState deserialize(String filePath)
+        {
+            return deserialize(filePath, Format.XML);
+        }
+
+        /// <summary>
         ///     Unmarshall the serialized representation of the objects. 
         /// </summary>
         /// <param name="filePath">Location of the XML file.</param>

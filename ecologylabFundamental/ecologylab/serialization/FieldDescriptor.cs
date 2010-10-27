@@ -6,7 +6,7 @@ using ecologylabFundamental.ecologylab.generic;
 using ecologylabFundamental.ecologylab.serialization.types;
 using System.Reflection;
 using ecologylabFundamental.ecologylab.serialization.types.scalar;
-using ecologylabFundamental.ecologylab.atttributes;
+using ecologylabFundamental.ecologylab.attributes;
 using System.Collections;
 
 namespace ecologylabFundamental.ecologylab.serialization

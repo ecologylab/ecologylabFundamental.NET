@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.serialization;
 
-namespace ecologylabFundamental.ecologylab.atttributes
+namespace ecologylabFundamental.ecologylab.attributes
 {
     /// <summary>
-    ///     Defines a field is represented as XML leaf when marshalled.
+    ///     Annotation describes a collection as not wrapped
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class simpl_scalar : Attribute
+    public class simpl_nowrap : Attribute
     {
-       
+
     }
 }
