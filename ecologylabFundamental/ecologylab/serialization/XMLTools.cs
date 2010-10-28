@@ -315,7 +315,7 @@ namespace ecologylabFundamental.ecologylab.serialization
         /// <returns></returns>
         public static bool IsEnum(FieldInfo field)
         {
-            return IsEnum(field.GetType());
+            return IsEnum(field.FieldType);
         }
 
         /// <summary>
@@ -386,5 +386,29 @@ namespace ecologylabFundamental.ecologylab.serialization
             }
             return true;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="valueString"></param>
+        /// <returns></returns>
+        public static Enum CreateEnumeratedType(FieldInfo field, string valueString)
+        {
+            if (IsEnum(field))
+            {
+                Array enumArray = field.FieldType.GetEnumValues();
+
+                foreach (Enum enumObj in enumArray)
+                {
+                    if (enumObj.ToString().Equals(valueString))
+                    {
+                        return enumObj;
+                    }
+                }
+            }
+            return null;
+        }
+
     }
 }

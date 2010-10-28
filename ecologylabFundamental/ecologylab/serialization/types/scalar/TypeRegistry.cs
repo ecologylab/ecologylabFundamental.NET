@@ -30,6 +30,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types.scalar
             typeof(UriType),
             typeof(BooleanType),
             typeof(ScalarTypeType),
+            typeof(EnumeratedType)
         };
 
         /// <summary>
@@ -111,7 +112,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types.scalar
         /// <returns></returns>
         public static ScalarType GetType(Type type)
         {
-            return GetType(type.Name);
+            return XMLTools.IsEnum(type) ? GetType(typeof(Enum).Name) : GetType(type.Name);
         }
     }
 }

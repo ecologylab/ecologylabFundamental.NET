@@ -65,7 +65,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types
         /// <param name="valueString"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public Boolean SetField(Object context, FieldInfo field, String valueString, String[] format)
+        public virtual Boolean SetField(Object context, FieldInfo field, String valueString, String[] format)
         {
             if (valueString == null)
                 return true;
@@ -98,7 +98,7 @@ namespace ecologylabFundamental.ecologylab.serialization.types
         /// <returns>Boolean</returns>
         public Boolean SetField(Object obj, FieldInfo field, String value)
         {
-            return SetField(obj, field, value, null);
+            return this.SetField(obj, field, value, null);
         }
 
         /// <summary>

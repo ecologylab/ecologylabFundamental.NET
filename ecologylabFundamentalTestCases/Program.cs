@@ -13,7 +13,7 @@ namespace ecologylabFundamentalTestCases
     {
         static void Main(string[] args)
         {
-            //MapTest();
+            MapTest();
 
             //PolyMorphicMapTest();
         }

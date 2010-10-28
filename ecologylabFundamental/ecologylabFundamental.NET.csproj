@@ -89,6 +89,7 @@
     <Compile Include="ecologylab\serialization\TranslationScope.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\BooleanType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\DoubleType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\EnumeratedType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\FloatType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\IntType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\LongType.cs" />
