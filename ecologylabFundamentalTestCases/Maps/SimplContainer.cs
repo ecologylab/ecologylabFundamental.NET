@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.attributes;
-using ecologylabFundamental.ecologylab.serialization;
+using ecologylab.attributes;
+using ecologylab.serialization;
 
 namespace ecologylabFundamentalTestCases.Maps
 {

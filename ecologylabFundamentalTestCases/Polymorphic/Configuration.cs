@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using ecologylabFundamental.ecologylab.serialization;
-using ecologylabFundamental.ecologylab.attributes;
+using ecologylab.serialization;
+using ecologylab.attributes;
 
 namespace ecologylabFundamentalTestCases.Polymorphic
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ecologylabFundamental.ecologylab.serialization.library;
+using ecologylab.serialization.library;
 using System.IO;
-using ecologylabFundamental.ecologylab.serialization;
-using ecologylabFundamental.ecologylab.serialization.library.Schmannel;
+using ecologylab.serialization;
+using ecologylab.serialization.library.Schmannel;
 
 namespace ecologylabXMLTesterApp
 {

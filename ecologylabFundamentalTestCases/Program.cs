@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ecologylabFundamentalTestCases.Maps;
-using ecologylabFundamental.ecologylab.serialization;
+using ecologylab.serialization;
 using System.IO;
 using ecologylabFundamentalTestCases.Polymorphic;
 
