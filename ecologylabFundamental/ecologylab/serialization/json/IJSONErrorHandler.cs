@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylabFundamental.ecologylab.serialization.json
+namespace ecologylab.serialization.json
 {
     /// <summary>
     ///     Interface to handle errors raised by SAX Parser

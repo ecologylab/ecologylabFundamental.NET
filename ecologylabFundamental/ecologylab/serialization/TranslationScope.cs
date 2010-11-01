@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.collections;
+using ecologylab.collections;
 using System.Reflection;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     /// <summary>
     /// 

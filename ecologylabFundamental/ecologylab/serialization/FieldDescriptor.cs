@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.generic;
-using ecologylabFundamental.ecologylab.serialization.types;
+using ecologylab.generic;
+using ecologylab.serialization.types;
 using System.Reflection;
-using ecologylabFundamental.ecologylab.serialization.types.scalar;
-using ecologylabFundamental.ecologylab.attributes;
+using ecologylab.serialization.types.scalar;
+using ecologylab.attributes;
 using System.Collections;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     /// <summary>
     ///     <c>FieldDescriptors</c> are abstract data strucutres which defines a field in a 

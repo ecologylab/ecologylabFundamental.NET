@@ -2,9 +2,9 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Text;
-//using ecologylabFundamental.ecologylab.serialization.json;
+//using ecologylab.serialization.json;
 
-//namespace ecologylabFundamental.ecologylab.serialization
+//namespace ecologylab.serialization
 //{
 //    public class ElementStateJSONHandler : FieldTypes, IJSONContentHandler
 //    {
@@ -71,12 +71,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.serialization.sax;
+using ecologylab.serialization.sax;
 using System.IO;
 using System.Collections;
-using ecologylabFundamental.ecologylab.serialization.json;
+using ecologylab.serialization.json;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     /// <summary>
     ///     <c>ElementStateSAXHandler</c> is a SAX Parser to parse XML files

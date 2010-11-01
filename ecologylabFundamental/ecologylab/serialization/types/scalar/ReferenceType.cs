@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.serialization;
+using ecologylab.serialization;
 
-namespace ecologylabFundamental.ecologylab.serialization.types.scalar
+namespace ecologylab.serialization.types.scalar
 {
     /// <summary>
     /// 

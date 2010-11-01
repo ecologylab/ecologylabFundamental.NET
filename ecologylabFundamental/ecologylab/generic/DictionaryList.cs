@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylabFundamental.ecologylab.generic
+namespace ecologylab.generic
 {
     /// <summary>
     /// 

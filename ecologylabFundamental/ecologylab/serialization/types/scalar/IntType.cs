@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylabFundamental.ecologylab.serialization.types.scalar
+namespace ecologylab.serialization.types.scalar
 {
     /// <summary>
     ///     Class abstracting C# int type

@@ -1,4 +1,4 @@
-namespace ecologylabFundamental.ecologylab.serialization.sax
+namespace ecologylab.serialization.sax
 {
     /// <summary>
     /// 

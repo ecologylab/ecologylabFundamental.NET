@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.serialization.sax;
+using ecologylab.serialization.sax;
 using System.IO;
 using System.Collections;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     /// <summary>
     ///     <c>ElementStateSAXHandler</c> is a SAX Parser to parse XML files

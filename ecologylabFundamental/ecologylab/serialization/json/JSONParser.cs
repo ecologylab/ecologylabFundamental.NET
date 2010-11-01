@@ -5,7 +5,7 @@ using System.Text;
 using LitJson;
 using System.IO;
 
-namespace ecologylabFundamental.ecologylab.serialization.json
+namespace ecologylab.serialization.json
 {
     class JSONParser
     {

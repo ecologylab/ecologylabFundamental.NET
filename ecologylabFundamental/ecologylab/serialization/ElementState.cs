@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Collections;
 using System.IO;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     public enum Format
     {

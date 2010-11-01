@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ecologylabFundamental.ecologylab.attributes;
+using ecologylab.attributes;
 
-namespace ecologylabFundamental.ecologylab.serialization.library
+namespace ecologylab.serialization.library
 {
     /// <summary>
     /// 

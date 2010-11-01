@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 
-namespace ecologylabFundamental.ecologylab.serialization.sax
+namespace ecologylab.serialization.sax
 {
     /// <summary>
     /// 

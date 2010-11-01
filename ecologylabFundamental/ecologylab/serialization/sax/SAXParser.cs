@@ -1,11 +1,11 @@
 using System;
 using System.Xml;
 using System.Collections;
-using ecologylabFundamental.ecologylab.serialization.sax;
+using ecologylab.serialization.sax;
 using System.Web;
 using System.IO;
 
-namespace ecologylabFundamental.ecologylab.serialization.sax
+namespace ecologylab.serialization.sax
 {
     /// <summary>
     ///    The SaxParser class build a SAX push model from the pull model found

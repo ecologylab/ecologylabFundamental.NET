@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
-namespace ecologylabFundamental.ecologylab.serialization.types
+namespace ecologylab.serialization.types
 {
     /// <summary>
     ///     Abstract class encapsulating all the scalar type fields 

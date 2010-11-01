@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections;
-using ecologylabFundamental.ecologylab.attributes;
+using ecologylab.attributes;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     /// <summary>
     ///     Class with static utility methods. These methods encapsulate some repeated 

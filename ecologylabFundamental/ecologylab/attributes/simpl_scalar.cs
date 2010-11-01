@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ecologylabFundamental.ecologylab.serialization;
+using ecologylab.serialization;
 
-namespace ecologylabFundamental.ecologylab.attributes
+namespace ecologylab.attributes
 {
     /// <summary>
     ///     Defines a field is represented as XML leaf when marshalled.

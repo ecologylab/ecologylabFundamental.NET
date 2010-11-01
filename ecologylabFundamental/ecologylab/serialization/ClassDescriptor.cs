@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-using ecologylabFundamental.ecologylab.generic;
-using ecologylabFundamental.ecologylab.attributes;
+using ecologylab.generic;
+using ecologylab.attributes;
 
-namespace ecologylabFundamental.ecologylab.serialization
+namespace ecologylab.serialization
 {
     /// <summary>
     ///     <para>
