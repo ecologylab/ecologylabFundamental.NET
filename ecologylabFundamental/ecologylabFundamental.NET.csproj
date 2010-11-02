@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="ecologylab\attributes\simpl_classes.cs" />
     <Compile Include="ecologylab\attributes\simpl_collection.cs" />
+    <Compile Include="ecologylab\attributes\simpl_descriptor_classes.cs" />
     <Compile Include="ecologylab\attributes\simpl_hints.cs" />
     <Compile Include="ecologylab\attributes\simpl_inherit.cs" />
     <Compile Include="ecologylab\attributes\simpl_scalar.cs" />
