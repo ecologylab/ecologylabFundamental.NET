@@ -75,6 +75,7 @@ using ecologylab.serialization.sax;
 using System.IO;
 using System.Collections;
 using ecologylab.serialization.json;
+using ecologylab.serialization.types.element;
 
 namespace ecologylab.serialization
 {
@@ -584,9 +585,9 @@ namespace ecologylab.serialization
             switch (currentFieldDescriptor.Type)
             {
                 case MAP_ELEMENT:
-                    if (currentElementState is IMappable)
+                    if (currentElementState is Mappable)
                     {
-                        Object key = ((IMappable)currentElementState).key();
+                        Object key = ((Mappable)currentElementState).key();
                         IDictionary dict = (IDictionary)currentFieldDescriptor.AutomaticLazyGetCollectionOrDict(parentElementState);
                         dict.Add(key, currentElementState);
                     }

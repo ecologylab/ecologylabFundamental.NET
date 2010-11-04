@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylab.serialization
+namespace ecologylab.serialization.types.element
 {
-    public interface IMappable
+    public interface Mappable
     {
         Object key();
     }

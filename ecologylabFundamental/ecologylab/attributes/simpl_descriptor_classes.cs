@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylabFundamental.ecologylab.attributes
+namespace ecologylab.attributes
 {
     /// <summary>
     ///     An array of classes used to bind the type of classes 
     ///     the annotated attribute can hold. 
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class simpl_descriptor_classes : Attribute
     {
         private Type[] classes;
