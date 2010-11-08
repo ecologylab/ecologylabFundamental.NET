@@ -95,6 +95,7 @@
     <Compile Include="ecologylab\serialization\types\scalar\IntType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\LongType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ReferenceType.cs" />
+    <Compile Include="ecologylab\serialization\types\scalar\RegexType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ScalarType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\ScalarTypeType.cs" />
     <Compile Include="ecologylab\serialization\types\scalar\StringType.cs" />

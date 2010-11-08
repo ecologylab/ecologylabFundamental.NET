@@ -41,8 +41,7 @@ namespace ecologylab.serialization
         /// <param name="name"></param>
         private TranslationScope(String name)
         {
-            this.name = name;
-            allTranslationScopes.Add(name, this);
+            this.name = name;            
         }
 
         /// <summary>
@@ -97,7 +96,9 @@ namespace ecologylab.serialization
         /// <param name="translations"></param>
         private TranslationScope(String name, params Type[] translations)
             : this(name, (TranslationScope[])null, translations)
-        { }
+        {
+            AddTranslationScope(name);
+        }
 
         /// <summary>
         /// 
@@ -121,6 +122,8 @@ namespace ecologylab.serialization
         {
 
             AddTranslations(translations);
+
+            AddTranslationScope(name);
         }
 
         /// <summary>
@@ -133,6 +136,16 @@ namespace ecologylab.serialization
             : this(name, inheritedTranslationScope)
         {
             AddTranslation(translation);
+            AddTranslationScope(name);
+        }
+
+        private void AddTranslationScope(string name)
+        {
+            if (allTranslationScopes.ContainsKey(name))
+            {
+                allTranslationScopes.Remove(name);
+            }
+            allTranslationScopes.Add(name, this);
         }
 
         /// <summary>
@@ -146,6 +159,7 @@ namespace ecologylab.serialization
         {
 
             AddTranslations(translations);
+            AddTranslationScope(name);
         }
         
         /// <summary>
@@ -322,6 +336,19 @@ namespace ecologylab.serialization
                 default: Console.WriteLine("invalid format");
                                    return null;
             }
+        }
+
+        public List<ClassDescriptor> GetClassDescriptors()
+        {
+            List<ClassDescriptor> result = classDescriptors;
+            if (result == null)
+            {
+                // result = entriesByClassSimpleName.values();
+                result = entriesByTag.Values.ToList(); // we use entriesByTag so that overriding works well.
+                
+                this.classDescriptors = result;
+            }
+            return result;
         }
     }   
 }

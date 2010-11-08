@@ -55,6 +55,8 @@ namespace ecologylab.serialization
         private Hint xmlHint;
         private object isEnum;
 
+        private String unresolvedScopeAnnotation = null;
+
         #endregion
 
         #region Constructors
@@ -318,6 +320,8 @@ namespace ecologylab.serialization
         /// <returns></returns>
         public ElementState ConstructChildElementState(ElementState parent, String tagName)
         {
+            if (tagClassDescriptors != null && !tagClassDescriptors.ContainsKey(tagName))
+                Console.WriteLine("Error: " + tagName);
             ClassDescriptor childClassDescriptor = !IsPolymorphic ? elementClassDescriptor : tagClassDescriptors[tagName];
             ElementState result = null;
 
@@ -678,18 +682,17 @@ namespace ecologylab.serialization
             {
                 simpl_scope scopeAnnotationObj = (simpl_scope)XMLTools.GetAnnotation(field, typeof(simpl_scope));
                 String scopeAnnotation = scopeAnnotationObj.TranslationScope;
-                TranslationScope scope = TranslationScope.Get(scopeAnnotation);
-                if (scope != null)
-                {
-                    List<ClassDescriptor> scopeClassDescriptors = scope.ClassDescriptors;
-                    InitTagClassDescriptorsArrayList(scopeClassDescriptors.Count);
-                    foreach (ClassDescriptor classDescriptor in scopeClassDescriptors)
-                    {
-                        tagClassDescriptors.Add(classDescriptor.TagName, classDescriptor);
-                        tagClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);
-                    }
 
+                if (scopeAnnotation != null && scopeAnnotation.Length > 0)
+                {
+                    if (!ResolveScopeAnnotation(scopeAnnotation))
+                    {
+                        unresolvedScopeAnnotation = scopeAnnotation;
+                        declaringClassDescriptor.RegisterUnresolvedScopeAnnotationFD(this);
+                    }
                 }
+
+               
             }
             else if (XMLTools.IsAnnotationPresent(field, typeof(simpl_classes)))
             {
@@ -700,7 +703,19 @@ namespace ecologylab.serialization
                     if (typeof(ElementState).IsAssignableFrom(thatClass))
                     {
                         ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatClass);
+                        ClassDescriptor previousMapping = null;
+                        if (tagClassDescriptors.TryGetValue(classDescriptor.TagName, out previousMapping))
+                        {
+                            tagClassDescriptors.Remove(classDescriptor.TagName);
+                        }
                         tagClassDescriptors.Add(classDescriptor.TagName, classDescriptor);
+
+                        Type previousType = null;
+
+                        if (tagClasses.TryGetValue(classDescriptor.TagName, out previousType))
+                        {
+                            tagClasses.Remove(classDescriptor.TagName);
+                        }
                         tagClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);
                     }
             }
@@ -755,7 +770,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return tagClassDescriptors != null;
+                return tagClassDescriptors != null || unresolvedScopeAnnotation != null;
             }
         }
 
@@ -868,11 +883,11 @@ namespace ecologylab.serialization
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerable<ClassDescriptor> TagClassDescriptors
+        public DictionaryList<String, ClassDescriptor> TagClassDescriptors
         {
             get
             {
-                return tagClassDescriptors.Values;
+                return tagClassDescriptors;
             }
         }
 
@@ -1019,6 +1034,41 @@ namespace ecologylab.serialization
         public void WriteJSONCloseTag(StringBuilder output)
         {
             output.Append('}');
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Boolean ResolveUnresolvedScopeAnnotation()
+        {
+            if (unresolvedScopeAnnotation == null)
+                return true;
+
+            Boolean result = ResolveScopeAnnotation(unresolvedScopeAnnotation);
+            if (result)
+            {
+                unresolvedScopeAnnotation = null;
+                declaringClassDescriptor.MapTagClassDescriptors(this);
+            }
+            return result;
+        }
+
+        private bool ResolveScopeAnnotation(string scopeAnnotation)
+        {
+            TranslationScope scope = TranslationScope.Get(scopeAnnotation);
+            if (scope != null)
+            {
+                List<ClassDescriptor> scopeClassDescriptors = scope.GetClassDescriptors();
+                InitTagClassDescriptorsArrayList(scopeClassDescriptors.Count);
+                foreach (ClassDescriptor classDescriptor in scopeClassDescriptors)
+                {
+                    String tagName = classDescriptor.TagName;
+                    tagClassDescriptors.Add(tagName, classDescriptor);
+                    tagClasses.Add(tagName, classDescriptor.DescribedClass);
+                }
+            }
+            return scope != null;
         }
     }
 }

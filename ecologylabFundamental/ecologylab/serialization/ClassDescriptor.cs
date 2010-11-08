@@ -105,6 +105,8 @@ namespace ecologylab.serialization
         private static Dictionary<String, ClassDescriptor>
             globalClassDescriptorsMap = new Dictionary<String, ClassDescriptor>();
 
+        private List<FieldDescriptor> unresolvedScopeAnnotationFDs = null;
+
 
         #endregion
 
@@ -290,7 +292,7 @@ namespace ecologylab.serialization
                 }
                 else
                 {
-                    foreach (ClassDescriptor classDescriptor in fieldDescriptor.TagClassDescriptors)
+                    foreach (ClassDescriptor classDescriptor in fieldDescriptor.TagClassDescriptors.Values)
                     {
                         MapTagToFdForTranslateFrom(classDescriptor.tagName, fieldDescriptor);
                     }
@@ -300,18 +302,36 @@ namespace ecologylab.serialization
 
         /// <summary>
         ///     Public method to get the field descriptor from its tagName.
-        ///     TODO: why this function takes all these parameters. Remove them!
-        /// </summary>
         /// <param name="tagName">
         ///     <c>String</c> tagName for to find the associated <c>FieldDescriptor</c>
         /// </param>
         /// <returns></returns>
         public FieldDescriptor GetFieldDescriptorByTag(String tagName)
         {
+
+            if (unresolvedScopeAnnotationFDs != null)
+            {
+                ResolveUnresolvedScopeAnnotationFDs();
+            }
             if (allFieldDescriptorsByTagNames.ContainsKey(tagName))
                 return allFieldDescriptorsByTagNames[tagName];
             else
                 return null;
+        }
+
+        private void ResolveUnresolvedScopeAnnotationFDs()
+        {
+            if (unresolvedScopeAnnotationFDs != null)
+            {
+                for (int i = unresolvedScopeAnnotationFDs.Count - 1; i >= 0; i--)
+                {
+                    // TODO -- do we want to enable retrying multiple times in case it gets fixed even later
+                    FieldDescriptor fd = unresolvedScopeAnnotationFDs[i];
+                    unresolvedScopeAnnotationFDs.RemoveAt(i);
+                    fd.ResolveUnresolvedScopeAnnotation();
+                }
+            }
+            unresolvedScopeAnnotationFDs = null;
         }
 
         #endregion
@@ -331,7 +351,7 @@ namespace ecologylab.serialization
 
             if (allFieldDescriptorsByTagNames.TryGetValue(tagName, out previousMapping))
             {
-                Console.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
+                //Console.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
                 allFieldDescriptorsByTagNames.Remove(tagName);
             }
 
@@ -459,5 +479,37 @@ namespace ecologylab.serialization
         }
 
         #endregion       
+    
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fieldDescriptor"></param>
+        public void MapTagClassDescriptors(FieldDescriptor fieldDescriptor)
+        {
+            DictionaryList<String, ClassDescriptor> tagClassDescriptors = fieldDescriptor.TagClassDescriptors;
+
+            if (tagClassDescriptors != null)
+                foreach (String tagName in tagClassDescriptors.Keys)
+                {
+                    MapTagToFdForTranslateFrom(tagName, fieldDescriptor);
+                }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fd"></param>
+        public void RegisterUnresolvedScopeAnnotationFD(FieldDescriptor fd)
+        {
+            if (unresolvedScopeAnnotationFDs == null)
+            {
+                lock (this)
+                {
+                    if (unresolvedScopeAnnotationFDs == null)
+                        unresolvedScopeAnnotationFDs = new List<FieldDescriptor>();
+                }
+            }
+            unresolvedScopeAnnotationFDs.Add(fd);
+        }
     }
 }
