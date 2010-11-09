@@ -51,7 +51,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="SimplScope\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ecologylabFundamental\ecologylabFundamental.NET.csproj">
       <Project>{2250CC5F-E93C-4BCE-82B8-3760E3A528EE}</Project>

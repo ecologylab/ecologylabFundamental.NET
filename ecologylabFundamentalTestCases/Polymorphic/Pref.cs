@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using ecologylab.serialization;
 using ecologylab.attributes;
+using ecologylab.serialization.types.element;
 
 namespace ecologylabFundamentalTestCases.Polymorphic
 {
-    public class Pref : ElementState, IMappable
+    public class Pref : ElementState, Mappable
     {
         [simpl_scalar]
         public String name;

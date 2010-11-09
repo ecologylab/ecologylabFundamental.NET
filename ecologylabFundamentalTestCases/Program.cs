@@ -13,9 +13,8 @@ namespace ecologylabFundamentalTestCases
     {
         static void Main(string[] args)
         {
-            MapTest();
-
-            //PolyMorphicMapTest();
+            //MapTest();
+            PolyMorphicMapTest();
         }
 
         private static void PolyMorphicMapTest()
@@ -35,6 +34,7 @@ namespace ecologylabFundamentalTestCases
             tw.WriteLine(output);
             tw.Close();
 
+            TranslationScope.Get("testScope", typeof(Pref), typeof(PrefDouble));
             Configuration outputData = (Configuration)TranslationScope.Get("test", typeof(Configuration), typeof(Pref), typeof(PrefDouble)).deserialize("dict_output.xml", Format.XML);
             output.Clear();
             outputData.serializeToXML(output);

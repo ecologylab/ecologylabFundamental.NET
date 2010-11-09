@@ -285,6 +285,17 @@ namespace ecologylab.serialization
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="translations"></param>
+        /// <returns></returns>
+        public static TranslationScope Get(string name)
+        {
+            return Lookup(name);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ClassDescriptor> ClassDescriptors
         {
             get
@@ -338,6 +349,10 @@ namespace ecologylab.serialization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public List<ClassDescriptor> GetClassDescriptors()
         {
             List<ClassDescriptor> result = classDescriptors;
@@ -348,6 +363,18 @@ namespace ecologylab.serialization
                 
                 this.classDescriptors = result;
             }
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private static TranslationScope Lookup(String name)
+        {
+            TranslationScope result = null;
+            allTranslationScopes.TryGetValue(name, out result);
             return result;
         }
     }   

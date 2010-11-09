@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using ecologylab.serialization;
 using ecologylab.attributes;
+using ecologylab.serialization.types.element;
 namespace ecologylabFundamentalTestCases.Maps
 {
-    class SimplData : ElementState, IMappable
+    class SimplData : ElementState, Mappable
     {
         public enum Planet
         {

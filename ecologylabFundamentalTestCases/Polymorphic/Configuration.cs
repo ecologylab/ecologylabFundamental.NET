@@ -21,7 +21,8 @@ namespace ecologylabFundamentalTestCases.Polymorphic
     {
 
         [simpl_nowrap]
-        [simpl_classes(new Type[] { typeof(Pref), typeof(PrefDouble) })]
+        [simpl_scope("testScope")]
+        //[simpl_classes(new Type[] { typeof(Pref), typeof(PrefDouble) })]
         [simpl_map]
         public Dictionary<String, Pref> prefs = new Dictionary<string, Pref>();
 

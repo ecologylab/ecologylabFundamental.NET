@@ -292,10 +292,7 @@ namespace ecologylab.serialization
                 }
                 else
                 {
-                    foreach (ClassDescriptor classDescriptor in fieldDescriptor.TagClassDescriptors.Values)
-                    {
-                        MapTagToFdForTranslateFrom(classDescriptor.tagName, fieldDescriptor);
-                    }
+                    MapTagClassDescriptors(fieldDescriptor);
                 }
             }
         }
