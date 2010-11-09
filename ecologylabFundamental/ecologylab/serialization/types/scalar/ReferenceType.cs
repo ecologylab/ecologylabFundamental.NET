@@ -9,7 +9,7 @@ namespace ecologylab.serialization.types.scalar
     /// <summary>
     /// 
     /// </summary>
-    abstract class ReferenceType : ScalarType
+    public abstract class ReferenceType : ScalarType
     {
         /// <summary>
         /// 
