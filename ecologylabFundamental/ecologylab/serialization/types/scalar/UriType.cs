@@ -5,13 +5,26 @@ using System.Text;
 
 namespace ecologylab.serialization.types.scalar
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class UriType : ReferenceType
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public UriType()
             : base(typeof(Uri))
         {
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="formatStrings"></param>
+        /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings)
         {
             return new Uri(value);

@@ -29,15 +29,27 @@ namespace ecologylab.serialization.json
         void fatalError(JSONParseException exception);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class JSONParseException
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private String message;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public JSONParseException()
         {
             message = "";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public String Message
         {
             get

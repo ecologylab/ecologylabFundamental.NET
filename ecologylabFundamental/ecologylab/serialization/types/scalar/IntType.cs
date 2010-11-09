@@ -34,6 +34,12 @@ namespace ecologylab.serialization.types.scalar
             return int.Parse(value);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override bool IsDefaultValue(FieldInfo field, ElementState context)
         {
             return (Int32)field.GetValue(context) == DEFAULT_VALUE;

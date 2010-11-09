@@ -7,12 +7,31 @@ using System.IO;
 
 namespace ecologylab.serialization.json
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class JSONParser
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private IJSONContentHandler handler;
+
+        /// <summary>
+        /// 
+        /// </summary>
         private IJSONErrorHandler   errorHandler;
+
+        /// <summary>
+        /// 
+        /// </summary>
         private List<Boolean> inArray;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="errorHandler"></param>
         public JSONParser(IJSONContentHandler handler, IJSONErrorHandler errorHandler)
         {
             this.handler = handler;
@@ -44,11 +63,19 @@ namespace ecologylab.serialization.json
             parse(fileStream);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileStream"></param>
         public void parse(FileStream fileStream)
         {
             parse(new StreamReader(fileStream));
         }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputStream"></param>
         public void parse(StreamReader inputStream)
         {
             JSONParseException exception = new JSONParseException();
@@ -112,11 +139,19 @@ namespace ecologylab.serialization.json
             }
         }
        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="var"></param>
         private void push(Boolean var)
         {
             inArray.Add(var);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Boolean pop()
         {
             Boolean result = false;
@@ -129,6 +164,10 @@ namespace ecologylab.serialization.json
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Boolean top()
         {
             Boolean result = false;

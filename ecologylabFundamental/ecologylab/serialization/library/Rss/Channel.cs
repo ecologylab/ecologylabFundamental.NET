@@ -11,14 +11,23 @@ namespace ecologylab.serialization.library
     /// </summary>
     public class Channel : ElementState
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [simpl_scalar]
         [simpl_hints(new Hint[] { Hint.XML_LEAF })]
         private String title;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [simpl_scalar]
         [simpl_hints(new Hint[] { Hint.XML_LEAF })]
         private String description;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [simpl_scalar]
         [simpl_hints(new Hint[] { Hint.XML_LEAF })]
         private Uri link;
