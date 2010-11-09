@@ -7,6 +7,7 @@ using ecologylab.attributes;
 
 namespace ecologylabFundamentalTestCases.Polymorphic
 {
+    [simpl_inherit]
     public class PrefDouble : Pref // : Pref
     {
         [simpl_scalar]
