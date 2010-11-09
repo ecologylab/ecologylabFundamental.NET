@@ -8,7 +8,7 @@ using ecologylab.attributes;
 namespace ecologylabFundamentalTestCases.Polymorphic
 {
     [simpl_inherit]
-    public class PrefDouble : Pref // : Pref
+    public class PrefDouble : Pref
     {
         [simpl_scalar]
         public double value;
@@ -19,11 +19,6 @@ namespace ecologylabFundamentalTestCases.Polymorphic
         {
             get { return value; }
             set { this.value = value; }
-        }
-
-        public object key()
-        {
-            return name;
         }
     }
 }
