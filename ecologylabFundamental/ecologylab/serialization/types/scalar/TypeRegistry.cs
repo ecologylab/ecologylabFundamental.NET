@@ -10,7 +10,7 @@ namespace ecologylab.serialization.types.scalar
     ///     supported by the serialization framework. This objects 
     ///     returns the right abstraction for the supported types. 
     /// </summary>
-    class TypeRegistry
+    public class TypeRegistry
     {
         /// <summary>
         ///     Maps to hold the Type with their right abstraction

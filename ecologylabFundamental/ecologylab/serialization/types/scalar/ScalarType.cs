@@ -13,7 +13,14 @@ namespace ecologylab.serialization.types
     /// </summary>
     public abstract class ScalarType
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected Type thatClass;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected Boolean isPrimitive;
 
         /// <summary>
@@ -33,7 +40,7 @@ namespace ecologylab.serialization.types
         /// <param name="thatClass"></param>
         protected ScalarType(Type thatClass)
         {
-            this.thatClass = thatClass;           
+            this.thatClass = thatClass;
             this.isPrimitive = thatClass.IsPrimitive;
         }
 
@@ -162,9 +169,16 @@ namespace ecologylab.serialization.types
         /// <param name="field"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public bool IsDefaultValue(FieldInfo field, ElementState context)
+        public virtual bool IsDefaultValue(FieldInfo field, ElementState context)
         {
-            return field.GetValue(context) == null;
+            Object fieldValue = field.GetValue(context);
+            return fieldValue == null || DEFAULT_VALUE_STRING.Equals(fieldValue.ToString());
+        }
+
+        public bool IsDefaultValue(String value)
+        {
+            String defaultValue = DefaultValueString;
+            return (defaultValue.Length == value.Length) && defaultValue.Equals(value);
         }
 
         /// <summary>
@@ -178,14 +192,14 @@ namespace ecologylab.serialization.types
         {
             Object instance = fieldDescriptor.Field.GetValue(context);
             AppendValue(instance, buffy, !fieldDescriptor.IsCDATA);
-        }        
+        }
 
         /// <summary>
         ///     Serializes the objects to its string value 
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        protected String Marshall(object instance)
+        public virtual String Marshall(object instance)
         {
             return instance.ToString();
         }
@@ -205,5 +219,16 @@ namespace ecologylab.serialization.types
         /// TODO: if not required then remove.
         /// </summary>
         public bool IsMarshallOnly { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
+        public string DefaultValueString { get { return DEFAULT_VALUE_STRING; } }
     }
 }

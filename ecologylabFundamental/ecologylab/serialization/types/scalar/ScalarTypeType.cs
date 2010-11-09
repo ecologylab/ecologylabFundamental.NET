@@ -8,7 +8,7 @@ namespace ecologylab.serialization.types.scalar
     /// <summary>
     ///     Class abstracting C# int type
     /// </summary>
-    class ScalarTypeType : ScalarType
+    class ScalarTypeType : ReferenceType
     {
         /// <summary>
         ///      Calls the parent constructor for int type

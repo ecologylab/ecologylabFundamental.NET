@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace ecologylab.serialization.types.scalar
 {
@@ -10,6 +11,16 @@ namespace ecologylab.serialization.types.scalar
     /// </summary>
     class DoubleType : ScalarType
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static double DEFAULT_VALUE = 0;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// 
+        public static String DEFAULT_VALUE_STRING = "0";
         /// <summary>
         ///     Calls the parent constructor for Double type
         /// </summary>
@@ -26,6 +37,11 @@ namespace ecologylab.serialization.types.scalar
         public override Object GetInstance(String value, String[] formatStrings)
         {
             return Double.Parse(value);
+        }
+
+        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+        {
+            return (double)field.GetValue(context) == DEFAULT_VALUE;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace ecologylab.serialization.types.scalar
 {
@@ -10,6 +11,16 @@ namespace ecologylab.serialization.types.scalar
     /// </summary>
     class FloatType : ScalarType
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static float DEFAULT_VALUE = 0f;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static String DEFAULT_VALUE_STRING = "0";
+
         /// <summary>
         ///      Calls the parent constructor for float type
         /// </summary>
@@ -26,6 +37,11 @@ namespace ecologylab.serialization.types.scalar
         public override Object GetInstance(String value, String[] formatStrings)
         {
             return float.Parse(value);
+        }
+
+        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+        {
+            return (float)field.GetValue(context) == DEFAULT_VALUE;
         }
     }
 }
