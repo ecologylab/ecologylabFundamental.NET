@@ -19,8 +19,8 @@ namespace ecologylab.serialization
 
         private static Dictionary<String, TranslationScope> allTranslationScopes = new Dictionary<String, TranslationScope>();
 
-        private String name;
-        private TranslationScope[] inheritedTranslationScopes;
+        private String name = null;
+        private TranslationScope[] inheritedTranslationScopes = null;
         private Scope<ClassDescriptor> entriesByClassSimpleName = new Scope<ClassDescriptor>();
         private Scope<ClassDescriptor> entriesByClassName = new Scope<ClassDescriptor>();
         private Scope<ClassDescriptor> entriesByTag = new Scope<ClassDescriptor>();
