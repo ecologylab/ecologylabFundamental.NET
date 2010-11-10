@@ -220,7 +220,6 @@ namespace ecologylab.serialization
             }
 
             FieldInfo[] fields = thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            //FieldInfo[] fields = thatClass.GetFields);
             foreach (FieldInfo thatField in fields)
             {
                 if ((thatField.IsStatic)) continue;
