@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ecologylab.collections;
 using System.Reflection;
+using System.IO;
 
 namespace ecologylab.serialization
 {
@@ -251,9 +252,12 @@ namespace ecologylab.serialization
         private void AddTranslation(Type thatClass)
         {
             ClassDescriptor entry = ClassDescriptor.GetClassDescriptor(thatClass);
-            entriesByTag.Add(entry.TagName, entry);
-            entriesByClassSimpleName.Add(entry.DescribedClassSimpleName, entry);
-            entriesByClassName.Add(thatClass.Name, entry);
+            if (!entriesByTag.ContainsKey(entry.TagName)) 
+                entriesByTag.Add(entry.TagName, entry);
+            if (!entriesByClassSimpleName.ContainsKey(entry.DescribedClassSimpleName))
+                entriesByClassSimpleName.Add(entry.DescribedClassSimpleName, entry);
+            if (!entriesByClassName.ContainsKey(thatClass.Name))
+                entriesByClassName.Add(thatClass.Name, entry);
 
             String[] otherTags = XMLTools.OtherTags(entry.DescribedClass);
             if(otherTags != null)
@@ -332,9 +336,29 @@ namespace ecologylab.serialization
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public ElementState deserializeString(String input, Format format)
+        {
+            switch(format)
+            {
+                case Format.JSON:
+                    ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(input), this);
+                    return jsonHandler.Parse();
+                    //break;
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         ///     Unmarshall the serialized representation of the objects. 
         /// </summary>
-        /// <param name="filePath">Location of the XML file.</param>
+        /// <param name="filePath">Location of the file.</param>
+        /// <param name="format">Format of the file</param>
         /// <returns></returns>
         public ElementState deserialize(String filePath, Format format)
         {
@@ -342,7 +366,7 @@ namespace ecologylab.serialization
             {
                 case Format.XML :  ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this);
                                    return saxHandler.Parse();
-                case Format.JSON: ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(filePath, this);
+                case Format.JSON: ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(File.OpenRead(filePath)), this);
                                    return jsonHandler.Parse();
                 default: Console.WriteLine("invalid format");
                                    return null;

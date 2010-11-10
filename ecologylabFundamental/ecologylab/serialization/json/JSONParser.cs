@@ -53,29 +53,6 @@ namespace ecologylab.serialization.json
             this.errorHandler = errorHandler;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="url"></param>
-        public void parse(String url)
-        {
-            FileStream fileStream = File.OpenRead(url);
-            parse(fileStream);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="fileStream"></param>
-        public void parse(FileStream fileStream)
-        {
-            parse(new StreamReader(fileStream));
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="inputStream"></param>
         public void parse(StreamReader inputStream)
         {
             JSONParseException exception = new JSONParseException();

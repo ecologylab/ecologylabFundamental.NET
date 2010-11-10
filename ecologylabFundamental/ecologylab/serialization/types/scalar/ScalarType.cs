@@ -16,7 +16,7 @@ namespace ecologylab.serialization.types
         /// <summary>
         /// 
         /// </summary>
-        protected Type thatClass;
+        public Type thatClass;
 
         /// <summary>
         /// 

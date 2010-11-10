@@ -27,7 +27,16 @@ namespace ecologylab.serialization.types.scalar
         /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings)
         {
-            return new Uri(value);
+            Object result = null;
+            try
+            {
+                result = new Uri(value);
+            }
+            catch (UriFormatException e)
+            {
+                Console.WriteLine("UriFormat Exception: " + value);
+            }
+            return result;
         } 
     }
 }

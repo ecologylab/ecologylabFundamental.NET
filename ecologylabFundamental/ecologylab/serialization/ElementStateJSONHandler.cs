@@ -97,7 +97,7 @@ namespace ecologylab.serialization
         /// <summary>
         ///     A files stream object to read XML files.
         /// </summary>
-        private FileStream inputFileStream;
+        private StreamReader inputStream;
 
         /// <summary>
         ///     Used the unmarshalling context. The root which holds the final
@@ -170,52 +170,16 @@ namespace ecologylab.serialization
         /// <param name="translationScope">
         ///     translation scope which binds the run-time objects.
         /// </param>
-        public ElementStateJSONHandler(String url, TranslationScope translationScope)
+        public ElementStateJSONHandler(StreamReader inputStream, TranslationScope translationScope)
             : this()
         {
-            this.inputFileStream = File.OpenRead(url);
-            this.translationScope = translationScope;
-        }
-
-        /// <summary>
-        ///     Constructor which initializes the SAX Parser. Opens an input stream 
-        ///     on a file to start reading. Needs to map XML data to runtime representation
-        /// </summary>
-        /// <param name="inputFileStream">
-        ///     Stream of the input file to read XML file.
-        /// </param>
-        /// <param name="translationScope">
-        ///     translation scope which binds the run-time objects.
-        /// </param>
-        public ElementStateJSONHandler(FileStream inputFileStream, TranslationScope translationScope)
-            : this()
-        {
-            this.inputFileStream = inputFileStream;
+            this.inputStream = inputStream;
             this.translationScope = translationScope;
         }
 
         #endregion
 
         #region Parse Methods
-
-        /// <summary>
-        ///     Parses the XML file and returns the unmarshalled ElementState object.
-        /// </summary>
-        /// <param name="inputFileStream">
-        ///     Stream of the input file to read XML file.
-        /// </param>
-        /// <param name="translationScope">
-        ///     Translation scope which binds the run-time objects.
-        /// </param>
-        /// <returns>
-        ///     <c>ElementState</c> unmarshalled object from input stream
-        /// </returns>
-        public ElementState Parse(FileStream inputFileStream, TranslationScope translationScope)
-        {
-            this.inputFileStream = inputFileStream;
-            this.translationScope = translationScope;
-            return Parse();
-        }
 
         /// <summary>
         ///      Parses the XML file and returns the unmarshalled ElementState object.
@@ -225,9 +189,9 @@ namespace ecologylab.serialization
         /// </returns>
         public ElementState Parse()
         {
-            if (inputFileStream != null)
+            if (inputStream != null)
             {
-                parser.parse(inputFileStream);
+                parser.parse(inputStream);
                 return root;
             }
             else
