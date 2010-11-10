@@ -46,7 +46,7 @@ namespace ecologylab.serialization.types.scalar
         ///     Maps basic types 
         /// </summary>
         /// <param name="basicTypes"></param>
-        private static void Register(Type[] basicTypes)
+        public static void Register(Type[] basicTypes)
         {
             for (int i = 0; i < basicTypes.Length; i++)
             {
@@ -58,7 +58,7 @@ namespace ecologylab.serialization.types.scalar
         ///     Maps basic types with their simple and type names. 
         /// </summary>
         /// <param name="thatClass"></param>
-        private static void Register(Type thatClass)
+        public static void Register(Type thatClass)
         {
             ScalarType scalarType = (ScalarType)Activator.CreateInstance(thatClass);
             String typeName = scalarType.EncapsulatedType.Name;
