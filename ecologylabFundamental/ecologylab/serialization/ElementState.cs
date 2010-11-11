@@ -542,7 +542,7 @@ namespace ecologylab.serialization
                     {
                         try
                         {
-                            fieldDescriptor.SetFieldToScalar(this, value);
+                            fieldDescriptor.SetFieldToScalar(this, value, null);
                             if ("id".Equals(fieldDescriptor.TagName))
                                 this.elementById.Add(value, this);
                         }

@@ -363,7 +363,8 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="context"></param>
         /// <param name="value"></param>        
-        public void SetFieldToScalar(ElementState context, String value)
+        /// <param name="scalarUnmarshallingContext"></param>
+        public void SetFieldToScalar(ElementState context, String value, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             if ((value == null))
             {
@@ -378,7 +379,7 @@ namespace ecologylab.serialization
             }
             else if (scalarType != null && !scalarType.IsMarshallOnly)
             {
-                scalarType.SetField(context, field, value);
+                scalarType.SetField(context, field, value, null, scalarUnmarshallingContext);
             }
         }
 
@@ -388,7 +389,7 @@ namespace ecologylab.serialization
         /// <param name="activeElementState"></param>
         /// <param name="leafNodeValue"></param>
         /// 
-        public void AddLeafNodeToCollection(ElementState activeElementState, String leafNodeValue)
+        public void AddLeafNodeToCollection(ElementState activeElementState, String leafNodeValue, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             if (leafNodeValue != null)
             {
@@ -397,7 +398,7 @@ namespace ecologylab.serialization
 
             if (scalarType != null)
             {
-                Object typeConvertedValue = scalarType.GetInstance(leafNodeValue, format);
+                Object typeConvertedValue = scalarType.GetInstance(leafNodeValue, format, scalarUnmarshallingContext);
                 if (typeConvertedValue != null)
                 {
                     IList collection = (IList)AutomaticLazyGetCollectionOrDict(activeElementState);

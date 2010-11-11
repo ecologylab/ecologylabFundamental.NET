@@ -326,27 +326,18 @@ namespace ecologylab.serialization
 
 
         /// <summary>
-        ///     Default to deserialization from XML
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public ElementState deserialize(String filePath)
-        {
-            return deserialize(filePath, Format.XML);
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="input"></param>
         /// <param name="format"></param>
+        /// <param name="uriContext"></param>
         /// <returns></returns>
-        public ElementState deserializeString(String input, Format format)
+        public ElementState deserializeString(String input, Format format, Uri uriContext = null)
         {
             switch(format)
             {
                 case Format.JSON:
-                    ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(input), this);
+                    ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(null, this, uriContext, jsonText:input);
                     return jsonHandler.Parse();
                     //break;
                 default:
@@ -359,15 +350,18 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="filePath">Location of the file.</param>
         /// <param name="format">Format of the file</param>
+        /// <param name="uriContext">Optional arguement to enable relative path resolution of Uris. (Which can be files or Urls)</param>
         /// <returns></returns>
-        public ElementState deserialize(String filePath, Format format)
+        public ElementState deserialize(String filePath, Format format = Format.XML, Uri uriContext = null)
         {
             switch (format)
             {
-                case Format.XML :  ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this);
-                                   return saxHandler.Parse();
-                case Format.JSON: ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(File.OpenRead(filePath)), this);
-                                   return jsonHandler.Parse();
+                case Format.XML :
+                    ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this, uriContext);
+                    return saxHandler.Parse();
+                case Format.JSON:
+                    ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(File.OpenRead(filePath)), this, uriContext);
+                    return jsonHandler.Parse();
                 default: Console.WriteLine("invalid format");
                                    return null;
             }

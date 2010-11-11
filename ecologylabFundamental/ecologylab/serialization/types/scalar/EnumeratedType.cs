@@ -23,7 +23,7 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="valueString"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public override Boolean SetField(Object context, FieldInfo field, String valueString, String[] format)
+        public override Boolean SetField(Object context, FieldInfo field, String valueString, String[] format, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             Boolean returnValue = false;
 
@@ -56,7 +56,7 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns></returns>
-        public override object GetInstance(string value, string[] formatStrings)
+        public override object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return null;
         }

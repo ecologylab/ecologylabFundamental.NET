@@ -24,7 +24,7 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns></returns>
-        public override Object GetInstance(String value, String[] formatStrings)
+        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         { return value; }
     }
 }

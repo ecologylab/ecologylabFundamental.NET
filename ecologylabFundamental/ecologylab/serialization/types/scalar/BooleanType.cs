@@ -32,7 +32,7 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns></returns>
-        public override object GetInstance(String value, string[] formatStrings)
+        public override object GetInstance(String value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return Convert.ToBoolean(value);
         }

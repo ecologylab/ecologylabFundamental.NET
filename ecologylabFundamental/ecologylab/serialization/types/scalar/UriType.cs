@@ -25,16 +25,25 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns></returns>
-        public override Object GetInstance(String value, String[] formatStrings)
+        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             Object result = null;
             try
             {
-                result = new Uri(value);
+                if (scalarUnmarshallingContext != null)
+                {
+                    Uri baseUri = scalarUnmarshallingContext.UriContext();
+                    if (baseUri != null)
+                        result = new Uri(baseUri, value);
+                }
+                else
+                    result = new Uri(value);
             }
+            catch (ArgumentNullException e){ }
+            catch (ArgumentException e){ }
             catch (UriFormatException e)
             {
-                Console.WriteLine("UriFormat Exception: " + value);
+                Console.WriteLine(e.Message + " :: " + value);
             }
             return result;
         } 

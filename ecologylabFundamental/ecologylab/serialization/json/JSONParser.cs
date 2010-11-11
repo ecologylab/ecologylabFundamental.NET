@@ -53,12 +53,17 @@ namespace ecologylab.serialization.json
             this.errorHandler = errorHandler;
         }
 
-        public void parse(StreamReader inputStream)
+        public void parse(StreamReader inputStream, String jsonText = null)
         {
             JSONParseException exception = new JSONParseException();
             try
             {
-                JsonReader reader = new JsonReader(inputStream);
+                JsonReader reader = null;
+                if (inputStream != null)
+                    reader = new JsonReader(inputStream);
+                else if (jsonText != null)
+                    reader = new JsonReader(jsonText);
+
                 handler.StartJSON();
 
                 bool registerObjectEntryEnd = false;

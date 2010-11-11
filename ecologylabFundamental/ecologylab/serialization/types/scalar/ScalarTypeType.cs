@@ -23,8 +23,9 @@ namespace ecologylab.serialization.types.scalar
         /// </summary>
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
+        /// <param name="scalarUnmarshallingContext"></param>
         /// <returns>int</returns>
-        public override Object GetInstance(String value, String[] formatStrings)
+        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             ScalarType result = null;
             int length = value.Length;

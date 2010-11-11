@@ -51,8 +51,9 @@ namespace ecologylab.serialization.types
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns></returns>
-        abstract public Object GetInstance(String value, String[] formatStrings);
+        abstract public Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext unmarshallingContext);
 
+        /*
         /// <summary>
         ///     Abstract method to create the instance of the class type this object
         ///     represents. 
@@ -63,6 +64,7 @@ namespace ecologylab.serialization.types
         {
             return GetInstance(value, null);
         }
+        */
 
         /// <summary>
         ///     Sets the value of the field in the context 
@@ -71,8 +73,9 @@ namespace ecologylab.serialization.types
         /// <param name="field"></param>
         /// <param name="valueString"></param>
         /// <param name="format"></param>
+        /// <param name="scalarUnmarshallingContext"></param>
         /// <returns></returns>
-        public virtual Boolean SetField(Object context, FieldInfo field, String valueString, String[] format)
+        public virtual Boolean SetField(Object context, FieldInfo field, String valueString, String[] format, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             if (valueString == null)
                 return true;
@@ -82,7 +85,7 @@ namespace ecologylab.serialization.types
 
             try
             {
-                referenceObject = GetInstance(valueString, format);
+                referenceObject = GetInstance(valueString, format, scalarUnmarshallingContext);
                 if (referenceObject != null)
                 {
                     field.SetValue(context, referenceObject);
@@ -105,7 +108,7 @@ namespace ecologylab.serialization.types
         /// <returns>Boolean</returns>
         public Boolean SetField(Object obj, FieldInfo field, String value)
         {
-            return this.SetField(obj, field, value, null);
+            return this.SetField(obj, field, value, null, null);
         }
 
         /// <summary>

@@ -1,73 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using ecologylab.serialization.json;
-
-//namespace ecologylab.serialization
-//{
-//    public class ElementStateJSONHandler : FieldTypes, IJSONContentHandler
-//    {
-
-//        public ElementStateJSONHandler()
-//        {
-//        }
-
-//        public void parse(String jsonString)
-//        {
-//            JSONParser parser = new JSONParser(this);
-//            parser.parse(jsonString);
-//        }
-
-//        public void StartJSON()
-//        {
-//            Console.WriteLine("start json");
-//        }
-
-//        public void StartObject()
-//        {
-//            Console.WriteLine("start object");
-//        }
-
-//        public void StartObjectEntry(string key)
-//        {
-//            Console.WriteLine(key);
-//        }
-
-//        public void StartArray()
-//        {
-//            Console.WriteLine("start array");
-//        }
-
-//        public void Primitive(object value)
-//        {
-//            Console.WriteLine(value.ToString());
-//        }
-
-//        public void EndJSON()
-//        {
-//            Console.WriteLine("end json");
-//        }
-
-//        public void EndObject()
-//        {
-//            Console.WriteLine("end object");
-//        }
-
-//        public void EndObjectEntry()
-//        {
-//            Console.WriteLine("end object entry");
-//        }
-
-//        public void EndArray()
-//        {
-//            Console.WriteLine("end array");
-//        }
-//    }
-//}
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -85,7 +16,7 @@ namespace ecologylab.serialization
     ///     which is an abstract representation of the translation semantics. TranslationScopes 
     ///     defines which classes bind to which tags in the XML representation.
     /// </summary>
-    public class ElementStateJSONHandler : FieldTypes, IJSONContentHandler, IJSONErrorHandler
+    public class ElementStateJSONHandler : FieldTypes, IJSONContentHandler, IJSONErrorHandler, IScalarUnmarshallingContext
     {
         #region Private Fields
 
@@ -142,6 +73,15 @@ namespace ecologylab.serialization
 
         private List<Int32> numOfCollectionElements = new List<Int32>();
 
+        /// <summary>
+        /// The context of the 
+        /// </summary>
+        private Uri uriContext;
+
+        /// <summary>
+        /// In the rare cases that the text is directly available without a url/file, do not create a stream reader unnecessarily.
+        /// </summary>
+        private String jsonText;
         #endregion
 
         #region Constructors
@@ -164,17 +104,20 @@ namespace ecologylab.serialization
         ///     Constructor which initializes the SAX Parser. Opens an input stream 
         ///     on a file to start reading. Needs to map XML data to runtime representation
         /// </summary>
-        /// <param name="url">
-        ///     location of the file to parse
-        /// </param>
+        /// <param name="inputStream">The stream to be deserialized</param>
         /// <param name="translationScope">
         ///     translation scope which binds the run-time objects.
         /// </param>
-        public ElementStateJSONHandler(StreamReader inputStream, TranslationScope translationScope)
+        /// <param name="uriContext">uriContext which will be used to resolve ambiguities.</param>
+        /// <param name="jsonText">use jsonText directly if available.</param>
+
+        public ElementStateJSONHandler(StreamReader inputStream, TranslationScope translationScope, Uri uriContext, String jsonText = null)
             : this()
         {
-            this.inputStream = inputStream;
-            this.translationScope = translationScope;
+            this.inputStream            = inputStream;
+            this.translationScope       = translationScope;
+            this.uriContext             = uriContext;
+            this.jsonText               = jsonText;
         }
 
         #endregion
@@ -189,9 +132,9 @@ namespace ecologylab.serialization
         /// </returns>
         public ElementState Parse()
         {
-            if (inputStream != null)
+            if (inputStream != null || jsonText != null)
             {
-                parser.parse(inputStream);
+                parser.parse(inputStream, jsonText);
                 return root;
             }
             else
@@ -227,7 +170,7 @@ namespace ecologylab.serialization
         /// <param name="currentElementState">
         ///     The current <c>ElementState</c> object. 
         /// </param>
-        private void ProcessPendingTextScalar(int currentType, ElementState currentElementState)
+        private void ProcessPendingTextScalar(int currentType, ElementState currentElementState, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             int length = currentTextValue.Length;
             String value = null;
@@ -238,11 +181,11 @@ namespace ecologylab.serialization
                 {
                     case SCALAR:
                         value = currentTextValue.ToString().Substring(0, length);
-                        currentFieldDescriptor.SetFieldToScalar(currentElementState, value);
+                        currentFieldDescriptor.SetFieldToScalar(currentElementState, value, scalarUnmarshallingContext);
                         break;
                     case COLLECTION_SCALAR:
                         value = currentTextValue.ToString().Substring(0, length);
-                        currentFieldDescriptor.AddLeafNodeToCollection(currentElementState, value);
+                        currentFieldDescriptor.AddLeafNodeToCollection(currentElementState, value, scalarUnmarshallingContext);
                         break;
                     default:
                         break;
@@ -440,7 +383,7 @@ namespace ecologylab.serialization
             }
             else
             {
-                ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState);
+                ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
                 ClassDescriptor currentClassDescriptor = CurrentClassDescriptor;
                 activeFieldDescriptor = ((currentFieldDescriptor != null) && (currentFieldDescriptor.Type == IGNORED_ELEMENT)) ?
                     FieldDescriptor.IGNORED_ELEMENT_FIELD_DESCRIPTOR : (currentFieldDescriptor.Type == WRAPPER) ?
@@ -508,7 +451,7 @@ namespace ecologylab.serialization
                     case COLLECTION_SCALAR:
                     case NAME_SPACE_LEAF_NODE:
                         currentTextValue.Append(value.ToString());
-                        ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState);
+                        ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
                         break;
                     case COMPOSITE_ELEMENT:
                     case COLLECTION_ELEMENT:
@@ -542,7 +485,7 @@ namespace ecologylab.serialization
         /// </summary>
         public void EndObjectEntry()
         {
-            ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState);
+            ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
             ElementState parentElementState = currentElementState.parent;
 
 
@@ -578,5 +521,13 @@ namespace ecologylab.serialization
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Uri UriContext()
+        {
+             return uriContext; 
+        }
     }
 }

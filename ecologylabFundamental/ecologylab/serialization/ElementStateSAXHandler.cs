@@ -15,7 +15,7 @@ namespace ecologylab.serialization
     ///     which is an abstract representation of the translation semantics. TranslationScopes 
     ///     defines which classes bind to which tags in the XML representation.
     /// </summary>
-    public class ElementStateSAXHandler : FieldTypes, ISAXContentHandler, ISAXErrorHandler
+    public class ElementStateSAXHandler : FieldTypes, ISAXContentHandler, ISAXErrorHandler, IScalarUnmarshallingContext
     {
         #region Private Fields
 
@@ -64,6 +64,7 @@ namespace ecologylab.serialization
         /// </summary>
         private StringBuilder currentTextValue = new StringBuilder(1024);
 
+        private Uri uriContext;
         #endregion
 
         #region Constructors 
@@ -92,11 +93,12 @@ namespace ecologylab.serialization
         /// <param name="translationScope">
         ///     translation scope which binds the run-time objects.
         /// </param>
-        public ElementStateSAXHandler(String url, TranslationScope translationScope)
+        public ElementStateSAXHandler(String url, TranslationScope translationScope, Uri uriContext)
             : this()
         {
             this.inputFileStream = File.OpenRead(url);
             this.translationScope = translationScope;
+            this.uriContext = uriContext;
         }
 
         /// <summary>
@@ -201,7 +203,7 @@ namespace ecologylab.serialization
             }
             else
             {
-                ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState);
+                ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
                 ClassDescriptor currentClassDescriptor = CurrentClassDescriptor;
                 activeFieldDescriptor = ((currentFieldDescriptor != null) && (currentFieldDescriptor.Type == IGNORED_ELEMENT)) ?
                     FieldDescriptor.IGNORED_ELEMENT_FIELD_DESCRIPTOR : (currentFieldDescriptor.Type == WRAPPER) ?
@@ -257,7 +259,7 @@ namespace ecologylab.serialization
         /// <param name="rawName"></param>
         public void endElement(String namespaceURI, String localName, String rawName)
         {
-            ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState);
+            ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
             ElementState parentElementState = currentElementState.parent;
 
 
@@ -339,7 +341,7 @@ namespace ecologylab.serialization
         /// <param name="currentElementState">
         ///     The current <c>ElementState</c> object. 
         /// </param>
-        private void ProcessPendingTextScalar(int currentType, ElementState currentElementState)
+        private void ProcessPendingTextScalar(int currentType, ElementState currentElementState, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             int length = currentTextValue.Length;
             String value = null;
@@ -350,11 +352,11 @@ namespace ecologylab.serialization
                 {
                     case SCALAR:
                         value = currentTextValue.ToString().Substring(0, length);
-                        currentFieldDescriptor.SetFieldToScalar(currentElementState, value);
+                        currentFieldDescriptor.SetFieldToScalar(currentElementState, value, scalarUnmarshallingContext);
                         break;
                     case COLLECTION_SCALAR:
                         value = currentTextValue.ToString().Substring(0, length);
-                        currentFieldDescriptor.AddLeafNodeToCollection(currentElementState, value);
+                        currentFieldDescriptor.AddLeafNodeToCollection(currentElementState, value, scalarUnmarshallingContext);
                         break;
                     default:
                         break;
@@ -518,5 +520,14 @@ namespace ecologylab.serialization
         }
 
         #endregion
+    
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Uri UriContext()
+        {
+            return uriContext;
+        }
     }
 }
