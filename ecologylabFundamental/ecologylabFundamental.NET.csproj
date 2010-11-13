@@ -74,6 +74,7 @@
     <Compile Include="ecologylab\serialization\json\IJSONContentHandler.cs" />
     <Compile Include="ecologylab\serialization\json\IJSONErrorHandler.cs" />
     <Compile Include="ecologylab\serialization\json\JSONParser.cs" />
+    <Compile Include="ecologylab\serialization\IScalarUnmarshallingContext.cs" />
     <Compile Include="ecologylab\serialization\types\element\Mappable.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\Channel.cs" />
     <Compile Include="ecologylab\serialization\library\Rss\Item.cs" />
