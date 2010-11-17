@@ -75,8 +75,8 @@ namespace ecologylab.serialization
         ///     field names.
         ///     Does this contains all field descriptors for this class descriptor??.
         /// </summary>
-        private DictionaryList<String, FieldDescriptor>
-            fieldDescriptorsByFieldName = new DictionaryList<string, FieldDescriptor>();
+        //private DictionaryList<String, FieldDescriptor>
+        //    fieldDescriptorsByFieldName = new DictionaryList<string, FieldDescriptor>();
 
         /// <summary>
         ///     This dictionary holds the association of field descriptors to
@@ -111,6 +111,15 @@ namespace ecologylab.serialization
         #endregion
 
         #region Constructors
+
+        /// <summary>
+        /// Empty constructor for base classes
+        /// </summary>
+        public ClassDescriptor()
+        {
+
+        }
+
 
         /// <summary>
         ///     Constructor for <c>ClassDescriptor</c> takes
@@ -508,5 +517,6 @@ namespace ecologylab.serialization
             }
             unresolvedScopeAnnotationFDs.Add(fd);
         }
+
     }
 }

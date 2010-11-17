@@ -86,5 +86,10 @@ namespace ecologylab.generic
         {
             return arrayList.ElementAt(index);
         }
+
+        public List<V> Values
+        {
+            get { return arrayList; }
+        }
     }
 }

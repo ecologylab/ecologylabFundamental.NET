@@ -27,7 +27,7 @@ namespace ecologylab.serialization.types.scalar
             typeof(IntType),
             typeof(FloatType),
             typeof(LongType),
-            typeof(UriType),
+            typeof(ParsedUriType),
             typeof(BooleanType),
             typeof(ScalarTypeType),
             typeof(EnumeratedType),

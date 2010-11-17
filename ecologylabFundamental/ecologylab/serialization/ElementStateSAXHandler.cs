@@ -6,6 +6,7 @@ using ecologylab.serialization.sax;
 using System.IO;
 using System.Collections;
 using ecologylab.serialization.types.element;
+using ecologylab.net;
 
 namespace ecologylab.serialization
 {
@@ -64,7 +65,7 @@ namespace ecologylab.serialization
         /// </summary>
         private StringBuilder currentTextValue = new StringBuilder(1024);
 
-        private Uri uriContext;
+        private ParsedUri uriContext;
         #endregion
 
         #region Constructors 
@@ -93,7 +94,7 @@ namespace ecologylab.serialization
         /// <param name="translationScope">
         ///     translation scope which binds the run-time objects.
         /// </param>
-        public ElementStateSAXHandler(String url, TranslationScope translationScope, Uri uriContext)
+        public ElementStateSAXHandler(String url, TranslationScope translationScope, ParsedUri uriContext)
             : this()
         {
             this.inputFileStream = File.OpenRead(url);
@@ -260,7 +261,7 @@ namespace ecologylab.serialization
         public void endElement(String namespaceURI, String localName, String rawName)
         {
             ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
-            ElementState parentElementState = currentElementState.parent;
+            ElementState parentElementState = currentElementState.Parent;
 
 
             switch (currentFieldDescriptor.Type)
@@ -272,11 +273,11 @@ namespace ecologylab.serialization
                         IDictionary dict = (IDictionary)currentFieldDescriptor.AutomaticLazyGetCollectionOrDict(parentElementState);
                         dict.Add(key, currentElementState);
                     }
-                    this.currentElementState = this.currentElementState.parent;
+                    this.currentElementState = this.currentElementState.Parent;
                     break;
                 case COMPOSITE_ELEMENT:
                 case COLLECTION_ELEMENT:
-                    this.currentElementState = this.currentElementState.parent;
+                    this.currentElementState = this.currentElementState.Parent;
                     break;
                 default:
                     break;
@@ -525,7 +526,7 @@ namespace ecologylab.serialization
         /// 
         /// </summary>
         /// <returns></returns>
-        public Uri UriContext()
+        public ParsedUri UriContext()
         {
             return uriContext;
         }

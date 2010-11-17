@@ -5,6 +5,7 @@ using System.Text;
 using ecologylab.collections;
 using System.Reflection;
 using System.IO;
+using ecologylab.net;
 
 namespace ecologylab.serialization
 {
@@ -324,6 +325,17 @@ namespace ecologylab.serialization
             return entriesByTag[tagName];
         }
 
+        /// <summary>
+        /// Gets the Type of the tag
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public Type GetClassByTag(String tag)
+        {
+            ClassDescriptor entry = GetClassDescriptorByTag(tag);
+            return entry == null ? null : entry.DescribedClass;
+        }
+
 
         /// <summary>
         /// 
@@ -332,7 +344,7 @@ namespace ecologylab.serialization
         /// <param name="format"></param>
         /// <param name="uriContext"></param>
         /// <returns></returns>
-        public ElementState deserializeString(String input, Format format, Uri uriContext = null)
+        public ElementState deserializeString(String input, Format format, ParsedUri uriContext = null)
         {
             switch(format)
             {
@@ -352,7 +364,7 @@ namespace ecologylab.serialization
         /// <param name="format">Format of the file</param>
         /// <param name="uriContext">Optional arguement to enable relative path resolution of Uris. (Which can be files or Urls)</param>
         /// <returns></returns>
-        public ElementState deserialize(String filePath, Format format = Format.XML, Uri uriContext = null)
+        public ElementState deserialize(String filePath, Format format = Format.XML, ParsedUri uriContext = null)
         {
             switch (format)
             {

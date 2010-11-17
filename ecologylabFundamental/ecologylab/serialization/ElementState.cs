@@ -68,8 +68,13 @@ namespace ecologylab.serialization
         /// <summary>
         /// 
         /// </summary>
-        public ElementState parent;        
+        private ElementState parent;
 
+        public ElementState Parent
+        {
+            get { return parent; }
+            set { parent = value; }
+        }
         #endregion
 
         #region Translation To functions

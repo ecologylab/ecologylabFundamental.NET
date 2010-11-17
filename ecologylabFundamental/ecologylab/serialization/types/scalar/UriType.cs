@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ecologylab.net;
 
 namespace ecologylab.serialization.types.scalar
 {
     /// <summary>
     /// 
     /// </summary>
-    class UriType : ReferenceType
+    class ParsedUriType : ReferenceType
     {
         /// <summary>
         /// 
         /// </summary>
-        public UriType()
-            : base(typeof(Uri))
+        public ParsedUriType()
+            : base(typeof(ParsedUri))
         {
         }
 
@@ -32,12 +33,12 @@ namespace ecologylab.serialization.types.scalar
             {
                 if (scalarUnmarshallingContext != null)
                 {
-                    Uri baseUri = scalarUnmarshallingContext.UriContext();
+                    ParsedUri baseUri = scalarUnmarshallingContext.UriContext();
                     if (baseUri != null)
-                        result = new Uri(baseUri, value);
+                        result = new ParsedUri(baseUri, value);
                 }
                 else
-                    result = new Uri(value);
+                    result = new ParsedUri(value);
             }
             catch (ArgumentNullException e){ }
             catch (ArgumentException e){ }

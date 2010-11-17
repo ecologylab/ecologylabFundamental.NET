@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ecologylab.attributes;
+using ecologylab.net;
 
 namespace ecologylab.serialization.library
 {
@@ -30,7 +31,7 @@ namespace ecologylab.serialization.library
         /// </summary>
         [simpl_scalar]
         [simpl_hints(new Hint[] { Hint.XML_LEAF })]
-        private Uri link;
+        private ParsedUri link;
 
         [simpl_collection("item")]
         private List<Item> items;
@@ -72,7 +73,7 @@ namespace ecologylab.serialization.library
         /// <summary>
         /// 
         /// </summary>
-        public Uri Link
+        public ParsedUri Link
         {
             get { return link; }
             set { link = value; }

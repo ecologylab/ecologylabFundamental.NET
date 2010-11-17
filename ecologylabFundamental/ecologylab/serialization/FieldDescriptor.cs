@@ -8,6 +8,7 @@ using System.Reflection;
 using ecologylab.serialization.types.scalar;
 using ecologylab.attributes;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace ecologylab.serialization
 {
@@ -54,6 +55,10 @@ namespace ecologylab.serialization
         private Type fieldDescriptorClass;
         private Hint xmlHint;
         private object isEnum;
+
+	    Regex   regex;
+
+	    String  filterReplace;
 
         private String unresolvedScopeAnnotation = null;
 
@@ -1070,6 +1075,23 @@ namespace ecologylab.serialization
                 }
             }
             return scope != null;
+        }
+
+        public ScalarType GetScalarType()
+        {
+            return scalarType;
+        }
+
+        public Regex RegexPattern
+        {
+            get { return regex; }
+            set { regex = value; }
+        }
+
+        public String RegexReplacement
+        {
+            get { return filterReplace; }
+            set { filterReplace = value; }
         }
     }
 }

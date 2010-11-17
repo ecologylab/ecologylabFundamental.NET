@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using ecologylab.net;
 
 namespace ecologylab.serialization
 {
@@ -12,6 +13,6 @@ namespace ecologylab.serialization
     /// </summary>
     public interface IScalarUnmarshallingContext
     {
-        Uri UriContext();
+        ParsedUri UriContext();
     }
 }
