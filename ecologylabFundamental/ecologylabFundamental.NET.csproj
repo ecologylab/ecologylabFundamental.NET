@@ -65,6 +65,7 @@
     <Compile Include="ecologylab\attributes\Hint.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
+    <Compile Include="ecologylab\net\ParsedUri.cs" />
     <Compile Include="ecologylab\serialization\ClassDescriptor.cs" />
     <Compile Include="ecologylab\serialization\ElementState.cs" />
     <Compile Include="ecologylab\serialization\ElementStateJSONHandler.cs" />
