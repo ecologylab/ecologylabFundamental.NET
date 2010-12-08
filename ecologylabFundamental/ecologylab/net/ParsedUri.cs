@@ -11,9 +11,14 @@ namespace ecologylab.net
     /// </summary>
     public class ParsedUri : Uri
     {
-
+        #region Caches
+        
         String domain = null;
         String suffix = null;
+        String stripped = null;
+
+        #endregion
+
         /// <summary>
         /// 
         /// 
@@ -40,23 +45,27 @@ namespace ecologylab.net
         /// Domain name.
         /// </summary>
         /// <returns></returns>
-        public String Domain()
+        public String Domain
         {
-            String result = domain;
-            if (result == null)
+            get 
             {
-                if (!Host.Contains('.'))
-                    result = Host;
-                else 
+                String result = domain;
+                if (result == null)
                 {
-                    //Guaranteed to have an array of atleast length two
-                    string[] domains = this.Host.Split('.');
-                    result = domains[domains.Length - 2] + "." + domains[domains.Length - 1];
+                    if (!Host.Contains('.'))
+                        result = Host;
+                    else
+                    {
+                        //Guaranteed to have an array of atleast length two
+                        string[] domains = this.Host.Split('.');
+                        result = domains[domains.Length - 2] + "." + domains[domains.Length - 1];
+                    }
+                    domain = result;
                 }
-                domain = result;
-            }
 
-            return result;
+                return result;
+            }
+            
         }
 
 
@@ -65,21 +74,43 @@ namespace ecologylab.net
         /// otherwise returns a blank string ""
         /// </summary>
         /// <returns></returns>
-        public String Suffix()
+        public String Suffix
         {
-            String result = suffix;
-            if (result == null)
+            get 
             {
-                //Use System.Uri vars to help
-                String lastSegment = Segments[Segments.Length - 1];
-                int lastIndexOfDot = lastSegment.LastIndexOf('.');
-                if (lastIndexOfDot > -1)
-                    result = lastSegment.Substring(lastIndexOfDot + 1);
-                else
-                    result = "";
-                suffix = result;
+                String result = suffix;
+                if (result == null)
+                {
+                    //Use System.Uri vars to help
+                    String lastSegment = Segments[Segments.Length - 1];
+                    int lastIndexOfDot = lastSegment.LastIndexOf('.');
+                    if (lastIndexOfDot > -1)
+                        result = lastSegment.Substring(lastIndexOfDot + 1);
+                    else
+                        result = "";
+                    suffix = result;
+                }
+                return result;
             }
-            return result;
+            
+        }
+
+        /// <summary>
+        /// Syntactic sugar and lazy eval on System.Uri.GetLeftPart(UriPartial.Path) 
+        /// </summary>
+        public String Stripped 
+        {
+            get 
+            {
+                string result = stripped;
+                if (result == null)
+                {
+                    result = GetLeftPart(UriPartial.Path);
+                    stripped = result;
+                }
+
+                return stripped; 
+            }
         }
     }
 }

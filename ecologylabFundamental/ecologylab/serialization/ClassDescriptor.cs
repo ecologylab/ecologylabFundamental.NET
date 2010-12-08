@@ -177,7 +177,17 @@ namespace ecologylab.serialization
             {
                 if (!globalClassDescriptorsMap.TryGetValue(className, out result))
                 {
-                    result = new ClassDescriptor(thatClass);
+                    simpl_descriptor_classes descriptorsAnnotation = (simpl_descriptor_classes)XMLTools.GetAnnotation(thatClass, typeof(simpl_descriptor_classes));
+                    if (descriptorsAnnotation == null) 
+                        result = new ClassDescriptor(thatClass);
+                    else
+                    {
+                        //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
+                        Type classDescriptorClass   = descriptorsAnnotation.Classes[0];
+                        Type annotatedClass                = descriptorsAnnotation.Classes[1];
+                        object obj = Activator.CreateInstance(classDescriptorClass, new object[] { thatClass });;
+                        result = (ClassDescriptor)obj;
+                    }
                     globalClassDescriptorsMap.Add(className, result);
                     result.DeriveAndOrganizeFieldsRecursive(thatClass, null);
                     result.isGetAndOrganizeComplete = true;
@@ -325,6 +335,26 @@ namespace ecologylab.serialization
                 return null;
         }
 
+        /// <summary>
+        /// Iterator through all these fields
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<FieldDescriptor> GetAllFields()
+        {
+
+            if (unresolvedScopeAnnotationFDs != null)
+            {
+                ResolveUnresolvedScopeAnnotationFDs();
+            }
+            foreach (FieldDescriptor fd in allFieldDescriptorsByTagNames.Values)
+            {
+                if (fd == null)
+                    continue;
+                yield return fd;
+            }
+            yield break;
+        }
+
         private void ResolveUnresolvedScopeAnnotationFDs()
         {
             if (unresolvedScopeAnnotationFDs != null)
@@ -393,6 +423,16 @@ namespace ecologylab.serialization
             }
         }
 
+        public IEnumerable<FieldDescriptor> AllFieldDescriptors
+        {
+            get
+            {
+                foreach (FieldDescriptor fd in attributeFieldDescriptors)
+                    yield return fd;
+                foreach (FieldDescriptor fd in elementFieldDescriptors)
+                    yield return fd;
+            }
+        }
         /// <summary>
         ///     Gets the type of the class described by this <c>ClassDescriptor</c>
         /// </summary>

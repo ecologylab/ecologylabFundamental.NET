@@ -322,7 +322,9 @@ namespace ecologylab.serialization
         /// <returns></returns>
         public ClassDescriptor GetClassDescriptorByTag(string tagName)
         {
-            return entriesByTag[tagName];
+            ClassDescriptor result = null;
+            entriesByTag.TryGetValue(tagName, out result);
+            return result;
         }
 
         /// <summary>

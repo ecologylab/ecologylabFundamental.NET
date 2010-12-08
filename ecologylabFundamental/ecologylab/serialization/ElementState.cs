@@ -606,5 +606,21 @@ namespace ecologylab.serialization
         }
 
         #endregion
+
+        public IEnumerable<Object> EnumerableFields
+        {
+            get
+            {
+                foreach (FieldDescriptor fd in elementClassDescriptor.AllFieldDescriptors)
+                {
+                    if (fd.WrappedFieldDescriptor != null)
+                        yield return fd.WrappedFieldDescriptor.Field.GetValue(this);
+                    yield return fd.Field.GetValue(this);
+                }
+
+
+                yield break;
+            }
+        }
     }
 }

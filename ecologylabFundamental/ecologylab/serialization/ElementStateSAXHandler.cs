@@ -211,6 +211,9 @@ namespace ecologylab.serialization
                     currentFieldDescriptor.WrappedFieldDescriptor : currentClassDescriptor.GetFieldDescriptorByTag(tagName);
             }
 
+            if (activeFieldDescriptor == null)
+                activeFieldDescriptor = FieldDescriptor.IGNORED_ELEMENT_FIELD_DESCRIPTOR;
+
             this.currentFieldDescriptor = activeFieldDescriptor;
             this.PushFieldDescriptor(activeFieldDescriptor);
 
