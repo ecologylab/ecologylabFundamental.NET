@@ -613,9 +613,21 @@ namespace ecologylab.serialization
             {
                 foreach (FieldDescriptor fd in elementClassDescriptor.AllFieldDescriptors)
                 {
+
+                    Object[] result = new Object[2];
+
                     if (fd.WrappedFieldDescriptor != null)
-                        yield return fd.WrappedFieldDescriptor.Field.GetValue(this);
-                    yield return fd.Field.GetValue(this);
+                    {
+                        result[0] = fd.WrappedFieldDescriptor;
+                        result[1] = fd.WrappedFieldDescriptor.Field.GetValue(this);
+                    }
+                    else
+                    {
+                        result[0] = fd;
+                        result[1] = fd.Field.GetValue(this);
+                    }
+                    if (result[1] != null)
+                        yield return result;
                 }
 
 
