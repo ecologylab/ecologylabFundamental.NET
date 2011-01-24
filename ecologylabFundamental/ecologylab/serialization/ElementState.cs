@@ -607,32 +607,112 @@ namespace ecologylab.serialization
 
         #endregion
 
-        public IEnumerable<Object> EnumerableFields
+
+        List<FieldEntry> cachedEnumerableFields;
+
+        /// <summary>
+        /// Enumerates over all the field descriptors,
+        /// first the attributeFieldDescriptors, then the elementFieldDescriptors
+        /// 
+        /// </summary>
+        public List<FieldEntry> EnumerableFields
         {
             get
             {
+                List<FieldEntry> result = cachedEnumerableFields;
+
+                if (result != null)
+                    return result;
+
+                result = new List<FieldEntry>();
                 foreach (FieldDescriptor fd in elementClassDescriptor.AllFieldDescriptors)
                 {
 
-                    Object[] result = new Object[2];
+                    FieldEntry entry = new FieldEntry();
 
                     if (fd.WrappedFieldDescriptor != null)
                     {
-                        result[0] = fd.WrappedFieldDescriptor;
-                        result[1] = fd.WrappedFieldDescriptor.Field.GetValue(this);
+                        entry.FD = fd.WrappedFieldDescriptor;
+                        entry.Value = fd.WrappedFieldDescriptor.Field.GetValue(this);
                     }
                     else
                     {
-                        result[0] = fd;
-                        result[1] = fd.Field.GetValue(this);
+                        entry.FD = fd;
+                        entry.Value = fd.Field.GetValue(this);
                     }
-                    if (result[1] != null)
-                        yield return result;
+                    if (entry.Value != null)
+                        result.Add(entry);
                 }
-
-
-                yield break;
+                cachedEnumerableFields = result;
+                return result;
             }
+        }
+
+        /// <summary>
+        /// Number of levels to the furthest child node.
+        /// FIXME: Handle cycles.
+        /// </summary>
+        public int TreeDepth
+        {
+            get
+            {
+                return GetTreeDepth();
+            }
+            
+
+        }
+
+        public int GetTreeDepth()
+        {
+            List<int> depths = new List<int>();
+            foreach (FieldEntry fieldEntry in EnumerableFields)
+            {
+                if (fieldEntry.Value == null)
+                    continue;
+
+                if (fieldEntry.Value is ElementState)
+                {
+                    int childDepth = (fieldEntry.Value as ElementState).TreeDepth;
+                    depths.Add(childDepth);
+                }
+                if (fieldEntry.FD.IsCollection)
+                {
+                    IList collection = (IList)fieldEntry.Value;
+                    if (collection.Count == 0)
+                        continue;
+
+                    if (typeof(ElementState).IsAssignableFrom(fieldEntry.FD.Field.FieldType.GetGenericArguments()[0]))
+                    {
+                        Console.WriteLine("Encountered collection of ElementState");
+                        foreach (ElementState item in collection)
+                        {
+                            depths.Add(item.TreeDepth + 1);
+                        }
+                    }
+                  
+                    collection.OfType<ElementState>();
+                }
+            }
+
+            return depths.Count == 0 ? 1 : depths.Max() + 1;
+        }
+    }
+
+    public struct FieldEntry
+    {
+        FieldDescriptor fd;
+        Object value;
+
+        public FieldDescriptor FD
+        {
+            get { return fd; }
+            set { fd = value; }
+        }
+
+        public Object Value
+        {
+            get { return value; }
+            set {this.value = value; }
         }
     }
 }
