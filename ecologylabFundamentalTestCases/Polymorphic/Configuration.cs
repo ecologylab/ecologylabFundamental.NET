@@ -39,7 +39,7 @@ namespace ecologylabFundamentalTestCases.Polymorphic
         internal void fillDictionary()
         {
             PrefDouble prefDouble = new PrefDouble();
-            prefDouble.Name = "index_thumb_dist";
+            prefDouble.Name = "index_thumb_dist \"now with a double quote\" and a 'single quote' ";
             prefDouble.Value = 200;
 
             Pref pref = new Pref();
