@@ -647,55 +647,6 @@ namespace ecologylab.serialization
                 return result;
             }
         }
-
-        /// <summary>
-        /// Number of levels to the furthest child node.
-        /// FIXME: Handle cycles.
-        /// </summary>
-        public int TreeDepth
-        {
-            get
-            {
-                return GetTreeDepth();
-            }
-            
-
-        }
-
-        public int GetTreeDepth()
-        {
-            List<int> depths = new List<int>();
-            foreach (FieldEntry fieldEntry in EnumerableFields)
-            {
-                if (fieldEntry.Value == null)
-                    continue;
-
-                if (fieldEntry.Value is ElementState)
-                {
-                    int childDepth = (fieldEntry.Value as ElementState).TreeDepth;
-                    depths.Add(childDepth);
-                }
-                if (fieldEntry.FD.IsCollection)
-                {
-                    IList collection = (IList)fieldEntry.Value;
-                    if (collection.Count == 0)
-                        continue;
-
-                    if (typeof(ElementState).IsAssignableFrom(fieldEntry.FD.Field.FieldType.GetGenericArguments()[0]))
-                    {
-                        Console.WriteLine("Encountered collection of ElementState");
-                        foreach (ElementState item in collection)
-                        {
-                            depths.Add(item.TreeDepth + 1);
-                        }
-                    }
-                  
-                    collection.OfType<ElementState>();
-                }
-            }
-
-            return depths.Count == 0 ? 1 : depths.Max() + 1;
-        }
     }
 
     public struct FieldEntry

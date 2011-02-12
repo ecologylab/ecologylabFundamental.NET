@@ -31,12 +31,9 @@ namespace ecologylab.serialization.types.scalar
             Object result = null;
             try
             {
-                if (scalarUnmarshallingContext != null)
-                {
-                    ParsedUri baseUri = scalarUnmarshallingContext.UriContext();
-                    if (baseUri != null)
-                        result = new ParsedUri(baseUri, value);
-                }
+                ParsedUri baseUri = scalarUnmarshallingContext.UriContext();
+                if (baseUri != null)
+                    result = new ParsedUri(baseUri, value);
                 else
                     result = new ParsedUri(value);
             }
