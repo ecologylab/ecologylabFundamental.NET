@@ -25,13 +25,16 @@ namespace ecologylab.serialization.types.scalar
         /// </summary>
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
+        /// <param name="scalarUnmarshallingContext"></param>
         /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             Object result = null;
             try
             {
-                ParsedUri baseUri = scalarUnmarshallingContext.UriContext();
+                ParsedUri baseUri = null;
+                if(scalarUnmarshallingContext != null)
+                    baseUri = scalarUnmarshallingContext.UriContext();
                 if (baseUri != null)
                     result = new ParsedUri(baseUri, value);
                 else
