@@ -5,12 +5,16 @@ using System.Text;
 
 namespace ecologylab.generic
 {
+    public interface IDictionaryList
+    {
+        void Add(object key, object value);
+    }
     /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="K"></typeparam>
     /// <typeparam name="V"></typeparam>
-    public class DictionaryList<K, V> : Dictionary<K, V>
+    public class DictionaryList<K, V> : Dictionary<K, V>, IDictionaryList
     {
         /// <summary>
         /// 
@@ -34,20 +38,25 @@ namespace ecologylab.generic
             arrayList = new List<V>(capacity);
         }
 
+        public void Add(object key, object value)
+        {
+            this.Add((K) key, (V) value);
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        new public V Add(K key, V value)
+        new public void Add(K key, V value)
         {
-            V oldValue = this.Remove(key);
+            this.Remove(key);
             
             base.Add(key, value);
             arrayList.Add(value);
 
-            return oldValue;
+            //return oldValue;
         }
 
         /// <summary>
@@ -55,7 +64,7 @@ namespace ecologylab.generic
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        new public V Remove(K key)
+        new public bool Remove(K key)
         {
             V oldValue = default(V);
             
@@ -63,9 +72,10 @@ namespace ecologylab.generic
             {
                 base.Remove(key);
                 arrayList.Remove(oldValue);
+                return true;
             }
 
-            return oldValue;
+            return false;
         }
 
         /// <summary>
@@ -91,5 +101,14 @@ namespace ecologylab.generic
         {
             get { return arrayList; }
         }
+
+        public void PutAll(DictionaryList<K, V> otherList)
+        {
+            foreach(K key in otherList.Keys)
+            {
+                this.Add(key, otherList[key]);
+            }
+        }
+
     }
 }
