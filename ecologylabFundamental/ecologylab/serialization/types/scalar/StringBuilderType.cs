@@ -1,4 +1,7 @@
-﻿using System;
+﻿
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +11,13 @@ namespace ecologylab.serialization.types.scalar
     /// <summary>
     ///     Class abstracting C# Float type
     /// </summary>
-    class StringType : ScalarType
+    class StringBuilderType : ScalarType
     {
         /// <summary>
         ///      Calls the parent constructor for String type
         /// </summary>
-        public StringType()
-            : base(typeof(String))
+        public StringBuilderType()
+            : base(typeof(StringBuilder))
         { }
 
         /// <summary>
@@ -25,6 +28,6 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="formatStrings"></param>
         /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
-        { return value; }
+        { return new StringBuilder(value); }
     }
 }

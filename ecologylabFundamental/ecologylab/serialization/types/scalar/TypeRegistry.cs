@@ -31,7 +31,8 @@ namespace ecologylab.serialization.types.scalar
             typeof(BooleanType),
             typeof(ScalarTypeType),
             typeof(EnumeratedType),
-            typeof(RegexType)
+            typeof(RegexType),
+            typeof(StringBuilderType)
         };
 
         /// <summary>
