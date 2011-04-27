@@ -35,6 +35,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AsyncCtpLibrary">
+      <HintPath>..\..\..\..\Microsoft Visual Studio Async CTP\Samples\AsyncCtpLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="LitJson, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\LitJson.dll</HintPath>
@@ -66,45 +69,154 @@
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
     <Compile Include="ecologylab\net\ParsedUri.cs" />
-    <Compile Include="ecologylab\serialization\ClassDescriptor.cs" />
-    <Compile Include="ecologylab\serialization\ElementState.cs" />
-    <Compile Include="ecologylab\serialization\ElementStateJSONHandler.cs" />
-    <Compile Include="ecologylab\serialization\ElementStateSAXHandler.cs" />
-    <Compile Include="ecologylab\serialization\FieldDescriptor.cs" />
-    <Compile Include="ecologylab\serialization\FieldTypes.cs" />
-    <Compile Include="ecologylab\serialization\json\IJSONContentHandler.cs" />
-    <Compile Include="ecologylab\serialization\json\IJSONErrorHandler.cs" />
-    <Compile Include="ecologylab\serialization\json\JSONParser.cs" />
-    <Compile Include="ecologylab\serialization\IScalarUnmarshallingContext.cs" />
-    <Compile Include="ecologylab\serialization\types\element\Mappable.cs" />
-    <Compile Include="ecologylab\serialization\library\Rss\Channel.cs" />
-    <Compile Include="ecologylab\serialization\library\Rss\Item.cs" />
-    <Compile Include="ecologylab\serialization\library\Rss\RssState.cs" />
-    <Compile Include="ecologylab\serialization\library\Rss\RssTranslations.cs" />
-    <Compile Include="ecologylab\serialization\library\Schmannel\BItem.cs" />
-    <Compile Include="ecologylab\serialization\library\Schmannel\Schmannel.cs" />
-    <Compile Include="ecologylab\serialization\library\Schmannel\SchmannelTranslations.cs" />
-    <Compile Include="ecologylab\serialization\library\Schmannel\SchmItem.cs" />
-    <Compile Include="ecologylab\serialization\sax\ISAXContentHandler.cs" />
-    <Compile Include="ecologylab\serialization\sax\ISAXErrorHandler.cs" />
-    <Compile Include="ecologylab\serialization\sax\SAXHelpers.cs" />
-    <Compile Include="ecologylab\serialization\sax\SAXParser.cs" />
-    <Compile Include="ecologylab\serialization\TranslationScope.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\BooleanType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\DoubleType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\EnumeratedType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\FloatType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\IntType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\LongType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\ReferenceType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\RegexType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\ScalarType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\ScalarTypeType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\StringType.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\TypeRegistry.cs" />
-    <Compile Include="ecologylab\serialization\types\scalar\UriType.cs" />
-    <Compile Include="ecologylab\serialization\XMLTools.cs" />
+    <Compile Include="ecologylab\oodss\logging\Epilogue.cs" />
+    <Compile Include="ecologylab\oodss\logging\LogEvent.cs" />
+    <Compile Include="ecologylab\oodss\logging\LogOps.cs" />
+    <Compile Include="ecologylab\oodss\logging\LogueMessage.cs" />
+    <Compile Include="ecologylab\oodss\logging\Prologue.cs" />
+    <Compile Include="ecologylab\oodss\logging\SendEpilogue.cs" />
+    <Compile Include="ecologylab\oodss\logging\SendPrologue.cs" />
+    <Compile Include="ecologylab\oodss\messages\BadSemanticContentResponse.cs" />
+    <Compile Include="ecologylab\oodss\messages\CfCollaborationGetSurrogate.cs" />
+    <Compile Include="ecologylab\oodss\messages\CloseMessage.cs" />
+    <Compile Include="ecologylab\oodss\messages\ContinuedHTTPGetRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\DisconnectRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\ErrorResponse.cs" />
+    <Compile Include="ecologylab\oodss\messages\ExplanationResponse.cs" />
+    <Compile Include="ecologylab\oodss\messages\HttpGetRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\HttpRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\IgnoreRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\InitConnectionRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\InitConnectionResponse.cs" />
+    <Compile Include="ecologylab\oodss\messages\OkResponse.cs" />
+    <Compile Include="ecologylab\oodss\messages\Ping.cs" />
+    <Compile Include="ecologylab\oodss\messages\PingRequest.cs" />
+    <Compile Include="ecologylab\oodss\messages\Pong.cs" />
+    <Compile Include="ecologylab\oodss\messages\RequestMessage.cs" />
+    <Compile Include="ecologylab\oodss\messages\ResponseMessage.cs" />
+    <Compile Include="ecologylab\oodss\messages\ServiceMessage.cs" />
+    <Compile Include="ecologylab\oodss\messages\UpdateMessage.cs" />
+    <Compile Include="ecologylab\oodss\messages\UrlMessage.cs" />
+    <Compile Include="ecologylab\oodss\OODSSClient.cs" />
+    <Compile Include="ecologylab\serialization\ClassDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\ElementState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\ElementStateJSONHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\ElementStateSAXHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\FieldDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\FieldTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\IScalarUnmarshallingContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\json\IJSONContentHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\json\IJSONErrorHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\json\JSONParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Rss\Channel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Rss\Item.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Rss\RssState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Rss\RssTranslations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Schmannel\BItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Schmannel\Schmannel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Schmannel\SchmannelTranslations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\library\Schmannel\SchmItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\sax\ISAXContentHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\sax\ISAXErrorHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\sax\SAXHelpers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\sax\SAXParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\TranslationScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\element\Mappable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\BooleanType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\DoubleType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\EnumeratedType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\FloatType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\IntType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\LongType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\ReferenceType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\RegexType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\ScalarType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\ScalarTypeType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\StringBuilderType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\StringType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\TypeRegistry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\types\scalar\UriType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ecologylab\serialization\XMLTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ecologylab\oodss\tscope\OODSSMessages.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\LitJson.dll" />
