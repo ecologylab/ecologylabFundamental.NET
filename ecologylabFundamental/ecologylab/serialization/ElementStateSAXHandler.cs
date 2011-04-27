@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections;
 using ecologylab.serialization.types.element;
 using ecologylab.net;
+using ecologylab.generic;
 
 namespace ecologylab.serialization
 {
@@ -273,8 +274,19 @@ namespace ecologylab.serialization
                     if (currentElementState is Mappable)
                     {
                         Object key = ((Mappable)currentElementState).key();
-                        IDictionary dict = (IDictionary)currentFieldDescriptor.AutomaticLazyGetCollectionOrDict(parentElementState);
-                        dict.Add(key, currentElementState);
+                        Object collection = currentFieldDescriptor.AutomaticLazyGetCollectionOrDict(parentElementState);
+                        // because c# casting causes the wrong add method call
+                        if (collection is IDictionaryList)
+                        {
+                            IDictionaryList dict = (IDictionaryList)collection;
+                            dict.Add(key, currentElementState);
+                        }
+                        else
+                        {
+                            IDictionary dict = (IDictionary)collection;
+                            dict.Add(key, currentElementState);
+                        }
+
                     }
                     this.currentElementState = this.currentElementState.Parent;
                     break;

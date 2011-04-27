@@ -19,8 +19,10 @@ using ecologylab.oodss.messages;
  
 public class OODSSClient {
     Socket clientSocket;
-    public Task StartClient(string host,int port) {
-        try {
+    public Task StartClient(string host,int port) 
+    {
+        try 
+        {
             IPHostEntry ipHostInfo = Dns.Resolve(host);//"achilles.cse.tamu.edu");
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
@@ -32,53 +34,52 @@ public class OODSSClient {
         return null;
     }
     
-    async public Task<ElementState> GetResponse(ElementState request,TranslationScope ts=null)
+    public ElementState GetResponse(ElementState request,TranslationScope ts=null)
     {
         TranslationScope tsf = OODSSMessages.Get();
         if (ts != null)
             tsf.AddTranslations(ts); 
-        ElementState ret = null;
+        ElementState responseElementState = null;
         try
         {
 
-        //push
-        StringBuilder rq = new StringBuilder();
-        request.serializeToXML(rq);
-        clientSocket.Send(Encoding.ASCII.GetBytes(message_for_xml(rq.ToString())));
-        Console.WriteLine("Trying to send the string:");
+            //push
+            StringBuilder rq = new StringBuilder();
+            request.serializeToXML(rq);
+            clientSocket.Send(Encoding.ASCII.GetBytes(message_for_xml(rq.ToString())));
+            Console.WriteLine("Trying to send the string:");
 
-        //pull
-        byte[] data = new byte[1024*1024];
-        int receivedDataLength = clientSocket.Receive(data);
-        string stringData = Encoding.ASCII.GetString(data, 0, receivedDataLength);
-        Console.WriteLine(stringData);
+            //pull
+            byte[] data = new byte[1024*1024];
+            int receivedDataLength = clientSocket.Receive(data);
+            string stringData = Encoding.ASCII.GetString(data, 0, receivedDataLength);
+            Console.WriteLine(stringData);
         
-            //This is hacky but it works right now
-        FileStream fs = new FileStream(@"c:\temp\mcb.txt", FileMode.OpenOrCreate, FileAccess.Write);
-        //strip header info
-        int index = 0;
-        for (int i = 0; i < data.Length; i++)
-            if (data[i] == '<')
+                //This is hacky but it works right now
+            FileStream fs = new FileStream(@"c:\temp\mcb.txt", FileMode.OpenOrCreate, FileAccess.Write);
+            //strip header info
+            int index = 0;
+            for (int i = 0; i < data.Length; i++)
+                if (data[i] == '<')
+                {
+                    index = i;
+                    break;
+                }
+            byte[] shorter = new byte[data.Length - index];
+            for (int i = 0; i < shorter.Length; i++)
             {
-                index = i;
-                break;
+                shorter[i] = data[i + index];
             }
-        byte[] shorter = new byte[data.Length - index];
-        for (int i = 0; i < shorter.Length; i++)
-        {
-            shorter[i] = data[i + index];
-        }
-        fs.Write(shorter, 0, shorter.Length);
-        fs.Close();
-        
-        ret = tsf.deserialize(@"c:\temp\mcb.txt", Format.XML);
+            fs.Write(shorter, 0, shorter.Length);
+            fs.Close();
+            responseElementState = tsf.deserialize(@"c:\temp\mcb.txt", Format.XML);
         
         }
         catch (Exception e)
         {
             Console.WriteLine(e.ToString());
         }
-        return ret;
+        return responseElementState;
     }
     
     static int n=1;

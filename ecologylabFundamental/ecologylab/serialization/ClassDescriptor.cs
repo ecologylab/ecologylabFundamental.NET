@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 using ecologylab.generic;
 using ecologylab.attributes;
@@ -239,6 +237,7 @@ namespace ecologylab.serialization
             }
 
             FieldInfo[] fields = thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            
             foreach (FieldInfo thatField in fields)
             {
                 if ((thatField.IsStatic)) continue;

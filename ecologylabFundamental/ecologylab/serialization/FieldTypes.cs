@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ecologylab.serialization
+﻿namespace ecologylab.serialization
 {
     /// <summary>
     ///     
@@ -104,5 +99,6 @@ namespace ecologylab.serialization
         /// 
         /// </summary>
         public const int NAME_SPACE_LEAF_NODE = NAME_SPACE_MASK + SCALAR;
+
     }
 }
