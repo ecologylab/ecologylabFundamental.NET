@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Reflection;
 
@@ -215,7 +216,11 @@ namespace ecologylab.serialization.types
         /// <param name="needsEscaping"></param>
         public void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping)
         {
-            buffy.Append(Marshall(instance));
+            var marshalled = Marshall(instance);
+            if (!needsEscaping)
+                buffy.Append(marshalled);
+            else
+                buffy.Append(SecurityElement.Escape(marshalled));
         }
 
         /// <summary>

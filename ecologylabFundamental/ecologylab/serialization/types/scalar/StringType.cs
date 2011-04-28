@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 
 namespace ecologylab.serialization.types.scalar
@@ -25,6 +26,8 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="formatStrings"></param>
         /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
-        { return value; }
+        {
+            return value; 
+        }
     }
 }

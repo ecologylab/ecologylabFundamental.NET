@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using ecologylab.generic;
 using ecologylab.serialization.types;
@@ -49,7 +50,6 @@ namespace ecologylab.serialization
         private FieldInfo xmlTextScalarField;
 
         private Boolean isCDATA;
-        private ClassDescriptor classDescriptor;
         private FieldInfo thatField;
         private int fieldType;
         private Type fieldDescriptorClass;
@@ -371,10 +371,10 @@ namespace ecologylab.serialization
         /// <param name="scalarUnmarshallingContext"></param>
         public void SetFieldToScalar(ElementState context, String value, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            if ((value == null))
-            {
+            if (value == null)
                 return;
-            }
+
+
             if (setValueMethod != null)
             {
                 Object[] args = new Object[1];
@@ -384,7 +384,8 @@ namespace ecologylab.serialization
             }
             else if (scalarType != null && !scalarType.IsMarshallOnly)
             {
-                scalarType.SetField(context, field, value, null, scalarUnmarshallingContext);
+                var UGLY_UNESCAPING = value.Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
+                scalarType.SetField(context, field, UGLY_UNESCAPING, null, scalarUnmarshallingContext);
             }
         }
 
@@ -639,7 +640,7 @@ namespace ecologylab.serialization
         private ScalarType DeriveCollectionScalar(Type collectionScalarClass, FieldInfo field)
         {
             ScalarType result = TypeRegistry.GetType(collectionScalarClass);
-            if (result == null)
+            if (result != null)
             {
                 needsEscaping = result.NeedsEscaping;
                 format = XMLTools.GetFormatAnnotation(field);
@@ -831,6 +832,11 @@ namespace ecologylab.serialization
             }
         }
 
+        public bool IsScalar
+        {
+            get { return scalarType != null; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -940,6 +946,11 @@ namespace ecologylab.serialization
             {
                 xmlHint = value;
             }
+        }
+
+        public ClassDescriptor ClassDescriptor
+        {
+            get { return elementClassDescriptor; }
         }
 
         #endregion

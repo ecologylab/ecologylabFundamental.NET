@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Reflection;
 using ecologylab.generic;
 using ecologylab.attributes;
@@ -96,6 +98,17 @@ namespace ecologylab.serialization
         /// </summary>
         private List<FieldDescriptor> elementFieldDescriptors = new List<FieldDescriptor>();
 
+        /**
+	     * Map of FieldToXMLOptimizations, with field names as keys.
+	     * 
+	     * Used to optimize translateToXML(). Also handy for providing functionality like associative
+	     * arrays in Perl, JavaScript, PHP, ..., but with less overhead, because the hashtable is only
+	     * maintained per class, not per instance.
+	     */
+	    [simpl_nowrap]
+	    [simpl_map("field_descriptor")]
+        private DictionaryList<String, FieldDescriptor> _fieldDescriptorsByFieldName = new DictionaryList<String, FieldDescriptor>();
+
         /// <summary>
         ///     Static dictionary containing all the <c>ClassDescriptors</c>, with their 
         ///     tagNames. This is used for fast access to class descriptors.
@@ -105,6 +118,7 @@ namespace ecologylab.serialization
 
         private List<FieldDescriptor> unresolvedScopeAnnotationFDs = null;
 
+        private FieldDescriptor scalarValueFieldDescriptor = null;
 
         #endregion
 
@@ -176,18 +190,20 @@ namespace ecologylab.serialization
                 if (!globalClassDescriptorsMap.TryGetValue(className, out result))
                 {
                     simpl_descriptor_classes descriptorsAnnotation = (simpl_descriptor_classes)XMLTools.GetAnnotation(thatClass, typeof(simpl_descriptor_classes));
+                    Type fieldDesctriptorType = null;
                     if (descriptorsAnnotation == null) 
                         result = new ClassDescriptor(thatClass);
                     else
                     {
                         //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
                         Type classDescriptorClass   = descriptorsAnnotation.Classes[0];
-                        Type annotatedClass                = descriptorsAnnotation.Classes[1];
+                        fieldDesctriptorType = descriptorsAnnotation.Classes[1];
                         object obj = Activator.CreateInstance(classDescriptorClass, new object[] { thatClass });;
                         result = (ClassDescriptor)obj;
                     }
                     globalClassDescriptorsMap.Add(className, result);
-                    result.DeriveAndOrganizeFieldsRecursive(thatClass, null);
+                    
+                    result.DeriveAndOrganizeFieldsRecursive(thatClass, fieldDesctriptorType);
                     result.isGetAndOrganizeComplete = true;
                 }
             }
@@ -234,10 +250,10 @@ namespace ecologylab.serialization
 
                 if (superClass != null)
                     DeriveAndOrganizeFieldsRecursive(superClass, fieldDescriptorClass);
+
             }
 
             FieldInfo[] fields = thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            
             foreach (FieldInfo thatField in fields)
             {
                 if ((thatField.IsStatic)) continue;
@@ -264,7 +280,7 @@ namespace ecologylab.serialization
                 if (fieldType == UNSET_TYPE)
                     continue; //not a simpl serialization annotated field
 
-                FieldDescriptor fieldDescriptor = new FieldDescriptor(this, thatField, fieldType);
+                FieldDescriptor fieldDescriptor = NewFieldDescriptor(thatField, fieldType, fieldDescriptorClass);
 
                 if (fieldDescriptor.Type == SCALAR)
                 {
@@ -286,13 +302,21 @@ namespace ecologylab.serialization
                 else
                     elementFieldDescriptors.Add(fieldDescriptor);
 
+                if (XMLTools.IsCompositeAsScalarValue(thatField))
+                {
+                    scalarValueFieldDescriptor = fieldDescriptor;
+                }
+
+                
+                _fieldDescriptorsByFieldName.Add(thatField.Name, fieldDescriptor);
+
                 if (fieldDescriptor.IsMarshallOnly)
                     continue;
 
                 String fieldTagName = fieldDescriptor.TagName;
                 if (fieldDescriptor.IsWrapped)
                 {
-                    FieldDescriptor wrapper = new FieldDescriptor(this, fieldDescriptor, fieldTagName);
+                    FieldDescriptor wrapper = NewFieldDescriptor(fieldDescriptor, fieldTagName, fieldDescriptorClass);
                     MapTagToFdForTranslateFrom(fieldTagName, wrapper);
                 }
                 else if (!fieldDescriptor.IsPolymorphic)
@@ -332,6 +356,20 @@ namespace ecologylab.serialization
                 return allFieldDescriptorsByTagNames[tagName];
             else
                 return null;
+        }
+
+        /// <summary>
+        ///     Public method to get the field descriptor from its field name.
+        /// <param name="tagName">
+        ///     <c>String</c> tagName for to find the associated <c>FieldDescriptor</c>
+        /// </param>
+        /// <returns></returns>
+        public FieldDescriptor getFieldDescriptorByFieldName(String fieldName)
+        {
+            FieldDescriptor result = null;
+            _fieldDescriptorsByFieldName.TryGetValue(fieldName, out result);
+
+            return result;
         }
 
         /// <summary>
@@ -392,6 +430,32 @@ namespace ecologylab.serialization
 
             allFieldDescriptorsByTagNames.Add(tagName, fdToMap);
             
+        }
+
+        private FieldDescriptor NewFieldDescriptor(FieldInfo thatField, Int16 annotationType, Type fieldDescriptorClass)
+	    {
+		    if (fieldDescriptorClass == null)
+			    return new FieldDescriptor(this, thatField, annotationType);
+
+		    Object[] args = new Object[3];
+		    args[0] = this;
+		    args[1] = thatField;
+		    args[2] = annotationType;
+
+            return (FieldDescriptor)Activator.CreateInstance(fieldDescriptorClass, args);
+	    }
+
+        protected FieldDescriptor NewFieldDescriptor(FieldDescriptor wrappedFD, String wrapperTag, Type fieldDescriptorClass)
+        {
+            if (fieldDescriptorClass == null)
+			return new FieldDescriptor(this, wrappedFD, wrapperTag);
+
+		    Object[] args = new Object[3];
+		    args[0] = this;
+		    args[1] = wrappedFD;
+		    args[2] = wrapperTag;
+
+            return (FieldDescriptor) Activator.CreateInstance(fieldDescriptorClass, args);
         }
 
         #endregion
@@ -521,6 +585,12 @@ namespace ecologylab.serialization
                 scalarTextFD = value;
             }
         
+        }
+
+        public FieldDescriptor ScalarValueFieldDescriptor
+        {
+            get { return scalarValueFieldDescriptor; }
+            set { scalarValueFieldDescriptor = value; }
         }
 
         #endregion       

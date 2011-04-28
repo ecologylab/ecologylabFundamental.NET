@@ -29,7 +29,7 @@ namespace ecologylab.serialization
         /// <summary>
         ///     A files stream object to read XML files.
         /// </summary>
-        private FileStream inputFileStream;
+        private Stream inputFileStream;
 
         /// <summary>
         ///     Used the unmarshalling context. The root which holds the final
@@ -67,6 +67,9 @@ namespace ecologylab.serialization
         private StringBuilder currentTextValue = new StringBuilder(1024);
 
         private ParsedUri uriContext;
+
+        private IDeserializationHookStrategy deserializationHookStrategy;
+
         #endregion
 
         #region Constructors 
@@ -101,6 +104,15 @@ namespace ecologylab.serialization
             this.inputFileStream = File.OpenRead(url);
             this.translationScope = translationScope;
             this.uriContext = uriContext;
+        }
+
+        public ElementStateSAXHandler(Stream stream, TranslationScope translationScope, ParsedUri uriContext, IDeserializationHookStrategy deserializationHookStrategy = null)
+            : this()
+        {
+            this.inputFileStream = stream;
+            this.translationScope = translationScope;
+            this.uriContext = uriContext;
+            this.deserializationHookStrategy = deserializationHookStrategy;
         }
 
         /// <summary>
@@ -140,6 +152,12 @@ namespace ecologylab.serialization
         {
             this.inputFileStream = inputFileStream;
             this.translationScope = translationScope;
+            return Parse();
+        }
+
+        public ElementState Parse(IDeserializationHookStrategy deserializationHookStrategy)
+        {
+            this.deserializationHookStrategy = deserializationHookStrategy;
             return Parse();
         }
 
@@ -190,6 +208,8 @@ namespace ecologylab.serialization
                     {
                         tempRoot.SetupRoot();
                         SetRoot(tempRoot);
+                        if (deserializationHookStrategy != null)
+                            deserializationHookStrategy.deserializationPreHook(tempRoot, null);
                         tempRoot.TranslateAttributes(atts);
                         activeFieldDescriptor = rootClassDescriptor.PseudoFieldDescriptor;
                     }
@@ -249,6 +269,9 @@ namespace ecologylab.serialization
 
             if (childES != null)
             {
+                if (deserializationHookStrategy != null)
+                    deserializationHookStrategy.deserializationPreHook(childES, activeFieldDescriptor);
+
                 childES.TranslateAttributes(atts);
                 this.currentElementState = childES;
                 this.currentFieldDescriptor = activeFieldDescriptor;
@@ -286,12 +309,17 @@ namespace ecologylab.serialization
                             IDictionary dict = (IDictionary)collection;
                             dict.Add(key, currentElementState);
                         }
-
                     }
+                    currentElementState.DeserializationPostHook();
+                    if (deserializationHookStrategy != null)
+                        deserializationHookStrategy.deserializationPostHook(currentElementState, currentFieldDescriptor);
                     this.currentElementState = this.currentElementState.Parent;
                     break;
                 case COMPOSITE_ELEMENT:
                 case COLLECTION_ELEMENT:
+                    currentElementState.DeserializationPostHook();
+                    if (deserializationHookStrategy != null)
+                        deserializationHookStrategy.deserializationPostHook(currentElementState, currentFieldDescriptor);
                     this.currentElementState = this.currentElementState.Parent;
                     break;
                 default:
@@ -422,7 +450,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return this.currentElementState.ElementClassDescriptor;
+                return this.currentElementState.ClassDescriptor;
             }
         }
 
@@ -452,7 +480,8 @@ namespace ecologylab.serialization
         /// </summary>
         public void endDocument()
         {
-            //Do Nothing
+            if (root != null)
+                root.DeserializationPostHook();
         }
 
         /// <summary>

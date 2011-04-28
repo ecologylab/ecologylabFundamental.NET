@@ -41,7 +41,7 @@ namespace ecologylab.serialization
         /// 
         /// </summary>
         /// <param name="name"></param>
-        private TranslationScope(String name)
+        public TranslationScope(String name)
         {
             this.name = name;            
         }
@@ -51,7 +51,7 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="name"></param>
         /// <param name="inheritedTranslationScope"></param>
-        private TranslationScope(String name, TranslationScope inheritedTranslationScope)
+        public TranslationScope(String name, TranslationScope inheritedTranslationScope)
             : this(name)
         {
             AddTranslations(inheritedTranslationScope);
@@ -65,7 +65,7 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="name"></param>
         /// <param name="inheritedTranslationScopes"></param>
-        private TranslationScope(String name, params TranslationScope[] inheritedTranslationScopes)
+        public TranslationScope(String name, params TranslationScope[] inheritedTranslationScopes)
             : this(name)
         {
 
@@ -83,7 +83,7 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="name"></param>
         /// <param name="baseTranslationsSet"></param>
-        private TranslationScope(String name, List<TranslationScope> baseTranslationsSet)
+        public TranslationScope(String name, List<TranslationScope> baseTranslationsSet)
             : this(name)
         {
             foreach (TranslationScope thatTranslationScope in baseTranslationsSet)
@@ -96,7 +96,7 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="name"></param>
         /// <param name="translations"></param>
-        private TranslationScope(String name, params Type[] translations)
+        public TranslationScope(String name, params Type[] translations)
             : this(name, (TranslationScope[])null, translations)
         {
             AddTranslationScope(name);
@@ -108,7 +108,8 @@ namespace ecologylab.serialization
         /// <param name="name"></param>
         /// <param name="inheritedTranslationScopes"></param>
         /// <param name="translations"></param>
-        private TranslationScope(String name, TranslationScope[] inheritedTranslationScopes, Type[] translations) : this(name, inheritedTranslationScopes)
+        public TranslationScope(String name, TranslationScope[] inheritedTranslationScopes, Type[] translations)
+            : this(name, inheritedTranslationScopes)
         {   
 	         AddTranslations(translations);
         }
@@ -119,7 +120,7 @@ namespace ecologylab.serialization
         /// <param name="name"></param>
         /// <param name="inheritedTranslationsSet"></param>
         /// <param name="translations"></param>
-        private TranslationScope(String name, List<TranslationScope> inheritedTranslationsSet, Type[] translations)
+        public TranslationScope(String name, List<TranslationScope> inheritedTranslationsSet, Type[] translations)
             : this(name, inheritedTranslationsSet)
         {
 
@@ -134,7 +135,7 @@ namespace ecologylab.serialization
         /// <param name="name"></param>
         /// <param name="inheritedTranslationScope"></param>
         /// <param name="translation"></param>
-        private TranslationScope(String name, TranslationScope inheritedTranslationScope, Type translation)
+        public TranslationScope(String name, TranslationScope inheritedTranslationScope, Type translation)
             : this(name, inheritedTranslationScope)
         {
             AddTranslation(translation);
@@ -287,6 +288,16 @@ namespace ecologylab.serialization
             return result;
         }
 
+        public static TranslationScope Get(string name, TranslationScope inheritedScope, params Type[] translations)
+        {
+            TranslationScope result = null;
+            if (!allTranslationScopes.TryGetValue(name, out result))
+            {
+                result = new TranslationScope(name, inheritedScope, translations);
+            }
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -354,6 +365,14 @@ namespace ecologylab.serialization
                     ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(null, this, uriContext, jsonText:input);
                     return jsonHandler.Parse();
                     //break;
+                case Format.XML:
+
+                    using (Stream inputFileStream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
+                    {
+                        ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(inputFileStream, this, uriContext);
+                        return saxHandler.Parse();
+                    }
+                    
                 default:
                     return null;
             }
@@ -378,6 +397,21 @@ namespace ecologylab.serialization
                     return jsonHandler.Parse();
                 default: Console.WriteLine("invalid format");
                                    return null;
+            }
+        }
+
+        public ElementState deserialize(Stream stream, IDeserializationHookStrategy deserializationHookStrategy = null, Format format = Format.XML, ParsedUri uriContext = null)
+        {
+            switch (format)
+            {
+                case Format.XML:
+                    ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(stream, this, uriContext, deserializationHookStrategy);
+                    return saxHandler.Parse();
+                case Format.JSON:
+                    ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(stream), this, uriContext);
+                    return jsonHandler.Parse();
+                default: Console.WriteLine("invalid format");
+                    return null;
             }
         }
 

@@ -27,14 +27,14 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="needsEscaping"></param>
         public new void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping)
         {
-            String instaceString = Marshall(instance);
+            String instanceString = Marshall(instance);
             if (NeedsEscaping)
             {
-                XMLTools.EscapeXML(buffy, instaceString);
+                XMLTools.EscapeXML(buffy, instanceString);
             }
             else
             {
-                buffy.Append(instaceString);
+                buffy.Append(instanceString);
             }
         } 
     }

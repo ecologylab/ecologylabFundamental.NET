@@ -201,7 +201,7 @@ namespace ecologylab.serialization
         /// <param name="className"></param>
         /// <param name="suffix"></param>
         /// <returns></returns>
-        private static string GetXmlTagName(string className, string suffix)
+        public static string GetXmlTagName(string className, string suffix)
         {
             if ((suffix != null) && (className.EndsWith(suffix)))
             {
@@ -349,7 +349,10 @@ namespace ecologylab.serialization
 
         }
 
-
+        public static bool IsCompositeAsScalarValue(FieldInfo field)
+	    {
+		    return IsAnnotationPresent(field, typeof(simpl_composite_as_scalar));
+	    }
 
         const int ISO_LATIN1_START = 128;
         const char TAB = (char)0x09;
@@ -408,6 +411,35 @@ namespace ecologylab.serialization
                 }
             }
             return null;
+        }
+
+        public static String CamelCaseFromXMLElementName(String elementName, bool capsOn)
+        {
+            StringBuilder result = new StringBuilder(DEFAULT_TAG_LENGTH);
+
+            for (int i = 0; i < elementName.Length; i++)
+            {
+                char c = elementName[i];
+
+                if (capsOn)
+                {
+                    result.Append(Char.ToUpper(c));
+                    capsOn = false;
+                }
+                else
+                {
+                    if (c != '_')
+                        result.Append(c);
+                }
+                if (c == '_')
+                    capsOn = true;
+            }
+            return result.ToString();
+        }
+
+        public static String FieldNameFromElementName(String elementName)
+        {
+            return CamelCaseFromXMLElementName(elementName, false);
         }
 
     }

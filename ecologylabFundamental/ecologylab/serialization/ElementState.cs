@@ -103,7 +103,7 @@ namespace ecologylab.serialization
         public void serializeToXML(StringBuilder output)
         {
             if (output == null) throw new Exception("null : output object");
-            else serializeToXML(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
+            else serializeToXML(this.ClassDescriptor.PseudoFieldDescriptor, output);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace ecologylab.serialization
 
             fieldDescriptor.WriteElementStart(output);
 
-            List<FieldDescriptor> attributeFieldDescriptors = this.ElementClassDescriptor.AttributeFieldDescriptors;
+            List<FieldDescriptor> attributeFieldDescriptors = this.ClassDescriptor.AttributeFieldDescriptors;
             int numAttributes = attributeFieldDescriptors.Count;
 
             if (numAttributes > 0)
@@ -138,7 +138,7 @@ namespace ecologylab.serialization
                 }
             }
 
-            List<FieldDescriptor> elementFieldDescriptors = ElementClassDescriptor.ElementFieldDescriptors;
+            List<FieldDescriptor> elementFieldDescriptors = ClassDescriptor.ElementFieldDescriptors;
             int numElements = elementFieldDescriptors.Count;
 
             //FIXME -- get rid of old textNode stuff. it doesnt even work
@@ -246,7 +246,7 @@ namespace ecologylab.serialization
                                     // Type collectionElementClass = collectionSubElementState.GetClass();
 
                                     FieldDescriptor collectionElementFD = childFD.IsPolymorphic ?
-                                            collectionSubElementState.ElementClassDescriptor.PseudoFieldDescriptor :
+                                            collectionSubElementState.ClassDescriptor.PseudoFieldDescriptor :
                                             childFD;
 
                                     collectionSubElementState.serializeToXML(collectionElementFD, output);
@@ -261,7 +261,7 @@ namespace ecologylab.serialization
                         {
                             ElementState nestedES = (ElementState)thatReferenceObject;
                             FieldDescriptor nestedF2XO = childFD.IsPolymorphic ?
-                                    nestedES.ElementClassDescriptor.PseudoFieldDescriptor : childFD;
+                                    nestedES.ClassDescriptor.PseudoFieldDescriptor : childFD;
 
                             nestedES.serializeToXML(nestedF2XO, output);
                         }
@@ -285,7 +285,7 @@ namespace ecologylab.serialization
         public void serializeToJSON(StringBuilder output)
         {
             if (output == null) throw new Exception("null : output object");
-            else serializeToJSON(this.ElementClassDescriptor.PseudoFieldDescriptor, output);
+            else serializeToJSON(this.ClassDescriptor.PseudoFieldDescriptor, output);
         }
         private void serializeToJSON(FieldDescriptor fieldDescriptor, StringBuilder output)
         {
@@ -297,8 +297,8 @@ namespace ecologylab.serialization
         {
             fieldDescriptor.WriteJSONElementStart(output, withTag);
 
-            List<FieldDescriptor> elementFieldDescriptors = ElementClassDescriptor.ElementFieldDescriptors;
-            List<FieldDescriptor> attributeFieldDescriptors = ElementClassDescriptor.AttributeFieldDescriptors;
+            List<FieldDescriptor> elementFieldDescriptors = ClassDescriptor.ElementFieldDescriptors;
+            List<FieldDescriptor> attributeFieldDescriptors = ClassDescriptor.AttributeFieldDescriptors;
 
             int numAttributes = attributeFieldDescriptors.Count;
             int numElements = elementFieldDescriptors.Count;
@@ -450,7 +450,7 @@ namespace ecologylab.serialization
 
                             ElementState collectionSubElementState = (ElementState)next;
 
-                            FieldDescriptor collectionElementFD = collectionSubElementState.ElementClassDescriptor
+                            FieldDescriptor collectionElementFD = collectionSubElementState.ClassDescriptor
                                     .PseudoFieldDescriptor;
 
                             output.Append('{');
@@ -473,7 +473,7 @@ namespace ecologylab.serialization
 					elementsSerialized = true;
 
 					ElementState nestedES = (ElementState) thatReferenceObject;
-					FieldDescriptor nestedFD = childFD.IsPolymorphic ? nestedES.ElementClassDescriptor.PseudoFieldDescriptor : childFD;
+					FieldDescriptor nestedFD = childFD.IsPolymorphic ? nestedES.ClassDescriptor.PseudoFieldDescriptor : childFD;
 
                     nestedES.serializeToJSONRecursive(nestedFD, output, true);
 
@@ -491,11 +491,15 @@ namespace ecologylab.serialization
         /// <summary>
         ///     
         /// </summary>
-        public void preTranslationProcessingHook()
+        protected virtual void preTranslationProcessingHook()
         {
             //Inheriting class can override to execute custom functionality.
         }
 
+        public virtual void DeserializationPostHook()
+        {
+
+        }
 
         #endregion
 
@@ -536,7 +540,7 @@ namespace ecologylab.serialization
 
                 if (value != null)
                 {
-                    ClassDescriptor classDescriptor = this.ElementClassDescriptor;
+                    ClassDescriptor classDescriptor = this.ClassDescriptor;
                     FieldDescriptor fieldDescriptor = classDescriptor.GetFieldDescriptorByTag(tag);
 
                     if (fieldDescriptor == null)
@@ -569,7 +573,7 @@ namespace ecologylab.serialization
         {
             newChildElementState.elementById = elementById;
             newChildElementState.parent = this;
-            ClassDescriptor parentOptimizations = ElementClassDescriptor;
+            ClassDescriptor parentOptimizations = ClassDescriptor;
             newChildElementState.elementClassDescriptor = ClassDescriptor.GetClassDescriptor(newChildElementState);
         }
 
@@ -580,7 +584,7 @@ namespace ecologylab.serialization
         /// <summary>
         /// 
         /// </summary>
-        public ClassDescriptor ElementClassDescriptor
+        public ClassDescriptor ClassDescriptor
         {
             get
             {
@@ -601,7 +605,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return ElementClassDescriptor.HasScalarTextField;
+                return ClassDescriptor.HasScalarTextField;
             }
         }
 
@@ -666,4 +670,6 @@ namespace ecologylab.serialization
             set {this.value = value; }
         }
     }
+
+    
 }

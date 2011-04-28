@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="ecologylab\attributes\simpl_classes.cs" />
     <Compile Include="ecologylab\attributes\simpl_collection.cs" />
+    <Compile Include="ecologylab\attributes\simpl_composite_as_scalar.cs" />
     <Compile Include="ecologylab\attributes\simpl_descriptor_classes.cs" />
     <Compile Include="ecologylab\attributes\simpl_hints.cs" />
     <Compile Include="ecologylab\attributes\simpl_inherit.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="ecologylab\attributes\Hint.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
+    <Compile Include="ecologylab\generic\OneLevelNestingEnumerator.cs" />
     <Compile Include="ecologylab\net\ParsedUri.cs" />
     <Compile Include="ecologylab\oodss\logging\Epilogue.cs" />
     <Compile Include="ecologylab\oodss\logging\LogEvent.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="ecologylab\serialization\FieldTypes.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ecologylab\serialization\IDeserializationHookStrategy.cs" />
     <Compile Include="ecologylab\serialization\IScalarUnmarshallingContext.cs">
       <SubType>Code</SubType>
     </Compile>

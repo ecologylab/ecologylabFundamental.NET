@@ -83,6 +83,8 @@ namespace ecologylab.serialization
         /// In the rare cases that the text is directly available without a url/file, do not create a stream reader unnecessarily.
         /// </summary>
         private String jsonText;
+
+        private IDeserializationHookStrategy deserializationHookStrategy;
         #endregion
 
         #region Constructors
@@ -286,7 +288,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return this.currentElementState.ElementClassDescriptor;
+                return this.currentElementState.ClassDescriptor;
             }
         }
 
@@ -370,6 +372,8 @@ namespace ecologylab.serialization
                     {
                         tempRoot.SetupRoot();
                         SetRoot(tempRoot);
+                        if (deserializationHookStrategy != null)
+                            deserializationHookStrategy.deserializationPreHook(root, null);
                         activeFieldDescriptor = rootClassDescriptor.PseudoFieldDescriptor;
                     }
                     else
@@ -425,6 +429,10 @@ namespace ecologylab.serialization
 
             if (childES != null)
             {
+                // fill in its attributes
+                if (deserializationHookStrategy != null)
+                    deserializationHookStrategy.deserializationPreHook(childES, activeFieldDescriptor);
+
                 this.currentElementState = childES;
                 this.currentFieldDescriptor = activeFieldDescriptor;
             }
