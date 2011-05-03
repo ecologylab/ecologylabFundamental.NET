@@ -36,9 +36,9 @@ public class OODSSClient {
     
     public ElementState GetResponse(ElementState request,TranslationScope ts=null)
     {
-        TranslationScope tsf = OODSSMessages.Get();
+        TranslationScope translationScope = OODSSMessages.Get();
         if (ts != null)
-            tsf.AddTranslations(ts); 
+            translationScope.AddTranslations(ts); 
         ElementState responseElementState = null;
         try
         {
@@ -46,34 +46,21 @@ public class OODSSClient {
             //push
             StringBuilder rq = new StringBuilder();
             request.serializeToXML(rq);
-            clientSocket.Send(Encoding.ASCII.GetBytes(message_for_xml(rq.ToString())));
-            Console.WriteLine("Trying to send the string:");
+            String sendMessage = message_for_xml(rq.ToString());
+            Console.WriteLine("Trying to send the string:" + sendMessage);
+            clientSocket.Send(Encoding.ASCII.GetBytes(sendMessage));
+            
 
             //pull
             byte[] data = new byte[1024*1024];
             int receivedDataLength = clientSocket.Receive(data);
             string stringData = Encoding.ASCII.GetString(data, 0, receivedDataLength);
+            
+
+            stringData = stringData.Substring(stringData.IndexOf('<')-1);
             Console.WriteLine(stringData);
-        
-                //This is hacky but it works right now
-            FileStream fs = new FileStream(@"c:\temp\mcb.txt", FileMode.OpenOrCreate, FileAccess.Write);
-            //strip header info
-            int index = 0;
-            for (int i = 0; i < data.Length; i++)
-                if (data[i] == '<')
-                {
-                    index = i;
-                    break;
-                }
-            byte[] shorter = new byte[data.Length - index];
-            for (int i = 0; i < shorter.Length; i++)
-            {
-                shorter[i] = data[i + index];
-            }
-            fs.Write(shorter, 0, shorter.Length);
-            fs.Close();
-            responseElementState = tsf.deserialize(@"c:\temp\mcb.txt", Format.XML);
-        
+            responseElementState = translationScope.deserializeString(stringData, Format.XML);
+            return responseElementState;
         }
         catch (Exception e)
         {
