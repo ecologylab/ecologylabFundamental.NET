@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
 using ecologylab.oodss.messages;
+using System.Collections.Concurrent;
 /* 
  * 
  *  This is the initial OODSS for C#.  It uses the async library.
@@ -18,7 +19,8 @@ using ecologylab.oodss.messages;
  */
  
 public class OODSSClient {
-    Socket clientSocket;
+    public Socket clientSocket;
+
     public Task StartClient(string host,int port) 
     {
         try 
@@ -81,11 +83,71 @@ public class OODSSClient {
     {
     }
 
+    Thread workingThread;
+    static int callNumber = 0;    
     public OODSSClient(String host, int port)
     {
         StartClient(host, port);
         GetResponse(new InitConnectionRequest());
+        workingThread = new Thread(new ThreadStart(messageWorker));
+        blockingQueue = new BlockingCollection<QueueObject>();
+        blockingResponse = new BlockingCollection<ElementState>();
+        workingThread.Start();
+        
+    }
+       
+    
+    public async Task<ElementState> GetRequestAsync(ElementState elementState, TranslationScope translationScope)
+    {
+        int callNum = callNumber;
+        
+        //queue.Add(new QueueObject(elementState,translationScope,callNumber));
+        callNumber+=1;
+        QueueObject toTheQueue = new QueueObject(elementState, translationScope, callNumber);
+        blockingQueue.Add(toTheQueue);
+        ElementState elementStateResponse = null;
+        await TaskEx.Run(() => elementStateResponse=blockingResponse.Take());
+        return elementStateResponse;
     }
 
+    
 
+    struct QueueObject
+    {
+        public ElementState elementState;
+        public TranslationScope translationScope;
+        public int callNumber;
+        public ElementState response;
+        public QueueObject(ElementState elementState, TranslationScope translationScope, int callNumber)
+        {
+            this.elementState = elementState;
+            this.translationScope = translationScope;
+            this.callNumber = callNumber;
+            response = null;
+        }
+    }
+
+    BlockingCollection<QueueObject> blockingQueue;
+    BlockingCollection<ElementState> blockingResponse;
+    public void messageWorker()
+    {
+        while (true)
+        {
+            QueueObject q = blockingQueue.Take();
+            blockingResponse.Add( GetResponse(q.elementState,q.translationScope));
+        }
+    }
+
+    public void doWork()
+    {
+        //while (true)
+        for (int i = 0; i < 5; i++ )
+        {
+            Console.WriteLine("derp");
+            Thread.Sleep(500);
+            Console.WriteLine("dop");
+        }
+       // return 0;
+
+    }
 }
