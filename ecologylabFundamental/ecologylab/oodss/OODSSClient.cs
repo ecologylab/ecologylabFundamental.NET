@@ -95,22 +95,32 @@ public class OODSSClient {
         workingThread.Start();
         
     }
-       
-    
+
+    int lastServed = -1;
     public async Task<ElementState> GetRequestAsync(ElementState elementState, TranslationScope translationScope)
     {
         int callNum = callNumber;
         
         //queue.Add(new QueueObject(elementState,translationScope,callNumber));
         callNumber+=1;
+        await TaskEx.Run(() => pauseTillServedBlah(callNum));
         QueueObject toTheQueue = new QueueObject(elementState, translationScope, callNumber);
         blockingQueue.Add(toTheQueue);
         ElementState elementStateResponse = null;
         await TaskEx.Run(() => elementStateResponse=blockingResponse.Take());
+        lastServed = callNum;
         return elementStateResponse;
     }
 
-    
+    void pauseTillServedBlah(int i)
+    {
+        while (true)
+        {
+            if (lastServed == i - 1)
+                break;
+            Thread.Sleep(50);
+        }
+    }
 
     struct QueueObject
     {
