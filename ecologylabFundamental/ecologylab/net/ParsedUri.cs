@@ -84,10 +84,7 @@ namespace ecologylab.net
                     //Use System.Uri vars to help
                     String lastSegment = Segments[Segments.Length - 1];
                     int lastIndexOfDot = lastSegment.LastIndexOf('.');
-                    if (lastIndexOfDot > -1)
-                        result = lastSegment.Substring(lastIndexOfDot + 1);
-                    else
-                        result = "";
+                    result = lastIndexOfDot > -1 ? lastSegment.Substring(lastIndexOfDot + 1) : string.Empty;
                     suffix = result;
                 }
                 return result;

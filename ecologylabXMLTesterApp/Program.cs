@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ecologylab.attributes;
 using ecologylab.serialization.library;
 using System.IO;
 using ecologylab.serialization;
@@ -8,6 +9,28 @@ using ecologylab.serialization.library.Schmannel;
 
 namespace ecologylabXMLTesterApp
 {
+
+    public class SimplTest : ElementState
+    {
+        [simpl_collection("Some")]
+        [xml_tag("Some")]
+        public List<SimplItem> simplItems = new List<SimplItem>();
+    }
+
+    public class SimplItem : ElementState
+    {
+
+        [simpl_collection("Some")]
+        public List<SimplInnerItem> simplInnerItems = new List<SimplInnerItem>();
+        
+    }
+
+    public class SimplInnerItem : ElementState
+    {
+        [simpl_scalar]
+        public String test;
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -26,7 +49,30 @@ namespace ecologylabXMLTesterApp
 
             //Console.WriteLine("testing monomorphic colleciton");
             //Console.WriteLine();
-            MonomorphicTest();
+
+            SimplTest test = new SimplTest();
+
+            for (int i = 0; i < 10; i++)
+            {
+                SimplItem item = new SimplItem();
+                for (int j = 0; j < 10; j++)
+                {
+                    item.simplInnerItems.Add(new SimplInnerItem {test = "j " + j});
+                }
+                test.simplItems.Add(item);
+            }
+
+            var stringBuilder = new StringBuilder();
+            test.serializeToJSON(stringBuilder);
+
+            Console.WriteLine("buffy" + stringBuilder);
+
+            TranslationScope scop = new TranslationScope("chuut", typeof (SimplItem), typeof (SimplTest));
+
+            ElementState deserializeString = scop.deserializeString(stringBuilder.ToString(), Format.JSON);
+
+            Console.WriteLine("Done !");
+            //MonomorphicTest();
         }
 
         private static void PolymorphicTest()
@@ -36,7 +82,7 @@ namespace ecologylabXMLTesterApp
             * Simple test case poly-morphic collection 
             *             
             */
-            Item item = new Item("t2ec");
+            Item item = new Item("t2ec\" is an item");
             Item schmItem = new SchmItem("cf");
             Item nested = new BItem("nested");
 
@@ -95,7 +141,7 @@ namespace ecologylabXMLTesterApp
 
             channel.Title = "testTile";
             channel.Description = "testDescription";
-            channel.Link = new Uri("http://www.google.com");
+            //channel.Link = new Uri("http://www.google.com");
 
             categorySet.Add("category1");
             categorySet.Add("category2");

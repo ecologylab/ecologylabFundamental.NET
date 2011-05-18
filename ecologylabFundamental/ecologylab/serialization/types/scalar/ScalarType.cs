@@ -82,11 +82,10 @@ namespace ecologylab.serialization.types
                 return true;
 
             Boolean result = false;
-            Object referenceObject;
 
             try
             {
-                referenceObject = GetInstance(valueString, format, scalarUnmarshallingContext);
+                Object referenceObject = GetInstance(valueString, format, scalarUnmarshallingContext);
                 if (referenceObject != null)
                 {
                     field.SetValue(context, referenceObject);
@@ -120,7 +119,7 @@ namespace ecologylab.serialization.types
         /// <param name="e"></param>
         protected void SetFieldError(FieldInfo field, String value, Exception e)
         {
-            System.Console.WriteLine("Got " + e + " while trying to set field " + field + " to " + value);
+            Console.WriteLine("Got " + e + " while trying to set field " + field + " to " + value);
         }
 
         /// <summary>
@@ -192,10 +191,10 @@ namespace ecologylab.serialization.types
         /// <param name="buffy"></param>
         /// <param name="fieldDescriptor"></param>
         /// <param name="context"></param>
-        public void AppendValue(StringBuilder buffy, FieldDescriptor fieldDescriptor, ElementState context)
+        public void AppendValue(StringBuilder buffy, FieldDescriptor fieldDescriptor, ElementState context, Format format)
         {
             Object instance = fieldDescriptor.Field.GetValue(context);
-            AppendValue(instance, buffy, !fieldDescriptor.IsCDATA);
+            AppendValue(instance, buffy, !fieldDescriptor.IsCDATA, format);
         }
 
         /// <summary>
@@ -214,13 +213,27 @@ namespace ecologylab.serialization.types
         /// <param name="instance"></param>
         /// <param name="buffy"></param>
         /// <param name="needsEscaping"></param>
-        public void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping)
+        /// <param name="format">Format serializing to, each one has their own escaping requirements.</param>
+        public void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping, Format format)
         {
-            var marshalled = Marshall(instance);
+            String marshalled = Marshall(instance);
             if (!needsEscaping)
                 buffy.Append(marshalled);
             else
-                buffy.Append(SecurityElement.Escape(marshalled));
+            {
+
+                String result = null;
+                switch(format)
+                {
+                    case Format.XML:
+                        result = SecurityElement.Escape(marshalled);
+                        break;
+                    case Format.JSON:
+                        result = marshalled.Replace("\"", "\\\"");
+                        break;
+                }
+                buffy.Append(result);
+            }
         }
 
         /// <summary>
@@ -234,7 +247,7 @@ namespace ecologylab.serialization.types
         /// <returns></returns>
         public override string ToString()
         {
-            return this.GetType().Name;
+            return GetType().Name;
         }
 
         public string DefaultValueString { get { return DEFAULT_VALUE_STRING; } }

@@ -328,7 +328,7 @@ namespace ecologylab.serialization
                 catch(Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
-                    throw (ex);
+                    throw;
                 }
             }
 

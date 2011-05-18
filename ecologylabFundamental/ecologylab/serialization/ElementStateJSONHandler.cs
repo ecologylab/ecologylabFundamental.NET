@@ -390,9 +390,19 @@ namespace ecologylab.serialization
             {
                 ProcessPendingTextScalar(currentFieldDescriptor.Type, currentElementState, this);
                 ClassDescriptor currentClassDescriptor = CurrentClassDescriptor;
-                activeFieldDescriptor = ((currentFieldDescriptor != null) && (currentFieldDescriptor.Type == IGNORED_ELEMENT)) ?
-                    FieldDescriptor.IGNORED_ELEMENT_FIELD_DESCRIPTOR : (currentFieldDescriptor.Type == WRAPPER) ?
-                    currentFieldDescriptor.WrappedFieldDescriptor : currentClassDescriptor.GetFieldDescriptorByTag(key);
+                bool ignoredFieldDescriptor = ((currentFieldDescriptor != null) && (currentFieldDescriptor.Type == IGNORED_ELEMENT));
+                bool wrapperFieldDescriptor = (currentFieldDescriptor.Type == WRAPPER);
+                activeFieldDescriptor = 
+                    ignoredFieldDescriptor 
+                        ? FieldDescriptor.IGNORED_ELEMENT_FIELD_DESCRIPTOR 
+                        : wrapperFieldDescriptor 
+                            ? currentFieldDescriptor.WrappedFieldDescriptor 
+                            : currentClassDescriptor.GetFieldDescriptorByTag(key);
+            }
+
+            if (activeFieldDescriptor == null)
+            {
+                Console.WriteLine("Could not find activeFieldDescriptor for key : " + key);
             }
 
             this.currentFieldDescriptor = activeFieldDescriptor;
@@ -422,11 +432,11 @@ namespace ecologylab.serialization
                     if (dict != null)
                     {
                         childES = activeFieldDescriptor.ConstructChildElementState(
-                                currentElementState, key);
+                            currentElementState, key);
                     }
                     break;
-            }
 
+            }
             if (childES != null)
             {
                 // fill in its attributes
@@ -436,6 +446,7 @@ namespace ecologylab.serialization
                 this.currentElementState = childES;
                 this.currentFieldDescriptor = activeFieldDescriptor;
             }
+
         }
 
         /// <summary>

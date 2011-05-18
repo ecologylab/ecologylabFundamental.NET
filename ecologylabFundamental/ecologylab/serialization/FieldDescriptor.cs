@@ -173,7 +173,7 @@ namespace ecologylab.serialization
         }
 
         /// <summary>
-        /// 
+        /// Note: XML only method.
         /// </summary>
         /// <param name="buffy"></param>
         /// <param name="context"></param>
@@ -195,14 +195,14 @@ namespace ecologylab.serialization
                     buffy.Append('=');
                     buffy.Append('"');
 
-                    scalarType.AppendValue(buffy, this, context);
+                    scalarType.AppendValue(buffy, this, context, Format.XML);
                     buffy.Append('"');
                 }
             }
         }
 
         /// <summary>
-        /// 
+        /// Note: XML only method.
         /// </summary>
         /// <param name="output"></param>
         /// <param name="elementState"></param>
@@ -215,7 +215,7 @@ namespace ecologylab.serialization
                 {
                     if (isCDATA)
                         output.Append(START_CDATA);
-                    scalarType.AppendValue(output, this, elementState);
+                    scalarType.AppendValue(output, this, elementState, Format.XML);
                     if (isCDATA)
                         output.Append(END_CDATA);
                 }
@@ -223,7 +223,7 @@ namespace ecologylab.serialization
         }
 
         /// <summary>
-        /// 
+        /// Note: XML only method.
         /// </summary>
         /// <param name="output"></param>
         /// <param name="elementState"></param>
@@ -240,7 +240,7 @@ namespace ecologylab.serialization
 
                     if (isCDATA)
                         output.Append(START_CDATA);
-                    scalarType.AppendValue(output, this, elementState); // escape if not CDATA! :-)
+                    scalarType.AppendValue(output, this, elementState, Format.XML); // escape if not CDATA! :-)
                     if (isCDATA)
                         output.Append(END_CDATA);
 
@@ -281,7 +281,7 @@ namespace ecologylab.serialization
         }
 
         /// <summary>
-        /// 
+        /// Note: XML only method.
         /// </summary>
         /// <param name="buffy"></param>
         /// <param name="instance"></param>
@@ -294,7 +294,7 @@ namespace ecologylab.serialization
                 WriteOpenTag(buffy);
                 if (isCDATA)
                     buffy.Append(START_CDATA);
-                scalarType.AppendValue(instance, buffy, !isCDATA);
+                scalarType.AppendValue(instance, buffy, !isCDATA, Format.XML);
                 if (isCDATA)
                     buffy.Append(END_CDATA);
 
@@ -384,8 +384,9 @@ namespace ecologylab.serialization
             }
             else if (scalarType != null && !scalarType.IsMarshallOnly)
             {
-                var UGLY_UNESCAPING = value.Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
-                scalarType.SetField(context, field, UGLY_UNESCAPING, null, scalarUnmarshallingContext);
+                var UGLY_UNESCAPING = new StringBuilder(value).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
+                scalarType.SetField(context, field, UGLY_UNESCAPING.ToString(), null, scalarUnmarshallingContext);
+                //scalarType.SetField(context, field, value, null, scalarUnmarshallingContext);
             }
         }
 
@@ -973,6 +974,12 @@ namespace ecologylab.serialization
             return false;
         }
 
+        ///<summary>
+        /// Note: JSON Only method
+        ///</summary>
+        ///<param name="output"></param>
+        ///<param name="context"></param>
+        ///<param name="isFirst"></param>
         public void AppendValueAsJSONAttribute(StringBuilder output, ElementState context, bool isFirst)
         {
             if (context != null)
@@ -991,7 +998,7 @@ namespace ecologylab.serialization
                     output.Append(':');
                     output.Append('"');
 
-                    scalarType.AppendValue(output, this, context);
+                    scalarType.AppendValue(output, this, context, Format.JSON);
                     output.Append('"');
 
                 }
@@ -1036,7 +1043,7 @@ namespace ecologylab.serialization
 
                 ScalarType scalarType = this.scalarType;
                 output.Append('"');
-                scalarType.AppendValue(instance, output, false);
+                scalarType.AppendValue(instance, output, false, Format.JSON);
                 output.Append('"');
             }
         }
