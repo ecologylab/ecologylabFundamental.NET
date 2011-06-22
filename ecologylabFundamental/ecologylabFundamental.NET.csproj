@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AsyncCtpLibrary">
-      <HintPath>..\..\..\..\Documents\Microsoft Visual Studio Async CTP\Samples\AsyncCtpLibrary.dll</HintPath>
+      <HintPath>lib\AsyncCtpLibrary.dll</HintPath>
     </Reference>
     <Reference Include="LitJson, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -222,6 +222,7 @@
     <Compile Include="ecologylab\oodss\tscope\OODSSMessages.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\AsyncCtpLibrary.dll" />
     <Content Include="lib\LitJson.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
