@@ -61,12 +61,14 @@
     <Compile Include="ecologylab\attributes\simpl_map.cs" />
     <Compile Include="ecologylab\attributes\simpl_composite.cs" />
     <Compile Include="ecologylab\attributes\simpl_nowrap.cs" />
+    <Compile Include="ecologylab\attributes\simpl_use_equals_equals.cs" />
     <Compile Include="ecologylab\attributes\xml_other_tags.cs" />
     <Compile Include="ecologylab\attributes\simpl_scope.cs" />
     <Compile Include="ecologylab\attributes\xml_tag.cs" />
     <Compile Include="ecologylab\attributes\simpl_text.cs" />
     <Compile Include="ecologylab\attributes\simpl_wrap.cs" />
     <Compile Include="ecologylab\attributes\Hint.cs" />
+    <Compile Include="ecologylab\collections\MultiMap.cs" />
     <Compile Include="ecologylab\collections\Scope.cs" />
     <Compile Include="ecologylab\generic\DictionaryList.cs" />
     <Compile Include="ecologylab\generic\OneLevelNestingEnumerator.cs" />
@@ -167,6 +169,7 @@
     <Compile Include="ecologylab\serialization\sax\SAXParser.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ecologylab\serialization\TranslationContext.cs" />
     <Compile Include="ecologylab\serialization\TranslationScope.cs">
       <SubType>Code</SubType>
     </Compile>

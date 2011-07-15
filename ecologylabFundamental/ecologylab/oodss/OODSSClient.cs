@@ -47,7 +47,8 @@ public class OODSSClient {
 
             //push
             StringBuilder rq = new StringBuilder();
-            request.serializeToXML(rq);
+            request.serialize(rq, Format.XML);
+            //request.serializeToXML(rq);
             String sendMessage = message_for_xml(rq.ToString());
             Console.WriteLine("Trying to send the string:" + sendMessage);
             clientSocket.Send(Encoding.ASCII.GetBytes(sendMessage));
@@ -61,7 +62,7 @@ public class OODSSClient {
 
             stringData = stringData.Substring(stringData.IndexOf('<')-1);
             Console.WriteLine(stringData);
-            responseElementState = translationScope.deserializeString(stringData, Format.XML);
+            responseElementState = translationScope.deserializeString(stringData, new ecologylabFundamental.ecologylab.serialization.TranslationContext(),Format.XML);
             return responseElementState;
         }
         catch (Exception e)

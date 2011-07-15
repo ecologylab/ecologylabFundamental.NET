@@ -6,6 +6,7 @@ using ecologylab.collections;
 using System.Reflection;
 using System.IO;
 using ecologylab.net;
+using ecologylabFundamental.ecologylab.serialization;
 
 namespace ecologylab.serialization
 {
@@ -29,6 +30,19 @@ namespace ecologylab.serialization
         private Scope<Type> nameSpaceClassesByURN = new Scope<Type>();
 
         private List<ClassDescriptor> classDescriptors;
+
+        /// <summary>
+        /// Graph Switch enum
+        /// </summary>
+        public enum GRAPH_SWITCH
+        {
+            ON, OFF
+        }
+
+        /// <summary>
+        /// Initialising graph switch to be off by default
+        /// </summary>
+        public static GRAPH_SWITCH graphSwitch = GRAPH_SWITCH.OFF;
 
         /// <summary>
         /// 
@@ -357,7 +371,7 @@ namespace ecologylab.serialization
         /// <param name="format"></param>
         /// <param name="uriContext"></param>
         /// <returns></returns>
-        public ElementState deserializeString(String input, Format format, ParsedUri uriContext = null)
+        public ElementState deserializeString(String input, TranslationContext translationContext, Format format, ParsedUri uriContext = null)
         {
             switch(format)
             {
@@ -369,7 +383,7 @@ namespace ecologylab.serialization
 
                     using (Stream inputFileStream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
                     {
-                        ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(inputFileStream, this, uriContext);
+                        ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(inputFileStream, this, uriContext, translationContext);
                         return saxHandler.Parse();
                     }
                     
@@ -385,12 +399,12 @@ namespace ecologylab.serialization
         /// <param name="format">Format of the file</param>
         /// <param name="uriContext">Optional arguement to enable relative path resolution of Uris. (Which can be files or Urls)</param>
         /// <returns></returns>
-        public ElementState deserialize(String filePath, Format format = Format.XML, ParsedUri uriContext = null)
+        public ElementState deserialize(String filePath, TranslationContext translationContext, Format format = Format.XML, ParsedUri uriContext = null)
         {
             switch (format)
             {
                 case Format.XML :
-                    ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this, uriContext);
+                    ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(filePath, this, uriContext,translationContext);
                     return saxHandler.Parse();
                 case Format.JSON:
                     ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(File.OpenRead(filePath)), this, uriContext);
@@ -400,12 +414,12 @@ namespace ecologylab.serialization
             }
         }
 
-        public ElementState deserialize(Stream stream, IDeserializationHookStrategy deserializationHookStrategy = null, Format format = Format.XML, ParsedUri uriContext = null)
+        public ElementState deserialize(Stream stream,  TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy = null, Format format = Format.XML, ParsedUri uriContext = null)
         {
             switch (format)
             {
                 case Format.XML:
-                    ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(stream, this, uriContext, deserializationHookStrategy);
+                    ElementStateSAXHandler saxHandler = new ElementStateSAXHandler(stream, this, uriContext, translationContext, deserializationHookStrategy);
                     return saxHandler.Parse();
                 case Format.JSON:
                     ElementStateJSONHandler jsonHandler = new ElementStateJSONHandler(new StreamReader(stream), this, uriContext);

@@ -8,6 +8,7 @@ using System.Collections;
 using ecologylab.serialization.types.element;
 using ecologylab.net;
 using ecologylab.generic;
+using ecologylabFundamental.ecologylab.serialization;
 
 namespace ecologylab.serialization
 {
@@ -70,6 +71,8 @@ namespace ecologylab.serialization
 
         private IDeserializationHookStrategy deserializationHookStrategy;
 
+        TranslationContext translationContext = new TranslationContext();
+
         #endregion
 
         #region Constructors 
@@ -98,21 +101,23 @@ namespace ecologylab.serialization
         /// <param name="translationScope">
         ///     translation scope which binds the run-time objects.
         /// </param>
-        public ElementStateSAXHandler(String url, TranslationScope translationScope, ParsedUri uriContext)
+        public ElementStateSAXHandler(String url, TranslationScope translationScope, ParsedUri uriContext, TranslationContext translationContext)
             : this()
         {
             this.inputFileStream = File.OpenRead(url);
             this.translationScope = translationScope;
             this.uriContext = uriContext;
+            this.translationContext = translationContext;
         }
 
-        public ElementStateSAXHandler(Stream stream, TranslationScope translationScope, ParsedUri uriContext, IDeserializationHookStrategy deserializationHookStrategy = null)
+        public ElementStateSAXHandler(Stream stream, TranslationScope translationScope, ParsedUri uriContext, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy = null)
             : this()
         {
             this.inputFileStream = stream;
             this.translationScope = translationScope;
             this.uriContext = uriContext;
             this.deserializationHookStrategy = deserializationHookStrategy;
+            this.translationContext = translationContext;
         }
 
         /// <summary>
@@ -125,11 +130,12 @@ namespace ecologylab.serialization
         /// <param name="translationScope">
         ///     translation scope which binds the run-time objects.
         /// </param>
-        public ElementStateSAXHandler(FileStream inputFileStream, TranslationScope translationScope)
+        public ElementStateSAXHandler(FileStream inputFileStream, TranslationScope translationScope, TranslationContext translationContext)
             : this()
         {
             this.inputFileStream = inputFileStream;
             this.translationScope = translationScope;
+            this.translationContext = translationContext;
         }
 
         #endregion
@@ -210,7 +216,7 @@ namespace ecologylab.serialization
                         SetRoot(tempRoot);
                         if (deserializationHookStrategy != null)
                             deserializationHookStrategy.deserializationPreHook(tempRoot, null);
-                        tempRoot.TranslateAttributes(atts);
+                        tempRoot.TranslateAttributes(atts,translationContext);
                         activeFieldDescriptor = rootClassDescriptor.PseudoFieldDescriptor;
                     }
                     else
@@ -246,14 +252,14 @@ namespace ecologylab.serialization
             switch (activeFieldDescriptor.Type)
             {
                 case COMPOSITE_ELEMENT:
-                    childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, tagName);
+                    childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, tagName, atts, translationContext);
                     activeFieldDescriptor.SetFieldToNestedObject(currentElementState, childES);
                     break;
                 case COLLECTION_ELEMENT:
                     IList collection = (IList)activeFieldDescriptor.AutomaticLazyGetCollectionOrDict(currentElementState);
                     if (collection != null)
                     {
-                        childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, tagName);
+                        childES = activeFieldDescriptor.ConstructChildElementState(currentElementState, tagName, atts, translationContext);
                         collection.Add(childES);
                     }
                     break;
@@ -262,7 +268,7 @@ namespace ecologylab.serialization
                     if (dict != null)
                     {
                         childES = activeFieldDescriptor.ConstructChildElementState(
-                                currentElementState, tagName);
+                                currentElementState, tagName, atts, translationContext);
                     }
                     break;
             }
@@ -272,7 +278,7 @@ namespace ecologylab.serialization
                 if (deserializationHookStrategy != null)
                     deserializationHookStrategy.deserializationPreHook(childES, activeFieldDescriptor);
 
-                childES.TranslateAttributes(atts);
+                childES.TranslateAttributes(atts,translationContext);
                 this.currentElementState = childES;
                 this.currentFieldDescriptor = activeFieldDescriptor;
             }

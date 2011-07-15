@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using ecologylab.generic;
 using ecologylab.attributes;
+using ecologylabFundamental.ecologylab.attributes;
 
 namespace ecologylab.serialization
 {
@@ -119,6 +120,21 @@ namespace ecologylab.serialization
         private List<FieldDescriptor> unresolvedScopeAnnotationFDs = null;
 
         private FieldDescriptor scalarValueFieldDescriptor = null;
+        
+        /// <summary>
+        /// defines whether a strict object graph is required based on the equality operator
+        /// </summary>
+        [simpl_scalar]
+        private bool strictObjectGraphRequired = false;
+
+        /// <summary>
+        /// Whether a strict object graph is required
+        /// </summary>
+        public bool StrictObjectGraphRequired
+        {
+            get { return strictObjectGraphRequired; }
+            set { strictObjectGraphRequired = value; }
+        }
 
         #endregion
 
@@ -149,6 +165,11 @@ namespace ecologylab.serialization
             this.describedClassSimpleName = thatClass.Name;
             this.describedClassPackageName = thatClass.Namespace;
             this.tagName = XMLTools.GetXmlTagName(thatClass, TranslationScope.STATE);
+
+            if(XMLTools.IsAnnotationPresent(thatClass,typeof(simpl_use_equals_equals)))
+            {
+                this.strictObjectGraphRequired = true;
+            }
         }
 
         /// <summary>

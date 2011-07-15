@@ -10,6 +10,8 @@ using ecologylab.serialization.types.scalar;
 using ecologylab.attributes;
 using System.Collections;
 using System.Text.RegularExpressions;
+using ecologylabFundamental.ecologylab.serialization;
+using ecologylab.serialization.sax;
 
 namespace ecologylab.serialization
 {
@@ -177,7 +179,7 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="buffy"></param>
         /// <param name="context"></param>
-        public void AppendValueAsAttribute(StringBuilder buffy, ElementState context)
+        public void AppendValueAsAttribute(StringBuilder buffy, ElementState context, TranslationContext serializationContext)
         {
             if (context != null)
             {
@@ -227,7 +229,7 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="output"></param>
         /// <param name="elementState"></param>
-        public void AppendLeaf(StringBuilder output, ElementState elementState)
+        public void AppendLeaf(StringBuilder output, ElementState elementState, TranslationContext serializationContext)
         {
             if (elementState != null)
             {
@@ -315,6 +317,31 @@ namespace ecologylab.serialization
         public void SetFieldToNestedObject(ElementState context, ElementState nestedObject)
         {
             this.field.SetValue(context, nestedObject);
+        }
+
+        /// <summary>
+        /// Construct child elementstate object based on the given grpahcontext
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
+        public ElementState ConstructChildElementState(ElementState parent, String tagName, Attributes attributes, TranslationContext graphContext)
+        {
+            if (tagClassDescriptors != null && !tagClassDescriptors.ContainsKey(tagName))
+                Console.WriteLine("Error: " + tagName);
+            ClassDescriptor childClassDescriptor = !IsPolymorphic ? elementClassDescriptor : tagClassDescriptors[tagName];
+            ElementState result = null;
+
+            if (childClassDescriptor != null)
+            {
+                result = GetInstance(attributes, childClassDescriptor, graphContext);
+                if (result != null)
+                {
+                    parent.SetupChildElementState(result);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1094,6 +1121,35 @@ namespace ecologylab.serialization
             }
             return scope != null;
         }
+
+        /// <summary>
+        /// return an instance based on whether the graph switch is on or not
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <param name="childClassDescriptor"></param>
+        /// <param name="graphContext"></param>
+        /// <returns></returns>
+        private ElementState GetInstance(Attributes attributes, ClassDescriptor childClassDescriptor,
+			TranslationContext graphContext) 
+	    {
+		    ElementState result;
+
+		    if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+		    {
+			    ElementState alreadyUnmarshalledObject = graphContext.GetFromMap(attributes);
+
+			    if (alreadyUnmarshalledObject != null)
+				    result = alreadyUnmarshalledObject;
+			    else
+				    result = childClassDescriptor.Instance;
+		    }
+		    else
+		    {
+			    result = childClassDescriptor.Instance;
+		    }
+
+		    return result;
+	    }
 
         public ScalarType GetScalarType()
         {

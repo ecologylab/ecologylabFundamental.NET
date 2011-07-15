@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.IO;
+using ecologylabFundamental.ecologylab.serialization;
 
 namespace ecologylab.serialization
 {
@@ -70,6 +71,11 @@ namespace ecologylab.serialization
         /// </summary>
         private ElementState parent;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private bool isRoot = false;
+
         public ElementState Parent
         {
             get { return parent; }
@@ -81,13 +87,25 @@ namespace ecologylab.serialization
 
         public void serialize(StringBuilder output, Format format)
         {
-            switch (format)
+            TranslationContext graphContext = new TranslationContext();
+
+            try
             {
-                case Format.XML  : 
-                    serializeToXML(output);
-                    break;
-                case Format.JSON : serializeToJSON(output);
-                    break;
+                graphContext.ResolveGraph(this);
+                isRoot = true;
+
+                switch (format)
+                {
+                    case Format.XML:
+                        serializeToXML(output, graphContext);
+                        break;
+                    case Format.JSON: serializeToJSON(output, graphContext);
+                        break;
+                }
+            }
+            catch (IOException e)
+            {
+                throw e;
             }
         }
 
@@ -100,10 +118,11 @@ namespace ecologylab.serialization
         ///     The output buffer which contains the marshalled representation of the
         ///     run-time object.
         /// </param>
-        public void serializeToXML(StringBuilder output)
+        public void serializeToXML(StringBuilder output, TranslationContext context)
         {
             if (output == null) throw new Exception("null : output object");
-            else serializeToXML(this.ClassDescriptor.PseudoFieldDescriptor, output);
+            else serializeToXML(this.ClassDescriptor.PseudoFieldDescriptor, output, context);
+           
         }
 
         /// <summary>
@@ -112,8 +131,10 @@ namespace ecologylab.serialization
         /// </summary>
         /// <param name="fieldDescriptor"></param>
         /// <param name="output"></param>
-        private void serializeToXML(FieldDescriptor fieldDescriptor, StringBuilder output)
+        private void serializeToXML(FieldDescriptor fieldDescriptor, StringBuilder output, TranslationContext serializationContext)
         {
+            serializationContext.MapElementState(this);
+
             this.preTranslationProcessingHook();
 
             fieldDescriptor.WriteElementStart(output);
@@ -128,7 +149,7 @@ namespace ecologylab.serialization
                     for (int i = 0; i < numAttributes; i++)
                     {
                         FieldDescriptor childFD = attributeFieldDescriptors[i];
-                        childFD.AppendValueAsAttribute(output, this);
+                        childFD.AppendValueAsAttribute(output, this, serializationContext);
                     }
                 }
                 catch (Exception e)
@@ -137,6 +158,14 @@ namespace ecologylab.serialization
                     throw new Exception("TranslateToXML for attribute " + this, e);
                 }
             }
+
+            if (serializationContext.IsGraph && isRoot)
+            {
+                serializationContext.AppendSimplNameSpace(output);
+            }
+
+            // To handle cyclic graphs append simpl id as an attribute.
+            serializationContext.AppendSimplIdIfRequired(output, this);
 
             List<FieldDescriptor> elementFieldDescriptors = ClassDescriptor.ElementFieldDescriptors;
             int numElements = elementFieldDescriptors.Count;
@@ -174,7 +203,7 @@ namespace ecologylab.serialization
                     {
                         try
                         {
-                            childFD.AppendLeaf(output, this);
+                            childFD.AppendLeaf(output, this, serializationContext);
                         }
                         catch (Exception e)
                         {
@@ -249,7 +278,7 @@ namespace ecologylab.serialization
                                             collectionSubElementState.ClassDescriptor.PseudoFieldDescriptor :
                                             childFD;
 
-                                    collectionSubElementState.serializeToXML(collectionElementFD, output);
+                                    collectionSubElementState.serializeCompositeElements(output, collectionSubElementState, collectionElementFD, serializationContext);                                      
                                 }
                                 else
                                     throw new Exception("thrown");
@@ -262,12 +291,10 @@ namespace ecologylab.serialization
                             ElementState nestedES = (ElementState)thatReferenceObject;
                             FieldDescriptor nestedF2XO = childFD.IsPolymorphic ?
                                     nestedES.ClassDescriptor.PseudoFieldDescriptor : childFD;
-
-                            nestedES.serializeToXML(nestedF2XO, output);
+                            nestedES.serializeCompositeElements(output, nestedES, nestedF2XO, serializationContext);                           
                         }
                     }
                 }
-
                 fieldDescriptor.WriteCloseTag(output);
             }
         }
@@ -282,19 +309,21 @@ namespace ecologylab.serialization
         ///     The output buffer which contains the marshalled representation of the
         ///     run-time object.
         /// </param>
-        public void serializeToJSON(StringBuilder output)
+        public void serializeToJSON(StringBuilder output, TranslationContext graphContext)
         {
             if (output == null) throw new Exception("null : output object");
-            else serializeToJSON(this.ClassDescriptor.PseudoFieldDescriptor, output);
+            else serializeToJSON(this.ClassDescriptor.PseudoFieldDescriptor, output,graphContext);
         }
-        private void serializeToJSON(FieldDescriptor fieldDescriptor, StringBuilder output)
+        private void serializeToJSON(FieldDescriptor fieldDescriptor, StringBuilder output, TranslationContext graphContext)
         {
             output.Append('{');
-            serializeToJSONRecursive(fieldDescriptor, output, true);
+            serializeToJSONRecursive(fieldDescriptor, output, true,graphContext);
             output.Append('}');
         }
-        private void serializeToJSONRecursive(FieldDescriptor fieldDescriptor, StringBuilder output, bool withTag)
+        private void serializeToJSONRecursive(FieldDescriptor fieldDescriptor, StringBuilder output, bool withTag,TranslationContext graphContext)
         {
+            graphContext.MapElementState(this);
+
             fieldDescriptor.WriteJSONElementStart(output, withTag);
 
             List<FieldDescriptor> elementFieldDescriptors = ClassDescriptor.ElementFieldDescriptors;
@@ -428,7 +457,7 @@ namespace ecologylab.serialization
                                     output.Append(',');
 
                                 ElementState collectionSubElementState = (ElementState)next;
-                                collectionSubElementState.serializeToJSONRecursive(childFD, output, false);
+                                collectionSubElementState.serializeToJSONRecursive(childFD, output, false,graphContext);
                             }
                             j++;
                         }
@@ -455,7 +484,7 @@ namespace ecologylab.serialization
 
                             output.Append('{');
                             collectionSubElementState.serializeToJSONRecursive(collectionElementFD, output,
-                                    true);
+                                    true,graphContext);
                             output.Append('}');
 
                             j++;
@@ -475,7 +504,7 @@ namespace ecologylab.serialization
 					ElementState nestedES = (ElementState) thatReferenceObject;
 					FieldDescriptor nestedFD = childFD.IsPolymorphic ? nestedES.ClassDescriptor.PseudoFieldDescriptor : childFD;
 
-                    nestedES.serializeToJSONRecursive(nestedFD, output, true);
+                    nestedES.serializeToJSONRecursive(nestedFD, output, true,graphContext);
 
 				}
 			}
@@ -529,7 +558,7 @@ namespace ecologylab.serialization
         ///     Translates fields to attributes in XML
         /// </summary>
         /// <param name="atts"></param>
-        public void TranslateAttributes(sax.Attributes atts)
+        public void TranslateAttributes(sax.Attributes atts, TranslationContext graphContext)
         {
             int numAttributes = atts.attArray.Count;
 
@@ -537,6 +566,9 @@ namespace ecologylab.serialization
             {
                 String tag = atts.getQName(i);
                 String value = atts.getValue(i);
+
+                if (graphContext.HandleSimplIds(tag, value, this))
+                    continue;
 
                 if (value != null)
                 {
@@ -650,6 +682,47 @@ namespace ecologylab.serialization
                 cachedEnumerableFields = result;
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Creates the graph context
+        /// </summary>
+        /// <returns></returns>
+        public TranslationContext CreateGraphContext()
+	    {
+			TranslationContext graphContext = new TranslationContext();
+			graphContext.ResolveGraph(this);
+			isRoot = true;
+			return graphContext;
+	    }
+
+        /// <summary>
+        /// method to serialise composite elements
+        /// </summary>
+        /// <param name="appendable"></param>
+        /// <param name="nestedES"></param>
+        /// <param name="nestedF2XO"></param>
+        /// <param name="graphContext"></param>
+        private void serializeCompositeElements(StringBuilder appendable, ElementState nestedES,
+			FieldDescriptor nestedF2XO, TranslationContext graphContext) 
+	    {
+		    if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON
+				    && graphContext.AlreadyMarshalled(nestedES))
+		    {
+			    graphContext.AppendSimplRefId(appendable, nestedES, nestedF2XO);
+		    }
+		    else
+		    {
+			    nestedES.serializeToXML(nestedF2XO, appendable, graphContext);
+		    }
+	    }
+
+        /// <summary>
+        /// returns whether a strict object graph is required
+        /// </summary>
+        public bool StrictObjectGraphRequired
+        {        
+            get { return ClassDescriptor.StrictObjectGraphRequired; }   
         }
     }
 
