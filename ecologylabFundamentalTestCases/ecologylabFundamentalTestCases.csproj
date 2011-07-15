@@ -45,6 +45,14 @@
   <ItemGroup>
     <Compile Include="Maps\SimplContainer.cs" />
     <Compile Include="Maps\SimplData.cs" />
+    <Compile Include="ObjectGraph\ClassA.cs" />
+    <Compile Include="ObjectGraph\ClassB.cs" />
+    <Compile Include="ObjectGraph\ListDotEquals.cs" />
+    <Compile Include="ObjectGraph\ListEqEq.cs" />
+    <Compile Include="ObjectGraph\ObjectGraphTest.cs" />
+    <Compile Include="ObjectGraph\PointDotEquals.cs" />
+    <Compile Include="ObjectGraph\PointEqEq.cs" />
+    <Compile Include="ObjectGraph\SerialisationTest.cs" />
     <Compile Include="Polymorphic\Configuration.cs" />
     <Compile Include="Polymorphic\Pref.cs" />
     <Compile Include="Polymorphic\PrefDouble.cs" />

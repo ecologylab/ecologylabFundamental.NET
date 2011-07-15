@@ -6,6 +6,7 @@ using ecologylab.serialization.library;
 using System.IO;
 using ecologylab.serialization;
 using ecologylab.serialization.library.Schmannel;
+using ecologylabFundamental.ecologylab.serialization;
 
 namespace ecologylabXMLTesterApp
 {
@@ -63,16 +64,18 @@ namespace ecologylabXMLTesterApp
             }
 
             var stringBuilder = new StringBuilder();
-            test.serializeToJSON(stringBuilder);
+            //test.serializeToJSON(stringBuilder,new TranslationContext());
+            test.serialize(stringBuilder, Format.JSON);
 
             Console.WriteLine("buffy" + stringBuilder);
 
             TranslationScope scop = new TranslationScope("chuut", typeof (SimplItem), typeof (SimplTest));
 
-            ElementState deserializeString = scop.deserializeString(stringBuilder.ToString(), Format.JSON);
+            ElementState deserializeString = scop.deserializeString(stringBuilder.ToString(), new TranslationContext(), Format.JSON);
 
             Console.WriteLine("Done !");
             //MonomorphicTest();
+            Console.Read();
         }
 
         private static void PolymorphicTest()
@@ -96,9 +99,10 @@ namespace ecologylabXMLTesterApp
             StringBuilder output = new StringBuilder();
             StringBuilder jsonOutput = new StringBuilder();
 
-            schmannel.serializeToXML(output);
-
-            schmannel.serializeToJSON(jsonOutput);
+            schmannel.serialize(output, Format.XML);
+            //schmannel.serializeToXML(output,new TranslationContext());
+            schmannel.serialize(jsonOutput, Format.JSON);
+            //schmannel.serializeToJSON(jsonOutput,new TranslationContext());
 
             // create a writer and open the file
             TextWriter tw = new StreamWriter("polymorphic_output.xml");
@@ -117,10 +121,10 @@ namespace ecologylabXMLTesterApp
             Console.WriteLine(jsonOutput);
             Console.ReadLine();
 
-            ElementState es = SchmannelTranslations.Get().deserialize("json_polymorphic_output.xml", Format.JSON);
+            ElementState es = SchmannelTranslations.Get().deserialize("json_polymorphic_output.xml", new TranslationContext(), Format.JSON);
 
             output.Clear();
-            es.serializeToXML(output);
+            es.serialize(output, Format.XML);
             Console.WriteLine(output);
             Console.ReadLine();
         }
@@ -163,9 +167,11 @@ namespace ecologylabXMLTesterApp
             StringBuilder output = new StringBuilder();
             StringBuilder jsonOutput = new StringBuilder();
 
-            rssState.serializeToXML(output);
-            rssState.serializeToJSON(jsonOutput);
-            
+            rssState.serialize(output, Format.XML);
+            //rssState.serializeToXML(output,new TranslationContext());
+            //rssState.serializeToJSON(jsonOutput,new TranslationContext());
+            rssState.serialize(jsonOutput, Format.JSON);
+
             // create a writer and open the file
             TextWriter tw = new StreamWriter("monomorphic_output.xml");
             tw.WriteLine(output);
@@ -182,10 +188,10 @@ namespace ecologylabXMLTesterApp
             Console.WriteLine(jsonOutput);
             Console.ReadLine();
 
-            ElementState es = RssTranslations.Get().deserialize("json_monomorphic_output.xml", Format.JSON);
+            ElementState es = RssTranslations.Get().deserialize("json_monomorphic_output.xml", new TranslationContext() ,Format.JSON);
 
             output.Clear();
-            es.serializeToXML(output);
+            es.serialize(output, Format.XML);
             Console.WriteLine(output);
             Console.ReadLine();
         }

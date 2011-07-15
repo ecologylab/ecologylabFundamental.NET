@@ -6,6 +6,8 @@ using ecologylabFundamentalTestCases.Maps;
 using ecologylab.serialization;
 using System.IO;
 using ecologylabFundamentalTestCases.Polymorphic;
+using ecologylabFundamental.ecologylab.serialization;
+using ecologylabFundamentalTestCases.ObjectGraph;
 
 namespace ecologylabFundamentalTestCases
 {
@@ -13,8 +15,10 @@ namespace ecologylabFundamentalTestCases
     {
         static void Main(string[] args)
         {
-            //MapTest();
-            PolyMorphicMapTest();
+            //MapTest();            
+            //PolyMorphicMapTest();
+            //SerialisationTest.Run();
+            ObjectGraphTest.RunTests();
         }
 
         private static void PolyMorphicMapTest()
@@ -24,7 +28,8 @@ namespace ecologylabFundamentalTestCases
             test.fillDictionary();
 
             StringBuilder output = new StringBuilder();
-            test.serializeToXML(output);
+            test.serialize(output, Format.XML);
+            //test.serializeToXML(output,new TranslationContext());
 
             Console.WriteLine(output);
             Console.ReadLine();
@@ -35,9 +40,10 @@ namespace ecologylabFundamentalTestCases
             tw.Close();
 
             TranslationScope.Get("testScope", typeof(Pref), typeof(PrefDouble));
-            Configuration outputData = (Configuration)TranslationScope.Get("test", typeof(Configuration), typeof(Pref), typeof(PrefDouble)).deserialize("dict_output.xml", Format.XML);
+            Configuration outputData = (Configuration)TranslationScope.Get("test", typeof(Configuration), typeof(Pref), typeof(PrefDouble)).deserialize("dict_output.xml", new TranslationContext(), Format.XML);
             output.Clear();
-            outputData.serializeToXML(output);
+            outputData.serialize(output, Format.XML);
+            //outputData.serializeToXML(output,new TranslationContext());
             Console.WriteLine(output);
             Console.ReadLine();
         }
@@ -49,7 +55,8 @@ namespace ecologylabFundamentalTestCases
             test.fillDictionary();
 
             StringBuilder output = new StringBuilder();
-            test.serializeToXML(output);
+            test.serialize(output, Format.XML);
+            //test.serializeToXML(output,new TranslationContext());
 
             Console.WriteLine(output);
             Console.ReadLine();
@@ -59,9 +66,10 @@ namespace ecologylabFundamentalTestCases
             tw.WriteLine(output);
             tw.Close();
 
-            SimplContainer outputData = (SimplContainer)TranslationScope.Get("test", typeof(SimplContainer), typeof(SimplData)).deserialize("dict_output.xml", Format.XML);
+            SimplContainer outputData = (SimplContainer)TranslationScope.Get("test", typeof(SimplContainer), typeof(SimplData)).deserialize("dict_output.xml", new TranslationContext(), Format.XML);
             output.Clear();
-            outputData.serializeToXML(output);
+            outputData.serialize(output, Format.XML);
+            //outputData.serializeToXML(output,new TranslationContext());
             Console.WriteLine(output);
             Console.ReadLine();
         }
