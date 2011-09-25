@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using Simpl.Fundamental.Generic;
 using Simpl.Serialization;
 using Simpl.Serialization.Attributes;
-using ecologylab.generic;
-using ecologylab.attributes;
 
 namespace ecologylab.serialization
 {

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace ecologylab.net
+namespace Simpl.Fundamental.Net
 {
     /// <summary>
     /// Extending Uri to support some additional features 
@@ -13,9 +11,9 @@ namespace ecologylab.net
     {
         #region Caches
         
-        String domain = null;
-        String suffix = null;
-        String stripped = null;
+        String _domain;
+        String _suffix;
+        String _stripped;
 
         #endregion
 
@@ -49,7 +47,7 @@ namespace ecologylab.net
         {
             get 
             {
-                String result = domain;
+                String result = _domain;
                 if (result == null)
                 {
                     if (!Host.Contains('.'))
@@ -60,7 +58,7 @@ namespace ecologylab.net
                         string[] domains = this.Host.Split('.');
                         result = domains[domains.Length - 2] + "." + domains[domains.Length - 1];
                     }
-                    domain = result;
+                    _domain = result;
                 }
 
                 return result;
@@ -78,14 +76,14 @@ namespace ecologylab.net
         {
             get 
             {
-                String result = suffix;
+                String result = _suffix;
                 if (result == null)
                 {
                     //Use System.Uri vars to help
                     String lastSegment = Segments[Segments.Length - 1];
                     int lastIndexOfDot = lastSegment.LastIndexOf('.');
                     result = lastIndexOfDot > -1 ? lastSegment.Substring(lastIndexOfDot + 1) : string.Empty;
-                    suffix = result;
+                    _suffix = result;
                 }
                 return result;
             }
@@ -99,14 +97,14 @@ namespace ecologylab.net
         {
             get 
             {
-                string result = stripped;
+                string result = _stripped;
                 if (result == null)
                 {
                     result = GetLeftPart(UriPartial.Path);
-                    stripped = result;
+                    _stripped = result;
                 }
 
-                return stripped; 
+                return _stripped; 
             }
         }
     }

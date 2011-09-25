@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
+// ReSharper disable CheckNamespace
 namespace ecologylab.collections
+// ReSharper restore CheckNamespace
 {
     /// <summary>
     /// 
@@ -11,8 +11,6 @@ namespace ecologylab.collections
     /// <typeparam name="T"></typeparam>
     public class Scope<T> : Dictionary<String , T>
     {
-        private IDictionary<String, T> parent;
-
         /// <summary>
         /// 
         /// </summary>
@@ -26,7 +24,7 @@ namespace ecologylab.collections
         /// <param name="parent"></param>
         public Scope(IDictionary<String, T> parent)
         {
-            this.parent = parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -37,8 +35,10 @@ namespace ecologylab.collections
         public Scope(IDictionary<String, T> parent, int size)
             : base(size)
         {
-            this.parent = parent;
+            Parent = parent;
         }
+
+        public IDictionary<string, T> Parent { get; private set; }
 
         /// <summary>
         /// 
@@ -47,11 +47,10 @@ namespace ecologylab.collections
         /// <returns></returns>
         public T Get(String name)
         {
-            T result = default(T);
-            if (base.TryGetValue(name, out result))
+            T result;
+            if (TryGetValue(name, out result))
                 return result;
-            else
-                return default(T);
+            return default(T);
         }
     }
 }

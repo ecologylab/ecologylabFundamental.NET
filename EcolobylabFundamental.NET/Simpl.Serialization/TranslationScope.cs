@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simpl.Fundamental.Net;
 using Simpl.Serialization;
 using Simpl.Serialization.Graph;
 using ecologylab.collections;
 using System.Reflection;
 using System.IO;
-using ecologylab.net;
 
 namespace ecologylab.serialization
 {

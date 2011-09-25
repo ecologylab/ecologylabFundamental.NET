@@ -1,4 +1,4 @@
-﻿using ecologylab.net;
+﻿using Simpl.Fundamental.Net;
 
 namespace Simpl.Serialization
 {

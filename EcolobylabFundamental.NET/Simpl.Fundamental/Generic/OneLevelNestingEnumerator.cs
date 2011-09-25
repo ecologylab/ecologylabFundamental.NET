@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Collections;
 
-namespace ecologylab.generic
+namespace Simpl.Fundamental.Generic
 {
     ///<summary>
     /// An enumerator that iterates through nested elements and collections that are children of the object

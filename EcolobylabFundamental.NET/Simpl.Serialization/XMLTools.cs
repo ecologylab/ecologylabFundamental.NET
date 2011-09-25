@@ -4,7 +4,6 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 using Simpl.Serialization.Attributes;
-using ecologylab.attributes;
 using ecologylab.serialization;
 
 namespace Simpl.Serialization

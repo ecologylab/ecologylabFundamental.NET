@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simpl.Fundamental.Net;
 using Simpl.Serialization;
-using ecologylab.net;
 
 namespace ecologylab.serialization.types.scalar
 {
