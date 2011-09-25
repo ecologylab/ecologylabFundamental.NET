@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace ecologylab.attributes
+namespace Simpl.Serialization.Attributes
 {
     /// <summary>
     ///     Takes a translation scope which binds classes to their XML
     ///     representation. This is used for polymorphic types.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class simpl_scope : Attribute
+    public class SimplScope : Attribute
     {
-        private String translationScope;
+        private readonly String _translationScope;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="translationScope"></param>
-        public simpl_scope(String translationScope)
+        public SimplScope(String translationScope)
         {
-            this.translationScope = translationScope;
+            this._translationScope = translationScope;
         }
 
         /// <summary>
@@ -30,7 +27,7 @@ namespace ecologylab.attributes
         {
             get
             {
-                return translationScope;
+                return _translationScope;
             }
         }
     }

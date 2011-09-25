@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Text;
+using Simpl.Fundamental.Generic;
 using Simpl.Serialization;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.Graph;
-using ecologylab.generic;
 using ecologylab.serialization.types;
 using System.Reflection;
 using ecologylab.serialization.types.scalar;
-using ecologylab.attributes;
 using System.Collections;
 using System.Text.RegularExpressions;
 using ecologylab.serialization.sax;
@@ -715,9 +714,9 @@ namespace ecologylab.serialization
         /// <param name="field"></param>
         private void DeriveTagClassDescriptors(FieldInfo field)
         {
-            if (XmlTools.IsAnnotationPresent(field, typeof(simpl_scope)))
+            if (XmlTools.IsAnnotationPresent(field, typeof(SimplScope)))
             {
-                simpl_scope scopeAnnotationObj = (simpl_scope)XmlTools.GetAnnotation(field, typeof(simpl_scope));
+                SimplScope scopeAnnotationObj = (SimplScope)XmlTools.GetAnnotation(field, typeof(SimplScope));
                 String scopeAnnotation = scopeAnnotationObj.TranslationScope;
 
                 if (scopeAnnotation != null && scopeAnnotation.Length > 0)
