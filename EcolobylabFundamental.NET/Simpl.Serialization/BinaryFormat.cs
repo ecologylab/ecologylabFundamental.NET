@@ -1,6 +1,6 @@
 ﻿namespace Simpl.Serialization
 {
-    enum BinaryFormat
+    public enum BinaryFormat
     {
         Tlv
     }

@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.IO;
-using Simpl.Serialization;
-using Simpl.Serialization.Graph;
+using Simpl.Serialization.Context;
+using ecologylab.serialization;
 
-namespace ecologylab.serialization
+namespace Simpl.Serialization
 {
-    public enum Format
-    {
-        XML, JSON
-    }
-
     /// <summary>
     ///     This class is the heart of the <code>ecologylab.xml</code>
     ///     translation framework.
@@ -237,15 +231,15 @@ namespace ecologylab.serialization
                         if (thatReferenceObject == null)
                             continue;
 
-                        Boolean isScalar = (childFdType == COLLECTION_SCALAR) || (childFdType == MAP_SCALAR);
+                        Boolean isScalar = (childFdType == CollectionSCALAR) || (childFdType == MapSCALAR);
 
                         ICollection thatCollection;
                         switch (childFdType)
                         {
-                            case COLLECTION_ELEMENT:
-                            case COLLECTION_SCALAR:
-                            case MAP_ELEMENT:
-                            case MAP_SCALAR:
+                            case CollectionElement:
+                            case CollectionSCALAR:
+                            case MapElement:
+                            case MapSCALAR:
                                 thatCollection = XmlTools.GetCollection(thatReferenceObject);
                                 break;
                             default:
@@ -407,15 +401,15 @@ namespace ecologylab.serialization
 				if (thatReferenceObject == null)
 					continue;
 
-				bool isScalar = (childFdType == COLLECTION_SCALAR) || (childFdType == MAP_SCALAR);
+				bool isScalar = (childFdType == CollectionSCALAR) || (childFdType == MapSCALAR);
 				// gets Collection object directly or through Map.values()
 				ICollection thatCollection;
 				switch (childFdType)
 				{
-				case COLLECTION_ELEMENT:
-				case COLLECTION_SCALAR:
-				case MAP_ELEMENT:
-				case MAP_SCALAR:
+				case CollectionElement:
+				case CollectionSCALAR:
+				case MapElement:
+				case MapSCALAR:
 					thatCollection = XmlTools.GetCollection(thatReferenceObject);
 					break;
 				default:
@@ -559,7 +553,7 @@ namespace ecologylab.serialization
         ///     Translates fields to attributes in XML
         /// </summary>
         /// <param name="atts"></param>
-        public void TranslateAttributes(sax.Attributes atts, TranslationContext graphContext)
+        public void TranslateAttributes(ecologylab.serialization.sax.Attributes atts, TranslationContext graphContext)
         {
             int numAttributes = atts.attArray.Count;
 

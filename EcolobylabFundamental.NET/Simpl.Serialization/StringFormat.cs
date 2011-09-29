@@ -1,6 +1,6 @@
 ﻿namespace Simpl.Serialization
 {
-    enum StringFormat
+    public enum StringFormat
     {
         Xml, Json, Bibtex, Yaml
     }

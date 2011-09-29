@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Simpl.Serialization.Graph;
 using ecologylab.serialization;
 
-namespace Simpl.Serialization.Graph
+namespace Simpl.Serialization.Context
 {
     /// <summary>
     /// Representing the graph context
@@ -15,9 +16,9 @@ namespace Simpl.Serialization.Graph
         private const String SimplNamespace =
             " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
-        private const String SimplId = "simpl:id";
+        public const String SimplId = "simpl:id";
 
-        private const String SimplRef = "simpl:ref";
+        public const String SimplRef = "simpl:ref";
 
         private readonly MultiMap<Int32, ElementState> _marshalledObjects = new MultiMap<Int32, ElementState>();
 
@@ -61,14 +62,14 @@ namespace Simpl.Serialization.Graph
         /// <summary>
         /// resolving the graph based on the value of the graph switch
         /// </summary>
-        /// <param name="elementState"></param>
-        public void ResolveGraph(ElementState elementState)
+        /// <param name="obj"></param>
+        public void ResolveGraph(object obj)
         {
             if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
             {
-                _visitedElements.Add(elementState.GetHashCode(), elementState);
+                _visitedElements.Add(obj.GetHashCode(), obj);
 
-                List<FieldDescriptor> elementFieldDescriptors = elementState.ClassDescriptor.ElementFieldDescriptors;
+                List<FieldDescriptor> elementFieldDescriptors = obj.ClassDescriptor.ElementFieldDescriptors;
 
                 foreach (FieldDescriptor elementFieldDescriptor in elementFieldDescriptors)
                 {
@@ -76,7 +77,7 @@ namespace Simpl.Serialization.Graph
                     FieldInfo childField = elementFieldDescriptor.Field;
                     try
                     {
-                        thatReferenceObject = childField.GetValue(elementState);
+                        thatReferenceObject = childField.GetValue(obj);
                     }
                     catch (FieldAccessException e)
                     {
@@ -84,7 +85,7 @@ namespace Simpl.Serialization.Graph
 
                         try
                         {
-                            thatReferenceObject = childField.GetValue(elementState);
+                            thatReferenceObject = childField.GetValue(obj);
                         }
                         catch (FieldAccessException e1)
                         {
@@ -105,10 +106,9 @@ namespace Simpl.Serialization.Graph
                     ICollection thatCollection;
                     switch (childFdType)
                     {
-                        case COLLECTION_ELEMENT:
-                        case COLLECTION_SCALAR:
-                        case MAP_ELEMENT:
-                        case MAP_SCALAR:
+                        case CollectionElement:
+                        case CollectionSCALAR:
+                        case MapElement:
                             thatCollection = XmlTools.GetCollection(thatReferenceObject);
                             break;
                         default:
@@ -260,6 +260,16 @@ namespace Simpl.Serialization.Graph
         public bool NeedsHashCode(ElementState elementState)
         {
             return _needsAttributeHashCode.Contains(elementState.GetHashCode(), elementState);
+        }
+
+        internal bool AlreadyMarshalled(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MapObject(object o)
+        {
+            throw new NotImplementedException();
         }
     }
 }

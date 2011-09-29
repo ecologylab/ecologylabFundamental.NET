@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simpl.Serialization.Serializers.BinaryFormats
 {
-    class TlvSerializer
+    class TlvSerializer : BinarySerializer
     {
     }
 }
