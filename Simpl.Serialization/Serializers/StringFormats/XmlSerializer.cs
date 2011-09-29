@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Simpl.Serialization.Context;
@@ -11,6 +12,12 @@ namespace Simpl.Serialization.Serializers.StringFormats
     /// </summary>
     public class XmlSerializer : StringSerializer
     {
+
+        private const String StartCdata = "<![CDATA[";
+        private const String EndCdata = "]]>";
+
+        private Boolean _isRoot = true;
+
         /// <summary>
         /// 
         /// </summary>
@@ -102,20 +109,122 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="streamWriter"></param>
         /// <param name="translationContext"></param>
         /// <param name="elementFieldDescriptors"></param>
-        private void SerializeFields(object obj, StreamWriter streamWriter, TranslationContext translationContext, List<FieldDescriptor> elementFieldDescriptors)
+        private void SerializeFields(object obj, StreamWriter streamWriter, TranslationContext translationContext, IEnumerable<FieldDescriptor> elementFieldDescriptors)
         {
-            throw new NotImplementedException();
+           foreach (FieldDescriptor fd in elementFieldDescriptors)
+		{
+			switch (fd.Type)
+			{
+			case Scalar:
+				WriteValueAsLeaf(obj, fd, streamWriter, translationContext);
+				break;
+			case CompositeElement:
+				Object compositeObject = fd.GetObject(obj);
+				if (compositeObject != null)
+				{
+					FieldDescriptor compositeObjectFieldDescriptor = fd.IsPolymorphic ? GetClassDescriptor(
+							compositeObject).PseudoFieldDescriptor
+							: fd;
+					WriteWrap(fd, streamWriter, false);
+					Serialize(compositeObjectFieldDescriptor, streamWriter, translationContext);
+					WriteWrap(fd, streamWriter, true);
+				}
+				break;
+			case CollectionScalar:
+			case MapScalar:
+				Object scalarCollectionObject = fd.GetObject(obj);
+				ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
+				if (scalarCollection != null && scalarCollection.Count > 0)
+				{
+					WriteWrap(fd, streamWriter, false);
+
+					foreach (Object collectionScalar in scalarCollection)
+					{
+						WriteScalarCollectionLeaf(collectionScalar, fd, streamWriter, translationContext);
+					}
+					WriteWrap(fd, streamWriter, true);
+				}
+				break;
+			case CollectionElement:
+			case MapElement:
+				Object compositeCollectionObject = fd.GetObject(obj);
+				ICollection compositeCollection = XmlTools.GetCollection(compositeCollectionObject);
+                if (compositeCollection != null && compositeCollection.Count > 0)
+				{
+					WriteWrap(fd, streamWriter, false);
+					foreach (Object collectionComposite in compositeCollection)
+					{
+						FieldDescriptor collectionObjectFieldDescriptor = fd.IsPolymorphic ? GetClassDescriptor(
+								collectionComposite).PseudoFieldDescriptor
+								: fd;
+						Serialize(collectionComposite, collectionObjectFieldDescriptor, streamWriter,
+								translationContext);
+					}
+					WriteWrap(fd, streamWriter, true);
+				}
+				break;
+			}
+		}
+        }
+
+        private void WriteScalarCollectionLeaf(object obj, FieldDescriptor fd, StreamWriter streamWriter, TranslationContext translationContext)
+        {
+            if (!fd.IsDefaultValue(obj.ToString()))
+            {
+                streamWriter.Write('<');
+                streamWriter.Write(fd.ElementStart);
+                streamWriter.Write('>');
+                fd.AppendCollectionScalarValue(streamWriter, obj, translationContext, Format.Xml);
+                streamWriter.Write('<');
+                streamWriter.Write('/');
+                streamWriter.Write(fd.ElementStart);
+                streamWriter.Write('>');
+            }
+        }
+
+        private void WriteWrap(FieldDescriptor fd, StreamWriter streamWriter, bool close)
+        {
+            if (fd.IsWrapped)
+            {
+                streamWriter.Write('<');
+                if (close)
+                    streamWriter.Write('/');
+                streamWriter.Write(fd.TagName);
+                streamWriter.Write('>');
+            }
+        }
+
+        private void WriteValueAsLeaf(object obj, FieldDescriptor fd, StreamWriter streamWriter, TranslationContext translationContext)
+        {
+            if (!fd.IsDefaultValueFromContext(obj))
+            {
+                streamWriter.Write('<');
+                streamWriter.Write(fd.ElementStart);
+                streamWriter.Write('>');
+                fd.AppendValue(streamWriter, obj, translationContext, Format.Xml);
+                streamWriter.Write('<');
+                streamWriter.Write('/');
+                streamWriter.Write(fd.ElementStart);
+                streamWriter.Write('>');
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="o"></param>
-        /// <param name="scalarTextFD"></param>
+        /// <param name="obj"></param>
+        /// <param name="fd"></param>
         /// <param name="streamWriter"></param>
-        private void WriteValueAsText(object o, FieldDescriptor scalarTextFD, StreamWriter streamWriter)
+        private void WriteValueAsText(object obj, FieldDescriptor fd, StreamWriter streamWriter)
         {
-            throw new NotImplementedException();
+            if (!fd.IsDefaultValueFromContext(obj))
+            {
+                if (fd.IsCDATA)
+                    streamWriter.Write(StartCdata);
+                fd.WriteValue(streamWriter, obj, null, Format.Xml);
+                if (fd.IsCDATA)
+                    streamWriter.Write(EndCdata);
+            }
         }
 
         /// <summary>
@@ -124,7 +233,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="streamWriter"></param>
         private void WriteClose(StreamWriter streamWriter)
         {
-            throw new NotImplementedException();
+            streamWriter.Write('>');
         }
 
         /// <summary>
@@ -133,10 +242,86 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="obj"></param>
         /// <param name="streamWriter"></param>
         /// <param name="translationContext"></param>
-        /// <param name="rootObjectClassDescritor"></param>
-        private void SerializedAttributes(object obj, StreamWriter streamWriter, TranslationContext translationContext, ClassDescriptor rootObjectClassDescritor)
+        /// <param name="rootObjectClassDescrpitor"></param>
+        private void SerializedAttributes(object obj, StreamWriter streamWriter, TranslationContext translationContext, ClassDescriptor rootObjectClassDescrpitor)
         {
-            throw new NotImplementedException();
+            List<FieldDescriptor> attributeFieldDescriptors = rootObjectClassDescrpitor
+                .AttributeFieldDescriptors;
+
+            foreach (FieldDescriptor childFd in attributeFieldDescriptors)
+            {
+                try
+                {
+                    WriteValueAsAtrribute(obj, childFd, streamWriter, translationContext);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("serialize for attribute " + obj, ex);
+                }
+            }
+
+            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            {
+                if (translationContext.NeedsHashCode(obj))
+                {
+                    WriteSimplIdAttribute(obj, streamWriter);
+                }
+
+                if (_isRoot && translationContext.IsGraph)
+                {
+                    WriteSimplNameSpace(streamWriter);
+                    _isRoot = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="streamWriter"></param>
+        private static void WriteSimplNameSpace(StreamWriter streamWriter)
+        {
+            streamWriter.Write(TranslationContext.SimplNamespace);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="streamWriter"></param>
+        private static void WriteSimplIdAttribute(object obj, StreamWriter streamWriter)
+        {
+            streamWriter.Write(' ');
+            streamWriter.Write(TranslationContext.SimplId);
+            streamWriter.Write('=');
+            streamWriter.Write('"');
+            streamWriter.Write(obj.GetHashCode().ToString());
+            streamWriter.Write('"');
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fd"></param>
+        /// <param name="streamWriter"></param>
+        /// <param name="translationContext"></param>
+        private static void WriteValueAsAtrribute(object obj, FieldDescriptor fd, StreamWriter streamWriter, TranslationContext translationContext)
+        {
+            if (obj != null)
+            {
+                if (!fd.IsDefaultValueFromContext(obj))
+                {
+                    streamWriter.Write(' ');
+                    streamWriter.Write(fd.TagName);
+                    streamWriter.Write('=');
+                    streamWriter.Write('"');
+
+                    fd.AppendValue(streamWriter, obj, translationContext, Format.Xml);
+
+                    streamWriter.Write('"');
+                }
+            }
         }
 
         /// <summary>
