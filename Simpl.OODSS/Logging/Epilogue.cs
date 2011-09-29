@@ -6,6 +6,7 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
+using Simpl.Serialization;
 using ecologylab.serialization;
 
 namespace Simpl.OODSS.Logging

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simpl.Fundamental.Net;
-using Simpl.Serialization;
-using Simpl.Serialization.Graph;
+using Simpl.Serialization.Context;
 using ecologylab.collections;
-using System.Reflection;
 using System.IO;
+using ecologylab.serialization;
 
-namespace ecologylab.serialization
+namespace Simpl.Serialization
 {
     /// <summary>
     /// 

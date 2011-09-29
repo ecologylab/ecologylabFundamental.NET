@@ -279,7 +279,7 @@ namespace ecologylab.serialization
             {
                 if ((thatField.IsStatic)) continue;
 
-                Int16 fieldType = UNSET_TYPE;
+                Int16 fieldType = UnsetType;
 
                 if (XmlTools.IsScalar(thatField))
                 {
@@ -287,18 +287,18 @@ namespace ecologylab.serialization
                 }
                 else if (XmlTools.IsAnnotationPresent(thatField, typeof(SimplComposite)))
                 {
-                    fieldType = COMPOSITE_ELEMENT;
+                    fieldType = CompositeElement;
                 }
                 else if (XmlTools.IsAnnotationPresent(thatField, typeof(SimplCollection)))
                 {
-                    fieldType = COLLECTION_ELEMENT;
+                    fieldType = CollectionElement;
                 }
                 else if (XmlTools.IsAnnotationPresent(thatField, typeof(SimplMap)))
                 {
-                    fieldType = MAP_ELEMENT;
+                    fieldType = MapElement;
                 }
 
-                if (fieldType == UNSET_TYPE)
+                if (fieldType == UnsetType)
                     continue; //not a simpl serialization annotated field
 
                 FieldDescriptor fieldDescriptor = NewFieldDescriptor(thatField, fieldType, fieldDescriptorClass);
@@ -647,6 +647,8 @@ namespace ecologylab.serialization
             }
             unresolvedScopeAnnotationFDs.Add(fd);
         }
+
+        public static void Serialize(Object object, Format format);
 
     }
 }

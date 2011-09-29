@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simpl.Serialization.Serializers.StringFormats
 {
-    class BibtexSerialization
+    public class JsonSerializer : StringSerializer
     {
     }
 }

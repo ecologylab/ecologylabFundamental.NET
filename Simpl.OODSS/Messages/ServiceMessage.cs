@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using Simpl.Serialization;
 using ecologylab.serialization;
 
 namespace ecologylab.oodss.messages 

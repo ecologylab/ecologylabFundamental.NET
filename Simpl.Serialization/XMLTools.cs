@@ -440,6 +440,5 @@ namespace Simpl.Serialization
         {
             return CamelCaseFromXMLElementName(elementName, false);
         }
-
     }
 }

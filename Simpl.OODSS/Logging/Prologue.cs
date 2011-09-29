@@ -7,6 +7,7 @@
 //
 
 using System;
+using Simpl.Serialization;
 using Simpl.Serialization.Attributes;
 using ecologylab.serialization;
 

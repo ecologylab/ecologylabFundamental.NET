@@ -1,6 +1,10 @@
-﻿namespace Simpl.Serialization.Deserializers
+﻿using Simpl.Serialization.Context;
+using Simpl.Serialization.Graph;
+
+namespace Simpl.Serialization.Deserializers
 {
-    interface ISimplDeserializationpre
+    interface ISimplDeserializationPre
     {
+        void DeserializationPreHook(TranslationContext translationContext);
     }
 }

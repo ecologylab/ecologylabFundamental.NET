@@ -59,20 +59,26 @@
     <Compile Include="ClassDescriptor.cs" />
     <Compile Include="BinaryFormat.cs" />
     <Compile Include="Deserializers\ISimplDeserializationPost.cs" />
-    <Compile Include="Deserializers\ISimplDeserializationpre.cs" />
+    <Compile Include="Deserializers\ISimplDeserializationPre.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\ISAXContentHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\ISAXErrorHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\SAXHelpers.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\SAXParser.cs" />
     <Compile Include="Deserializers\PullHandlers\BinaryFormats\BinaryPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\BinaryFormats\TlvPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\PullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\BibtexPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\JsonPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\StringPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
+    <Compile Include="Format.cs" />
     <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
     <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
     <Compile Include="Serializers\FormatSerializer.cs" />
     <Compile Include="Serializers\ISimplSerializationPost.cs" />
     <Compile Include="Serializers\ISimplSerializationPre.cs" />
-    <Compile Include="Serializers\StringFormats\BibtexSerialization.cs" />
-    <Compile Include="Serializers\StringFormats\JsonSerialization.cs" />
+    <Compile Include="Serializers\StringFormats\BibtexSerializer.cs" />
+    <Compile Include="Serializers\StringFormats\JsonSerializer.cs" />
     <Compile Include="Serializers\StringFormats\StringSerializer.cs" />
     <Compile Include="Serializers\StringFormats\XmlSerializer.cs" />
     <Compile Include="StringFormat.cs" />
@@ -83,7 +89,7 @@
     <Compile Include="IDeserializationHookStrategy.cs" />
     <Compile Include="IScalarUnmarshallingContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Graph\TranslationContext.cs" />
+    <Compile Include="Context\TranslationContext.cs" />
     <Compile Include="TranslationScope.cs" />
     <Compile Include="Types\Element\IMappable.cs" />
     <Compile Include="Types\Scalar\BooleanType.cs" />
@@ -109,7 +115,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Deserializers\Parsers\" />
     <Folder Include="Library\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

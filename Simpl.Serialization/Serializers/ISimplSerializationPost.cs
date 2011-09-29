@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Simpl.Serialization.Context;
+using Simpl.Serialization.Graph;
 
-namespace Simpl.Serialization.Library
+namespace Simpl.Serialization.Serializers
 {
     interface ISimplSerializationPost
     {
+        void SerializationPostHook(TranslationContext translationContext);
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using Simpl.Fundamental.Generic;
 using Simpl.Serialization;
 using Simpl.Serialization.Attributes;
+using Simpl.Serialization.Context;
 using Simpl.Serialization.Graph;
 using ecologylab.serialization.types;
 using System.Reflection;
@@ -64,6 +65,7 @@ namespace ecologylab.serialization
 	    String  filterReplace;
 
         private String unresolvedScopeAnnotation = null;
+        private string compositeTagName;
 
         #endregion
 
@@ -91,7 +93,7 @@ namespace ecologylab.serialization
             this.declaringClassDescriptor = declaringClassDescriptor;
             this.field = null;
             this.tagName = declaringClassDescriptor.TagName;
-            this.type = PSEUDO_FIELD_DESCRIPTOR;
+            this.type = PseudoFieldDescriptor;
             this.scalarType = null;
         }
 
@@ -116,9 +118,9 @@ namespace ecologylab.serialization
             DeriveTagClassDescriptors(field);
             this.tagName = XmlTools.GetXmlTagName(field);
 
-            type = UNSET_TYPE;
+            type = UnsetType;
 
-            type = UNSET_TYPE; // for debugging!
+            type = UnsetType; // for debugging!
 
             if (annotationType == SCALAR)
                 type = DeriveScalarSerialization(field);
@@ -157,7 +159,7 @@ namespace ecologylab.serialization
         public FieldDescriptor(String tag)
         {
             this.tagName = tag;
-            this.type = IGNORED_ELEMENT;
+            this.type = IgnoredElement;
             this.field = null;
             this.declaringClassDescriptor = null;
         }
@@ -479,7 +481,7 @@ namespace ecologylab.serialization
             {
                 String message = "Can't find ScalarType to serialize field: \t\t" + thatClass.Name + "\t" + field.Name + ";";
                 Console.WriteLine(message);
-                return (xmlHint == Hint.XmlAttribute) ? IGNORED_ATTRIBUTE : IGNORED_ELEMENT;
+                return (xmlHint == Hint.XmlAttribute) ? IgnoredAttribute : IgnoredElement;
             }
 
             if (xmlHint != Hint.XmlAttribute)
@@ -506,9 +508,9 @@ namespace ecologylab.serialization
 
             switch (annotationType)
             {               
-                case COMPOSITE_ELEMENT:
+                case CompositeElement:
                     if (!CheckAssignableFrom(typeof(ElementState), field, fieldClass, "xml_nested"))
-                        result = IGNORED_ELEMENT;
+                        result = IgnoredElement;
                     else if (!IsPolymorphic)
                     {
                         elementClassDescriptor = ClassDescriptor.GetClassDescriptor(fieldClass);
@@ -516,7 +518,7 @@ namespace ecologylab.serialization
                         tagName = XmlTools.GetXmlTagName(field);
                     }
                     break;
-                case COLLECTION_ELEMENT:
+                case CollectionElement:
                     if (XmlTools.IsAnnotationPresent(field, typeof(SimplCollection)))
                     {
                         SimplCollection collectionAttribute = null;
@@ -524,7 +526,7 @@ namespace ecologylab.serialization
                         String collectionTag = collectionAttribute.TagName;
 
                         if (!CheckAssignableFrom(typeof(IList), field, fieldClass, "xml_collection"))
-                            return IGNORED_ATTRIBUTE;
+                            return IgnoredAttribute;
 
                         if (!IsPolymorphic)
                         {
@@ -535,14 +537,14 @@ namespace ecologylab.serialization
                                 Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_collection " + field.Name
                                         + " because its tag argument is missing.");
-                                return IGNORED_ELEMENT;
+                                return IgnoredElement;
                             }
                             if (collectionElementClass == null)
                             {
                                 Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_collection " + field.Name
                                         + " because the parameterized type argument for the Collection is missing.");
-                                return IGNORED_ELEMENT;
+                                return IgnoredElement;
                             }
                             if (typeof(ElementState).IsAssignableFrom(collectionElementClass))
                             {
@@ -551,7 +553,7 @@ namespace ecologylab.serialization
                             }
                             else
                             {
-                                result = COLLECTION_SCALAR;
+                                result = CollectionSCALAR;
                                 scalarType = DeriveCollectionScalar(collectionElementClass, field);
                             }
                         }
@@ -567,9 +569,9 @@ namespace ecologylab.serialization
                         collectionOrMapTagName = collectionTag;
                     }
                     else
-                        return IGNORED_ATTRIBUTE;
+                        return IgnoredAttribute;
                     break;
-                case MAP_ELEMENT:
+                case MapElement:
                     if (XmlTools.IsAnnotationPresent(field, typeof(SimplMap)))
                     {
                         SimplMap mapAttribute = null;
@@ -577,7 +579,7 @@ namespace ecologylab.serialization
                         String mapTag = mapAttribute.TagName;
 
                         if (!CheckAssignableFrom(typeof(IDictionary), field, fieldClass, "xml_collection"))
-                            return IGNORED_ATTRIBUTE;
+                            return IgnoredAttribute;
 
                         if (!IsPolymorphic)
                         {
@@ -588,14 +590,14 @@ namespace ecologylab.serialization
                                 Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_map " + field.Name
                                         + " because its tag argument is missing.");
-                                return IGNORED_ELEMENT;
+                                return IgnoredElement;
                             }
                             if (mapElementClass == null)
                             {
                                 Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_map " + field.Name
                                         + " because the parameterized type argument for the Collection is missing.");
-                                return IGNORED_ELEMENT;
+                                return IgnoredElement;
                             }
                             if (typeof(ElementState).IsAssignableFrom(mapElementClass))
                             {
@@ -604,7 +606,7 @@ namespace ecologylab.serialization
                             }
                             else
                             {
-                                result = COLLECTION_SCALAR;
+                                result = CollectionSCALAR;
                                 scalarType = DeriveCollectionScalar(mapElementClass, field);
                             }
                         }
@@ -620,21 +622,21 @@ namespace ecologylab.serialization
                         collectionOrMapTagName = mapTag;
                     }
                     else
-                        return IGNORED_ATTRIBUTE;
+                        return IgnoredAttribute;
                     break;
                 default:
                     break;
             }
 
-            if (annotationType == COLLECTION_ELEMENT || annotationType == MAP_ELEMENT)
+            if (annotationType == CollectionElement || annotationType == MapElement)
             {
                 if (!XmlTools.IsAnnotationPresent(field, typeof(SimplNowrap)))
                     wrapped = true;
             }
-            if (result == UNSET_TYPE)
+            if (result == UnsetType)
             {
                 Console.WriteLine("Programmer error -- can't derive type.");
-                result = IGNORED_ELEMENT;
+                result = IgnoredElement;
             }
 
             return result;
@@ -837,8 +839,13 @@ namespace ecologylab.serialization
         {
             get
             {
-                return IsCollection ? CollectionOrMapTagName : TagName;
+                return IsCollection ? CollectionOrMapTagName : IsNested ? compositeTagName : tagName;
             }
+        }
+
+        protected bool IsNested
+        {
+            get { return type == CompositeElement; }
         }
 
         /// <summary>
@@ -850,10 +857,9 @@ namespace ecologylab.serialization
             {
                 switch (type)
                 {
-                    case MAP_ELEMENT:
-                    case MAP_SCALAR:
-                    case COLLECTION_ELEMENT:
-                    case COLLECTION_SCALAR:
+                    case MapElement:
+                    case CollectionElement:
+                    case CollectionSCALAR:
                         return true;
                     default:
                         return false;
