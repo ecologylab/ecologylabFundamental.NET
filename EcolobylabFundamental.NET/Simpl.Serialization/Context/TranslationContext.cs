@@ -13,7 +13,7 @@ namespace Simpl.Serialization.Context
     /// </summary>
     public class TranslationContext : FieldTypes
     {
-        private const String SimplNamespace =
+        public const String SimplNamespace =
             " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
         public const String SimplId = "simpl:id";
@@ -107,7 +107,7 @@ namespace Simpl.Serialization.Context
                     switch (childFdType)
                     {
                         case CollectionElement:
-                        case CollectionSCALAR:
+                        case CollectionScalar:
                         case MapElement:
                             thatCollection = XmlTools.GetCollection(thatReferenceObject);
                             break;
@@ -268,6 +268,16 @@ namespace Simpl.Serialization.Context
         }
 
         public void MapObject(object o)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool NeedsHashCode(object elementState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementState GetFromMap(ecologylab.serialization.sax.Attributes attributes)
         {
             throw new NotImplementedException();
         }

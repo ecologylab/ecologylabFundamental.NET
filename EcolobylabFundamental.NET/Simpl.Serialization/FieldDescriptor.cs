@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Text;
@@ -66,6 +67,7 @@ namespace ecologylab.serialization
 
         private String unresolvedScopeAnnotation = null;
         private string compositeTagName;
+       
 
         #endregion
 
@@ -553,7 +555,7 @@ namespace ecologylab.serialization
                             }
                             else
                             {
-                                result = CollectionSCALAR;
+                                result = CollectionScalar;
                                 scalarType = DeriveCollectionScalar(collectionElementClass, field);
                             }
                         }
@@ -606,7 +608,7 @@ namespace ecologylab.serialization
                             }
                             else
                             {
-                                result = CollectionSCALAR;
+                                result = CollectionScalar;
                                 scalarType = DeriveCollectionScalar(mapElementClass, field);
                             }
                         }
@@ -859,7 +861,7 @@ namespace ecologylab.serialization
                 {
                     case MapElement:
                     case CollectionElement:
-                    case CollectionSCALAR:
+                    case CollectionScalar:
                         return true;
                     default:
                         return false;
@@ -1129,6 +1131,8 @@ namespace ecologylab.serialization
             return scope != null;
         }
 
+
+
         /// <summary>
         /// return an instance based on whether the graph switch is on or not
         /// </summary>
@@ -1141,7 +1145,7 @@ namespace ecologylab.serialization
 	    {
 		    ElementState result;
 
-		    if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
 		    {
 			    ElementState alreadyUnmarshalledObject = graphContext.GetFromMap(attributes);
 
@@ -1154,7 +1158,6 @@ namespace ecologylab.serialization
 		    {
 			    result = childClassDescriptor.Instance;
 		    }
-
 		    return result;
 	    }
 
@@ -1173,6 +1176,36 @@ namespace ecologylab.serialization
         {
             get { return filterReplace; }
             set { filterReplace = value; }
+        }
+
+        public bool IsDefaultValueFromContext(object o)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteValue(StreamWriter streamWriter, object o, object o1, Format xml)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AppendValue(StreamWriter streamWriter, object o, TranslationContext translationContext, Format xml)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool IsDefaultValue(string p)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AppendCollectionScalarValue(StreamWriter streamWriter, object o, TranslationContext translationContext, Format xml)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetObject(object p0)
+        {
+            throw new NotImplementedException();
         }
     }
 }

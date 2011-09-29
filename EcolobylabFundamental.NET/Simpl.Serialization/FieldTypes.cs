@@ -43,7 +43,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public const int CollectionSCALAR = 5;
+        public const int CollectionScalar = 5;
 
         /// <summary>
         /// 
