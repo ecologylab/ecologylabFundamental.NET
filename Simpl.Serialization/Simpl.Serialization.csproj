@@ -58,6 +58,7 @@
     <Compile Include="Attributes\SimplTag.cs" />
     <Compile Include="ClassDescriptor.cs" />
     <Compile Include="BinaryFormat.cs" />
+    <Compile Include="DescriptorBase.cs" />
     <Compile Include="Deserializers\ISimplDeserializationPost.cs" />
     <Compile Include="Deserializers\ISimplDeserializationPre.cs" />
     <Compile Include="Deserializers\Parsers\Xml\ISAXContentHandler.cs" />
@@ -91,6 +92,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Context\TranslationContext.cs" />
     <Compile Include="TranslationScope.cs" />
+    <Compile Include="Types\CollectionType.cs" />
+    <Compile Include="Types\CLTypeConstants.cs" />
+    <Compile Include="Types\SimplBaseType.cs" />
     <Compile Include="Types\Element\IMappable.cs" />
     <Compile Include="Types\Scalar\BooleanType.cs" />
     <Compile Include="Types\Scalar\DoubleType.cs" />
@@ -104,8 +108,9 @@
     <Compile Include="Types\Scalar\ScalarTypeType.cs" />
     <Compile Include="Types\Scalar\StringBuilderType.cs" />
     <Compile Include="Types\Scalar\StringType.cs" />
-    <Compile Include="Types\Scalar\TypeRegistry.cs" />
+    <Compile Include="Types\TypeRegistry.cs" />
     <Compile Include="Types\Scalar\UriType.cs" />
+    <Compile Include="Types\SimplType.cs" />
     <Compile Include="XMLTools.cs" />
   </ItemGroup>
   <ItemGroup>

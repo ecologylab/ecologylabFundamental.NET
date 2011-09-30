@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
+using Simpl.Fundamental.Net;
 using Simpl.Serialization.Graph;
-using ecologylab.serialization;
 
 namespace Simpl.Serialization.Context
 {
@@ -13,19 +12,21 @@ namespace Simpl.Serialization.Context
     /// </summary>
     public class TranslationContext : FieldTypes
     {
-        public const String SimplNamespace =
-            " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
+        public const String SimplNamespace = " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
         public const String SimplId = "simpl:id";
-
         public const String SimplRef = "simpl:ref";
+        public const String JsonSimplRef = "simpl.ref";
+        public const String JsonSimplId = "simpl.id";
 
-        private readonly MultiMap<Int32, ElementState> _marshalledObjects = new MultiMap<Int32, ElementState>();
+        private readonly MultiMap<Int32> _marshalledObjects = new MultiMap<Int32>();
+        private readonly MultiMap<Int32> _needsAttributeHashCode = new MultiMap<Int32>();
+        private readonly Dictionary<String, Object> _unmarshalledObjects = new Dictionary<String, Object>();
+        private readonly MultiMap<Int32> _visitedElements = new MultiMap<Int32>();
 
-        private readonly MultiMap<Int32, ElementState> _needsAttributeHashCode = new MultiMap<Int32, ElementState>();
+        private ParsedUri _baseDirPurl;
+        private String _delimiter = ",";
 
-        private readonly Dictionary<String, ElementState> _unmarshalledObjects = new Dictionary<String, ElementState>();
-        private readonly MultiMap<Int32, ElementState> _visitedElements = new MultiMap<Int32, ElementState>();
 
         /// <summary>
         /// Return whether it is a graph
@@ -69,7 +70,8 @@ namespace Simpl.Serialization.Context
             {
                 _visitedElements.Add(obj.GetHashCode(), obj);
 
-                List<FieldDescriptor> elementFieldDescriptors = obj.ClassDescriptor.ElementFieldDescriptors;
+                List<FieldDescriptor> elementFieldDescriptors =
+                    ClassDescriptor.GetClassDescriptor(obj).ElementFieldDescriptors;
 
                 foreach (FieldDescriptor elementFieldDescriptor in elementFieldDescriptors)
                 {
@@ -97,7 +99,7 @@ namespace Simpl.Serialization.Context
                     {
                         Console.WriteLine("error" + e);
                     }
-                    // ignore null reference objects
+
                     if (thatReferenceObject == null)
                         continue;
 
@@ -120,33 +122,23 @@ namespace Simpl.Serialization.Context
                     {
                         foreach (Object next in thatCollection)
                         {
-                            if (next is ElementState)
+                            var compositeElement = next;
+                            if (AlreadyVisited(compositeElement))
                             {
-                                var compositeElement = (ElementState) next;
-                                if (AlreadyVisited(compositeElement))
-                                {
-                                    //this.needsAttributeHashCode.put(System.identityHashCode(compositeElement),
-                                    //		compositeElement);
-                                    _needsAttributeHashCode.Add(compositeElement.GetHashCode(),
-                                                                compositeElement);
-                                }
-                                else
-                                {
-                                    ResolveGraph(compositeElement);
-                                }
+                                _needsAttributeHashCode.Add(compositeElement.GetHashCode(), compositeElement);
+                            }
+                            else
+                            {
+                                ResolveGraph(compositeElement);
                             }
                         }
                     }
-                    else if (thatReferenceObject is ElementState)
+                    else
                     {
-                        var compositeElement = (ElementState) thatReferenceObject;
-
+                        var compositeElement = thatReferenceObject;
                         if (AlreadyVisited(compositeElement))
                         {
-                            //this.needsAttributeHashCode.put(System.identityHashCode(compositeElement),
-                            //		compositeElement);
-                            _needsAttributeHashCode.Add(compositeElement.GetHashCode(),
-                                                        compositeElement);
+                            _needsAttributeHashCode.Add(compositeElement.GetHashCode(), compositeElement);
                         }
                         else
                         {
@@ -157,129 +149,43 @@ namespace Simpl.Serialization.Context
             }
         }
 
-        /// <summary>
-        /// Returns whether the object is already visited
-        /// </summary>
-        /// <param name="elementState"></param>
-        /// <returns></returns>
-        public bool AlreadyVisited(ElementState elementState)
+        private bool AlreadyVisited(Object obj)
         {
-            return _visitedElements.Contains(elementState.GetHashCode(), elementState);
+            return _visitedElements.Contains(obj.GetHashCode(), obj);
         }
 
         /// <summary>
         /// Adding to the marshalledObjects
         /// </summary>
-        /// <param name="elementState"></param>
-        public void MapElementState(ElementState elementState)
+        /// <param name="obj"></param>
+        public void MapObject(Object obj)
         {
             if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
             {
-                _marshalledObjects.Add(elementState.GetHashCode(), elementState);
+                _marshalledObjects.Add(obj.GetHashCode(), obj);
             }
         }
 
-        /// <summary>
-        /// Append the simpl id
-        /// </summary>
-        /// <param name="appendable"></param>
-        /// <param name="elementState"></param>
-        public void AppendSimplIdIfRequired(StringBuilder appendable, ElementState elementState)
-        {
-            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON && NeedsHashCode(elementState))
-            {
-                AppendSimplIdAttribute(appendable, elementState);
-            }
-        }
 
         /// <summary>
-        /// decides whether the give elementstate is already marshalled
+        /// 
         /// </summary>
-        /// <param name="compositeElementState"></param>
+        /// <param name="obj"></param>
         /// <returns></returns>
-        public bool AlreadyMarshalled(ElementState compositeElementState)
+        public bool AlreadyMarshalled(Object obj)
         {
-            return _marshalledObjects.Contains(compositeElementState.GetHashCode(), compositeElementState);
+            return _marshalledObjects.Contains(obj.GetHashCode(), obj);
         }
 
-        /// <summary>
-        /// Append the simpl namespace
-        /// </summary>
-        /// <param name="appendable"></param>
-        public void AppendSimplNameSpace(StringBuilder appendable)
-        {
-            appendable.Append(SimplNamespace);
-        }
 
         /// <summary>
-        /// Append Simpl ref id
+        /// 
         /// </summary>
-        /// <param name="appendable"></param>
-        /// <param name="elementState"></param>
-        /// <param name="compositeElementFD"></param>
-        public void AppendSimplRefId(StringBuilder appendable, ElementState elementState,
-                                     FieldDescriptor compositeElementFD)
-        {
-            compositeElementFD.WriteElementStart(appendable);
-            AppendSimplIdAttributeWithTagName(appendable, SimplRef, elementState);
-            appendable.Append("/>");
-        }
-
-        /// <summary>
-        /// Append simpl id with the tag name
-        /// </summary>
-        /// <param name="appendable"></param>
-        /// <param name="tagName"></param>
-        /// <param name="elementState"></param>
-        public void AppendSimplIdAttributeWithTagName(StringBuilder appendable, String tagName,
-                                                      ElementState elementState)
-        {
-            appendable.Append(' ');
-            appendable.Append(tagName);
-            appendable.Append('=');
-            appendable.Append('"');
-            appendable.Append((elementState.GetHashCode()).ToString());
-            appendable.Append('"');
-        }
-
-        /// <summary>
-        /// Append simpl id attribute
-        /// </summary>
-        /// <param name="appendable"></param>
-        /// <param name="elementState"></param>
-        public void AppendSimplIdAttribute(StringBuilder appendable, ElementState elementState)
-        {
-            AppendSimplIdAttributeWithTagName(appendable, SimplId, elementState);
-        }
-
-        /// <summary>
-        /// returns whether the hashcode is needed
-        /// </summary>
-        /// <param name="elementState"></param>
+        /// <param name="obj"></param>
         /// <returns></returns>
-        public bool NeedsHashCode(ElementState elementState)
+        public bool NeedsHashCode(Object obj)
         {
-            return _needsAttributeHashCode.Contains(elementState.GetHashCode(), elementState);
-        }
-
-        internal bool AlreadyMarshalled(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void MapObject(object o)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool NeedsHashCode(object elementState)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ElementState GetFromMap(ecologylab.serialization.sax.Attributes attributes)
-        {
-            throw new NotImplementedException();
+            return _needsAttributeHashCode.Contains(obj.GetHashCode(), obj);
         }
     }
 }
