@@ -3,7 +3,7 @@
     /// <summary>
     ///     
     /// </summary>
-    public class FieldTypes
+    public static class FieldTypes
     {
         /// <summary>
         /// 
@@ -63,7 +63,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public const int PseudoFieldDescriptor = 0x0d;
+        public const int Pseudo = 0x0d;
 
         /// <summary>
         /// 

@@ -292,9 +292,9 @@ namespace Simpl.Serialization
         /// </summary>
         /// <param name="describedClass"></param>
         /// <returns></returns>
-        public static ElementState GetInstance(Type describedClass)
+        public static Object GetInstance(Type describedClass)
         {
-            return (ElementState)Activator.CreateInstance(describedClass);
+            return Activator.CreateInstance(describedClass);
         }
 
         /// <summary>

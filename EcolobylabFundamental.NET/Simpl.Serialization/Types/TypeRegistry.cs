@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Simpl.Serialization;
+using ecologylab.serialization.types;
+using ecologylab.serialization.types.scalar;
 
-namespace ecologylab.serialization.types.scalar
+namespace Simpl.Serialization.Types
 {
     /// <summary>
     ///     Class to hold the mappings of different datatypes 
@@ -116,6 +115,11 @@ namespace ecologylab.serialization.types.scalar
         public static ScalarType GetType(Type type)
         {
             return XmlTools.IsEnum(type) ? GetType(typeof(Enum).Name) : GetType(type.Name);
+        }
+
+        public static void RegisterSimplType(SimplType simplType)
+        {
+            throw new NotImplementedException();
         }
     }
 }

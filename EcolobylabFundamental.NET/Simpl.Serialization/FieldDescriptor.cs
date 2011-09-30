@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security;
 using System.Text;
 using Simpl.Fundamental.Generic;
-using Simpl.Serialization;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.Context;
-using Simpl.Serialization.Graph;
+using Simpl.Serialization.Types;
 using ecologylab.serialization.types;
 using System.Reflection;
 using ecologylab.serialization.types.scalar;
 using System.Collections;
 using System.Text.RegularExpressions;
-using ecologylab.serialization.sax;
 
-namespace ecologylab.serialization
+namespace Simpl.Serialization
 {
     /// <summary>
     ///     <c>FieldDescriptors</c> are abstract data strucutres which defines a field in a 
@@ -25,41 +21,36 @@ namespace ecologylab.serialization
     /// </summary>
     public class FieldDescriptor : FieldTypes
     {
-        const String START_CDATA = "<![CDATA[";
-        const String END_CDATA = "]]>";
+        private readonly FieldInfo _field;
+        private String _tagName;
+        private List<String> _otherTags;
 
-        #region Private Fields
+        private readonly ClassDescriptor _declaringClassDescriptor;
+        private readonly int _type;
+        private ScalarType _scalarType;
 
-        private FieldInfo field;
-        private String tagName;
-        private List<String> otherTags;
+        private String[] _format;
+        private Boolean _needsEscaping;
+        private readonly FieldDescriptor _wrappedFD;
 
-        private ClassDescriptor declaringClassDescriptor;
-        private int type;
-        private ScalarType scalarType;
+        private DictionaryList<String, ClassDescriptor> _tagClassDescriptors;
+        private Dictionary<String, Type> _tagClasses;
 
-        private String[] format;
-        private Boolean needsEscaping;
-        private FieldDescriptor wrappedFD;
+        private String _collectionOrMapTagName;
+        private Boolean _wrapped;
+        private readonly MethodInfo _setValueMethod;
 
-        private DictionaryList<String, ClassDescriptor> tagClassDescriptors;
-        private Dictionary<String, Type> tagClasses;
+        private ClassDescriptor _elementClassDescriptor;
+        private Type _elementClass;
 
-        private String collectionOrMapTagName;
-        private Boolean wrapped;
-        private MethodInfo setValueMethod;
+        private readonly FieldInfo _xmlTextScalarField;
 
-        private ClassDescriptor elementClassDescriptor;
-        private Type elementClass;
-
-        private FieldInfo xmlTextScalarField;
-
-        private Boolean isCDATA;
-        private FieldInfo thatField;
-        private int fieldType;
-        private Type fieldDescriptorClass;
-        private Hint xmlHint;
-        private object isEnum;
+        private Boolean _isCdata;
+        private FieldInfo _thatField;
+        private int _fieldType;
+        private Type _fieldDescriptorClass;
+        private Hint _xmlHint;
+        private object _isEnum;
 
 	    Regex   regex;
 
@@ -69,15 +60,15 @@ namespace ecologylab.serialization
         private string compositeTagName;
        
 
-        #endregion
-
-        #region Constructors
-
+     
         /// <summary>
         ///     Default constructor
         /// </summary>
-        public FieldDescriptor()
+        public FieldDescriptor(MethodInfo setValueMethod, FieldInfo xmlTextScalarField, FieldInfo xmlTextScalarField)
         {
+            this._setValueMethod = setValueMethod;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._xmlTextScalarField = xmlTextScalarField;
         }
 
 
@@ -90,13 +81,16 @@ namespace ecologylab.serialization
         ///     The <c>ClassDescriptor</c> for the class which defines the field
         ///     described by this <c>FieldDescriptor</c>.
         /// </param>
-        public FieldDescriptor(ClassDescriptor declaringClassDescriptor)
+        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, MethodInfo setValueMethod, FieldInfo xmlTextScalarField, FieldInfo xmlTextScalarField)
         {
-            this.declaringClassDescriptor = declaringClassDescriptor;
-            this.field = null;
-            this.tagName = declaringClassDescriptor.TagName;
-            this.type = PseudoFieldDescriptor;
-            this.scalarType = null;
+            this._declaringClassDescriptor = declaringClassDescriptor;
+            this._setValueMethod = setValueMethod;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._field = null;
+            this._tagName = declaringClassDescriptor.TagName;
+            this._type = Pseudo;
+            this._scalarType = null;
         }
 
         /// <summary>   
@@ -112,22 +106,25 @@ namespace ecologylab.serialization
         /// <param name="annotationType">
         ///     <c>Int16</c> type id of the annotation.
         /// </param>
-        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldInfo field, Int16 annotationType)
+        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldInfo field, Int16 annotationType, MethodInfo setValueMethod, FieldInfo xmlTextScalarField, FieldInfo xmlTextScalarField)
         {
-            this.declaringClassDescriptor = declaringClassDescriptor;
-            this.field = field;
+            this._declaringClassDescriptor = declaringClassDescriptor;
+            this._field = field;
+            this._setValueMethod = setValueMethod;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._xmlTextScalarField = xmlTextScalarField;
 
             DeriveTagClassDescriptors(field);
-            this.tagName = XmlTools.GetXmlTagName(field);
+            this._tagName = XmlTools.GetXmlTagName(field);
 
-            type = UnsetType;
+            _type = UnsetType;
 
-            type = UnsetType; // for debugging!
+            _type = UnsetType; // for debugging!
 
-            if (annotationType == SCALAR)
-                type = DeriveScalarSerialization(field);
+            if (annotationType == Scalar)
+                _type = DeriveScalarSerialization(field);
             else
-                type = DeriveNestedSerialization(field, annotationType);
+                _type = DeriveNestedSerialization(field, annotationType);
 
             //TODO: if we case use the set method in there? 
             //setValueMethod = ReflectionTools.getMethod(field.getType(), "setValue", SET_METHOD_ARG);
@@ -146,31 +143,33 @@ namespace ecologylab.serialization
         /// <param name="wrapperTag">
         ///     <c>String</c> wrapper tag name
         /// </param>
-        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldDescriptor wrappedFD, String wrapperTag)
+        public FieldDescriptor(ClassDescriptor declaringClassDescriptor, FieldDescriptor wrappedFD, String wrapperTag, MethodInfo setValueMethod, FieldInfo xmlTextScalarField, FieldInfo xmlTextScalarField)
         {
-            this.declaringClassDescriptor = declaringClassDescriptor;
-            this.wrappedFD = wrappedFD;
-            this.type = WRAPPER;
-            this.tagName = wrapperTag;
+            this._declaringClassDescriptor = declaringClassDescriptor;
+            this._wrappedFD = wrappedFD;
+            this._type = Wrapper;
+            this._tagName = wrapperTag;
+            this._setValueMethod = setValueMethod;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._xmlTextScalarField = xmlTextScalarField;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="tag"></param>
-        public FieldDescriptor(String tag)
+        public FieldDescriptor(String tag, MethodInfo setValueMethod, FieldInfo xmlTextScalarField, FieldInfo xmlTextScalarField)
         {
-            this.tagName = tag;
-            this.type = IgnoredElement;
-            this.field = null;
-            this.declaringClassDescriptor = null;
+            this._tagName = tag;
+            this._setValueMethod = setValueMethod;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._xmlTextScalarField = xmlTextScalarField;
+            this._type = IgnoredElement;
+            this._field = null;
+            this._declaringClassDescriptor = null;
         }
 
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
+  /// <summary>
         /// 
         /// </summary>
         /// <param name="buffy"></param>
@@ -188,8 +187,8 @@ namespace ecologylab.serialization
         {
             if (context != null)
             {
-                ScalarType scalarType = this.scalarType;
-                FieldInfo field = this.field;
+                ScalarType scalarType = this._scalarType;
+                FieldInfo field = this._field;
 
                 if (scalarType == null)
                 {
@@ -198,11 +197,11 @@ namespace ecologylab.serialization
                 else if (!scalarType.IsDefaultValue(field, context))
                 {
                     buffy.Append(' ');
-                    buffy.Append(this.tagName);
+                    buffy.Append(this._tagName);
                     buffy.Append('=');
                     buffy.Append('"');
 
-                    scalarType.AppendValue(buffy, this, context, Format.XML);
+                    scalarType.AppendValue(buffy, this, context, Format.Xml);
                     buffy.Append('"');
                 }
             }
@@ -217,13 +216,13 @@ namespace ecologylab.serialization
         {
             if (elementState != null)
             {
-                ScalarType scalarType = this.scalarType;
-                if (!scalarType.IsDefaultValue(xmlTextScalarField, elementState))
+                ScalarType scalarType = this._scalarType;
+                if (!scalarType.IsDefaultValue(_xmlTextScalarField, elementState))
                 {
-                    if (isCDATA)
+                    if (_isCdata)
                         output.Append(START_CDATA);
                     scalarType.AppendValue(output, this, elementState, Format.XML);
-                    if (isCDATA)
+                    if (_isCdata)
                         output.Append(END_CDATA);
                 }
             }
@@ -238,17 +237,17 @@ namespace ecologylab.serialization
         {
             if (elementState != null)
             {
-                ScalarType scalarType = this.scalarType;
-                FieldInfo field = this.field;
+                ScalarType scalarType = this._scalarType;
+                FieldInfo field = this._field;
 
                 if (!scalarType.IsDefaultValue(field, elementState))
                 {
                     WriteOpenTag(output);
 
-                    if (isCDATA)
+                    if (_isCdata)
                         output.Append(START_CDATA);
                     scalarType.AppendValue(output, this, elementState, Format.XML); // escape if not CDATA! :-)
-                    if (isCDATA)
+                    if (_isCdata)
                         output.Append(END_CDATA);
 
                     WriteCloseTag(output);
@@ -284,7 +283,7 @@ namespace ecologylab.serialization
             output.Append('<');
             if (close)
                 output.Append('/');
-            output.Append(tagName).Append('>');
+            output.Append(_tagName).Append('>');
         }
 
         /// <summary>
@@ -296,13 +295,13 @@ namespace ecologylab.serialization
         {
             if (instance != null)
             {
-                ScalarType scalarType = this.scalarType;
+                ScalarType scalarType = this._scalarType;
 
                 WriteOpenTag(buffy);
-                if (isCDATA)
+                if (_isCdata)
                     buffy.Append(START_CDATA);
-                scalarType.AppendValue(instance, buffy, !isCDATA, Format.XML);
-                if (isCDATA)
+                scalarType.AppendValue(instance, buffy, !_isCdata, Format.XML);
+                if (_isCdata)
                     buffy.Append(END_CDATA);
 
                 WriteCloseTag(buffy);
@@ -321,7 +320,7 @@ namespace ecologylab.serialization
         /// <param name="nestedObject"></param>
         public void SetFieldToNestedObject(ElementState context, ElementState nestedObject)
         {
-            this.field.SetValue(context, nestedObject);
+            this._field.SetValue(context, nestedObject);
         }
 
         /// <summary>
@@ -330,11 +329,11 @@ namespace ecologylab.serialization
         /// <param name="parent"></param>
         /// <param name="tagName"></param>
         /// <returns></returns>
-        public ElementState ConstructChildElementState(ElementState parent, String tagName, Attributes attributes, TranslationContext graphContext)
+        public ElementState ConstructChildElementState(ElementState parent, String tagName, ecologylab.serialization.sax.Attributes attributes, TranslationContext graphContext)
         {
-            if (tagClassDescriptors != null && !tagClassDescriptors.ContainsKey(tagName))
+            if (_tagClassDescriptors != null && !_tagClassDescriptors.ContainsKey(tagName))
                 Console.WriteLine("Error: " + tagName);
-            ClassDescriptor childClassDescriptor = !IsPolymorphic ? elementClassDescriptor : tagClassDescriptors[tagName];
+            ClassDescriptor childClassDescriptor = !IsPolymorphic ? _elementClassDescriptor : _tagClassDescriptors[tagName];
             ElementState result = null;
 
             if (childClassDescriptor != null)
@@ -357,9 +356,9 @@ namespace ecologylab.serialization
         /// <returns></returns>
         public ElementState ConstructChildElementState(ElementState parent, String tagName)
         {
-            if (tagClassDescriptors != null && !tagClassDescriptors.ContainsKey(tagName))
+            if (_tagClassDescriptors != null && !_tagClassDescriptors.ContainsKey(tagName))
                 Console.WriteLine("Error: " + tagName);
-            ClassDescriptor childClassDescriptor = !IsPolymorphic ? elementClassDescriptor : tagClassDescriptors[tagName];
+            ClassDescriptor childClassDescriptor = !IsPolymorphic ? _elementClassDescriptor : _tagClassDescriptors[tagName];
             ElementState result = null;
 
             if (childClassDescriptor != null)
@@ -383,13 +382,13 @@ namespace ecologylab.serialization
         {
             Object collection = null;
 
-            collection = field.GetValue(currentElementState);
+            collection = _field.GetValue(currentElementState);
 
             if (collection == null)
             {
-                Type collectionType = field.FieldType;
+                Type collectionType = _field.FieldType;
                 collection = Activator.CreateInstance(collectionType);
-                field.SetValue(currentElementState, collection);
+                _field.SetValue(currentElementState, collection);
             }
 
             return collection;
@@ -407,17 +406,17 @@ namespace ecologylab.serialization
                 return;
 
 
-            if (setValueMethod != null)
+            if (_setValueMethod != null)
             {
                 Object[] args = new Object[1];
                 args[0] = value;
 
-                setValueMethod.Invoke(context, args);
+                _setValueMethod.Invoke(context, args);
             }
-            else if (scalarType != null && !scalarType.IsMarshallOnly)
+            else if (_scalarType != null && !_scalarType.IsMarshallOnly)
             {
                 var UGLY_UNESCAPING = new StringBuilder(value).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
-                scalarType.SetField(context, field, UGLY_UNESCAPING.ToString(), null, scalarUnmarshallingContext);
+                _scalarType.SetField(context, _field, UGLY_UNESCAPING.ToString(), null, scalarUnmarshallingContext);
                 //scalarType.SetField(context, field, value, null, scalarUnmarshallingContext);
             }
         }
@@ -435,9 +434,9 @@ namespace ecologylab.serialization
                 //silently ignore the leaf node values. 
             }
 
-            if (scalarType != null)
+            if (_scalarType != null)
             {
-                Object typeConvertedValue = scalarType.GetInstance(leafNodeValue, format, scalarUnmarshallingContext);
+                Object typeConvertedValue = _scalarType.GetInstance(leafNodeValue, _format, scalarUnmarshallingContext);
                 if (typeConvertedValue != null)
                 {
                     IList collection = (IList)AutomaticLazyGetCollectionOrDict(activeElementState);
@@ -462,8 +461,8 @@ namespace ecologylab.serialization
         private int DeriveScalarSerialization(FieldInfo field)
         {
             int result = DeriveScalarSerialization(field.FieldType, field);
-            if (xmlHint == Hint.XmlText || xmlHint == Hint.XmlLeafCdata)
-                this.declaringClassDescriptor.ScalarTextFD = this;
+            if (_xmlHint == Hint.XmlText || _xmlHint == Hint.XmlLeafCdata)
+                this._declaringClassDescriptor.ScalarTextFD = this;
             return result;
         }
 
@@ -475,21 +474,21 @@ namespace ecologylab.serialization
         /// <returns></returns>
         private int DeriveScalarSerialization(System.Type thatClass, FieldInfo field)
         {
-            isEnum = XmlTools.IsEnum(field);
-            xmlHint = XmlTools.SimplHint(field);
-            scalarType = TypeRegistry.GetType(thatClass);
+            _isEnum = XmlTools.IsEnum(field);
+            _xmlHint = XmlTools.SimplHint(field);
+            _scalarType = TypeRegistry.GetType(thatClass);
 
-            if (scalarType == null)
+            if (_scalarType == null)
             {
                 String message = "Can't find ScalarType to serialize field: \t\t" + thatClass.Name + "\t" + field.Name + ";";
                 Console.WriteLine(message);
-                return (xmlHint == Hint.XmlAttribute) ? IgnoredAttribute : IgnoredElement;
+                return (_xmlHint == Hint.XmlAttribute) ? IgnoredAttribute : IgnoredElement;
             }
 
-            if (xmlHint != Hint.XmlAttribute)
+            if (_xmlHint != Hint.XmlAttribute)
             {
-                needsEscaping = scalarType.NeedsEscaping;
-                isCDATA = xmlHint == Hint.XmlLeafCdata || xmlHint == Hint.XmlTextCdata;
+                _needsEscaping = _scalarType.NeedsEscaping;
+                _isCdata = _xmlHint == Hint.XmlLeafCdata || _xmlHint == Hint.XmlTextCdata;
             }
 
             //TODO : simple filter annotation;
@@ -515,9 +514,9 @@ namespace ecologylab.serialization
                         result = IgnoredElement;
                     else if (!IsPolymorphic)
                     {
-                        elementClassDescriptor = ClassDescriptor.GetClassDescriptor(fieldClass);
-                        elementClass = elementClassDescriptor.DescribedClass;
-                        tagName = XmlTools.GetXmlTagName(field);
+                        _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(fieldClass);
+                        _elementClass = _elementClassDescriptor.DescribedClass;
+                        _tagName = XmlTools.GetXmlTagName(field);
                     }
                     break;
                 case CollectionElement:
@@ -536,39 +535,39 @@ namespace ecologylab.serialization
 
                             if (collectionTag == null || collectionTag.Length < 0)
                             {
-                                Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                                Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_collection " + field.Name
                                         + " because its tag argument is missing.");
                                 return IgnoredElement;
                             }
                             if (collectionElementClass == null)
                             {
-                                Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                                Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_collection " + field.Name
                                         + " because the parameterized type argument for the Collection is missing.");
                                 return IgnoredElement;
                             }
                             if (typeof(ElementState).IsAssignableFrom(collectionElementClass))
                             {
-                                elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementClass);
-                                elementClass = elementClassDescriptor.DescribedClass;
+                                _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementClass);
+                                _elementClass = _elementClassDescriptor.DescribedClass;
                             }
                             else
                             {
                                 result = CollectionScalar;
-                                scalarType = DeriveCollectionScalar(collectionElementClass, field);
+                                _scalarType = DeriveCollectionScalar(collectionElementClass, field);
                             }
                         }
                         else
                         {
                             if (collectionTag != null && collectionTag.Length > 0)
                             {
-                                Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                                Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                                         + "\n\tIgnoring argument to  xml_collection " + field.Name
                                         + " because it is declared polymorphic with xml_classes.");
                             }
                         }
-                        collectionOrMapTagName = collectionTag;
+                        _collectionOrMapTagName = collectionTag;
                     }
                     else
                         return IgnoredAttribute;
@@ -589,39 +588,39 @@ namespace ecologylab.serialization
 
                             if (mapTag == null || mapTag.Length < 0)
                             {
-                                Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                                Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_map " + field.Name
                                         + " because its tag argument is missing.");
                                 return IgnoredElement;
                             }
                             if (mapElementClass == null)
                             {
-                                Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                                Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                                         + "\n\tCan't translate  xml_map " + field.Name
                                         + " because the parameterized type argument for the Collection is missing.");
                                 return IgnoredElement;
                             }
                             if (typeof(ElementState).IsAssignableFrom(mapElementClass))
                             {
-                                elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementClass);
-                                elementClass = elementClassDescriptor.DescribedClass;
+                                _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementClass);
+                                _elementClass = _elementClassDescriptor.DescribedClass;
                             }
                             else
                             {
                                 result = CollectionScalar;
-                                scalarType = DeriveCollectionScalar(mapElementClass, field);
+                                _scalarType = DeriveCollectionScalar(mapElementClass, field);
                             }
                         }
                         else
                         {
                             if (mapTag != null && mapTag.Length > 0)
                             {
-                                Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                                Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                                         + "\n\tIgnoring argument to  xml_map " + field.Name
                                         + " because it is declared polymorphic with xml_classes.");
                             }
                         }
-                        collectionOrMapTagName = mapTag;
+                        _collectionOrMapTagName = mapTag;
                     }
                     else
                         return IgnoredAttribute;
@@ -633,7 +632,7 @@ namespace ecologylab.serialization
             if (annotationType == CollectionElement || annotationType == MapElement)
             {
                 if (!XmlTools.IsAnnotationPresent(field, typeof(SimplNowrap)))
-                    wrapped = true;
+                    _wrapped = true;
             }
             if (result == UnsetType)
             {
@@ -657,7 +656,7 @@ namespace ecologylab.serialization
             Boolean result = targetClass.IsAssignableFrom(fieldClass);
             if (!result)
             {
-                System.Console.WriteLine("In " + declaringClassDescriptor.DescribedClass
+                System.Console.WriteLine("In " + _declaringClassDescriptor.DescribedClass
                         + "\n\tCan't translate  " + annotationDescription + "() " + field.Name
                         + " because the annotated field is not an instance of " + targetClass.Name + ".");
             }
@@ -675,8 +674,8 @@ namespace ecologylab.serialization
             ScalarType result = TypeRegistry.GetType(collectionScalarClass);
             if (result != null)
             {
-                needsEscaping = result.NeedsEscaping;
-                format = XmlTools.GetFormatAnnotation(field);
+                _needsEscaping = result.NeedsEscaping;
+                _format = XmlTools.GetFormatAnnotation(field);
             }
             return result;
         }
@@ -728,7 +727,7 @@ namespace ecologylab.serialization
                     if (!ResolveScopeAnnotation(scopeAnnotation))
                     {
                         unresolvedScopeAnnotation = scopeAnnotation;
-                        declaringClassDescriptor.RegisterUnresolvedScopeAnnotationFD(this);
+                        _declaringClassDescriptor.RegisterUnresolvedScopeAnnotationFD(this);
                     }
                 }
 
@@ -744,19 +743,19 @@ namespace ecologylab.serialization
                     {
                         ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatClass);
                         ClassDescriptor previousMapping = null;
-                        if (tagClassDescriptors.TryGetValue(classDescriptor.TagName, out previousMapping))
+                        if (_tagClassDescriptors.TryGetValue(classDescriptor.TagName, out previousMapping))
                         {
-                            tagClassDescriptors.Remove(classDescriptor.TagName);
+                            _tagClassDescriptors.Remove(classDescriptor.TagName);
                         }
-                        tagClassDescriptors.Add(classDescriptor.TagName, classDescriptor);
+                        _tagClassDescriptors.Add(classDescriptor.TagName, classDescriptor);
 
                         Type previousType = null;
 
-                        if (tagClasses.TryGetValue(classDescriptor.TagName, out previousType))
+                        if (_tagClasses.TryGetValue(classDescriptor.TagName, out previousType))
                         {
-                            tagClasses.Remove(classDescriptor.TagName);
+                            _tagClasses.Remove(classDescriptor.TagName);
                         }
-                        tagClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);
+                        _tagClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);
                     }
             }
         }
@@ -767,13 +766,13 @@ namespace ecologylab.serialization
         /// <param name="initialSize"></param>
         private void InitTagClassDescriptorsArrayList(int initialSize)
         {
-            if (tagClassDescriptors == null)
+            if (_tagClassDescriptors == null)
             {
-                tagClassDescriptors = new DictionaryList<string, ClassDescriptor>(initialSize);
+                _tagClassDescriptors = new DictionaryList<string, ClassDescriptor>(initialSize);
             }
-            if (tagClasses == null)
+            if (_tagClasses == null)
             {
-                tagClasses = new Dictionary<String, Type>(initialSize);
+                _tagClasses = new Dictionary<String, Type>(initialSize);
             }
         }
 
@@ -810,7 +809,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return tagClassDescriptors != null || unresolvedScopeAnnotation != null;
+                return _tagClassDescriptors != null || unresolvedScopeAnnotation != null;
             }
         }
 
@@ -821,7 +820,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return wrapped;
+                return _wrapped;
             }
         }
 
@@ -831,7 +830,7 @@ namespace ecologylab.serialization
         /// <returns></returns>
         public int GetTypeId()
         {
-            return type;
+            return _type;
         }
 
         /// <summary>
@@ -841,13 +840,13 @@ namespace ecologylab.serialization
         {
             get
             {
-                return IsCollection ? CollectionOrMapTagName : IsNested ? compositeTagName : tagName;
+                return IsCollection ? CollectionOrMapTagName : IsNested ? compositeTagName : _tagName;
             }
         }
 
         protected bool IsNested
         {
-            get { return type == CompositeElement; }
+            get { return _type == CompositeElement; }
         }
 
         /// <summary>
@@ -857,7 +856,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                switch (type)
+                switch (_type)
                 {
                     case MapElement:
                     case CollectionElement:
@@ -871,7 +870,7 @@ namespace ecologylab.serialization
 
         public bool IsScalar
         {
-            get { return scalarType != null; }
+            get { return _scalarType != null; }
         }
 
         /// <summary>
@@ -881,7 +880,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return collectionOrMapTagName;
+                return _collectionOrMapTagName;
             }
         }
 
@@ -892,7 +891,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return type;
+                return _type;
             }
         }
 
@@ -903,7 +902,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return tagName;
+                return _tagName;
             }
         }
 
@@ -914,7 +913,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return field;
+                return _field;
             }
         }
 
@@ -925,7 +924,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return scalarType != null && scalarType.IsMarshallOnly;
+                return _scalarType != null && _scalarType.IsMarshallOnly;
             }
         }
 
@@ -936,7 +935,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return tagClassDescriptors;
+                return _tagClassDescriptors;
             }
         }
 
@@ -947,7 +946,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return field == null ? null : field.Name;
+                return _field == null ? null : _field.Name;
             }
         }
 
@@ -958,7 +957,7 @@ namespace ecologylab.serialization
         {
             get
             {
-                return isCDATA;
+                return _isCdata;
             }
         }
 
@@ -967,7 +966,7 @@ namespace ecologylab.serialization
         /// </summary>
         public FieldDescriptor WrappedFieldDescriptor
         {
-            get { return wrappedFD; }
+            get { return _wrappedFD; }
         }
 
         /// <summary>
@@ -977,17 +976,17 @@ namespace ecologylab.serialization
         {
             get
             {
-                return xmlHint;
+                return _xmlHint;
             }
             set
             {
-                xmlHint = value;
+                _xmlHint = value;
             }
         }
 
         public ClassDescriptor ClassDescriptor
         {
-            get { return elementClassDescriptor; }
+            get { return _elementClassDescriptor; }
         }
 
         #endregion
@@ -1006,7 +1005,7 @@ namespace ecologylab.serialization
         public bool IsDefaultValue(ElementState context)
         {
             if (context != null)
-                return scalarType.IsDefaultValue(this.field, context);
+                return _scalarType.IsDefaultValue(this._field, context);
             return false;
         }
 
@@ -1020,8 +1019,8 @@ namespace ecologylab.serialization
         {
             if (context != null)
             {
-                ScalarType scalarType = this.scalarType;
-                FieldInfo field = this.field;
+                ScalarType scalarType = this._scalarType;
+                FieldInfo field = this._field;
 
                 if (!scalarType.IsDefaultValue(field, context))
                 {
@@ -1029,7 +1028,7 @@ namespace ecologylab.serialization
                         output.Append(", ");
 
                     output.Append('"');
-                    output.Append(tagName);
+                    output.Append(_tagName);
                     output.Append('"');
                     output.Append(':');
                     output.Append('"');
@@ -1046,7 +1045,7 @@ namespace ecologylab.serialization
             if (!close)
             {
                 output.Append('"');
-                output.Append(tagName);
+                output.Append(_tagName);
                 output.Append('"').Append(':');
                 output.Append('{');
             }
@@ -1077,7 +1076,7 @@ namespace ecologylab.serialization
                     output.Append(',');
                 }
 
-                ScalarType scalarType = this.scalarType;
+                ScalarType scalarType = this._scalarType;
                 output.Append('"');
                 scalarType.AppendValue(instance, output, false, Format.JSON);
                 output.Append('"');
@@ -1086,7 +1085,7 @@ namespace ecologylab.serialization
 
         public void WriteJSONPolymorphicCollectionStart(StringBuilder output)
         {
-            output.Append('"').Append(tagName).Append('"');
+            output.Append('"').Append(_tagName).Append('"');
             output.Append(':');
             output.Append('[');
         }
@@ -1109,7 +1108,7 @@ namespace ecologylab.serialization
             if (result)
             {
                 unresolvedScopeAnnotation = null;
-                declaringClassDescriptor.MapTagClassDescriptors(this);
+                _declaringClassDescriptor.MapTagClassDescriptors(this);
             }
             return result;
         }
@@ -1124,8 +1123,8 @@ namespace ecologylab.serialization
                 foreach (ClassDescriptor classDescriptor in scopeClassDescriptors)
                 {
                     String tagName = classDescriptor.TagName;
-                    tagClassDescriptors.Add(tagName, classDescriptor);
-                    tagClasses.Add(tagName, classDescriptor.DescribedClass);
+                    _tagClassDescriptors.Add(tagName, classDescriptor);
+                    _tagClasses.Add(tagName, classDescriptor.DescribedClass);
                 }
             }
             return scope != null;
@@ -1140,7 +1139,7 @@ namespace ecologylab.serialization
         /// <param name="childClassDescriptor"></param>
         /// <param name="graphContext"></param>
         /// <returns></returns>
-        private ElementState GetInstance(Attributes attributes, ClassDescriptor childClassDescriptor,
+        private ElementState GetInstance(ecologylab.serialization.sax.Attributes attributes, ClassDescriptor childClassDescriptor,
 			TranslationContext graphContext) 
 	    {
 		    ElementState result;
@@ -1163,7 +1162,7 @@ namespace ecologylab.serialization
 
         public ScalarType GetScalarType()
         {
-            return scalarType;
+            return _scalarType;
         }
 
         public Regex RegexPattern
@@ -1193,7 +1192,7 @@ namespace ecologylab.serialization
             throw new NotImplementedException();
         }
 
-        internal bool IsDefaultValue(string p)
+        public bool IsDefaultValue(string p)
         {
             throw new NotImplementedException();
         }

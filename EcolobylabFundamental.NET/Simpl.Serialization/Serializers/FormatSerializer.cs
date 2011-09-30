@@ -15,9 +15,8 @@ namespace Simpl.Serialization.Serializers
     /// serialization, such as System.out, File, StringBuilder, or return serialized data as
     /// StringBuilder
     /// </summary>
-    public abstract class FormatSerializer : FieldTypes
+    public abstract class FormatSerializer
     {
-
         /// <summary>
         /// 
         /// </summary>

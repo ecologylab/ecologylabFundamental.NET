@@ -115,10 +115,10 @@ namespace Simpl.Serialization.Serializers.StringFormats
 		{
 			switch (fd.Type)
 			{
-			case Scalar:
+			case FieldTypes.Scalar:
 				WriteValueAsLeaf(obj, fd, streamWriter, translationContext);
 				break;
-			case CompositeElement:
+            case FieldTypes.CompositeElement:
 				Object compositeObject = fd.GetObject(obj);
 				if (compositeObject != null)
 				{
@@ -130,8 +130,8 @@ namespace Simpl.Serialization.Serializers.StringFormats
 					WriteWrap(fd, streamWriter, true);
 				}
 				break;
-			case CollectionScalar:
-			case MapScalar:
+            case FieldTypes.CollectionScalar:
+            case FieldTypes.MapScalar:
 				Object scalarCollectionObject = fd.GetObject(obj);
 				ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
 				if (scalarCollection != null && scalarCollection.Count > 0)
@@ -145,8 +145,8 @@ namespace Simpl.Serialization.Serializers.StringFormats
 					WriteWrap(fd, streamWriter, true);
 				}
 				break;
-			case CollectionElement:
-			case MapElement:
+            case FieldTypes.CollectionElement:
+            case FieldTypes.MapElement:
 				Object compositeCollectionObject = fd.GetObject(obj);
 				ICollection compositeCollection = XmlTools.GetCollection(compositeCollectionObject);
                 if (compositeCollection != null && compositeCollection.Count > 0)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ecologylab.serialization;
 
@@ -8,17 +9,16 @@ namespace Simpl.Serialization.Graph
     /// A collection type to hold a map of multiple elementstate objects
     /// </summary>
     /// <typeparam name="TK"></typeparam>
-    /// <typeparam name="TV"></typeparam>
-    class MultiMap<TK, TV > where TV : ElementState
+    class MultiMap<TK>
     {
-        private readonly Dictionary<TK, List<TV>> _map;
+        private readonly Dictionary<TK, List<Object>> _map;
         
         /// <summary>
         /// Ddefault constructor
         /// </summary>
         public MultiMap()
         {
-            _map = new Dictionary<TK,List<TV>>();
+            _map = new Dictionary<TK, List<Object>>();
         }
 
         /// <summary>
@@ -27,17 +27,17 @@ namespace Simpl.Serialization.Graph
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Add(TK key, TV value)
+        public bool Add(TK key, Object value)
         {
             if (!_map.ContainsKey(key))
             {
-                var collection = new List<TV>(1) {value};
+                var collection = new List<Object>(1) { value };
                 _map.Add(key, collection);
                 return true;
             }
             else
             {
-                List<TV> collection = _map[key];
+                List<Object> collection = _map[key];
                 if (!ContainsValue(collection,value))
                 {
                     collection.Add(value);
@@ -53,11 +53,11 @@ namespace Simpl.Serialization.Graph
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Contains(TK key, TV value)
+        public bool Contains(TK key, Object value)
         {
             if (_map.ContainsKey(key))
             {
-                List<TV> collection = _map[key];
+                List<Object> collection = _map[key];
                 return ContainsValue(collection,value);                
             }
             return false;
@@ -77,11 +77,12 @@ namespace Simpl.Serialization.Graph
         /// <param name="collection"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        private bool ContainsValue(IEnumerable<TV> collection, TV value)
+        private bool ContainsValue(IEnumerable<Object> collection, Object value)
         {
-            if(value.StrictObjectGraphRequired)
+            ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(value.GetType());
+            if (classDescriptor.StrictObjectGraphRequired)
 		    {
-		        return collection.Any(item => item == value);
+                return collection.Any(item => item == value);
 		    }
             return collection.Contains(value);
         }
