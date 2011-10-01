@@ -21,7 +21,7 @@ namespace Simpl.Serialization
     ///     of annotation meta-language.
     ///     </para>
     /// </summary>
-    public class ClassDescriptor : FieldTypes
+    public class ClassDescriptor
     {
         /// <summary>
         ///     Holds the <c>Type</c> of the class described by this 
@@ -227,31 +227,31 @@ namespace Simpl.Serialization
             {
                 if ((thatField.IsStatic)) continue;
 
-                Int16 fieldType = UnsetType;
+                Int16 fieldType = FieldTypes.UnsetType;
 
                 if (XmlTools.IsScalar(thatField))
                 {
-                    fieldType = Scalar;
+                    fieldType = FieldTypes.Scalar;
                 }
                 else if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplComposite)))
                 {
-                    fieldType = CompositeElement;
+                    fieldType = FieldTypes.CompositeElement;
                 }
                 else if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplCollection)))
                 {
-                    fieldType = CollectionElement;
+                    fieldType = FieldTypes.CollectionElement;
                 }
                 else if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplMap)))
                 {
-                    fieldType = MapElement;
+                    fieldType = FieldTypes.MapElement;
                 }
 
-                if (fieldType == UnsetType)
+                if (fieldType == FieldTypes.UnsetType)
                     continue; //not a simpl serialization annotated field
 
                 FieldDescriptor fieldDescriptor = NewFieldDescriptor(thatField, fieldType, fieldDescriptorClass);
 
-                if (fieldDescriptor.Type == Scalar)
+                if (fieldDescriptor.Type == FieldTypes.Scalar)
                 {
                     Hint xmlHint = fieldDescriptor.XmlHint;
                     switch (xmlHint)

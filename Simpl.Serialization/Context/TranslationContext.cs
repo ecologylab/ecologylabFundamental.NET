@@ -10,7 +10,7 @@ namespace Simpl.Serialization.Context
     /// <summary>
     /// Representing the graph context
     /// </summary>
-    public class TranslationContext : FieldTypes
+    public class TranslationContext
     {
         public const String SimplNamespace = " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
@@ -108,9 +108,9 @@ namespace Simpl.Serialization.Context
                     ICollection thatCollection;
                     switch (childFdType)
                     {
-                        case CollectionElement:
-                        case CollectionScalar:
-                        case MapElement:
+                        case FieldTypes.CollectionElement:
+                        case FieldTypes.CollectionScalar:
+                        case FieldTypes.MapElement:
                             thatCollection = XmlTools.GetCollection(thatReferenceObject);
                             break;
                         default:

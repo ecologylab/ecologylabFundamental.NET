@@ -93,7 +93,7 @@ namespace Simpl.Serialization.Types
 
             this.dbTypeName = dbTypeName;
 
-            TypeRegistry.RegisterSimplType(this);
+            TypeRegistry<SimplType>.RegisterSimplType(this);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Simpl.Serialization.Types
         public static string DeriveCrossPlatformName(Type cSharpType, bool isScalar)
         {
             String cSharpTypeName = cSharpType.FullName;
-            return cSharpTypeName != null && cSharpTypeName.StartsWith("cSharp") ? (isScalar ? Simpl_Scalar_Types_Prefix : Simpl_Collection_Types_Prefix) + cSharpType.Name : cSharpTypeName;
+            return cSharpTypeName != null && cSharpTypeName.StartsWith("cSharp") ? (isScalar ? CLTypeConstants.SimplScalarTypesPrefix : CLTypeConstants.SimplCollectionTypesPrefix) + cSharpType.Name : cSharpTypeName;
         }
     }
 }
