@@ -94,6 +94,7 @@
     <Compile Include="TranslationScope.cs" />
     <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CLTypeConstants.cs" />
+    <Compile Include="Types\ScalarType.cs" />
     <Compile Include="Types\SimplBaseType.cs" />
     <Compile Include="Types\Element\IMappable.cs" />
     <Compile Include="Types\Scalar\BooleanType.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="Types\Scalar\LongType.cs" />
     <Compile Include="Types\Scalar\ReferenceType.cs" />
     <Compile Include="Types\Scalar\RegexType.cs" />
-    <Compile Include="Types\Scalar\ScalarType.cs" />
     <Compile Include="Types\Scalar\ScalarTypeType.cs" />
     <Compile Include="Types\Scalar\StringBuilderType.cs" />
     <Compile Include="Types\Scalar\StringType.cs" />
