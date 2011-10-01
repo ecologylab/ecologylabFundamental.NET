@@ -6,15 +6,14 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
-using System;
-using System.Collections.Generic;
+using ecologylab.oodss.messages;
 
-namespace ecologylab.oodss.messages 
+namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
 	public class OkResponse : ResponseMessage<ServiceMessage<object>>
 	{
 		public OkResponse()

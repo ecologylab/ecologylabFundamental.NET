@@ -7,11 +7,10 @@
 //
 
 using System;
-using System.Collections.Generic;
 using Simpl.Serialization;
-using ecologylab.serialization;
+using Simpl.Serialization.Attributes;
 
-namespace ecologylab.oodss.messages 
+namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
@@ -21,16 +20,16 @@ namespace ecologylab.oodss.messages
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
-		private Int64 timeStamp;
+		[SimplScalar]
+		private Int64 _timeStamp;
 
 		public ServiceMessage()
 		{ }
 
 		public Int64 TimeStamp
 		{
-			get{return timeStamp;}
-			set{timeStamp = value;}
+			get{return _timeStamp;}
+			set{_timeStamp = value;}
 		}
 	}
 }

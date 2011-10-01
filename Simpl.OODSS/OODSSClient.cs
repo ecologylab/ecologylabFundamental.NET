@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 using System.Threading.Tasks;
+using Simpl.OODSS.Messages;
 using Simpl.Serialization;
 using ecologylab.serialization;
 using ecologylab.oodss.messages;

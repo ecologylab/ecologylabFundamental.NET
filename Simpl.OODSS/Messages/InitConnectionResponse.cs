@@ -7,20 +7,21 @@
 //
 
 using System;
-using System.Collections.Generic;
+using Simpl.Serialization.Attributes;
+using ecologylab.oodss.messages;
 
-namespace ecologylab.oodss.messages 
+namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
 	public class InitConnectionResponse : ResponseMessage<ServiceMessage<object>>
 	{
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
+		[SimplScalar]
 		private String sessionId;
 
 		public InitConnectionResponse()

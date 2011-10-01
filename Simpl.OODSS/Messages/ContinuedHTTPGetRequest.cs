@@ -7,42 +7,42 @@
 //
 
 using System;
-using System.Collections.Generic;
+using Simpl.Serialization.Attributes;
 
-namespace ecologylab.oodss.messages 
+namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
 	public class ContinuedHTTPGetRequest : HttpRequest
 	{
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
-		[simpl_hints(new Hint[] { Hint.XML_LEAF_CDATA })]
-		private String messageFragment;
+		[SimplScalar]
+		[SimplHints(new Hint[] { Hint.XmlLeafCdata })]
+		private String _messageFragment;
 
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
-		private Boolean isLast;
+		[SimplScalar]
+		private Boolean _isLast;
 
 		public ContinuedHTTPGetRequest()
 		{ }
 
 		public String MessageFragment
 		{
-			get{return messageFragment;}
-			set{messageFragment = value;}
+			get{return _messageFragment;}
+			set{_messageFragment = value;}
 		}
 
 		public Boolean IsLast
 		{
-			get{return isLast;}
-			set{isLast = value;}
+			get{return _isLast;}
+			set{_isLast = value;}
 		}
 	}
 }
