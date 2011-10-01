@@ -13,20 +13,26 @@ namespace Simpl.Serialization.Types.Scalar
         /// <summary>
         /// 
         /// </summary>
-        public static long DEFAULT_VALUE = 0;
+        public const long DEFAULT_VALUE = 0;
 
         /// <summary>
         /// 
         /// </summary>
         /// 
-        public static String DEFAULT_VALUE_STRING = "0";
+        public const String DEFAULT_VALUE_STRING = "0";
 
-        /// <summary>
-        ///      Calls the parent constructor for long type
+         /// <summary>
+        ///      Calls the parent constructor for int type
         /// </summary>
         public LongType()
-            : base(typeof(long))
-        { }
+            : this(typeof (long))
+        {
+        }
+
+        public LongType(Type type)
+            : base(type, CLTypeConstants.JavaLong, CLTypeConstants.JavaLong, null)
+        {
+        }
 
         /// <summary>
         ///     Creates and returns an instance of long type for the given
@@ -40,7 +46,7 @@ namespace Simpl.Serialization.Types.Scalar
             return long.Parse(value);
         }
 
-        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+        public override bool IsDefaultValue(FieldInfo field, Object context)
         {
             return (long)field.GetValue(context) == DEFAULT_VALUE;
         }

@@ -9,6 +9,14 @@ namespace Simpl.Serialization.Serializers.StringFormats
 {
     public class StringSerializer : FormatSerializer
     {
-       
+        public override void Serialize(object obj, StreamWriter streamWriter, TranslationContext translationContext)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Serialize(object obj, FileStream fileStream, TranslationContext translationContext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

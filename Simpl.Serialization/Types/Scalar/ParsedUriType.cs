@@ -1,7 +1,6 @@
 ﻿using System;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Context;
-using ecologylab.serialization.types.scalar;
 
 namespace Simpl.Serialization.Types.Scalar
 {
@@ -14,7 +13,7 @@ namespace Simpl.Serialization.Types.Scalar
         /// 
         /// </summary>
         public ParsedUriType()
-            : base(typeof(ParsedUri))
+            : base(typeof(ParsedUri), CLTypeConstants.JavaParsedUrl, CLTypeConstants.ObjCParsedUrl, null)
         {
         }
 

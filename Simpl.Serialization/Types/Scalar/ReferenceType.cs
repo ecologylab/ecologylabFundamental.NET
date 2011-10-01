@@ -1,23 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Simpl.Serialization;
-using Simpl.Serialization.Types;
-using ecologylab.serialization;
 
-namespace ecologylab.serialization.types.scalar
+namespace Simpl.Serialization.Types.Scalar
 {
     /// <summary>
     /// 
     /// </summary>
     public abstract class ReferenceType : ScalarType
     {
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="thatClass"></param>
-        public ReferenceType(Type thatClass) : base(thatClass)
+        /// <param name="javaTypeName"></param>
+        /// <param name="objectiveCTypeName"></param>
+        /// <param name="dbTypeName"></param>
+        protected ReferenceType(Type thatClass, String javaTypeName, String objectiveCTypeName, String dbTypeName)
+            : base(thatClass, javaTypeName, objectiveCTypeName, dbTypeName)
         {
         }
 

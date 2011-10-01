@@ -12,19 +12,25 @@ namespace Simpl.Serialization.Types.Scalar
         /// <summary>
         /// 
         /// </summary>
-        public static float DEFAULT_VALUE = 0f;
+        public const float DEFAULT_VALUE = 0f;
 
         /// <summary>
         /// 
         /// </summary>
-        public static String DEFAULT_VALUE_STRING = "0";
+        public const String DEFAULT_VALUE_STRING = "0";
 
         /// <summary>
-        ///      Calls the parent constructor for float type
+        ///      Calls the parent constructor for int type
         /// </summary>
         public FloatType()
-            : base(typeof(float))
-        { }
+            : this(typeof (float))
+        {
+        }
+
+        public FloatType(Type type)
+            : base(type, CLTypeConstants.JavaFloat, CLTypeConstants.ObjCFloat, null)
+        {
+        }
 
         /// <summary>
         ///     Creates and returns an instance of a float type for the supplied type
@@ -37,13 +43,13 @@ namespace Simpl.Serialization.Types.Scalar
             return float.Parse(value);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="field"></param>
+       /// <param name="context"></param>
+       /// <returns></returns>
+        public override bool IsDefaultValue(FieldInfo field, Object context)
         {
             return (float)field.GetValue(context) == DEFAULT_VALUE;
         }

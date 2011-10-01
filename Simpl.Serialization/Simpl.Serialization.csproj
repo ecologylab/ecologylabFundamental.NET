@@ -109,7 +109,7 @@
     <Compile Include="Types\Scalar\StringBuilderType.cs" />
     <Compile Include="Types\Scalar\StringType.cs" />
     <Compile Include="Types\TypeRegistry.cs" />
-    <Compile Include="Types\Scalar\UriType.cs" />
+    <Compile Include="Types\Scalar\ParsedUriType.cs" />
     <Compile Include="Types\SimplType.cs" />
     <Compile Include="XMLTools.cs" />
   </ItemGroup>

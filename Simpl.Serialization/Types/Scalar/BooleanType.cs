@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Simpl.Serialization.Context;
-using ecologylab.serialization.types.scalar;
 
 namespace Simpl.Serialization.Types.Scalar
 {
@@ -10,27 +9,33 @@ namespace Simpl.Serialization.Types.Scalar
         /// <summary>
         /// 
         /// </summary>
-        public static bool DEFAULT_VALUE = false;
+        public const bool DefaultValue = false;
 
         /// <summary>
         /// 
         /// </summary>
-        public static String DEFAULT_VALUE_STRING = "False";
+        public const String DEFAULT_VALUE_STRING = "False";
 
         /// <summary>
-        /// 
+        ///      Calls the parent constructor for int type
         /// </summary>
         public BooleanType()
-            : base(typeof(Boolean))
+            : this(typeof (Boolean))
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="formatStrings"></param>
-        /// <returns></returns>
+        public BooleanType(Type type)
+            : base(type, CLTypeConstants.JavaBoolean, CLTypeConstants.ObjCBoolean, null)
+        {
+        }
+
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="value"></param>
+       /// <param name="formatStrings"></param>
+       /// <param name="scalarUnmarshallingContext"></param>
+       /// <returns></returns>
         public override object GetInstance(String value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return Convert.ToBoolean(value);
@@ -42,9 +47,9 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="field"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+        public override bool IsDefaultValue(FieldInfo field, Object context)
         {
-            return (bool)field.GetValue(context) == DEFAULT_VALUE;
+            return (bool)field.GetValue(context) == DefaultValue;
         }
     }
 }

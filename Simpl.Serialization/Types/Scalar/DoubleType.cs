@@ -12,19 +12,26 @@ namespace Simpl.Serialization.Types.Scalar
         /// <summary>
         /// 
         /// </summary>
-        public static double DEFAULT_VALUE = 0;
+        public const double DEFAULT_VALUE = 0;
 
         /// <summary>
         /// 
         /// </summary>
         /// 
-        public static String DEFAULT_VALUE_STRING = "0";
+        public const String DEFAULT_VALUE_STRING = "0";
+       
         /// <summary>
-        ///     Calls the parent constructor for Double type
+        ///      Calls the parent constructor for int type
         /// </summary>
         public DoubleType()
-            : base(typeof(Double))
-        { }
+            : this(typeof(Double))
+        {
+        }
+
+        public DoubleType(Type type)
+            : base(type, CLTypeConstants.JavaDouble, CLTypeConstants.ObjCDouble, null)
+        {
+        }
 
         /// <summary>
         ///     Creates and returns and instance of a double type
@@ -43,7 +50,7 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="field"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+        public override bool IsDefaultValue(FieldInfo field, Object context)
         {
             return (double)field.GetValue(context) == DEFAULT_VALUE;
         }
