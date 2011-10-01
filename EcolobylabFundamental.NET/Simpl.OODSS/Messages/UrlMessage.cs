@@ -7,27 +7,27 @@
 //
 
 using System;
-using System.Collections.Generic;
+using Simpl.Serialization.Attributes;
 
-namespace ecologylab.oodss.messages 
+namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
     public class UrlMessage : RequestMessage<ServiceMessage<object>>
 	{
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
+		[SimplScalar]
 		private String url;
 
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
-		private String collection;
+		[SimplScalar]
+		private String _collection;
 
 		public UrlMessage()
 		{ }
@@ -40,8 +40,8 @@ namespace ecologylab.oodss.messages
 
 		public String Collection
 		{
-			get{return collection;}
-			set{collection = value;}
+			get{return _collection;}
+			set{_collection = value;}
 		}
 	}
 }

@@ -23,12 +23,12 @@ namespace Simpl.OODSS.Messages
         /// </summary>
         [SimplScalar] 
         [SimplHints(new[] {Hint.XmlLeafCdata})]
-        private String surrogateSetString;
+        private String _surrogateSetString;
 
         public String SurrogateSetString
         {
-            get { return surrogateSetString; }
-            set { surrogateSetString = value; }
+            get { return _surrogateSetString; }
+            set { _surrogateSetString = value; }
         }
     }
 }

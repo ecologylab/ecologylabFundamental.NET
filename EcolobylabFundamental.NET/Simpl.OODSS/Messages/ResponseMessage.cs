@@ -8,13 +8,14 @@
 
 using System;
 using System.Collections.Generic;
+using Simpl.OODSS.Messages;
 
 namespace ecologylab.oodss.messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
 	public class ResponseMessage<S> : ServiceMessage<S>
 	{
 		public ResponseMessage()

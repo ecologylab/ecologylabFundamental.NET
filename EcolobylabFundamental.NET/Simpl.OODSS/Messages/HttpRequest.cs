@@ -6,44 +6,43 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
-using System;
-using System.Collections.Generic;
 using Simpl.Fundamental.Net;
-using ecologylab.serialization;
+using Simpl.Serialization.Attributes;
+using ecologylab.oodss.messages;
 
-namespace ecologylab.oodss.messages 
+namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
     public class HttpRequest : RequestMessage<ServiceMessage<object>>
 	{
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
-		private ParsedUri okResponseUrl;
+		[SimplScalar]
+		private ParsedUri _okResponseUrl;
 
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
 		/// </summary>
-		[simpl_scalar]
-		private ParsedUri errorResponseUrl;
+		[SimplScalar]
+		private ParsedUri _errorResponseUrl;
 
 		public HttpRequest()
 		{ }
 
 		public ParsedUri OkResponseUrl
 		{
-			get{return okResponseUrl;}
-			set{okResponseUrl = value;}
+			get{return _okResponseUrl;}
+			set{_okResponseUrl = value;}
 		}
 
 		public ParsedUri ErrorResponseUrl
 		{
-			get{return errorResponseUrl;}
-			set{errorResponseUrl = value;}
+			get{return _errorResponseUrl;}
+			set{_errorResponseUrl = value;}
 		}
 	}
 }

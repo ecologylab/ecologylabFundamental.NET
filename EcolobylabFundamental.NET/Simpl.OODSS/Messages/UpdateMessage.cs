@@ -6,6 +6,7 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
+using Simpl.Serialization.Attributes;
 using ecologylab.oodss.messages;
 
 namespace Simpl.OODSS.Messages 
@@ -13,7 +14,7 @@ namespace Simpl.OODSS.Messages
 	/// <summary>
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
-	[simpl_inherit]
+	[SimplInherit]
 	public class UpdateMessage<S> : ServiceMessage<S>
 	{
 		public UpdateMessage()
