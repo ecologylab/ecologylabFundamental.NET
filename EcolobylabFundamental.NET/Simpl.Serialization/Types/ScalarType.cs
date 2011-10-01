@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security;
 using System.Text;
 using Simpl.Serialization.Attributes;
+using Simpl.Serialization.Context;
 
 namespace Simpl.Serialization.Types
 {

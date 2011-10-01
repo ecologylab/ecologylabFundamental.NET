@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Simpl.Serialization.Context;
 
 namespace Simpl.Serialization.Types.Scalar
 {

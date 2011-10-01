@@ -87,8 +87,8 @@
     <Compile Include="FieldDescriptor.cs" />
     <Compile Include="FieldTypes.cs" />
     <Compile Include="Graph\MultiMap.cs" />
-    <Compile Include="IDeserializationHookStrategy.cs" />
-    <Compile Include="IScalarUnmarshallingContext.cs" />
+    <Compile Include="Context\IDeserializationHookStrategy.cs" />
+    <Compile Include="Context\IScalarUnmarshallingContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Context\TranslationContext.cs" />
     <Compile Include="TranslationScope.cs" />

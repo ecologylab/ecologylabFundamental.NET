@@ -1,5 +1,6 @@
 ﻿using System;
 using Simpl.Fundamental.Net;
+using Simpl.Serialization.Context;
 using ecologylab.serialization.types.scalar;
 
 namespace Simpl.Serialization.Types.Scalar

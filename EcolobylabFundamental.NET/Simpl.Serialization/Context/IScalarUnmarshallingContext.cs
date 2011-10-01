@@ -1,6 +1,6 @@
 ﻿using Simpl.Fundamental.Net;
 
-namespace Simpl.Serialization
+namespace Simpl.Serialization.Context
 {
     /// <summary>
     /// The handler returns a context used by scalar types to resolve ambiguities, 
