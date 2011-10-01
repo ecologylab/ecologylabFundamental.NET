@@ -1,27 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using Simpl.Serialization;
 
-namespace ecologylab.serialization.types.scalar
+namespace Simpl.Serialization.Types.Scalar
 {
     /// <summary>
     ///     Class abstracting C# int type
     /// </summary>
-    class IntType : ScalarType
+    internal class IntType : ScalarType
     {
 
-        public static int DEFAULT_VALUE = 0;
-        public static String DEFAULT_VALUE_STRING = "0";
+        public new const int DefaultValue = 0;
+        public new const String DefaultValueString = "0";
 
         /// <summary>
         ///      Calls the parent constructor for int type
         /// </summary>
         public IntType()
-            : base(typeof(int))
-        { }
+            : this(typeof (int))
+        {
+        }
+
+        public IntType(Type type)
+            : base(type, CLTypeConstants.JavaInteger, CLTypeConstants.ObjCInteger, null)
+        {
+        }
+
+
 
         /// <summary>
         ///     Creates and returns an instance of int type for the given
@@ -30,7 +34,8 @@ namespace ecologylab.serialization.types.scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns>int</returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override Object GetInstance(String value, String[] formatStrings,
+                                           IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return int.Parse(value);
         }
@@ -43,7 +48,7 @@ namespace ecologylab.serialization.types.scalar
         /// <returns></returns>
         public override bool IsDefaultValue(FieldInfo field, ElementState context)
         {
-            return (Int32)field.GetValue(context) == DEFAULT_VALUE;
+            return (Int32) field.GetValue(context) == defaultValue;
         }
     }
 }

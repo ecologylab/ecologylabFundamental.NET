@@ -26,11 +26,11 @@ namespace Simpl.Serialization.Types
         /// 
         /// </summary>
         /// <param name="cSharpType"></param>
-        /// <param name="cShartTypeName"></param>
+        /// <param name="javaTypeName"></param>
         /// <param name="objectiveCTypeName"></param>
         /// <param name="dbTypeName"></param>
-        protected ScalarType(Type cSharpType, String cShartTypeName, String objectiveCTypeName, String dbTypeName)
-            : base(cSharpType, true, cShartTypeName, objectiveCTypeName, dbTypeName)
+        protected ScalarType(Type cSharpType, String javaTypeName, String objectiveCTypeName, String dbTypeName)
+            : base(cSharpType, true, javaTypeName, objectiveCTypeName, dbTypeName)
         {
             _isPrimitive = cSharpType.IsPrimitive;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simpl.Serialization;
+using Simpl.Serialization.Types;
 using ecologylab.serialization;
 
 namespace ecologylab.serialization.types.scalar

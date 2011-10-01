@@ -19,7 +19,7 @@ namespace Simpl.Serialization
     ///     <see cref="ClassDescriptor"/>. Holds the binding information for marshalling 
     ///     and unmarshalling of fields to their XML representation.
     /// </summary>
-    public class FieldDescriptor : FieldTypes
+    public class FieldDescriptor
     {
         private readonly FieldInfo _field;
         private String _tagName;
@@ -448,8 +448,6 @@ namespace Simpl.Serialization
                 //TODO: report error
             }
         }
-
-        #endregion 
 
         #region Private Methods
                 

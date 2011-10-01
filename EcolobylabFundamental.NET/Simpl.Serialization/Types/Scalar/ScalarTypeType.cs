@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Simpl.Serialization;
 using Simpl.Serialization.Types;
+using ecologylab.serialization.types.scalar;
 
-namespace ecologylab.serialization.types.scalar
+namespace Simpl.Serialization.Types.Scalar
 {
     /// <summary>
     ///     Class abstracting C# int type

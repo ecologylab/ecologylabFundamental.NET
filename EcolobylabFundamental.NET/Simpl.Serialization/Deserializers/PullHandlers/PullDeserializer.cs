@@ -5,7 +5,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
     /// <summary>
     /// 
     /// </summary>
-    public abstract class PullDeserializer : FieldTypes
+    public abstract class PullDeserializer
     {
         /// <summary>
         /// 

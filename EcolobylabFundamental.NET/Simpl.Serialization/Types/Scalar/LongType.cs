@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using Simpl.Serialization;
 
-namespace ecologylab.serialization.types.scalar
+namespace Simpl.Serialization.Types.Scalar
 {
    
     /// <summary>
