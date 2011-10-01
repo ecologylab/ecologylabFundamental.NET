@@ -13,15 +13,15 @@ namespace Simpl.Serialization.Types.Scalar
         ///      Calls the parent constructor for String type
         /// </summary>
         public RegexType()
-            : base(typeof(Regex))
+            : base(typeof(Regex), null, null, null)
         { }
 
         /// <summary>
-        ///     Creates and returns an instance of int type for the given
-        ///     input value.
+        /// 
         /// </summary>
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
+        /// <param name="scalarUnmarshallingContext"></param>
         /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         { return new Regex(value); }

@@ -165,6 +165,14 @@ namespace Simpl.Serialization.Types
         /// <summary>
         /// 
         /// </summary>
+        protected bool NeedsEscaping
+        {
+            get { return IsReference; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="buffy"></param>
         /// <param name="fieldDescriptor"></param>
         /// <param name="context"></param>
@@ -203,6 +211,17 @@ namespace Simpl.Serialization.Types
                 }
                 buffy.Append(result);
             }
+        }
+
+        public virtual Boolean IsDefaultValue(String value)
+        {
+            return (DefaultValueString.Length == value.Length) && DefaultValueString.Equals(value);
+        }
+
+        public virtual Boolean IsDefaultValue(FieldInfo field, Object context)
+        {
+            Object fieldValue = field.GetValue(context);
+            return fieldValue == null || DefaultValueString.Equals(fieldValue.ToString());
         }
     }
 }

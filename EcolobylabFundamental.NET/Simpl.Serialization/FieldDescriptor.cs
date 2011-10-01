@@ -6,9 +6,7 @@ using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Types;
-using ecologylab.serialization.types;
 using System.Reflection;
-using ecologylab.serialization.types.scalar;
 using System.Collections;
 using System.Text.RegularExpressions;
 

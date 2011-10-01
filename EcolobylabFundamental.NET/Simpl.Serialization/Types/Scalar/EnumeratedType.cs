@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Simpl.Serialization.Context;
-using ecologylab.serialization.types.scalar;
 
 namespace Simpl.Serialization.Types.Scalar
 {
@@ -9,19 +8,19 @@ namespace Simpl.Serialization.Types.Scalar
     {
 
         public EnumeratedType()
-            : base(typeof(Enum))
+            : base(typeof(Enum), null, null, null)
         {
-
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="field"></param>
-        /// <param name="valueString"></param>
-        /// <param name="format"></param>
-        /// <returns></returns>
+
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="context"></param>
+       /// <param name="field"></param>
+       /// <param name="valueString"></param>
+       /// <param name="format"></param>
+       /// <param name="scalarUnmarshallingContext"></param>
+       /// <returns></returns>
         public override Boolean SetField(Object context, FieldInfo field, String valueString, String[] format, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             Boolean returnValue = false;
@@ -48,13 +47,13 @@ namespace Simpl.Serialization.Types.Scalar
             }
             return returnValue;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="formatStrings"></param>
-        /// <returns></returns>
+/// <summary>
+/// 
+/// </summary>
+/// <param name="value"></param>
+/// <param name="formatStrings"></param>
+/// <param name="scalarUnmarshallingContext"></param>
+/// <returns></returns>
         public override object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return null;

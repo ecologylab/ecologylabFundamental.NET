@@ -2,7 +2,6 @@
 using System.Text;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Types;
-using ecologylab.serialization.types.scalar;
 
 namespace Simpl.Serialization.Types.Scalar
 {
@@ -15,7 +14,7 @@ namespace Simpl.Serialization.Types.Scalar
         ///      Calls the parent constructor for int type
         /// </summary>
         public ScalarTypeType()
-            : base(typeof(ScalarType))
+            : base(typeof(ScalarType), CLTypeConstants.JavaScalarType, CLTypeConstants.ObjCScalarType, null)
         { }
 
         /// <summary>
@@ -30,7 +29,7 @@ namespace Simpl.Serialization.Types.Scalar
         {
             ScalarType result = null;
             int length = value.Length;
-            if ((value != null) && (length > 0))
+            if ((length > 0))
             {
                 char firstChar = value[0];
                 StringBuilder buffy = new StringBuilder(length + 4);	// includes room for "Type"
@@ -44,7 +43,7 @@ namespace Simpl.Serialization.Types.Scalar
                     buffy.Append(value);
                 buffy.Append("Type");
 
-                result = TypeRegistry.GetType(buffy.ToString());
+                result = TypeRegistry<ScalarType>.GetScalarTypeBySimpleName(buffy.ToString());
             }
             return result;
         }

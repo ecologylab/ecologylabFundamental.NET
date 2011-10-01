@@ -28,13 +28,13 @@ namespace Simpl.Serialization.Types.Scalar
 
 
 
-        /// <summary>
-        ///     Creates and returns an instance of int type for the given
-        ///     input value. 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="formatStrings"></param>
-        /// <returns>int</returns>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="value"></param>
+       /// <param name="formatStrings"></param>
+       /// <param name="scalarUnmarshallingContext"></param>
+       /// <returns></returns>
         public override Object GetInstance(String value, String[] formatStrings,
                                            IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
@@ -47,9 +47,9 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="field"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override bool IsDefaultValue(FieldInfo field, ElementState context)
+        public override bool IsDefaultValue(FieldInfo field, Object context)
         {
-            return (Int32) field.GetValue(context) == defaultValue;
+            return (Int32) field.GetValue(context) == DefaultValue;
         }
     }
 }
