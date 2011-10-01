@@ -9,7 +9,6 @@
 using System.Text;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization.Attributes;
-using ecologylab.oodss.messages;
 
 namespace Simpl.OODSS.Logging
 {

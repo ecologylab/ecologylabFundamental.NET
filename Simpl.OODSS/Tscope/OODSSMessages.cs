@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Simpl.OODSS.Logging;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization;
-using ecologylab.oodss.messages;
 using ecologylab.serialization;
 
 //developer should modify the namespace

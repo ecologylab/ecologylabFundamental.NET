@@ -7,7 +7,6 @@
 //
 
 using Simpl.Serialization.Attributes;
-using ecologylab.oodss.messages;
 
 namespace Simpl.OODSS.Messages 
 {

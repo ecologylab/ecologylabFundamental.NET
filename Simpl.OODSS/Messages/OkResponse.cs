@@ -6,8 +6,6 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
-using ecologylab.oodss.messages;
-
 namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
