@@ -169,7 +169,7 @@ namespace Simpl.Serialization.Types
         /// <param name="cSharpType"></param>
         /// <param name="isScalar"></param>
         /// <returns></returns>
-        private static string DeriveCrossPlatformName(Type cSharpType, bool isScalar)
+        public static string DeriveCrossPlatformName(Type cSharpType, bool isScalar)
         {
             String cSharpTypeName = cSharpType.FullName;
             return cSharpTypeName != null && cSharpTypeName.StartsWith("cSharp") ? (isScalar ? Simpl_Scalar_Types_Prefix : Simpl_Collection_Types_Prefix) + cSharpType.Name : cSharpTypeName;
