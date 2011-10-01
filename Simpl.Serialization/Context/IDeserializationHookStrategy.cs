@@ -1,7 +1,6 @@
 ﻿using System;
-using ecologylab.serialization;
 
-namespace Simpl.Serialization
+namespace Simpl.Serialization.Context
 {
     public interface IDeserializationHookStrategy
     {

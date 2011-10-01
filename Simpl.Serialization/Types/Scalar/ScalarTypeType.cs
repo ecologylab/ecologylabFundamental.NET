@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Simpl.Serialization.Context;
 using Simpl.Serialization.Types;
 using ecologylab.serialization.types.scalar;
 
