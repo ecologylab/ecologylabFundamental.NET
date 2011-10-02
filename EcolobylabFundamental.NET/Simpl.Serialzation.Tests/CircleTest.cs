@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simpl.Serialization;
 using Simpl.Serialization.Library;
+using Simpl.Serialization.Library.Circle;
 
 namespace Simpl.Serialzation.Tests
 {

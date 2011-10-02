@@ -75,8 +75,8 @@
     <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
     <Compile Include="DictionaryExtension.cs" />
     <Compile Include="Format.cs" />
-    <Compile Include="Library\Circle.cs" />
-    <Compile Include="Library\Point.cs" />
+    <Compile Include="Library\Circle\Circle.cs" />
+    <Compile Include="Library\Circle\Point.cs" />
     <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
     <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
     <Compile Include="Serializers\FormatSerializer.cs" />
