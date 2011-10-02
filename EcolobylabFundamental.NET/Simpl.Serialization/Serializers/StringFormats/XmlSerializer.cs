@@ -113,7 +113,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
         {
            foreach (FieldDescriptor fd in elementFieldDescriptors)
 		{
-			switch (fd.Type)
+			switch (fd.FdType)
 			{
 			case FieldTypes.Scalar:
 				WriteValueAsLeaf(obj, fd, streamWriter, translationContext);
@@ -219,10 +219,10 @@ namespace Simpl.Serialization.Serializers.StringFormats
         {
             if (!fd.IsDefaultValueFromContext(obj))
             {
-                if (fd.IsCDATA)
+                if (fd.IsCdata)
                     streamWriter.Write(StartCdata);
-                fd.WriteValue(streamWriter, obj, null, Format.Xml);
-                if (fd.IsCDATA)
+                fd.AppendValue(streamWriter, obj, null, Format.Xml);
+                if (fd.IsCdata)
                     streamWriter.Write(EndCdata);
             }
         }

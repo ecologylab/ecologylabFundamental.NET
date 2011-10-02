@@ -21,7 +21,7 @@ namespace Simpl.Serialization
     ///     of annotation meta-language.
     ///     </para>
     /// </summary>
-    public class ClassDescriptor
+    public class ClassDescriptor : DescriptorBase
     {
         /// <summary>
         ///     Holds the <c>Type</c> of the class described by this 
@@ -57,6 +57,8 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         private FieldDescriptor _scalarTextFD;
+
+        private ClassDescriptor _superClass;
 
         /// <summary>
         ///     This flag indicates if the framework has completed resolving  
@@ -112,15 +114,6 @@ namespace Simpl.Serialization
         }
 
         /// <summary>
-        /// Empty constructor for base classes
-        /// </summary>
-        public ClassDescriptor()
-        {
-
-        }
-
-
-        /// <summary>
         ///     Constructor for <c>ClassDescriptor</c> takes
         ///     <c>Type</c> as the input parameter. Initializes
         ///     internal variables and resovles the tagName for 
@@ -131,6 +124,7 @@ namespace Simpl.Serialization
         ///     <c>ClassDescriptor</c>
         /// </param>
         public ClassDescriptor(Type thatClass)
+            : base(XmlTools.GetXmlTagName(thatClass, TranslationScope.STATE), thatClass.Name)
         {
             _describedClass = thatClass;
             _describedClassSimpleName = thatClass.Name;
@@ -150,9 +144,14 @@ namespace Simpl.Serialization
         /// <param name="tagName">
         ///     <c>String</c> tagName for the <c>ClassDescriptor</c>
         /// </param>
-        public ClassDescriptor(String tagName)
+        public ClassDescriptor(String tagName, String comment, String describedClassPackageName,
+                               String describedClassSimpleName, ClassDescriptor superClass, List<String> interfaces)
+            : base(tagName, describedClassPackageName + "." + describedClassSimpleName, comment)
         {
-            _tagName = tagName;
+            _describedClassPackageName = describedClassPackageName;
+            _describedClassSimpleName = describedClassSimpleName;
+            _superClass = superClass;
+
         }
 
         /// <summary>
@@ -251,7 +250,7 @@ namespace Simpl.Serialization
 
                 FieldDescriptor fieldDescriptor = NewFieldDescriptor(thatField, fieldType, fieldDescriptorClass);
 
-                if (fieldDescriptor.Type == FieldTypes.Scalar)
+                if (fieldDescriptor.FdType == FieldTypes.Scalar)
                 {
                     Hint xmlHint = fieldDescriptor.XmlHint;
                     switch (xmlHint)
@@ -360,6 +359,7 @@ namespace Simpl.Serialization
                     FieldDescriptor fd = _unresolvedScopeAnnotationFDs[i];
                     _unresolvedScopeAnnotationFDs.RemoveAt(i);
                     fd.ResolveUnresolvedScopeAnnotation();
+                    MapTagClassDescriptors(fd);
                 }
             }
             _unresolvedScopeAnnotationFDs = null;
@@ -460,6 +460,11 @@ namespace Simpl.Serialization
             get { return _tagName; }
         }
 
+        public override List<string> OtherTags
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         /// <summary>
         ///     Gets the Pseudo FieldDescriptor
         /// </summary>
@@ -527,13 +532,14 @@ namespace Simpl.Serialization
         /// <param name="fieldDescriptor"></param>
         public void MapTagClassDescriptors(FieldDescriptor fieldDescriptor)
         {
-            DictionaryList<String, ClassDescriptor> tagClassDescriptors = fieldDescriptor.TagClassDescriptors;
+            DictionaryList<String, ClassDescriptor> tagClassDescriptors = fieldDescriptor.PolymorphClassDescriptors;
 
             if (tagClassDescriptors != null)
                 foreach (String tagName in tagClassDescriptors.Keys)
                 {
                     MapTagToFdForTranslateFrom(tagName, fieldDescriptor);
                 }
+            MapTagToFdForTranslateFrom(fieldDescriptor.TagName, fieldDescriptor);
         }
 
         /// <summary>
@@ -556,6 +562,41 @@ namespace Simpl.Serialization
         public static ClassDescriptor GetClassDescriptor(object obj)
         {
             return GetClassDescriptor(obj.GetType());
+        }
+
+        public override string JavaTypeName
+        {
+            get { return DescribedClassName; }
+        }
+
+        public override string CSharpTypeName
+        {
+            get { return DescribedClassName; }
+        }
+
+        public override string ObjectiveCTypeName
+        {
+            get { return DescribedClassName; }
+        }
+
+        public override string DbTypeName
+        {
+            get { return DescribedClassName; }
+        }
+
+        public String DescribedClassName
+        {
+            get
+            {
+                return DescribedClass != null
+                           ? DescribedClass.Name
+                           : _describedClassPackageName + "." + DescribedClassSimpleName;
+            }
+        }
+
+        public string BibtexType
+        {
+            get { return null; }
         }
     }
 }
