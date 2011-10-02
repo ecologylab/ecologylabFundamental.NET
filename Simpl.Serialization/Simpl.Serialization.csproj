@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\SimplMapKeyField.cs" />
     <Compile Include="Attributes\Hint.cs" />
     <Compile Include="Attributes\SimplClasses.cs" />
     <Compile Include="Attributes\SimplCollection.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Deserializers\PullHandlers\StringFormats\JsonPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\StringPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
+    <Compile Include="DictionaryExtension.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
     <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
@@ -84,7 +86,6 @@
     <Compile Include="Serializers\StringFormats\XmlSerializer.cs" />
     <Compile Include="StringFormat.cs" />
     <Compile Include="ElementState.cs" />
-    <Compile Include="FieldDescriptor.cs" />
     <Compile Include="FieldTypes.cs" />
     <Compile Include="Graph\MultiMap.cs" />
     <Compile Include="Context\IDeserializationHookStrategy.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="TranslationScope.cs" />
     <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CLTypeConstants.cs" />
+    <Compile Include="FieldDescriptor.cs" />
     <Compile Include="Types\ScalarType.cs" />
     <Compile Include="Types\SimplBaseType.cs" />
     <Compile Include="Types\Element\IMappable.cs" />

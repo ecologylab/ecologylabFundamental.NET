@@ -52,9 +52,9 @@ namespace Simpl.Serialization.Types
 
         public const String ObjCArraylist = "NSMutableArray";
 
-        public const String ObjCHashmap = "NSDictionary";
+        public const String ObjCDictionary = "NSDictionary";
 
-        public const String ObjCHashmaparraylist = "NSDictionaryList";
+        public const String ObjCDictionaryarraylist = "NSDictionaryList";
 
         public const String ObjCScope = "NSScope";
 
@@ -99,9 +99,9 @@ namespace Simpl.Serialization.Types
 
         public const String DotNetArraylist = "List";
 
-        public const String DotNetHashmap = "Dictionary";
+        public const String DotNetDictionary = "Dictionary";
 
-        public const String DotNetHashmaparraylist = "DictionaryList";
+        public const String DotNetDictionaryarraylist = "DictionaryList";
 
         public const String DotNetScope = "Scope";
 
@@ -122,7 +122,7 @@ namespace Simpl.Serialization.Types
 
         public const String JavaChar = "char";
 
-        public const String JavaBoolean = "boolean";
+        public const String JavaBoolean = "Boolean";
 
         public const String JavaLong = "long";
 
@@ -150,9 +150,9 @@ namespace Simpl.Serialization.Types
 
         public const String JavaArraylist = "ArrayList";
 
-        public const String JavaHashMap = "HashMap";
+        public const String JavaDictionary = "Dictionary";
 
-        public const String JavaHashMaparraylist = "HashMapArrayList";
+        public const String JavaDictionaryarraylist = "DictionaryArrayList";
 
         public const String JavaScope = "Scope";
 

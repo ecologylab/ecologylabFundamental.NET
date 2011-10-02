@@ -103,7 +103,7 @@ namespace Simpl.Serialization.Context
                     if (thatReferenceObject == null)
                         continue;
 
-                    int childFdType = elementFieldDescriptor.Type;
+                    int childFdType = elementFieldDescriptor.FdType;
 
                     ICollection thatCollection;
                     switch (childFdType)

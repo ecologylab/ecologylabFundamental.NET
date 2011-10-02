@@ -56,7 +56,7 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
-        protected String TagName { get; set; }
+        public String TagName { get { return tagName; } }
 
         /// <summary>
         /// 

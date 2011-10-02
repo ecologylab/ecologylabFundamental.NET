@@ -44,7 +44,6 @@ namespace Simpl.OODSS
             ElementState responseElementState = null;
             try
             {
-                F
                 //push
                 StringBuilder rq = new StringBuilder();
                 request.serialize(rq, Format.XML);

@@ -127,6 +127,14 @@ namespace Simpl.Serialization.Types
         }
 
         /// <summary>
+        ///     True if the abstracted type is a reference type
+        /// </summary>
+        public Boolean IsMarshallOnly
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         ///     Serializes the objects to its string value 
         /// </summary>
         /// <param name="instance"></param>
@@ -165,7 +173,7 @@ namespace Simpl.Serialization.Types
         /// <summary>
         /// 
         /// </summary>
-        protected bool NeedsEscaping
+        public bool NeedsEscaping
         {
             get { return IsReference; }
         }
@@ -181,7 +189,7 @@ namespace Simpl.Serialization.Types
                                 Format format)
         {
             Object instance = fieldDescriptor.Field.GetValue(context);
-            AppendValue(instance, buffy, !fieldDescriptor.IsCDATA, format);
+            AppendValue(instance, buffy, !fieldDescriptor.IsCdata, format);
         }
 
         /// <summary>
