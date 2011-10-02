@@ -34,7 +34,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
             }
             catch (Exception ex)
             {
-                throw new Exception("IO exception occured", ex);
+                throw new SimplTranslationException("IO exception occured: ", ex);
             }
         }
 

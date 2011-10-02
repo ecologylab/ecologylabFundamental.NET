@@ -5,10 +5,12 @@ namespace Simpl.Serialization.Library.Circle
     public class Circle
     {
         [SimplComposite]
+        [SimplTag("p")]
         private readonly Point _p;
 
         [SimplScalar]
         [SimplHints(new Hint[] {Hint.XmlLeaf})]
+        [SimplTag("r")]
         private readonly int _r;
 
         public Circle(Point p, int r)

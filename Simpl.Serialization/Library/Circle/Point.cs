@@ -5,10 +5,12 @@ namespace Simpl.Serialization.Library.Circle
 {
     public class Point
     {
-        [SimplScalar] 
+        [SimplScalar]
+        [SimplTag("x")]
         private readonly int _x;
 
         [SimplScalar]
+        [SimplTag("y")]
         private readonly int _y;
 
         public Point(int x, int y)

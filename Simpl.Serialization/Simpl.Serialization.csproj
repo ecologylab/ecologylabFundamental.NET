@@ -86,6 +86,7 @@
     <Compile Include="Serializers\StringFormats\JsonSerializer.cs" />
     <Compile Include="Serializers\StringFormats\StringSerializer.cs" />
     <Compile Include="Serializers\StringFormats\XmlSerializer.cs" />
+    <Compile Include="SimplTranslationException.cs" />
     <Compile Include="StringFormat.cs" />
     <Compile Include="ElementState.cs" />
     <Compile Include="FieldTypes.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Types\TypeRegistry.cs" />
     <Compile Include="Types\Scalar\ParsedUriType.cs" />
     <Compile Include="Types\SimplType.cs" />
-    <Compile Include="XMLTools.cs" />
+    <Compile Include="XmlTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simpl.Fundamental\Simpl.Fundamental.csproj">
