@@ -9,16 +9,26 @@ namespace Simpl.Serialization.Library
     public class Circle
     {
         [SimplComposite]
-        private Point p;
+        private readonly Point _p;
 
         [SimplScalar]
         [SimplHints(new Hint[] {Hint.XmlLeaf})]
-        private int r;
+        private readonly int _r;
 
         public Circle(Point p, int r)
         {
-            this.p = p;
-            this.r = r;
+            _p = p;
+            _r = r;
+        }
+
+        public Point P
+        {
+            get { return _p; }
+        }
+
+        public int R
+        {
+            get { return _r; }
         }
     }
 }
