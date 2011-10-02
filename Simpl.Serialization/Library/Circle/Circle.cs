@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Simpl.Serialization.Attributes;
+﻿using Simpl.Serialization.Attributes;
 
-namespace Simpl.Serialization.Library
+namespace Simpl.Serialization.Library.Circle
 {
     public class Circle
     {
