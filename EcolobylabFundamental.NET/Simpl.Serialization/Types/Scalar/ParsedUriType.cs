@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Context;
 
@@ -42,7 +43,7 @@ namespace Simpl.Serialization.Types.Scalar
             catch (ArgumentException e){ }
             catch (UriFormatException e)
             {
-                Console.WriteLine(e.Message + " :: " + value);
+                Debug.WriteLine(e.Message + " :: " + value);
             }
             return result;
         } 

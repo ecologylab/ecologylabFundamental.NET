@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -107,7 +109,7 @@ namespace Simpl.Serialization.Types
         /// <param name="e"></param>
         protected void SetFieldError(FieldInfo field, String value, Exception e)
         {
-            Console.WriteLine("Got " + e + " while trying to set field " + field + " to " + value);
+            Debug.WriteLine("Got " + e + " while trying to set field " + field + " to " + value);
         }
 
         /// <summary>
@@ -181,15 +183,14 @@ namespace Simpl.Serialization.Types
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="buffy"></param>
         /// <param name="fieldDescriptor"></param>
         /// <param name="context"></param>
         /// <param name="format"></param>
-        public void AppendValue(StringBuilder buffy, FieldDescriptor fieldDescriptor, ElementState context,
+        public void AppendValue(TextWriter textWriter, FieldDescriptor fieldDescriptor, Object context,
                                 Format format)
         {
             Object instance = fieldDescriptor.Field.GetValue(context);
-            AppendValue(instance, buffy, !fieldDescriptor.IsCdata, format);
+            AppendValue(instance, textWriter, !fieldDescriptor.IsCdata, format);
         }
 
         /// <summary>
@@ -199,11 +200,11 @@ namespace Simpl.Serialization.Types
         /// <param name="buffy"></param>
         /// <param name="needsEscaping"></param>
         /// <param name="format">Format serializing to, each one has their own escaping requirements.</param>
-        public void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping, Format format)
+        public void AppendValue(object instance, TextWriter textWriter, Boolean needsEscaping, Format format)
         {
             String marshalled = Marshall(instance);
             if (!needsEscaping)
-                buffy.Append(marshalled);
+                textWriter.Write(marshalled);
             else
             {
 
@@ -217,7 +218,7 @@ namespace Simpl.Serialization.Types
                         result = marshalled.Replace("\"", "\\\"");
                         break;
                 }
-                buffy.Append(result);
+                textWriter.Write(result);
             }
         }
 
@@ -231,5 +232,5 @@ namespace Simpl.Serialization.Types
             Object fieldValue = field.GetValue(context);
             return fieldValue == null || DefaultValueString.Equals(fieldValue.ToString());
         }
-    }
+        }
 }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
+using Simpl.Serialization.Serializers;
 using ecologylab.serialization;
 
 namespace Simpl.Serialization
@@ -380,7 +383,7 @@ namespace Simpl.Serialization
 
             if (_allFieldDescriptorsByTagNames.TryGetValue(tagName, out previousMapping))
             {
-                //Console.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
+                //Debug.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
                 _allFieldDescriptorsByTagNames.Remove(tagName);
             }
 
@@ -597,6 +600,13 @@ namespace Simpl.Serialization
         public string BibtexType
         {
             get { return null; }
+        }
+
+
+        public static void Serialize(Object obj, StringFormat format, TextWriter textWriter)
+        {
+            FormatSerializer serializer = FormatSerializer.GetStringSerializer(format);
+            serializer.Serialize(obj, textWriter);
         }
     }
 }

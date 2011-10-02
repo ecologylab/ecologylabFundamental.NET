@@ -21,20 +21,19 @@ namespace Simpl.Serialization.Serializers
         /// 
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="streamWriter"></param>
-        public void Serialize(Object obj, StreamWriter streamWriter)
+        /// <param name="textWriter"></param>
+        public void Serialize(object obj, TextWriter textWriter)
         {
-            Serialize(obj, streamWriter, new TranslationContext());
+            Serialize(obj, textWriter, new TranslationContext());
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="streamWriter"></param>
+        /// <param name="textWriter"></param>
         /// <param name="translationContext"></param>
-        public abstract void Serialize(Object obj, StreamWriter streamWriter,
-                                       TranslationContext translationContext);
+        public abstract void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext);
 
 
         /// <summary>

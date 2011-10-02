@@ -58,7 +58,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         protected override string DeriveJavaTypeName()
         {
-            return JavaTypeName ?? TypeRegistry<CollectionType>.GetDefaultCollectionOrMapType(_isDictionary).JavaTypeName;
+            return JavaTypeName ?? TypeRegistry.GetDefaultCollectionOrMapType(_isDictionary).JavaTypeName;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         protected override string DeriveObjectiveCTypeName()
         {
-            return ObjectiveCTypeName ?? TypeRegistry<CollectionType>.GetDefaultCollectionOrMapType(_isDictionary).ObjectiveCTypeName;
+            return ObjectiveCTypeName ?? TypeRegistry.GetDefaultCollectionOrMapType(_isDictionary).ObjectiveCTypeName;
         }
 
         /// <summary>

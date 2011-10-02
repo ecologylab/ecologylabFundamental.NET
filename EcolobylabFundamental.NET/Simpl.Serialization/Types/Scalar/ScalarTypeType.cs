@@ -43,7 +43,7 @@ namespace Simpl.Serialization.Types.Scalar
                     buffy.Append(value);
                 buffy.Append("Type");
 
-                result = TypeRegistry<ScalarType>.GetScalarTypeBySimpleName(buffy.ToString());
+                result = TypeRegistry.GetScalarTypeBySimpleName(buffy.ToString());
             }
             return result;
         }

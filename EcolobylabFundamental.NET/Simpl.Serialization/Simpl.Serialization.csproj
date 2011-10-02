@@ -75,6 +75,8 @@
     <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
     <Compile Include="DictionaryExtension.cs" />
     <Compile Include="Format.cs" />
+    <Compile Include="Library\Circle.cs" />
+    <Compile Include="Library\Point.cs" />
     <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
     <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
     <Compile Include="Serializers\FormatSerializer.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CLTypeConstants.cs" />
     <Compile Include="FieldDescriptor.cs" />
+    <Compile Include="Types\FundamentalTypes.cs" />
     <Compile Include="Types\ScalarType.cs" />
     <Compile Include="Types\SimplBaseType.cs" />
     <Compile Include="Types\Element\IMappable.cs" />
@@ -121,9 +124,7 @@
       <Name>Simpl.Fundamental</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Library\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

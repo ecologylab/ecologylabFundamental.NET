@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Graph;
@@ -83,7 +84,7 @@ namespace Simpl.Serialization.Context
                     }
                     catch (FieldAccessException e)
                     {
-                        Console.WriteLine("WARNING re-trying access! " + e.StackTrace);
+                        Debug.WriteLine("WARNING re-trying access! " + e.StackTrace);
 
                         try
                         {
@@ -91,13 +92,13 @@ namespace Simpl.Serialization.Context
                         }
                         catch (FieldAccessException e1)
                         {
-                            Console.WriteLine("Can't access " + childField.Name);
-                            Console.WriteLine(e1.StackTrace);
+                            Debug.WriteLine("Can't access " + childField.Name);
+                            Debug.WriteLine(e1.StackTrace);
                         }
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("error" + e);
+                        Debug.WriteLine("error" + e);
                     }
 
                     if (thatReferenceObject == null)
