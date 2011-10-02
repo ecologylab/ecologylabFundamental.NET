@@ -93,7 +93,7 @@ namespace Simpl.Serialization.Types
 
             this.dbTypeName = dbTypeName;
 
-            TypeRegistry<SimplType>.RegisterSimplType(this);
+            TypeRegistry.RegisterSimplType(this);
         }
 
         /// <summary>

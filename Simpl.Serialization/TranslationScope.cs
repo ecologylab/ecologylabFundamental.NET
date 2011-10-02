@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Simpl.Fundamental.Net;
@@ -255,7 +256,7 @@ namespace Simpl.Serialization
             if (newEntry)
             {
                 if (entryExists)
-                    System.Console.WriteLine("Overriding " + warn + " " + key + " with " + translationEntry);
+                    Debug.WriteLine("Overriding " + warn + " " + key + " with " + translationEntry);
 
                 newMap.Add(key, translationEntry);
             }

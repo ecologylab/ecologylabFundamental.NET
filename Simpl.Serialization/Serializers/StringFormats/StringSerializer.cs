@@ -9,7 +9,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
 {
     public class StringSerializer : FormatSerializer
     {
-        public override void Serialize(object obj, StreamWriter streamWriter, TranslationContext translationContext)
+        public override void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext)
         {
             throw new NotImplementedException();
         }

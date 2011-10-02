@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -176,7 +177,7 @@ namespace Simpl.Serialization
                                          + "\n\tCan't translate  [SimplComposite] " + thatField.Name
                                          + " because its tag argument is missing.";
 
-                            Console.WriteLine(msg);
+                            Debug.WriteLine(msg);
                             return FieldTypes.IgnoredAttribute;
                         }
 
@@ -192,10 +193,10 @@ namespace Simpl.Serialization
                                          + "\n\tCan't translate  [SimplComposite] " + thatField.Name
                                          + " because its tag argument is missing.";
 
-                            Console.WriteLine(msg);
+                            Debug.WriteLine(msg);
                         }
-                        compositeTagName = compositeTag;
                     }
+                    compositeTagName = compositeTag;
                     break;
                 case FieldTypes.CollectionElement:
                     if (!(thatField is IList))
@@ -206,7 +207,7 @@ namespace Simpl.Serialization
                                      typeof (IList).Name
                                      + ".";
 
-                        Console.WriteLine(msg);
+                        Debug.WriteLine(msg);
                         return FieldTypes.IgnoredAttribute;
                     }
 
@@ -222,7 +223,7 @@ namespace Simpl.Serialization
                             String msg = "In " + declaringClassDescriptor.DescribedClass
                                          + "\n\tCan't translate [SimplCollection]" + field.Name
                                          + " because its tag argument is missing.";
-                            Console.WriteLine(msg);
+                            Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
                         if (collectionElementType == null)
@@ -230,10 +231,10 @@ namespace Simpl.Serialization
                             String msg = "In " + declaringClassDescriptor.DescribedClass
                                          + "\n\tCan't translate [SimplCollection] " + field.Name
                                          + " because the parameterized type argument for the Collection is missing.";
-                            Console.WriteLine(msg);
+                            Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
-                        if (!TypeRegistry<ScalarType>.ContainsScalarType(collectionElementType))
+                        if (!TypeRegistry.ContainsScalarType(collectionElementType))
                         {
                             elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementType);
                             elementClass = elementClassDescriptor.DescribedClass;
@@ -246,7 +247,7 @@ namespace Simpl.Serialization
                             {
                                 result = FieldTypes.IgnoredElement;
                                 String msg = "Can't identify ScalarType for serialization of " + collectionElementType;
-                                Console.WriteLine(msg);
+                                Debug.WriteLine(msg);
                             }
                         }
                     }
@@ -260,7 +261,7 @@ namespace Simpl.Serialization
                         }
                     }
                     collectionOrMapTagName = collectionTag;
-                    collectionType = TypeRegistry<CollectionType>.GetCollectionType(thatField);
+                    collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
 
                 case FieldTypes.MapElement:
@@ -272,7 +273,7 @@ namespace Simpl.Serialization
                                      typeof (IList).Name
                                      + ".";
 
-                        Console.WriteLine(msg);
+                        Debug.WriteLine(msg);
                         return FieldTypes.IgnoredAttribute;
                     }
 
@@ -288,7 +289,7 @@ namespace Simpl.Serialization
                             String msg = "In " + declaringClassDescriptor.DescribedClass
                                          + "\n\tCan't translate [SimplMap]" + field.Name
                                          + " because its tag argument is missing.";
-                            Console.WriteLine(msg);
+                            Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
                         if (mapElementType == null)
@@ -296,10 +297,10 @@ namespace Simpl.Serialization
                             String msg = "In " + declaringClassDescriptor.DescribedClass
                                          + "\n\tCan't translate [SimplMap] " + field.Name
                                          + " because the parameterized type argument for the map is missing.";
-                            Console.WriteLine(msg);
+                            Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
-                        if (!TypeRegistry<ScalarType>.ContainsScalarType(mapElementType))
+                        if (!TypeRegistry.ContainsScalarType(mapElementType))
                         {
                             elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementType);
                             elementClass = elementClassDescriptor.DescribedClass;
@@ -316,7 +317,7 @@ namespace Simpl.Serialization
                         }
                     }
                     collectionOrMapTagName = mapTag;
-                    collectionType = TypeRegistry<CollectionType>.GetCollectionType(thatField);
+                    collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
             }
 
@@ -326,7 +327,7 @@ namespace Simpl.Serialization
                 case FieldTypes.MapElement:
                     if (!XmlTools.IsAnnotationPresent(thatField, typeof(SimplNoWrap)))
                         wrapped = true;
-                    collectionType = TypeRegistry<CollectionType>.GetCollectionType(thatField);
+                    collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
                 case FieldTypes.CompositeElement: 
                     if(XmlTools.IsAnnotationPresent(thatField, typeof(SimplWrap)))
@@ -376,14 +377,14 @@ namespace Simpl.Serialization
         {
             isEnum = XmlTools.IsEnum(scalarField);
             xmlHint = XmlTools.SimplHint(scalarField);
-            scalarType = TypeRegistry<ScalarType>.GetScalarType(thatType);
+            scalarType = TypeRegistry.GetScalarType(thatType);
 
             if(scalarType == null)
             {
                 String msg = "Can't find ScalarType to serialize field: \t\t" + thatType.Name
                     + "\t" + scalarField.Name + ";";
 
-                Console.WriteLine(msg);
+                Debug.WriteLine(msg);
                 return (xmlHint == Hint.XmlAttribute) ? FieldTypes.IgnoredAttribute : FieldTypes.IgnoredElement;
             }
 
@@ -623,37 +624,44 @@ namespace Simpl.Serialization
             get { return isCDATA; }
         }
 
-        public char ElementStart
+        public String ElementStart
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return IsCollection ? collectionOrMapTagName : IsNested ? compositeTagName : tagName; }
         }
 
-        public bool IsDefaultValue(string toString)
+        public Boolean IsNested
+        {
+            get { return type == FieldTypes.CompositeElement; }
+        }
+
+        public bool IsDefaultValue(String value)
+        {
+            return scalarType.IsDefaultValue(value);
+        }
+
+        public void AppendValue(TextWriter textWriter, object obj, TranslationContext translationContext, Format format)
+        {
+            scalarType.AppendValue(textWriter, this, obj, format);
+        }
+
+        public bool IsDefaultValueFromContext(object context)
+        {
+            if (context != null)
+            {
+                return scalarType.IsDefaultValue(field, context);
+            }
+
+            return false;
+        }
+
+        public void AppendCollectionScalarValue(TextWriter streamWriter, object o, TranslationContext translationContext, Format xml)
         {
             throw new NotImplementedException();
         }
 
-        public void AppendValue(StreamWriter streamWriter, object o, TranslationContext translationContext, Format xml)
+        public object GetObject(object obj)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool IsDefaultValueFromContext(object o)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AppendCollectionScalarValue(StreamWriter streamWriter, object o, TranslationContext translationContext, Format xml)
-        {
-            throw new NotImplementedException();
-        }
-
-        public object GetObject(object p0)
-        {
-            throw new NotImplementedException();
+            return field.GetValue(obj);
         }
     }
-
-
 }

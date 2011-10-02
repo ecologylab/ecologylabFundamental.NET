@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -11,48 +12,48 @@ namespace Simpl.Serialization.Types
     ///     supported by the serialization framework. This objects 
     ///     returns the right abstraction for the supported types. 
     /// </summary>
-    public class TypeRegistry<T> where T : SimplType
+    public class TypeRegistry
     {
 
         /// <summary>
         /// 
         /// </summary>
-        private static TypeRegistry<ScalarType> scalarRegistry;
+        private static TypeRegistry scalarRegistry;
 
         /// <summary>
         /// 
         /// </summary>
-        private static TypeRegistry<CollectionType> collectionRegistry;
+        private static TypeRegistry collectionRegistry;
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<String, T> _typesByJavaName = new Dictionary<String, T>();
+        private readonly Dictionary<String, SimplType> _typesByJavaName = new Dictionary<String, SimplType>();
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<String, T> _typesByCrossPlatformName = new Dictionary<String, T>();
+        private readonly Dictionary<String, SimplType> _typesByCrossPlatformName = new Dictionary<String, SimplType>();
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<String, T> _typesBySimpleName = new Dictionary<String, T>();
+        private readonly Dictionary<String, SimplType> _typesBySimpleName = new Dictionary<String, SimplType>();
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<String, T> _typesBycSharpName = new Dictionary<String, T>();
+        private readonly Dictionary<String, SimplType> _typesBycSharpName = new Dictionary<String, SimplType>();
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<String, T> _typesByObjectiveCName = new Dictionary<String, T>();
+        private readonly Dictionary<String, SimplType> _typesByObjectiveCName = new Dictionary<String, SimplType>();
 
         /// <summary>
         /// 
         /// </summary>
-        private readonly Dictionary<String, T> _typesByDbName = new Dictionary<String, T>();
+        private readonly Dictionary<String, SimplType> _typesByDbName = new Dictionary<String, SimplType>();
 
         /// <summary>
         /// 
@@ -75,26 +76,28 @@ namespace Simpl.Serialization.Types
             if (!isInit)
             {
                 isInit = true;
+
+                new FundamentalTypes();
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private static TypeRegistry<ScalarType> ScalarRegistry
+        private static TypeRegistry ScalarRegistry
         {
             get
             {
-                TypeRegistry<ScalarType> result = scalarRegistry;
+                TypeRegistry result = scalarRegistry;
 
                 if (result == null)
                 {
-                    lock (typeof (TypeRegistry<T>))
+                    lock (typeof (TypeRegistry))
                     {
                         result = scalarRegistry;
                         if (result == null)
                         {
-                            result = new TypeRegistry<ScalarType>();
+                            result = new TypeRegistry();
                             scalarRegistry = result;
                         }
                     }
@@ -106,19 +109,19 @@ namespace Simpl.Serialization.Types
         /// <summary>
         /// 
         /// </summary>
-        private static TypeRegistry<CollectionType> CollectionRegistry
+        private static TypeRegistry CollectionRegistry
         {
             get
             {
-                TypeRegistry<CollectionType> result = collectionRegistry;
+                TypeRegistry result = collectionRegistry;
                 if (result == null)
                 {
-                    lock (typeof (TypeRegistry<T>))
+                    lock (typeof (TypeRegistry))
                     {
                         result = collectionRegistry;
                         if (result == null)
                         {
-                            result = new TypeRegistry<CollectionType>();
+                            result = new TypeRegistry();
                             collectionRegistry = result;
                         }
                     }
@@ -136,11 +139,11 @@ namespace Simpl.Serialization.Types
         {
             if (type is CollectionType)
             {
-                return CollectionRegistry.RegisterType((CollectionType) type);
+                return CollectionRegistry.RegisterType(type);
             }
 
             if (type is ScalarType)
-                return ScalarRegistry.RegisterType((ScalarType) type);
+                return ScalarRegistry.RegisterType(type);
 
             return false;
         }
@@ -151,7 +154,7 @@ namespace Simpl.Serialization.Types
         /// <param name="type"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Boolean RegisterType(T type)
+        public Boolean RegisterType(SimplType type)
         {
 
             _typesBycSharpName.Add(type.CSharpTypeName, type);
@@ -168,7 +171,7 @@ namespace Simpl.Serialization.Types
 
             if (_typesBySimpleName.ContainsKey(type.SimplName))
             {
-                Console.WriteLine("registerType(): Redefining type: " + type.SimplName);
+                Debug.WriteLine("registerType(): Redefining type: " + type.SimplName);
                 _typesBySimpleName.Remove(type.SimplName);
                 _typesBySimpleName.Add(type.SimplName, type);
                 return false;
@@ -193,7 +196,7 @@ namespace Simpl.Serialization.Types
         /// <param name="type"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Boolean RegisterTypeIfNew(T type)
+        public Boolean RegisterTypeIfNew(SimplType type)
         {
             String javaTypeName = type.JavaTypeName;
             return !_typesByJavaName.ContainsKey(javaTypeName) && RegisterType(type);
@@ -208,10 +211,9 @@ namespace Simpl.Serialization.Types
         {
             if (XmlTools.IsEnum(thatType))
             {
-                return ScalarRegistry.GetTypeByType(typeof (Enum));
+                return (ScalarType) ScalarRegistry.GetTypeByType(typeof(Enum));
             }
-
-            return null;
+            return (ScalarType) ScalarRegistry.GetTypeByType(thatType);
         }
 
         /// <summary>
@@ -251,7 +253,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static ScalarType GetScalarTypeBySimpleName(String simpleName)
         {
-            return ScalarRegistry.GetTypeBySimpleName(simpleName);
+            return (ScalarType) ScalarRegistry.GetTypeBySimpleName(simpleName);
         }
 
         /// <summary>
@@ -259,7 +261,7 @@ namespace Simpl.Serialization.Types
         /// </summary>
         /// <param name="simpleName"></param>
         /// <returns></returns>
-        private T GetTypeBySimpleName(String simpleName)
+        private SimplType GetTypeBySimpleName(String simpleName)
         {
             return _typesBySimpleName[simpleName];
         }
@@ -269,7 +271,7 @@ namespace Simpl.Serialization.Types
         /// </summary>
         /// <param name="cSharpType"></param>
         /// <returns></returns>
-        public T GetTypeByType(Type cSharpType)
+        public SimplType GetTypeByType(Type cSharpType)
         {
             return GetTypeBycSharpName(cSharpType.FullName);
         }
@@ -279,7 +281,7 @@ namespace Simpl.Serialization.Types
         /// </summary>
         /// <param name="cSharpName"></param>
         /// <returns></returns>
-        public T GetTypeBycSharpName(String cSharpName)
+        public SimplType GetTypeBycSharpName(String cSharpName)
         {
             return _typesBycSharpName[cSharpName];
         }
@@ -289,7 +291,7 @@ namespace Simpl.Serialization.Types
         /// </summary>
         /// <param name="javaName"></param>
         /// <returns></returns>
-        public T GetTypeByJavaName(String javaName)
+        public SimplType GetTypeByJavaName(String javaName)
         {
             return _typesByJavaName[javaName];
         }
@@ -299,7 +301,7 @@ namespace Simpl.Serialization.Types
         /// </summary>
         /// <param name="objectiveCName"></param>
         /// <returns></returns>
-        public T GetTypeByObjectiveCName(String objectiveCName)
+        public SimplType GetTypeByObjectiveCName(String objectiveCName)
         {
             return _typesByObjectiveCName[objectiveCName];
         }
@@ -309,7 +311,7 @@ namespace Simpl.Serialization.Types
         /// </summary>
         /// <param name="dbName"></param>
         /// <returns></returns>
-        public T GetTypeByDbName(String dbName)
+        public SimplType GetTypeByDbName(String dbName)
         {
             return _typesByDbName[dbName];
         }
@@ -330,7 +332,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeByCrossPlatformName(String crossPlatformName)
         {
-            return CollectionRegistry._typesByCrossPlatformName[crossPlatformName];
+            return (CollectionType) CollectionRegistry._typesByCrossPlatformName[crossPlatformName];
         }
 
         /// <summary>
@@ -340,7 +342,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeByCSharpName(String cSharpName)
         {
-            return CollectionRegistry._typesBycSharpName[cSharpName];
+            return (CollectionType) CollectionRegistry._typesBycSharpName[cSharpName];
         }
 
         /// <summary>
@@ -350,7 +352,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeByObjectiveCName(String objectiveCName)
         {
-            return CollectionRegistry._typesByObjectiveCName[objectiveCName];
+            return (CollectionType)CollectionRegistry._typesByObjectiveCName[objectiveCName];
         }
 
         /// <summary>
@@ -360,7 +362,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeBySimpleName(String simpleName)
         {
-            return CollectionRegistry._typesBySimpleName[simpleName];
+            return (CollectionType) CollectionRegistry._typesBySimpleName[simpleName];
         }
 
         /// <summary>
@@ -391,7 +393,7 @@ namespace Simpl.Serialization.Types
                                : collectionRegistry.DefaultCollectionType;
                 }
                 String crossPlatformName = SimplType.DeriveCrossPlatformName(cSharpFieldType, false);
-                Console.WriteLine("No CollectionType was pre-defined for " + crossPlatformName +
+                Debug.WriteLine("No CollectionType was pre-defined for " + crossPlatformName +
                                   ", so constructing one on the fly.\nCross-language code for fields defined with this type cannot be generated.");
                 result = new CollectionType(cSharpFieldType, null, null);
             }
@@ -405,13 +407,13 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeBycSharpName(String cSharpClassName)
         {
-            return collectionRegistry._typesBycSharpName[cSharpClassName];
+            return (CollectionType) collectionRegistry._typesBycSharpName[cSharpClassName];
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public static TypeRegistry<ScalarType> ScalarTypeRegistry
+        public static TypeRegistry ScalarTypeRegistry
         {
             get { return scalarRegistry; }
         }
