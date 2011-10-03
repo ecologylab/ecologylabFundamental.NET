@@ -55,6 +55,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
                 case StringFormat.Xml:
                     return new XmlPullDeserializer(translationScope, translationContext, deserializationHookStrategy);
                     case StringFormat.Json:
+                    return new JsonPullDeserializer(translationScope, translationContext, deserializationHookStrategy);
                     case StringFormat.Bibtex:
                 default:
                     throw  new SimplTranslationException(format + "format not supported");

@@ -76,31 +76,95 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                Debug.WriteLine("JSON Translation ERROR: not a valid JSON object. It should start with {");
             }
 
-//            // move the first field in the document. typically it is the root element.
-//            jp.nextToken();
-//
-//            Object root = null;
-//
-//            // find the classdescriptor for the root element.
-//            ClassDescriptor rootClassDescriptor = translationScope.getClassDescriptorByTag(jp
-//                    .getCurrentName());
-//
-//            root = rootClassDescriptor.getInstance();
-//
-//            // root.setupRoot();
-//            // root.deserializationPreHook();
-//            // if (deserializationHookStrategy != null)
-//            // deserializationHookStrategy.deserializationPreHook(root, null);
-//
-//            // move to the first field of the root element.
-//            jp.nextToken();
-//            jp.nextToken();
-//
-//            // complete the object model from root and recursively of the fields it is composed of
-//            createObjectModel(root, rootClassDescriptor);
-//
-//            return root;
-            return null;
+            // move the first field in the document. typically it is the root element.
+            _jsonReader.Read();
+
+            Object root = null;
+
+            // find the classdescriptor for the root element.
+            ClassDescriptor rootClassDescriptor = translationScope.GetClassDescriptorByTag(_jsonReader.Value.ToString());
+
+            root = rootClassDescriptor.GetInstance();
+
+            // move to the first field of the root element.
+            _jsonReader.Read();
+            _jsonReader.Read();
+
+            // complete the object model from root and recursively of the fields it is composed of
+            CreateObjectModel(root, rootClassDescriptor);
+
+            return root;        
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="rootClassDescriptor"></param>
+        private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor)
+        {
+            Object subRoot = null;
+            while (_jsonReader.Token != JsonToken.ObjectEnd)
+            {
+                FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(_jsonReader.Value.ToString());
+                switch (currentFieldDescriptor.FdType)
+                {
+                    case FieldTypes.Scalar:
+                        DeserializeScalar(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.CompositeElement:
+                        DeserializeComposite(root, currentFieldDescriptor);
+                        break;
+                }
+                _jsonReader.Read();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
+        private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
+        {
+            String tagName = _jsonReader.Value.ToString();
+
+            _jsonReader.Read();
+
+            Object subRoot = GetSubRoot(currentFieldDescriptor, tagName);
+            currentFieldDescriptor.SetFieldToComposite(root, subRoot);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentFieldDescriptor"></param>
+        /// <param name="tagName"></param>
+        /// <returns></returns>
+        private object GetSubRoot(FieldDescriptor currentFieldDescriptor, string tagName)
+        {
+            _jsonReader.Read();
+            Object subRoot = null;
+
+            if(_jsonReader.Token == JsonToken.PropertyName)
+            {
+                ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
+                subRoot = subRootClassDescriptor.GetInstance();
+                CreateObjectModel(subRoot, subRootClassDescriptor);
+            }
+
+            return subRoot;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
+        private void DeserializeScalar(object root, FieldDescriptor currentFieldDescriptor)
+        {
+            _jsonReader.Read();
+            currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
         }
     }
 }
