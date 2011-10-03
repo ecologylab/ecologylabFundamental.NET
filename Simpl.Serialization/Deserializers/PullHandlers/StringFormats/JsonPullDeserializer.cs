@@ -103,7 +103,6 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="rootClassDescriptor"></param>
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor)
         {
-            Object subRoot = null;
             while (_jsonReader.Token != JsonToken.ObjectEnd)
             {
                 FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(_jsonReader.Value.ToString());
