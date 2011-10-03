@@ -11,7 +11,7 @@ namespace Simpl.Serialization.Context
     /// <summary>
     /// Representing the graph context
     /// </summary>
-    public class TranslationContext
+    public class TranslationContext : IScalarUnmarshallingContext
     {
         public const String SimplNamespace = " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
@@ -187,6 +187,11 @@ namespace Simpl.Serialization.Context
         public bool NeedsHashCode(Object obj)
         {
             return _needsAttributeHashCode.Contains(obj.GetHashCode(), obj);
+        }
+
+        public ParsedUri UriContext()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Context;
+using Simpl.Serialization.Deserializers.PullHandlers;
+using Simpl.Serialization.Deserializers.PullHandlers.StringFormats;
 using ecologylab.collections;
 using System.IO;
 using ecologylab.serialization;
@@ -392,6 +394,21 @@ namespace Simpl.Serialization
             TranslationScope result = null;
             allTranslationScopes.TryGetValue(name, out result);
             return result;
+        }
+
+
+        public Object Deserialize(String inputString, StringFormat format)
+        {
+            return Deserialize(inputString, new TranslationContext(), null, format);
+        }
+
+        public Object Deserialize(String inputString, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, StringFormat format)
+        {
+            StringPullDeserializer pullDeserializer = PullDeserializer.GetStringDeserializer(this, translationContext,
+                                                                                             deserializationHookStrategy,
+                                                                                             format);
+
+            return pullDeserializer.Parse(inputString);
         }
     }   
 }

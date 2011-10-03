@@ -17,84 +17,63 @@ namespace Simpl.Serialization
     {
         public const String Null = ScalarType.DefaultValueString;
 
-        [SimplScalar] 
-        protected FieldInfo field;
+        [SimplScalar] protected FieldInfo field;
 
 
-        [SimplComposite] 
-        private ClassDescriptor elementClassDescriptor;
+        [SimplComposite] private ClassDescriptor elementClassDescriptor;
 
-        [SimplScalar] 
-        private String mapKeyFieldName;
+        [SimplScalar] private String mapKeyFieldName;
 
 
-        [SimplComposite] 
-        protected ClassDescriptor declaringClassDescriptor;
+        [SimplComposite] protected ClassDescriptor declaringClassDescriptor;
 
-        [SimplScalar] 
-        private Type elementClass;
+        [SimplScalar] private Type elementClass;
 
-        [SimplScalar] 
-        private Boolean isGeneric;
+        [SimplScalar] private Boolean isGeneric;
 
-        [SimplMap("polymorph_class_descriptor")]
-        [SimplMapKeyField] 
-        private DictionaryList<String, ClassDescriptor> polymorphClassDescriptors;
+        [SimplMap("polymorph_class_descriptor")] [SimplMapKeyField] private DictionaryList<String, ClassDescriptor>
+            polymorphClassDescriptors;
 
-        [SimplMap("polymorph_class")] 
-        private Dictionary<String, Type> polymorphClasses;
+        [SimplMap("polymorph_class")] private Dictionary<String, Type> polymorphClasses;
 
-        [SimplMap("library_namespace")] 
-        private Dictionary<String, String> libraryNamespaces = new Dictionary<String, String>();
+        [SimplMap("library_namespace")] private Dictionary<String, String> libraryNamespaces =
+            new Dictionary<String, String>();
 
-        [SimplScalar] 
-        private int type;
+        [SimplScalar] private int type;
 
-        [SimplScalar]
-        private ScalarType scalarType;
+        [SimplScalar] private ScalarType scalarType;
 
-        [SimplComposite]
-        private CollectionType collectionType;
+        [SimplComposite] private CollectionType collectionType;
 
-        [SimplScalar]
-        private Hint xmlHint;
+        [SimplScalar] private Hint xmlHint;
 
-        [SimplScalar]
-        private Boolean isEnum;
+        [SimplScalar] private Boolean isEnum;
 
 
         private String[] format;
 
-        [SimplScalar]
-        private Boolean isCDATA;
+        [SimplScalar] private Boolean isCDATA;
 
-        [SimplScalar]
-        private Boolean needsEscaping;
+        [SimplScalar] private Boolean needsEscaping;
 
-        [SimplScalar]
-        private Regex filterRegex;
+        [SimplScalar] private Regex filterRegex;
 
-        [SimplScalar]
-        private String filterReplace;
+        [SimplScalar] private String filterReplace;
 
 
         private FieldDescriptor wrappedFD;
 
         private Dictionary<Int32, ClassDescriptor> tlvClassDescriptors;
 
-        [SimplScalar]
-        private String unresolvedScopeAnnotation = null;
+        [SimplScalar] private String unresolvedScopeAnnotation = null;
 
 
-        [SimplScalar]
-        private String collectionOrMapTagName;
+        [SimplScalar] private String collectionOrMapTagName;
 
-        [SimplScalar]
-        private String compositeTagName;
+        [SimplScalar] private String compositeTagName;
 
 
-        [SimplScalar]
-        private Boolean wrapped;
+        [SimplScalar] private Boolean wrapped;
 
         private MethodInfo setValueMethod;
 
@@ -102,11 +81,9 @@ namespace Simpl.Serialization
 
         private Boolean isBibtexKey = false;
 
-        [SimplScalar]
-        private String fieldType;
+        [SimplScalar] private String fieldType;
 
-        [SimplScalar]
-        private String genericParametersString;
+        [SimplScalar] private String genericParametersString;
 
         private List<Type> dependencies = new List<Type>();
 
@@ -123,7 +100,7 @@ namespace Simpl.Serialization
 
 
         public FieldDescriptor(ClassDescriptor baseClassDescriptor, FieldDescriptor wrappedFD,
-                                  String wrapperTag)
+                               String wrapperTag)
             : base(wrapperTag, null)
         {
             declaringClassDescriptor = baseClassDescriptor;
@@ -143,7 +120,7 @@ namespace Simpl.Serialization
 
 
             DerivePolymorphicDescriptors(field);
-          
+
             type = FieldTypes.UnsetType;
 
             if (annotationType == FieldTypes.Scalar)
@@ -321,16 +298,16 @@ namespace Simpl.Serialization
                     break;
             }
 
-            switch(annotationType)
+            switch (annotationType)
             {
                 case FieldTypes.CollectionElement:
                 case FieldTypes.MapElement:
-                    if (!XmlTools.IsAnnotationPresent(thatField, typeof(SimplNoWrap)))
+                    if (!XmlTools.IsAnnotationPresent(thatField, typeof (SimplNoWrap)))
                         wrapped = true;
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
-                case FieldTypes.CompositeElement: 
-                    if(XmlTools.IsAnnotationPresent(thatField, typeof(SimplWrap)))
+                case FieldTypes.CompositeElement:
+                    if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplWrap)))
                     {
                         wrapped = true;
                     }
@@ -369,7 +346,7 @@ namespace Simpl.Serialization
         {
             int result = DeriveScalarSerialization(scalarField.FieldType, scalarField);
             if (xmlHint == Hint.XmlText || xmlHint == Hint.XmlTextCdata)
-               declaringClassDescriptor.ScalarTextFD = this;
+                declaringClassDescriptor.ScalarTextFD = this;
             return result;
         }
 
@@ -379,10 +356,10 @@ namespace Simpl.Serialization
             xmlHint = XmlTools.SimplHint(scalarField);
             scalarType = TypeRegistry.GetScalarType(thatType);
 
-            if(scalarType == null)
+            if (scalarType == null)
             {
                 String msg = "Can't find ScalarType to serialize field: \t\t" + thatType.Name
-                    + "\t" + scalarField.Name + ";";
+                             + "\t" + scalarField.Name + ";";
 
                 Debug.WriteLine(msg);
                 return (xmlHint == Hint.XmlAttribute) ? FieldTypes.IgnoredAttribute : FieldTypes.IgnoredElement;
@@ -390,7 +367,7 @@ namespace Simpl.Serialization
 
             format = XmlTools.GetFormatAnnotation(field);
 
-            if(xmlHint != Hint.XmlAttribute)
+            if (xmlHint != Hint.XmlAttribute)
             {
                 needsEscaping = scalarType.NeedsEscaping;
                 isCDATA = xmlHint == Hint.XmlLeafCdata || xmlHint == Hint.XmlTextCdata;
@@ -403,19 +380,19 @@ namespace Simpl.Serialization
             SimplScope scopeAttribute = (SimplScope) XmlTools.GetAnnotation(pField, typeof (SimplScope));
             String scopeAttributeValue = scopeAttribute == null ? null : scopeAttribute.TranslationScope;
 
-            if(!String.IsNullOrEmpty(scopeAttributeValue))
+            if (!String.IsNullOrEmpty(scopeAttributeValue))
             {
-                if(!ResolveScopeAttribute(scopeAttributeValue))
+                if (!ResolveScopeAttribute(scopeAttributeValue))
                 {
                     unresolvedScopeAnnotation = scopeAttributeValue;
                     declaringClassDescriptor.RegisterUnresolvedScopeAnnotationFD(this);
                 }
             }
 
-            SimplClasses classesAttribute = (SimplClasses) XmlTools.GetAnnotation(pField, typeof(SimplClasses));
+            SimplClasses classesAttribute = (SimplClasses) XmlTools.GetAnnotation(pField, typeof (SimplClasses));
             Type[] classesAttributeValue = classesAttribute == null ? null : classesAttribute.Classes;
 
-            if((classesAttribute != null) && classesAttributeValue.Length > 0)
+            if ((classesAttribute != null) && classesAttributeValue.Length > 0)
             {
                 InitPolymorphicClassDescriptorsList(classesAttributeValue.Length);
                 foreach (Type thatType in classesAttributeValue)
@@ -460,7 +437,7 @@ namespace Simpl.Serialization
         private bool ResolveScopeAttribute(string scopeAttributeValue)
         {
             TranslationScope scope = TranslationScope.Get(scopeAttributeValue);
-            if(scope != null)
+            if (scope != null)
             {
                 List<ClassDescriptor> scopeClassDescriptors = scope.ClassDescriptors;
                 InitPolymorphicClassDescriptorsList(scopeClassDescriptors.Count);
@@ -493,7 +470,12 @@ namespace Simpl.Serialization
 
         public override string ObjectiveCTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.ObjectiveCTypeName : scalarType.ObjectiveCTypeName; }
+            get
+            {
+                return elementClassDescriptor != null
+                           ? elementClassDescriptor.ObjectiveCTypeName
+                           : scalarType.ObjectiveCTypeName;
+            }
         }
 
         public override string DbTypeName
@@ -506,18 +488,15 @@ namespace Simpl.Serialization
             get { throw new NotImplementedException(); }
         }
 
-        public Int32 FdType { get { return type; } }
+        public Int32 FdType
+        {
+            get { return type; }
+        }
 
         public Hint XmlHint
         {
-            get
-            {
-                return xmlHint;
-            }
-            set
-            {
-                xmlHint = value;
-            }
+            get { return xmlHint; }
+            set { xmlHint = value; }
         }
 
         /// <summary>
@@ -525,26 +504,17 @@ namespace Simpl.Serialization
         /// </summary>
         public bool IsMarshallOnly
         {
-            get
-            {
-                return scalarType != null && scalarType.IsMarshallOnly;
-            }
+            get { return scalarType != null && scalarType.IsMarshallOnly; }
         }
 
         public FieldInfo Field
         {
-            get
-            {
-                return field;
-            }
+            get { return field; }
         }
 
         public Boolean IsWrapped
         {
-            get
-            {
-                return wrapped;
-            }
+            get { return wrapped; }
         }
 
         public bool IsCollection
@@ -565,10 +535,7 @@ namespace Simpl.Serialization
 
         public String CollectionOrMapTagName
         {
-            get
-            {
-                return collectionOrMapTagName;
-            }
+            get { return collectionOrMapTagName; }
         }
 
         public Boolean ResolveUnresolvedScopeAnnotation()
@@ -654,7 +621,8 @@ namespace Simpl.Serialization
             return false;
         }
 
-        public void AppendCollectionScalarValue(TextWriter streamWriter, object o, TranslationContext translationContext, Format xml)
+        public void AppendCollectionScalarValue(TextWriter streamWriter, object o, TranslationContext translationContext,
+                                                Format xml)
         {
             throw new NotImplementedException();
         }
@@ -662,6 +630,27 @@ namespace Simpl.Serialization
         public object GetObject(object obj)
         {
             return field.GetValue(obj);
+        }
+
+        public void SetFieldToScalar(object root, string value, TranslationContext translationContext)
+        {
+            if (scalarType != null && !scalarType.IsMarshallOnly)
+            {
+                scalarType.SetField(root, field, value, format, translationContext);
+            }
+        }
+
+        public void SetFieldToComposite(object root, object subRoot)
+        {
+            field.SetValue(root, subRoot);
+        }
+
+        public ClassDescriptor ChildClassDescriptor(string currentTagName)
+        {
+            ClassDescriptor childClassDescriptor = !IsPolymorphic
+                                                       ? elementClassDescriptor
+                                                       : polymorphClassDescriptors[currentTagName];
+            return childClassDescriptor;
         }
     }
 }

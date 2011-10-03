@@ -13,6 +13,11 @@ namespace Simpl.Serialization.Library.Circle
         [SimplTag("r")]
         private readonly int _r;
 
+        public Circle()
+        {
+            
+        }
+
         public Circle(Point p, int r)
         {
             _p = p;
