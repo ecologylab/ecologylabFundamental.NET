@@ -6,10 +6,12 @@ namespace Simpl.Serialization.Library.Circle
     public class Point
     {
         [SimplScalar]
+        [SimplHints(new[] { Hint.XmlLeaf })]
         [SimplTag("x")]
         private readonly int _x;
 
         [SimplScalar]
+        [SimplHints(new[] { Hint.XmlLeaf })]
         [SimplTag("y")]
         private readonly int _y;
 
