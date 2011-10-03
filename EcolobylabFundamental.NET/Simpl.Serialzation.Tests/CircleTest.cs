@@ -17,8 +17,20 @@ namespace Simpl.Serialzation.Tests
         [TestMethod]
         public void CircleSerialization()
         {
-            Circle c = new Circle(new Point(1,3), 3);
-            ClassDescriptor.Serialize(c, StringFormat.Xml, Console.Out);
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Circle c = new Circle(new Point(1, 3), 3);
+            ClassDescriptor.Serialize(c, StringFormat.Xml, sw);
+
+            Console.WriteLine(sb);
+
+
+            TranslationScope circleTransaltionScope = TranslationScope.Get("circleTScope", typeof (Circle),
+                                                                           typeof (Point));
+            Circle deserializedObj = (Circle) circleTransaltionScope.Deserialize(sb.ToString(), StringFormat.Xml);
+
+            if (deserializedObj != null)
+                ClassDescriptor.Serialize(deserializedObj, StringFormat.Xml, Console.Out);
         }
     }
 }

@@ -608,5 +608,10 @@ namespace Simpl.Serialization
             FormatSerializer serializer = FormatSerializer.GetStringSerializer(format);
             serializer.Serialize(obj, textWriter);
         }
+
+        public object GetInstance()
+        {
+            return XmlTools.GetInstance(_describedClass);
+        }
     }
 }

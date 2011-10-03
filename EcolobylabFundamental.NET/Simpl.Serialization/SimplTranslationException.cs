@@ -11,5 +11,11 @@ namespace Simpl.Serialization
         {
             
         }
+
+        public SimplTranslationException(String message)
+            : base(message)
+        {
+
+        }
     }
 }
