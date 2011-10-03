@@ -21,9 +21,9 @@ namespace Simpl.Serialzation.Tests
             StringWriter sw = new StringWriter(sb);
             Circle c = new Circle(new Point(1, 3), 3);
 
-            ClassDescriptor.Serialize(c, StringFormat.Xml, sw);
+            ClassDescriptor.Serialize(c, StringFormat.Json, sw);
 
-            ClassDescriptor.Serialize(c, StringFormat.Json, Console.Out);
+            //ClassDescriptor.Serialize(c, StringFormat.Json, Console.Out);
             Console.WriteLine();
 
             Console.WriteLine(sb);
@@ -31,10 +31,11 @@ namespace Simpl.Serialzation.Tests
 
             TranslationScope circleTransaltionScope = TranslationScope.Get("circleTScope", typeof (Circle),
                                                                            typeof (Point));
-            Circle deserializedObj = (Circle) circleTransaltionScope.Deserialize(sb.ToString(), StringFormat.Xml);
+
+            Circle deserializedObj = (Circle) circleTransaltionScope.Deserialize(sb.ToString(), StringFormat.Json);
 
             if (deserializedObj != null)
-                ClassDescriptor.Serialize(deserializedObj, StringFormat.Xml, Console.Out);
+                ClassDescriptor.Serialize(deserializedObj, StringFormat.Json, Console.Out);
         }
     }
 }
