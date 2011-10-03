@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LitJson, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\LitJson.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -62,6 +66,9 @@
     <Compile Include="DescriptorBase.cs" />
     <Compile Include="Deserializers\ISimplDeserializationPost.cs" />
     <Compile Include="Deserializers\ISimplDeserializationPre.cs" />
+    <Compile Include="Deserializers\Parsers\Json\IJSONContentHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Json\IJSONErrorHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Json\JSONParser.cs" />
     <Compile Include="Deserializers\Parsers\Xml\ISAXContentHandler.cs" />
     <Compile Include="Deserializers\Parsers\Xml\ISAXErrorHandler.cs" />
     <Compile Include="Deserializers\Parsers\Xml\SAXHelpers.cs" />
@@ -125,7 +132,9 @@
       <Name>Simpl.Fundamental</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Lib\LitJson.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
