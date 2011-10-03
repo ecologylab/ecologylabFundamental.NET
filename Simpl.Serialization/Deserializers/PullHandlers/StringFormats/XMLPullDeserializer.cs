@@ -154,17 +154,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
         private void DeserializeScalar(object root, FieldDescriptor currentFieldDescriptor)
         {
-            NextEvent();
-
-            StringBuilder text = new StringBuilder();
-            text.Append(_xmlReader.ReadString());
-
-            while(NextEvent() && _xmlReader.NodeType != XmlNodeType.EndElement)
-            {
-                text.Append(_xmlReader.ReadString());
-            }
-
-            String value = text.ToString();
+            String value = _xmlReader.ReadString();
             currentFieldDescriptor.SetFieldToScalar(root, value, translationContext);
         }
 

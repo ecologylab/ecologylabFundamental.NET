@@ -9,7 +9,7 @@ namespace Simpl.Serialization.Library.Circle
         private readonly Point _p;
 
         [SimplScalar]
-        [SimplHints(new Hint[] {Hint.XmlLeaf})]
+        [SimplHints(new[] {Hint.XmlLeaf})]
         [SimplTag("r")]
         private readonly int _r;
 
