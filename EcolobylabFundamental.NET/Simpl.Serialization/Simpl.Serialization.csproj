@@ -84,6 +84,46 @@
     <Compile Include="Format.cs" />
     <Compile Include="Library\Circle\Circle.cs" />
     <Compile Include="Library\Circle\Point.cs" />
+    <Compile Include="Library\Composite\Container.cs" />
+    <Compile Include="Library\Composite\WcBase.cs" />
+    <Compile Include="Library\Composite\WcSubOne.cs" />
+    <Compile Include="Library\Composite\WcSubTwo.cs" />
+    <Compile Include="Library\Configuration\Configuration.cs" />
+    <Compile Include="Library\Configuration\Pref.cs" />
+    <Compile Include="Library\Configuration\PrefDouble.cs" />
+    <Compile Include="Library\Configuration\PrefInteger.cs" />
+    <Compile Include="Library\Graph\ClassA.cs" />
+    <Compile Include="Library\Graph\ClassB.cs" />
+    <Compile Include="Library\Graph\Collection\ClassA.cs" />
+    <Compile Include="Library\Graph\Collection\ClassB.cs" />
+    <Compile Include="Library\Graph\Collection\Container.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassA.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassB.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassC.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassD.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassX.cs" />
+    <Compile Include="Library\Inheritence\BaseClass.cs" />
+    <Compile Include="Library\Inheritence\ChildClass1.cs" />
+    <Compile Include="Library\Inheritence\ChildClass2.cs" />
+    <Compile Include="Library\Inheritence\ContainingClass.cs" />
+    <Compile Include="Library\Items\Container.cs" />
+    <Compile Include="Library\Items\ItemBase.cs" />
+    <Compile Include="Library\Items\ItemOne.cs" />
+    <Compile Include="Library\Items\ItemRandom.cs" />
+    <Compile Include="Library\Items\ItemTwo.cs" />
+    <Compile Include="Library\Maps\ClassDesc.cs" />
+    <Compile Include="Library\Maps\FieldDesc.cs" />
+    <Compile Include="Library\Maps\MapsWithinMaps.cs" />
+    <Compile Include="Library\Maps\TranslationS.cs" />
+    <Compile Include="Library\Person\Faculty.cs" />
+    <Compile Include="Library\Person\Person.cs" />
+    <Compile Include="Library\Person\PersonDirectory.cs" />
+    <Compile Include="Library\Person\Student.cs" />
+    <Compile Include="Library\Person\StudentDirectory.cs" />
+    <Compile Include="Library\Rss\Channel.cs" />
+    <Compile Include="Library\Rss\Item.cs" />
+    <Compile Include="Library\Rss\Rss.cs" />
+    <Compile Include="Library\Scalar\ScalarCollection.cs" />
     <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
     <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
     <Compile Include="Serializers\FormatSerializer.cs" />
@@ -135,6 +175,7 @@
   <ItemGroup>
     <Content Include="Lib\LitJson.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
