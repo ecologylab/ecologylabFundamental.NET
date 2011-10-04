@@ -111,60 +111,60 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="elementFieldDescriptors"></param>
         private void SerializeFields(object obj, TextWriter textWriter, TranslationContext translationContext, IEnumerable<FieldDescriptor> elementFieldDescriptors)
         {
-           foreach (FieldDescriptor fd in elementFieldDescriptors)
-		{
-			switch (fd.FdType)
-			{
-			case FieldTypes.Scalar:
-				WriteValueAsLeaf(obj, fd, textWriter, translationContext);
-				break;
-            case FieldTypes.CompositeElement:
-				Object compositeObject = fd.GetObject(obj);
-				if (compositeObject != null)
-				{
-					FieldDescriptor compositeObjectFieldDescriptor = fd.IsPolymorphic ? GetClassDescriptor(
-							compositeObject).PseudoFieldDescriptor
-							: fd;
-					WriteWrap(fd, textWriter, false);
-					Serialize(compositeObject, compositeObjectFieldDescriptor, textWriter, translationContext);
-					WriteWrap(fd, textWriter, true);
-				}
-				break;
-            case FieldTypes.CollectionScalar:
-            case FieldTypes.MapScalar:
-				Object scalarCollectionObject = fd.GetObject(obj);
-				ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
-				if (scalarCollection != null && scalarCollection.Count > 0)
-				{
-					WriteWrap(fd, textWriter, false);
+            foreach (FieldDescriptor fd in elementFieldDescriptors)
+            {
+                switch (fd.FdType)
+                {
+                    case FieldTypes.Scalar:
+                        WriteValueAsLeaf(obj, fd, textWriter, translationContext);
+                        break;
+                    case FieldTypes.CompositeElement:
+                        Object compositeObject = fd.GetObject(obj);
+                        if (compositeObject != null)
+                        {
+                            FieldDescriptor compositeObjectFieldDescriptor = fd.IsPolymorphic ? GetClassDescriptor(
+                                    compositeObject).PseudoFieldDescriptor
+                                    : fd;
+                            WriteWrap(fd, textWriter, false);
+                            Serialize(compositeObject, compositeObjectFieldDescriptor, textWriter, translationContext);
+                            WriteWrap(fd, textWriter, true);
+                        }
+                        break;
+                    case FieldTypes.CollectionScalar:
+                    case FieldTypes.MapScalar:
+                        Object scalarCollectionObject = fd.GetObject(obj);
+                        ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
+                        if (scalarCollection != null && scalarCollection.Count > 0)
+                        {
+                            WriteWrap(fd, textWriter, false);
 
-					foreach (Object collectionScalar in scalarCollection)
-					{
-						WriteScalarCollectionLeaf(collectionScalar, fd, textWriter, translationContext);
-					}
-					WriteWrap(fd, textWriter, true);
-				}
-				break;
-            case FieldTypes.CollectionElement:
-            case FieldTypes.MapElement:
-				Object compositeCollectionObject = fd.GetObject(obj);
-				ICollection compositeCollection = XmlTools.GetCollection(compositeCollectionObject);
-                if (compositeCollection != null && compositeCollection.Count > 0)
-				{
-					WriteWrap(fd, textWriter, false);
-					foreach (Object collectionComposite in compositeCollection)
-					{
-						FieldDescriptor collectionObjectFieldDescriptor = fd.IsPolymorphic ? GetClassDescriptor(
-								collectionComposite).PseudoFieldDescriptor
-								: fd;
-						Serialize(collectionComposite, collectionObjectFieldDescriptor, textWriter,
-								translationContext);
-					}
-					WriteWrap(fd, textWriter, true);
-				}
-				break;
-			}
-		}
+                            foreach (Object collectionScalar in scalarCollection)
+                            {
+                                WriteScalarCollectionLeaf(collectionScalar, fd, textWriter, translationContext);
+                            }
+                            WriteWrap(fd, textWriter, true);
+                        }
+                        break;
+                    case FieldTypes.CollectionElement:
+                    case FieldTypes.MapElement:
+                        Object compositeCollectionObject = fd.GetObject(obj);
+                        ICollection compositeCollection = XmlTools.GetCollection(compositeCollectionObject);
+                        if (compositeCollection != null && compositeCollection.Count > 0)
+                        {
+                            WriteWrap(fd, textWriter, false);
+                            foreach (Object collectionComposite in compositeCollection)
+                            {
+                                FieldDescriptor collectionObjectFieldDescriptor = fd.IsPolymorphic ? GetClassDescriptor(
+                                        collectionComposite).PseudoFieldDescriptor
+                                        : fd;
+                                Serialize(collectionComposite, collectionObjectFieldDescriptor, textWriter,
+                                        translationContext);
+                            }
+                            WriteWrap(fd, textWriter, true);
+                        }
+                        break;
+                }
+            }
         }
 
         private void WriteScalarCollectionLeaf(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)

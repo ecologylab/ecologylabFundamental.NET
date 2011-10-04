@@ -12,7 +12,9 @@ namespace Simpl.Serialzation.Tests.TestHelper
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             ClassDescriptor.Serialize(obj, format, sw);
-            Console.WriteLine(sb);
+
+            PrettyPrint.Print(sb.ToString(), format);
+
             return sb.ToString();
         }
 
@@ -24,13 +26,13 @@ namespace Simpl.Serialzation.Tests.TestHelper
 
         public static void TestSimplObject(Object obj, TranslationScope translationScope, StringFormat format)
         {
-            Console.WriteLine("Serializing object " + obj);
+            Console.WriteLine("Serializing object " + obj); Console.WriteLine();
             String serializedData = TestSerialization(obj, format);
 
             Console.WriteLine();
             Object deserializedObj = TestDeserialization(translationScope, serializedData, format);
 
-            Console.WriteLine("Deserialized object " + deserializedObj);
+            Console.WriteLine("Deserialized object " + deserializedObj); Console.WriteLine();
             TestSerialization(deserializedObj, format);
         }
 

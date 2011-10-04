@@ -50,7 +50,7 @@ namespace Simpl.Serialization
         [SimplScalar] private Boolean isEnum;
 
 
-        private String[] format;
+        private String[] dataFormat;
 
         [SimplScalar] private Boolean isCDATA;
 
@@ -176,7 +176,7 @@ namespace Simpl.Serialization
                     compositeTagName = compositeTag;
                     break;
                 case FieldTypes.CollectionElement:
-                    if (!(thatField is IList))
+                    if (!(typeof(IList).IsAssignableFrom(thatField.FieldType)))
                     {
                         String msg = "In " + declaringClassDescriptor.DescribedClass + "\n\tCan't translate  "
                                      + "[SimplCollection] " + field.Name
@@ -365,7 +365,7 @@ namespace Simpl.Serialization
                 return (xmlHint == Hint.XmlAttribute) ? FieldTypes.IgnoredAttribute : FieldTypes.IgnoredElement;
             }
 
-            format = XmlTools.GetFormatAnnotation(field);
+            dataFormat = XmlTools.GetFormatAnnotation(field);
 
             if (xmlHint != Hint.XmlAttribute)
             {
@@ -626,10 +626,10 @@ namespace Simpl.Serialization
             return false;
         }
 
-        public void AppendCollectionScalarValue(TextWriter streamWriter, object o, TranslationContext translationContext,
-                                                Format xml)
+        public void AppendCollectionScalarValue(TextWriter textWriter, object obj, TranslationContext translationContext,
+                                                Format format)
         {
-            throw new NotImplementedException();
+            scalarType.AppendValue(obj, textWriter, !IsCdata, format);
         }
 
         public object GetObject(object obj)
@@ -641,7 +641,7 @@ namespace Simpl.Serialization
         {
             if (scalarType != null && !scalarType.IsMarshallOnly)
             {
-                scalarType.SetField(root, field, value, format, translationContext);
+                scalarType.SetField(root, field, value, dataFormat, translationContext);
             }
         }
 
@@ -667,7 +667,7 @@ namespace Simpl.Serialization
 
             if(scalarType != null)
             {
-                Object typeConvertedValue = scalarType.GetInstance(value, format, translationContext);
+                Object typeConvertedValue = scalarType.GetInstance(value, dataFormat, translationContext);
 
                 if(typeConvertedValue != null)
                 {
@@ -696,7 +696,7 @@ namespace Simpl.Serialization
         {
             return IsPolymorphic
                        ? polymorphClassDescriptors.ContainsKey(currentTag)
-                       : collectionOrMapTagName.Equals(tagName);
+                       : collectionOrMapTagName.Equals(currentTag);
         }
     }
 }

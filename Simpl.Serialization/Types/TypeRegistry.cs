@@ -233,7 +233,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public Boolean Contains(Type type)
         {
-            return ContainsBycSharpName(type.FullName);
+            return ContainsBycSharpName(type.Name);
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public SimplType GetTypeByType(Type cSharpType)
         {
-            return GetTypeBycSharpName(cSharpType.FullName);
+            return GetTypeBycSharpName(cSharpType.Name);
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionType(Type cSharpFieldType)
         {
-            String cSharpName = cSharpFieldType.FullName;
+            String cSharpName = cSharpFieldType.Name;
             CollectionType result = GetCollectionTypeBycSharpName(cSharpName);
             if (result == null)
             {
@@ -436,6 +436,16 @@ namespace Simpl.Serialization.Types
         public static CollectionType GetDefaultCollectionOrMapType(Boolean isDictionary)
         {
             return isDictionary ? CollectionRegistry.DefaultMapType : CollectionRegistry.DefaultCollectionType;
+        }
+
+        public static void SetDefaultCollectionType(CollectionType ct)
+        {
+            CollectionRegistry.DefaultCollectionType = ct;
+        }
+
+        public static void SetDefaultMapType(CollectionType ct)
+        {
+            CollectionRegistry.DefaultMapType = ct;
         }
     }
 }
