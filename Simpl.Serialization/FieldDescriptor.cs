@@ -601,6 +601,11 @@ namespace Simpl.Serialization
             get { return type == FieldTypes.CompositeElement; }
         }
 
+        public FieldDescriptor WrappedFd
+        {
+            get { return wrappedFD; }
+        }
+
         public bool IsDefaultValue(String value)
         {
             return scalarType.IsDefaultValue(value);
@@ -651,6 +656,47 @@ namespace Simpl.Serialization
                                                        ? elementClassDescriptor
                                                        : polymorphClassDescriptors[currentTagName];
             return childClassDescriptor;
+        }
+
+        public void AddLeafNodeToCollection(object root, string value, TranslationContext translationContext)
+        {
+            if(String.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
+            if(scalarType != null)
+            {
+                Object typeConvertedValue = scalarType.GetInstance(value, format, translationContext);
+
+                if(typeConvertedValue != null)
+                {
+                    IList collection = (IList) AutomaticLazyGetCollectionOrMap(root);
+                    collection.Add(typeConvertedValue);
+                }
+            }
+        }
+
+        public Object AutomaticLazyGetCollectionOrMap(object root)
+        {
+            Object
+            collection = null;
+
+            collection = field.GetValue(root);
+            if(collection == null)
+            {
+                collection = collectionType.Instance;
+                field.SetValue(root, collection);
+            }
+
+            return collection;
+        }
+
+        public bool IsCollectionTag(string currentTag)
+        {
+            return IsPolymorphic
+                       ? polymorphClassDescriptors.ContainsKey(currentTag)
+                       : collectionOrMapTagName.Equals(tagName);
         }
     }
 }

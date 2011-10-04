@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using LitJson;
 using Simpl.Serialization.Context;
+using Simpl.Serialization.Types.Element;
 
 namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 {
@@ -61,7 +65,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputStream"></param>
         private void ConfigureInput(Stream inputStream)
         {
-           _jsonReader = new JsonReader(new StreamReader(inputStream));
+            _jsonReader = new JsonReader(new StreamReader(inputStream));
         }
 
         /// <summary>
@@ -73,7 +77,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             _jsonReader.Read();
             if (_jsonReader.Token != JsonToken.ObjectStart)
             {
-               Debug.WriteLine("JSON Translation ERROR: not a valid JSON object. It should start with {");
+                Debug.WriteLine("JSON Translation ERROR: not a valid JSON object. It should start with {");
             }
 
             // move the first field in the document. typically it is the root element.
@@ -93,7 +97,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             // complete the object model from root and recursively of the fields it is composed of
             CreateObjectModel(root, rootClassDescriptor);
 
-            return root;        
+            return root;
         }
 
         /// <summary>
@@ -105,7 +109,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             while (_jsonReader.Token != JsonToken.ObjectEnd)
             {
-                FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(_jsonReader.Value.ToString());
+                FieldDescriptor currentFieldDescriptor =
+                    rootClassDescriptor.GetFieldDescriptorByTag(_jsonReader.Value.ToString());
                 switch (currentFieldDescriptor.FdType)
                 {
                     case FieldTypes.Scalar:
@@ -114,8 +119,116 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     case FieldTypes.CompositeElement:
                         DeserializeComposite(root, currentFieldDescriptor);
                         break;
+                    case FieldTypes.CollectionScalar:
+                        DeserializeScalarCollection(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.CollectionElement:
+                        DeserializeCompositeCollection(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.MapElement:
+                        DeserializeCompositeMap(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.Wrapper:
+                        if (!currentFieldDescriptor.WrappedFd.IsPolymorphic)
+                            _jsonReader.Read();
+                        break;
                 }
                 _jsonReader.Read();
+            }
+        }
+
+        private void DeserializeCompositeMap(object root, FieldDescriptor currentFieldDescriptor)
+        {
+            _jsonReader.Read();
+            Object subRoot;
+
+            if (currentFieldDescriptor.IsPolymorphic)
+            {
+                if (!currentFieldDescriptor.IsWrapped)
+                {
+                    _jsonReader.Read();
+                }
+
+                while (_jsonReader.Token != JsonToken.ArrayEnd)
+                {
+                    _jsonReader.Read();
+                    _jsonReader.Read();
+
+                    subRoot = GetSubRoot(currentFieldDescriptor, _jsonReader.Value.ToString());
+
+                    if (subRoot is IMappable)
+                    {
+                        Object key = ((IMappable) subRoot).Key();
+                        IDictionary collection =
+                            (IDictionary) currentFieldDescriptor.AutomaticLazyGetCollectionOrMap(root);
+                        collection.Add(key, subRoot);
+                    }
+
+                    _jsonReader.Read();
+                    _jsonReader.Read();
+                }
+            }
+            else
+            {
+                while (_jsonReader.Read() && _jsonReader.Token != JsonToken.ArrayEnd)
+                {
+                    subRoot = GetSubRoot(currentFieldDescriptor, _jsonReader.Value.ToString());
+                    if (subRoot is IMappable)
+                    {
+                        Object key = ((IMappable) subRoot).Key();
+                        IDictionary collection =
+                            (IDictionary) currentFieldDescriptor.AutomaticLazyGetCollectionOrMap(root);
+                        collection.Add(key, subRoot);
+                    }
+                }
+            }
+        }
+
+        private void DeserializeCompositeCollection(object root, FieldDescriptor currentFieldDescriptor)
+        {
+            _jsonReader.Read();
+            Object subRoot;
+
+            if (currentFieldDescriptor.IsPolymorphic)
+            {
+                if (!currentFieldDescriptor.IsWrapped)
+                {
+                    _jsonReader.Read();
+                }
+
+                while (_jsonReader.Token != JsonToken.ArrayEnd)
+                {
+                    _jsonReader.Read();
+                    _jsonReader.Read();
+
+                    subRoot = GetSubRoot(currentFieldDescriptor, _jsonReader.Value.ToString());
+                    IList collection = (IList) currentFieldDescriptor.AutomaticLazyGetCollectionOrMap(root);
+                    collection.Add(subRoot);
+
+                    _jsonReader.Read();
+                    _jsonReader.Read();
+                }
+            }
+            else
+            {
+                while (_jsonReader.Read() && _jsonReader.Token != JsonToken.ArrayEnd)
+                {
+                    subRoot = GetSubRoot(currentFieldDescriptor, _jsonReader.Value.ToString());
+                    IList collection = (IList) currentFieldDescriptor
+                                                   .AutomaticLazyGetCollectionOrMap(root);
+                    collection.Add(subRoot);
+                }
+            }
+
+
+        }
+
+        private void DeserializeScalarCollection(object root, FieldDescriptor currentFieldDescriptor)
+        {
+            _jsonReader.Read();
+            while (_jsonReader.Read() && _jsonReader.Token == JsonToken.ArrayEnd)
+            {
+                currentFieldDescriptor.AddLeafNodeToCollection(root, _jsonReader.Value.ToString(), translationContext);
             }
         }
 
@@ -145,11 +258,20 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             _jsonReader.Read();
             Object subRoot = null;
 
-            if(_jsonReader.Token == JsonToken.PropertyName)
+            if (_jsonReader.Token == JsonToken.PropertyName)
             {
-                ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
-                subRoot = subRootClassDescriptor.GetInstance();
-                CreateObjectModel(subRoot, subRootClassDescriptor);
+                if(_jsonReader.Value.ToString().Equals(TranslationContext.JsonSimplRef))
+                {
+                    _jsonReader.Read();
+                    subRoot = translationContext.GetFromMap(_jsonReader.Value.ToString());
+                    _jsonReader.Read();
+                }
+                else
+                {
+                    ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
+                    subRoot = subRootClassDescriptor.GetInstance();
+                    CreateObjectModel(subRoot, subRootClassDescriptor);    
+                }
             }
 
             return subRoot;
