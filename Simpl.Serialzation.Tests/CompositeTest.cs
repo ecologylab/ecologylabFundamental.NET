@@ -12,7 +12,7 @@ namespace Simpl.Serialzation.Tests
     [TestClass]
     public class CompositeTest
     {
-//        [TestMethod]
+        [TestMethod]
         public void CompositeBaseXml()
         {
             Container c = new Container(new WcBase(1));
@@ -23,7 +23,7 @@ namespace Simpl.Serialzation.Tests
             TestMethods.TestSimplObject(c, translationScope);
         }
 
-//        [TestMethod]
+        [TestMethod]
         public void CompositeSubOneXml()
         {
             Container c = new Container(new WcSubOne("testing", 1));
@@ -34,7 +34,7 @@ namespace Simpl.Serialzation.Tests
             TestMethods.TestSimplObject(c, translationScope);
         }
 
-//        [TestMethod]
+        [TestMethod]
         public void CompositeSubTwoXml()
         {
             Container c = new Container(new WcSubTwo(true, 1));
