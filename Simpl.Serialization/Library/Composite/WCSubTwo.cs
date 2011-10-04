@@ -6,7 +6,8 @@ using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Composite
 {
-    class WcSubTwo : WcBase
+    [SimplInherit]
+    public class WcSubTwo : WcBase
     {
          [SimplScalar] Boolean myBool;
 
