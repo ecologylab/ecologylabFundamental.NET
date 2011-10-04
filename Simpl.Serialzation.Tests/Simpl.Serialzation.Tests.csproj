@@ -50,7 +50,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestMethods.cs" />
+    <Compile Include="TestHelper\TestMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CircleTest.cs" />
   </ItemGroup>
@@ -59,6 +59,9 @@
       <Project>{2B7A3C03-D3F8-485D-9AA1-EDC9AB43E42D}</Project>
       <Name>Simpl.Serialization</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestCases\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
