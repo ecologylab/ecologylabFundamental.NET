@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="CompositeTest.cs" />
     <Compile Include="ConfigurationTest.cs" />
+    <Compile Include="RssTest.cs" />
     <Compile Include="ScalarCollectionTest.cs" />
     <Compile Include="TestHelper\PrettyPrint.cs" />
     <Compile Include="TestHelper\TestMethods.cs" />
@@ -59,6 +60,10 @@
     <Compile Include="CircleTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Simpl.Fundamental\Simpl.Fundamental.csproj">
+      <Project>{9A755A5E-88AA-4000-A9A7-ABDED3193855}</Project>
+      <Name>Simpl.Fundamental</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simpl.Serialization\Simpl.Serialization.csproj">
       <Project>{2B7A3C03-D3F8-485D-9AA1-EDC9AB43E42D}</Project>
       <Name>Simpl.Serialization</Name>

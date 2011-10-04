@@ -186,8 +186,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 Object subRoot = GetSubRoot(fd, compositeTagName, root);
                 IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
                 collection.Add(subRoot);
-
-                NextEvent();
+                if (_xmlReader.IsEmptyElement) NextEvent();
             }
         }
 
@@ -220,7 +219,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
             if (!_xmlReader.IsEmptyElement)
                 CreateObjectModel(subRoot, subRootClassDescriptor, currentTagName);
-
+           
             return subRoot;
         }
 
