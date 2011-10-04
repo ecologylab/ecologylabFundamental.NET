@@ -113,8 +113,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor, string rootTag)
         {
-            while(NextEvent() && _xmlReader.NodeType != XmlNodeType.EndElement )
+            while(NextEvent() && _xmlReader.NodeType != XmlNodeType.EndElement && !CurrentTag.Equals(rootTag) )
             {
+                if (_xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
                 FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(CurrentTag);
 
                 if(currentFieldDescriptor == null)
@@ -141,7 +144,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                         break;
                     case FieldTypes.Wrapper:
                         NextEvent();
-                        break;
+                        currentFieldDescriptor = currentFieldDescriptor.WrappedFd;
+                        goto case FieldTypes.CollectionScalar;
                     case FieldTypes.IgnoredElement:
                         _xmlReader.Skip();
                         break;
