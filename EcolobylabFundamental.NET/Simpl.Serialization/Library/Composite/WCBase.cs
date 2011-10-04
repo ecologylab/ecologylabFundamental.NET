@@ -6,7 +6,7 @@ using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Composite
 {
-    class WcBase
+    public class WcBase
     {
         [SimplScalar] private int x;
 

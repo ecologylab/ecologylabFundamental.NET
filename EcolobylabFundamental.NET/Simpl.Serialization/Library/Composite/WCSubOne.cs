@@ -6,7 +6,8 @@ using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Composite
 {
-    class WcSubOne : WcBase
+    [SimplInherit]
+    public class WcSubOne : WcBase
     {
         [SimplScalar] private String subString;
 

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Composite
 {
-    class Container
+    public class Container
     {
+        [SimplComposite]
+        [SimplClasses(new[] { typeof(WcBase), typeof(WcSubOne), typeof(WcSubTwo) })]
         private WcBase wc;
 
         public Container()
@@ -14,9 +17,19 @@ namespace Simpl.Serialization.Library.Composite
             
         }
 
+        public Container(WcBase wcBase)
+        {
+            wc = wcBase;
+        }
+
         public Container(WcSubOne wcSubOne)
         {
-            this.wc = wcSubOne;
+            wc = wcSubOne;
+        }
+
+        public Container(WcSubTwo wcSubTwo)
+        {
+            wc = wcSubTwo;
         }
     }
 }
