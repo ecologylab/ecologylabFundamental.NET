@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Simpl.Serialization.Context;
+using Simpl.Serialization.Types.Element;
 
 namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 {
@@ -85,7 +87,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 throw new SimplTranslationException("start of an element expected");
             }
 
-            String rootTag = CurrentTagName;
+            String rootTag = CurrentTag;
 
             ClassDescriptor rootClassDescriptor = translationScope
                 .GetClassDescriptorByTag(rootTag);
@@ -113,7 +115,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             while(NextEvent() && _xmlReader.NodeType != XmlNodeType.EndElement )
             {
-                FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(CurrentTagName);
+                FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(CurrentTag);
 
                 if(currentFieldDescriptor == null)
                 {
@@ -128,13 +130,73 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     case FieldTypes.CompositeElement:
                         DeserializeComposite(root, currentFieldDescriptor);
                         break;
+                    case FieldTypes.CollectionScalar:
+                        DeserializeScalarCollection(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.CollectionElement:
+                        DeserializeCompositeCollection(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.MapElement:
+                        DeserializeCompositeMap(root, currentFieldDescriptor);
+                        break;
+                    case FieldTypes.Wrapper:
+                        NextEvent();
+                        break;
+                    case FieldTypes.IgnoredElement:
+                        _xmlReader.Skip();
+                        break;
+                    default:
+                        NextEvent();
+                        break;
+                }
+            }
+        }
+
+        private void DeserializeCompositeMap(object root, FieldDescriptor fd)
+        {
+            while (fd.IsCollectionTag(CurrentTag))
+            {
+                String compositeTagName = CurrentTag;
+                Object subRoot = GetSubRoot(fd, compositeTagName, root);
+                if (subRoot is IMappable)
+                {
+                    Object key = ((IMappable) subRoot).Key();
+                    IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
+                    dictionary.Add(key, subRoot);
+                }
+                NextEvent();
+            }
+        }
+
+        private void DeserializeCompositeCollection(object root, FieldDescriptor fd)
+        {
+            while(fd.IsCollectionTag(CurrentTag))
+            {
+                String compositeTagName = CurrentTag;
+                Object subRoot = GetSubRoot(fd, compositeTagName, root);
+                IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
+                collection.Add(subRoot);
+
+                NextEvent();
+            }
+        }
+
+        private void DeserializeScalarCollection(object root, FieldDescriptor fd)
+        {
+            
+            while(fd.IsCollectionTag(CurrentTag))
+            {
+                if(NextEvent() && _xmlReader.NodeType == XmlNodeType.Text && _xmlReader.NodeType != XmlNodeType.EndElement)
+                {
+                    String value = _xmlReader.ReadString();
+                    fd.AddLeafNodeToCollection(root, value, translationContext);
                 }
             }
         }
 
         private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
-            Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTagName, root);
+            Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
             currentFieldDescriptor.SetFieldToComposite(root, subRoot);
         }
 
@@ -181,7 +243,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
         private Boolean NextEvent()
         {
-            Boolean returnValue = false;
+            Boolean returnValue;
             while ((returnValue = _xmlReader.Read()) && (_xmlReader.NodeType != XmlNodeType.Element
                    && _xmlReader.NodeType != XmlNodeType.EndElement
                    && _xmlReader.NodeType != XmlNodeType.CDATA
@@ -193,7 +255,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             return returnValue;
         }
 
-        public string CurrentTagName
+        public string CurrentTag
         {
             get
             {

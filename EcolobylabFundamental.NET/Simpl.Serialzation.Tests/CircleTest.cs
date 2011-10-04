@@ -19,8 +19,9 @@ namespace Simpl.Serialzation.Tests
         {
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
-            Circle c = new Circle(new Point(1, 3), 3);
 
+
+            Circle c = new Circle(new Point(1, 3), 3);
             ClassDescriptor.Serialize(c, StringFormat.Json, sw);
 
             //ClassDescriptor.Serialize(c, StringFormat.Json, Console.Out);

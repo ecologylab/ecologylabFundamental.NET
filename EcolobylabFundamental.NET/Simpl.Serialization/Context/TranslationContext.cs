@@ -193,5 +193,10 @@ namespace Simpl.Serialization.Context
         {
             throw new NotImplementedException();
         }
+
+        public object GetFromMap(string key)
+        {
+            return _unmarshalledObjects[key];
+        }
     }
 }
