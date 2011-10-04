@@ -685,7 +685,7 @@ namespace Simpl.Serialization
             collection = field.GetValue(root);
             if(collection == null)
             {
-                collection = collectionType.Instance;
+                collection = Activator.CreateInstance(Field.FieldType); //TODO: use collectionType.Instance but first have generic type parameter specification system in S.IM.PL
                 field.SetValue(root, collection);
             }
 

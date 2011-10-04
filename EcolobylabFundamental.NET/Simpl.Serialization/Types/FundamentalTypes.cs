@@ -12,6 +12,7 @@ namespace Simpl.Serialization.Types
         public static ScalarType stringType = new StringType();
         public static ScalarType intType = new IntType();
         public static ScalarType booleanType = new BooleanType();
+        public static ScalarType doubleType = new DoubleType();
 
         public static CollectionType listType = new CollectionType(typeof (List<>), CLTypeConstants.JavaArraylist,
                                                                    CLTypeConstants.ObjCArraylist);
