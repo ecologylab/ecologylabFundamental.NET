@@ -34,7 +34,7 @@ namespace Simpl.Serialzation.Tests
             TestMethods.TestSimplObject(c, translationScope);
         }
 
-        [TestMethod]
+//        [TestMethod]
         public void CompositeSubTwoXml()
         {
             Container c = new Container(new WcSubTwo(true, 1));

@@ -49,7 +49,7 @@ namespace Simpl.Serialization.Types.Scalar
         /// <returns></returns>
         public override bool IsDefaultValue(FieldInfo field, Object context)
         {
-            return (bool)field.GetValue(context) == DefaultValue;
-        }
+            return (bool) field.GetValue(context) == DefaultValue;
+        } 
     }
 }

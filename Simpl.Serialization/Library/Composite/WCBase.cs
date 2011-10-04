@@ -8,7 +8,8 @@ namespace Simpl.Serialization.Library.Composite
 {
     public class WcBase
     {
-        [SimplScalar] private int x;
+        [SimplScalar] 
+        private int x;
 
         public WcBase()
         {
