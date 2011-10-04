@@ -26,17 +26,20 @@ namespace Simpl.Serialzation.Tests.TestHelper
 
         public static void TestSimplObject(Object obj, TranslationScope translationScope, StringFormat format)
         {
-            Console.WriteLine("Serializing object " + obj); Console.WriteLine();
+
+            Console.WriteLine("Serializing object " + obj);
+            Console.WriteLine("-----------------------------------------------------------------------------");
             String serializedData = TestSerialization(obj, format);
 
             Console.WriteLine();
             Object deserializedObj = TestDeserialization(translationScope, serializedData, format);
 
-            Console.WriteLine("Deserialized object " + deserializedObj); Console.WriteLine();
+            Console.WriteLine("Deserialized object " + deserializedObj);
+            Console.WriteLine("-----------------------------------------------------------------------------");
             TestSerialization(deserializedObj, format);
         }
 
-         public static void TestSimplObject(Object obj, TranslationScope translationScope)
+        public static void TestSimplObject(Object obj, TranslationScope translationScope)
          {
              TestSimplObject(obj, translationScope, StringFormat.Xml);
          }
