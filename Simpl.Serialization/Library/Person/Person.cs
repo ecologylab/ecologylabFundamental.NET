@@ -1,6 +1,19 @@
-﻿namespace Simpl.Serialization.Library.Person
+﻿using Simpl.Serialization.Attributes;
+
+namespace Simpl.Serialization.Library.Person
 {
-    class Person
+    public class Person
     {
+        [SimplScalar] private string name;
+
+        public Person()
+        {
+            
+        }
+
+        public Person(string pName)
+        {
+            name = pName;
+        }
     }
 }
