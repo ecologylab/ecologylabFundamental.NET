@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2B7A3C03-D3F8-485D-9AA1-EDC9AB43E42D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Simpl.Serialization</RootNamespace>
+    <AssemblyName>Simpl.Serialization</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LitJson, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\LitJson.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\SimplMapKeyField.cs" />
+    <Compile Include="Attributes\Hint.cs" />
+    <Compile Include="Attributes\SimplClasses.cs" />
+    <Compile Include="Attributes\SimplCollection.cs" />
+    <Compile Include="Attributes\SimplComposite.cs" />
+    <Compile Include="Attributes\SimplCompositeAsScalar.cs" />
+    <Compile Include="Attributes\SimplDescriptorClasses.cs" />
+    <Compile Include="Attributes\SimplHints.cs" />
+    <Compile Include="Attributes\SimplInherit.cs" />
+    <Compile Include="Attributes\SimplMap.cs" />
+    <Compile Include="Attributes\SimplNoWrap.cs" />
+    <Compile Include="Attributes\SimplScalar.cs" />
+    <Compile Include="Attributes\SimplScope.cs" />
+    <Compile Include="Attributes\SimplUseEqualsEquals.cs" />
+    <Compile Include="Attributes\SimplWrap.cs" />
+    <Compile Include="Attributes\SimplOtherTags.cs" />
+    <Compile Include="Attributes\SimplTag.cs" />
+    <Compile Include="ClassDescriptor.cs" />
+    <Compile Include="BinaryFormat.cs" />
+    <Compile Include="DescriptorBase.cs" />
+    <Compile Include="Deserializers\ISimplDeserializationPost.cs" />
+    <Compile Include="Deserializers\ISimplDeserializationPre.cs" />
+    <Compile Include="Deserializers\Parsers\Json\IJSONContentHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Json\IJSONErrorHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Json\JSONParser.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\ISAXContentHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\ISAXErrorHandler.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\SAXHelpers.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\SAXParser.cs" />
+    <Compile Include="Deserializers\PullHandlers\BinaryFormats\BinaryPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\BinaryFormats\TlvPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\PullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\StringFormats\BibtexPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\StringFormats\JsonPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\StringFormats\StringPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
+    <Compile Include="Format.cs" />
+    <Compile Include="Library\Circle\Circle.cs" />
+    <Compile Include="Library\Circle\Point.cs" />
+    <Compile Include="Library\Composite\Container.cs" />
+    <Compile Include="Library\Composite\WcBase.cs" />
+    <Compile Include="Library\Composite\WcSubOne.cs" />
+    <Compile Include="Library\Composite\WcSubTwo.cs" />
+    <Compile Include="Library\Configuration\Configuration.cs" />
+    <Compile Include="Library\Configuration\Pref.cs" />
+    <Compile Include="Library\Configuration\PrefDouble.cs" />
+    <Compile Include="Library\Configuration\PrefInteger.cs" />
+    <Compile Include="Library\Graph\ClassA.cs" />
+    <Compile Include="Library\Graph\ClassB.cs" />
+    <Compile Include="Library\Graph\Collection\ClassA.cs" />
+    <Compile Include="Library\Graph\Collection\ClassB.cs" />
+    <Compile Include="Library\Graph\Collection\Container.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassA.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassB.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassC.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassD.cs" />
+    <Compile Include="Library\Graph\Diamond\ClassX.cs" />
+    <Compile Include="Library\Inheritence\BaseClass.cs" />
+    <Compile Include="Library\Inheritence\ChildClass1.cs" />
+    <Compile Include="Library\Inheritence\ChildClass2.cs" />
+    <Compile Include="Library\Inheritence\ContainingClass.cs" />
+    <Compile Include="Library\Items\Container.cs" />
+    <Compile Include="Library\Items\ItemBase.cs" />
+    <Compile Include="Library\Items\ItemOne.cs" />
+    <Compile Include="Library\Items\ItemRandom.cs" />
+    <Compile Include="Library\Items\ItemTwo.cs" />
+    <Compile Include="Library\Maps\ClassDesc.cs" />
+    <Compile Include="Library\Maps\FieldDesc.cs" />
+    <Compile Include="Library\Maps\MapsWithinMaps.cs" />
+    <Compile Include="Library\Maps\TranslationS.cs" />
+    <Compile Include="Library\Person\Faculty.cs" />
+    <Compile Include="Library\Person\Person.cs" />
+    <Compile Include="Library\Person\PersonDirectory.cs" />
+    <Compile Include="Library\Person\Student.cs" />
+    <Compile Include="Library\Person\StudentDirectory.cs" />
+    <Compile Include="Library\Rss\Channel.cs" />
+    <Compile Include="Library\Rss\Item.cs" />
+    <Compile Include="Library\Rss\Rss.cs" />
+    <Compile Include="Library\Scalar\ScalarCollection.cs" />
+    <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
+    <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
+    <Compile Include="Serializers\FormatSerializer.cs" />
+    <Compile Include="Serializers\ISimplSerializationPost.cs" />
+    <Compile Include="Serializers\ISimplSerializationPre.cs" />
+    <Compile Include="Serializers\StringFormats\BibtexSerializer.cs" />
+    <Compile Include="Serializers\StringFormats\JsonSerializer.cs" />
+    <Compile Include="Serializers\StringFormats\StringSerializer.cs" />
+    <Compile Include="Serializers\StringFormats\XmlSerializer.cs" />
+    <Compile Include="SimplTranslationException.cs" />
+    <Compile Include="StringFormat.cs" />
+    <Compile Include="ElementState.cs" />
+    <Compile Include="FieldTypes.cs" />
+    <Compile Include="Graph\MultiMap.cs" />
+    <Compile Include="Context\IDeserializationHookStrategy.cs" />
+    <Compile Include="Context\IScalarUnmarshallingContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Context\TranslationContext.cs" />
+    <Compile Include="TranslationScope.cs" />
+    <Compile Include="Types\CollectionType.cs" />
+    <Compile Include="Types\CLTypeConstants.cs" />
+    <Compile Include="FieldDescriptor.cs" />
+    <Compile Include="Types\FundamentalTypes.cs" />
+    <Compile Include="Types\ScalarType.cs" />
+    <Compile Include="Types\SimplBaseType.cs" />
+    <Compile Include="Types\Element\IMappable.cs" />
+    <Compile Include="Types\Scalar\BooleanType.cs" />
+    <Compile Include="Types\Scalar\DoubleType.cs" />
+    <Compile Include="Types\Scalar\EnumeratedType.cs" />
+    <Compile Include="Types\Scalar\FloatType.cs" />
+    <Compile Include="Types\Scalar\IntType.cs" />
+    <Compile Include="Types\Scalar\LongType.cs" />
+    <Compile Include="Types\Scalar\ReferenceType.cs" />
+    <Compile Include="Types\Scalar\RegexType.cs" />
+    <Compile Include="Types\Scalar\ScalarTypeType.cs" />
+    <Compile Include="Types\Scalar\StringBuilderType.cs" />
+    <Compile Include="Types\Scalar\StringType.cs" />
+    <Compile Include="Types\TypeRegistry.cs" />
+    <Compile Include="Types\Scalar\ParsedUriType.cs" />
+    <Compile Include="Types\SimplType.cs" />
+    <Compile Include="XmlTools.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simpl.Fundamental\Simpl.Fundamental.csproj">
+      <Project>{9A755A5E-88AA-4000-A9A7-ABDED3193855}</Project>
+      <Name>Simpl.Fundamental</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Lib\LitJson.dll" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
