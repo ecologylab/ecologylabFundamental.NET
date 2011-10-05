@@ -44,5 +44,39 @@ namespace Simpl.Serialzation.Tests
 
             TestMethods.TestSimplObject(c, translationScope);
         }
+
+
+        [TestMethod]
+        public void CompositeBaseJson()
+        {
+            Container c = new Container(new WcBase(1));
+            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+                                                                     typeof(WcBase), typeof(WcSubOne),
+                                                                     typeof(WcSubTwo));
+
+            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+        }
+
+        [TestMethod]
+        public void CompositeSubOneJson()
+        {
+            Container c = new Container(new WcSubOne("testing", 1));
+            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+                                                                     typeof(WcBase), typeof(WcSubOne),
+                                                                     typeof(WcSubTwo));
+
+            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+        }
+
+        [TestMethod]
+        public void CompositeSubTwoJson()
+        {
+            Container c = new Container(new WcSubTwo(true, 1));
+            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+                                                                     typeof(WcBase), typeof(WcSubOne),
+                                                                     typeof(WcSubTwo));
+
+            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+        }
     }
 }
