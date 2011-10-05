@@ -80,7 +80,6 @@
     <Compile Include="Deserializers\PullHandlers\StringFormats\JsonPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\StringPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
-    <Compile Include="DictionaryExtension.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="Library\Circle\Circle.cs" />
     <Compile Include="Library\Circle\Point.cs" />

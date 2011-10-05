@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Simpl.Serialization
+namespace Simpl.Fundamental.Generic
 {
     /// <summary>
     /// Extension to provide a more Java like put() method to dictionary. 
