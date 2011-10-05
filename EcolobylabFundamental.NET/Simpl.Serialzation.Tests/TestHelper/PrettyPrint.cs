@@ -1,13 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Simpl.Serialization;
-using Formatting = System.Xml.Formatting;
 
 namespace Simpl.Serialzation.Tests.TestHelper
 {
@@ -27,7 +22,11 @@ namespace Simpl.Serialzation.Tests.TestHelper
                 doc.LoadXml(xml);
                 XmlNodeReader xmlReader = new XmlNodeReader(doc);
                 XmlTextWriter xmlWriter = new XmlTextWriter(stringWriter)
-                                              {Formatting = Formatting.Indented, Indentation = 1, IndentChar = '\t'};
+                                              {
+                                                  Formatting = System.Xml.Formatting.Indented,
+                                                  Indentation = 1,
+                                                  IndentChar = '\t'
+                                              };
                 xmlWriter.WriteNode(xmlReader, true);
                 Console.WriteLine(stringWriter.ToString());
             }
