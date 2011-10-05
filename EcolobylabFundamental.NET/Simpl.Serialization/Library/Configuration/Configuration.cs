@@ -12,6 +12,8 @@ namespace Simpl.Serialization.Library.Configuration
         [SimplComposite]
         private Pref pref;
 
+        
+
         [SimplClasses(new[] { typeof(Pref), typeof(PrefDouble), typeof(PrefInteger) })]
         [SimplCollection]
         private List<Pref> prefs;
