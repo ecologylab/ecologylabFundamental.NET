@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Simpl.Serialization;
+using Formatting = System.Xml.Formatting;
 
 namespace Simpl.Serialzation.Tests.TestHelper
 {
@@ -13,7 +15,8 @@ namespace Simpl.Serialzation.Tests.TestHelper
     {
         public static void PrintJson(String json)
         {
-            Console.WriteLine(json);
+            dynamic parsedJson = JsonConvert.DeserializeObject(json);
+            Console.WriteLine(JsonConvert.SerializeObject(parsedJson, Newtonsoft.Json.Formatting.Indented));
         }
 
         public static void PrintXml(String xml)
