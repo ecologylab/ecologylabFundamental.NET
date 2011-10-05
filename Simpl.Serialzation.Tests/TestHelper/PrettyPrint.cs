@@ -44,7 +44,7 @@ namespace Simpl.Serialzation.Tests.TestHelper
                     break;
                 default:
                     Console.WriteLine(serializedData);
-                    break;
+                    break; 
             }
         }
     }
