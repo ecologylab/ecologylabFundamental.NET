@@ -31,7 +31,7 @@ namespace Simpl.Serialzation.Tests
 
         }
 
-        // [TestMethod]
+        [TestMethod]
         public void ScalarCollectionJson()
         {
             ScalarCollection sc = new ScalarCollection();
@@ -46,7 +46,7 @@ namespace Simpl.Serialzation.Tests
             TranslationScope scalarCollectionTranslationScope = TranslationScope.Get(
                 "scalarCollectionTScope", typeof(ScalarCollection));
 
-            TestMethods.TestSimplObject(sc, scalarCollectionTranslationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(sc, scalarCollectionTranslationScope, StringFormat.Json);
         }
     }
 }

@@ -21,22 +21,13 @@ namespace Simpl.Serialzation.Tests.TestHelper
             using (StringWriter stringWriter = new StringWriter())
             {
                 XmlDocument doc = new XmlDocument();
-
-                //get your document
-
                 doc.LoadXml(xml);
-
-                //create reader and writer
-
                 XmlNodeReader xmlReader = new XmlNodeReader(doc);
                 XmlTextWriter xmlWriter = new XmlTextWriter(stringWriter)
                                               {Formatting = Formatting.Indented, Indentation = 1, IndentChar = '\t'};
-
-
                 xmlWriter.WriteNode(xmlReader, true);
                 Console.WriteLine(stringWriter.ToString());
             }
-            
         }
 
         public static void Print(String serializedData, StringFormat format)

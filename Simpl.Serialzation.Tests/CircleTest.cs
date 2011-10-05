@@ -17,7 +17,7 @@ namespace Simpl.Serialzation.Tests
             TestMethods.TestSimplObject(c, circleTransaltionScope, StringFormat.Xml);
         }
 
-//        [TestMethod]
+        [TestMethod]
         public void CircleJson()
         {
             Circle c = new Circle(new Point(1, 3), 3);

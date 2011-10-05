@@ -28,5 +28,23 @@ namespace Simpl.Serialzation.Tests
 
             TestMethods.TestSimplObject(c, translationScope, StringFormat.Xml);
         }
+
+
+        [TestMethod]
+        public void ConfigurationJson()
+        {
+            PrefInteger prefInteger = new PrefInteger("integer_pref", 2);
+            PrefDouble prefDouble = new PrefDouble("integer_pref", 4);
+
+            Pref pref = new Pref("only_pref");
+
+            List<Pref> prefList = new List<Pref> { pref, prefInteger, prefDouble };
+
+            Configuration c = new Configuration(prefInteger, prefList);
+            TranslationScope translationScope = TranslationScope.Get("configuration", typeof(Configuration),
+                typeof(PrefInteger), typeof(PrefDouble), typeof(Pref));
+
+            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+        }
     }
 }
