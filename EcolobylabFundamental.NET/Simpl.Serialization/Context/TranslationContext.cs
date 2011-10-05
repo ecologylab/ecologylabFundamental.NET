@@ -191,7 +191,7 @@ namespace Simpl.Serialization.Context
 
         public ParsedUri UriContext()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public object GetFromMap(string key)

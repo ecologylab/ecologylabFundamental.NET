@@ -21,8 +21,8 @@ namespace Simpl.Serialization.Library.Rss
         [SimplHints(new[] {Hint.XmlLeaf})] 
         private String description;
 
-//        [SimplScalar] 
-//        [SimplHints(new[] {Hint.XmlLeaf})] 
+        [SimplScalar] 
+        [SimplHints(new[] {Hint.XmlLeaf})] 
         private ParsedUri link;
 
         public Channel()
