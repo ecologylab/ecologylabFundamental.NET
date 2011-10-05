@@ -21,7 +21,8 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
-        [SimplNoWrap] [SimplCollection("other_tag")] 
+        [SimplNoWrap] 
+        [SimplCollection("other_tag")] 
         protected List<String> otherTags;
         
         /// <summary>

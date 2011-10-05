@@ -1,6 +1,20 @@
-﻿namespace Simpl.Serialization.Library.Person
+﻿using Simpl.Serialization.Attributes;
+
+namespace Simpl.Serialization.Library.Person
 {
-    class Student
+    public class Student : Person
     {
+        [SimplScalar] private string stuNum;
+
+        public Student()
+        {
+            
+        }
+
+        public Student(string pName, string pStuNum)
+            : base(pName)
+        {
+            stuNum = pStuNum;
+        }
     }
 }
