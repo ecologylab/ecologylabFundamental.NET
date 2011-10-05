@@ -25,8 +25,8 @@ namespace Simpl.Serialzation.Tests
                                        };
             StudentDirectory p = new StudentDirectory(students);
 
-            TranslationScope translationScope = TranslationScope.Get("personDir", typeof(Person),
-                typeof(Student), typeof(StudentDirectory));
+            TranslationScope translationScope = TranslationScope.Get("studentDir", typeof(Person),
+                                                                     typeof(Student), typeof(StudentDirectory));
 
             TestMethods.TestSimplObject(p, translationScope, StringFormat.Xml);
         }
