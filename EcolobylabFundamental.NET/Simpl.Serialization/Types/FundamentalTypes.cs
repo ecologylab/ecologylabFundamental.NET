@@ -15,6 +15,10 @@ namespace Simpl.Serialization.Types
         public static ScalarType doubleType = new DoubleType();
         public static ScalarType parsedUriType = new ParsedUriType();
         public static ScalarType floatType = new FloatType();
+        public static ScalarType enumeratedType = new EnumeratedType();
+        public static ScalarType longType = new LongType();
+        public static ScalarType regexType = new RegexType();
+        public static ScalarType stringBuilderType = new StringBuilderType();
 
         public static CollectionType listType = new CollectionType(typeof (List<>), CLTypeConstants.JavaArraylist,
                                                                    CLTypeConstants.ObjCArraylist);
