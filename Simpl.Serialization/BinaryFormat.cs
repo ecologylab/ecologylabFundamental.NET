@@ -2,6 +2,6 @@
 {
     public enum BinaryFormat
     {
-        Tlv
+        Tlv 
     }
 }
