@@ -29,7 +29,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope.DisableGraphSerialization();
         }
 
-//        [TestMethod]
+        [TestMethod]
         public void ClassAJson()
         {
             SimplTypesScope.EnableGraphSerialization();
