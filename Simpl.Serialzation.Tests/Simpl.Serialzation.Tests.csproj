@@ -60,6 +60,8 @@
     <Compile Include="CompositeTest.cs" />
     <Compile Include="ConfigurationTest.cs" />
     <Compile Include="ContainerTest.cs" />
+    <Compile Include="ContainingClassTest.cs" />
+    <Compile Include="ItemContainer.cs" />
     <Compile Include="PersonDirectoryTest.cs" />
     <Compile Include="RssTest.cs" />
     <Compile Include="ScalarCollectionTest.cs" />
