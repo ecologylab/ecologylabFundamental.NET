@@ -397,6 +397,16 @@ namespace Simpl.Serialization
             return result;
         }
 
+        public static void EnableGraphSerialization()
+        {
+            graphSwitch = GRAPH_SWITCH.ON;
+        }
+
+        public static void DisableGraphSerialization()
+        {
+            graphSwitch = GRAPH_SWITCH.OFF;
+        }
+
 
         public Object Deserialize(String inputString, StringFormat format)
         {

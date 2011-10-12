@@ -1,11 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Graph.Collection
 {
-    class ClassA
+    public class ClassA
     {
+        [SimplScalar] private int w;
+
+        [SimplScalar] private int u;
+
+
+        public ClassA()
+        {
+            w = 55;
+            u = 54;
+        }
     }
 }

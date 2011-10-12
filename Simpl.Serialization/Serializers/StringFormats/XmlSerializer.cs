@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Simpl.Serialization.Context;
-using ecologylab.serialization;
 
 namespace Simpl.Serialization.Serializers.StringFormats
 {
@@ -167,6 +166,13 @@ namespace Simpl.Serialization.Serializers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fd"></param>
+        /// <param name="textWriter"></param>
+        /// <param name="translationContext"></param>
         private void WriteScalarCollectionLeaf(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
         {
             if (!fd.IsDefaultValue(obj.ToString()))
@@ -182,6 +188,12 @@ namespace Simpl.Serialization.Serializers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fd"></param>
+        /// <param name="textWriter"></param>
+        /// <param name="close"></param>
         private void WriteWrap(FieldDescriptor fd, TextWriter textWriter, bool close)
         {
             if (fd.IsWrapped)
@@ -194,6 +206,13 @@ namespace Simpl.Serialization.Serializers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fd"></param>
+        /// <param name="textWriter"></param>
+        /// <param name="translationContext"></param>
         private void WriteValueAsLeaf(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
         {
             if (!fd.IsDefaultValueFromContext(obj))

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simpl.Serialization.Library.Graph.Diamond
 {
-    class ClassC
+    public class ClassC
     {
     }
 }
