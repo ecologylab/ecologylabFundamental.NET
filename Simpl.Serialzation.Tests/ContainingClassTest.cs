@@ -13,7 +13,7 @@ namespace Simpl.Serialzation.Tests
     public class ContainingClassTest
     {
         [TestMethod]
-        public void ContainingClassXml()
+        public void ContainingClassCcbXml()
         {
             SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof (ContainingClass),
                                                                    typeof (ChildClass1), typeof (ChildClass2),
@@ -22,32 +22,62 @@ namespace Simpl.Serialzation.Tests
             ContainingClass ccb = new ContainingClass {TheField = new BaseClass()};
 
             TestMethods.TestSimplObject(ccb, translationScope, StringFormat.Xml);
+        }
 
-            ContainingClass cc1 = new ContainingClass {TheField = new ChildClass1()};
+        [TestMethod]
+        public void ContainingClassCc1Xml()
+        {
+            SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof(ContainingClass),
+                                                                   typeof(ChildClass1), typeof(ChildClass2),
+                                                                   typeof(BaseClass));
+            ContainingClass cc1 = new ContainingClass { TheField = new ChildClass1() };
 
             TestMethods.TestSimplObject(cc1, translationScope, StringFormat.Xml);
+        }
 
-            ContainingClass cc2 = new ContainingClass {TheField = new ChildClass2()};
+        [TestMethod]
+        public void ContainingClassCc2Xml()
+        {
+            SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof(ContainingClass),
+                                                                   typeof(ChildClass1), typeof(ChildClass2),
+                                                                   typeof(BaseClass));
+
+            ContainingClass cc2 = new ContainingClass { TheField = new ChildClass2() };
 
             TestMethods.TestSimplObject(cc2, translationScope, StringFormat.Xml);
         }
 
-        //        [TestMethod]
-        public void ContainingClassJson()
+        [TestMethod]
+        public void ContainingClassCcbJson()
         {
-            SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof (ContainingClass),
-                                                                   typeof (ChildClass1), typeof (ChildClass2),
-                                                                   typeof (BaseClass));
+            SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof(ContainingClass),
+                                                                   typeof(ChildClass1), typeof(ChildClass2),
+                                                                   typeof(BaseClass));
 
-            ContainingClass ccb = new ContainingClass {TheField = new BaseClass()};
+            ContainingClass ccb = new ContainingClass { TheField = new BaseClass() };
 
             TestMethods.TestSimplObject(ccb, translationScope, StringFormat.Json);
+        }
 
-            ContainingClass cc1 = new ContainingClass {TheField = new ChildClass1()};
+        [TestMethod]
+        public void ContainingClassCc1Json()
+        {
+            SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof(ContainingClass),
+                                                                   typeof(ChildClass1), typeof(ChildClass2),
+                                                                   typeof(BaseClass));
+            ContainingClass cc1 = new ContainingClass { TheField = new ChildClass1() };
 
             TestMethods.TestSimplObject(cc1, translationScope, StringFormat.Json);
+        }
 
-            ContainingClass cc2 = new ContainingClass {TheField = new ChildClass2()};
+        [TestMethod]
+        public void ContainingClassCc2Json()
+        {
+            SimplTypesScope translationScope = SimplTypesScope.Get("test", typeof(ContainingClass),
+                                                                   typeof(ChildClass1), typeof(ChildClass2),
+                                                                   typeof(BaseClass));
+
+            ContainingClass cc2 = new ContainingClass { TheField = new ChildClass2() };
 
             TestMethods.TestSimplObject(cc2, translationScope, StringFormat.Json);
         }
