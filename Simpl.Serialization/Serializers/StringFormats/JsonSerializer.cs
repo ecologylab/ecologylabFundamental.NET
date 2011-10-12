@@ -84,7 +84,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
         {
             int numOfFields = 0;
 
-            if(TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            if(SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
             {
                 if(translationContext.NeedsHashCode(obj))
                 {

@@ -14,21 +14,21 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
         /// <param name="deserializationHookStrategy"></param>
-        protected StringPullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext, IDeserializationHookStrategy deserializationHookStrategy)
-            : base(inputTranslationScope, inputContext, deserializationHookStrategy)
+        protected StringPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext, IDeserializationHookStrategy deserializationHookStrategy)
+            : base(inputSimplTypesScope, inputContext, deserializationHookStrategy)
         {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
-        protected StringPullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext)
-            : base(inputTranslationScope, inputContext)
+        protected StringPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext)
+            : base(inputSimplTypesScope, inputContext)
         {
         }
 

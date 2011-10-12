@@ -260,7 +260,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
                 }
             }
 
-            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            if (SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
             {
                 if (translationContext.NeedsHashCode(obj))
                 {

@@ -24,21 +24,21 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
         /// <param name="deserializationHookStrategy"></param>
-        public XmlPullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext, IDeserializationHookStrategy deserializationHookStrategy)
-            : base(inputTranslationScope, inputContext, deserializationHookStrategy)
+        public XmlPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext, IDeserializationHookStrategy deserializationHookStrategy)
+            : base(inputSimplTypesScope, inputContext, deserializationHookStrategy)
         {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
-        public XmlPullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext)
-            : base(inputTranslationScope, inputContext)
+        public XmlPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext)
+            : base(inputSimplTypesScope, inputContext)
         {
         }
 
@@ -89,7 +89,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
             String rootTag = CurrentTag;
 
-            ClassDescriptor rootClassDescriptor = translationScope
+            ClassDescriptor rootClassDescriptor = simplTypesScope
                 .GetClassDescriptorByTag(rootTag);
 
             if (rootClassDescriptor == null)

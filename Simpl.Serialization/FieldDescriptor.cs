@@ -436,7 +436,7 @@ namespace Simpl.Serialization
 
         private bool ResolveScopeAttribute(string scopeAttributeValue)
         {
-            TranslationScope scope = TranslationScope.Get(scopeAttributeValue);
+            SimplTypesScope scope = SimplTypesScope.Get(scopeAttributeValue);
             if (scope != null)
             {
                 List<ClassDescriptor> scopeClassDescriptors = scope.ClassDescriptors;
@@ -554,7 +554,7 @@ namespace Simpl.Serialization
 
         private bool ResolveScopeAnnotation(string scopeAnnotation)
         {
-            TranslationScope scope = TranslationScope.Get(scopeAnnotation);
+            SimplTypesScope scope = SimplTypesScope.Get(scopeAnnotation);
             if (scope != null)
             {
                 List<ClassDescriptor> scopeClassDescriptors = scope.GetClassDescriptors();

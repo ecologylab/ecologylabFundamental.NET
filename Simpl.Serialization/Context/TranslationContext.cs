@@ -46,7 +46,7 @@ namespace Simpl.Serialization.Context
         /// <returns></returns>
         public bool HandleSimplIds(String tag, String value, ElementState elementState)
         {
-            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            if (SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
             {
                 if (tag.Equals(SimplId))
                 {
@@ -67,7 +67,7 @@ namespace Simpl.Serialization.Context
         /// <param name="obj"></param>
         public void ResolveGraph(object obj)
         {
-            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            if (SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
             {
                 _visitedElements.Add(obj.GetHashCode(), obj);
 
@@ -161,7 +161,7 @@ namespace Simpl.Serialization.Context
         /// <param name="obj"></param>
         public void MapObject(Object obj)
         {
-            if (TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON)
+            if (SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
             {
                 _marshalledObjects.Add(obj.GetHashCode(), obj);
             }

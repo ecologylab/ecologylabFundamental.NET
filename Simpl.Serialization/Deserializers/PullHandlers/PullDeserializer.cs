@@ -12,7 +12,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
         /// <summary>
         /// 
         /// </summary>
-        protected TranslationScope translationScope;
+        protected SimplTypesScope simplTypesScope;
 
         /// <summary>
         /// 
@@ -27,13 +27,13 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
         /// <param name="deserializationHookStrategy"></param>
-        protected PullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext,
+        protected PullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext,
                                 IDeserializationHookStrategy deserializationHookStrategy)
         {
-            translationScope = inputTranslationScope;
+            simplTypesScope = inputSimplTypesScope;
             translationContext = inputContext;
             deserializationHookStrategy = deserializationHookStrategy;
         }
@@ -41,21 +41,21 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
-        protected PullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext)
-            : this(inputTranslationScope, inputContext, null)
+        protected PullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext)
+            : this(inputSimplTypesScope, inputContext, null)
         {
         }
 
-        public static StringPullDeserializer GetStringDeserializer(TranslationScope translationScope, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, StringFormat format)
+        public static StringPullDeserializer GetStringDeserializer(SimplTypesScope simplTypesScope, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, StringFormat format)
         {
             switch (format)
             {
                 case StringFormat.Xml:
-                    return new XmlPullDeserializer(translationScope, translationContext, deserializationHookStrategy);
+                    return new XmlPullDeserializer(simplTypesScope, translationContext, deserializationHookStrategy);
                     case StringFormat.Json:
-                    return new JsonPullDeserializer(translationScope, translationContext, deserializationHookStrategy);
+                    return new JsonPullDeserializer(simplTypesScope, translationContext, deserializationHookStrategy);
                     case StringFormat.Bibtex:
                 default:
                     throw  new SimplTranslationException(format + "format not supported");

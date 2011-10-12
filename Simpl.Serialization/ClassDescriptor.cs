@@ -127,12 +127,12 @@ namespace Simpl.Serialization
         ///     <c>ClassDescriptor</c>
         /// </param>
         public ClassDescriptor(Type thatClass)
-            : base(XmlTools.GetXmlTagName(thatClass, TranslationScope.STATE), thatClass.Name)
+            : base(XmlTools.GetXmlTagName(thatClass, SimplTypesScope.STATE), thatClass.Name)
         {
             _describedClass = thatClass;
             _describedClassSimpleName = thatClass.Name;
             _describedClassPackageName = thatClass.Namespace;
-            _tagName = XmlTools.GetXmlTagName(thatClass, TranslationScope.STATE);
+            _tagName = XmlTools.GetXmlTagName(thatClass, SimplTypesScope.STATE);
 
             if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplUseEqualsEquals)))
             {
@@ -602,12 +602,6 @@ namespace Simpl.Serialization
             get { return null; }
         }
 
-
-        public static void Serialize(Object obj, StringFormat format, TextWriter textWriter)
-        {
-            FormatSerializer serializer = FormatSerializer.GetStringSerializer(format);
-            serializer.Serialize(obj, textWriter);
-        }
 
         public object GetInstance()
         {

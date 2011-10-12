@@ -7,6 +7,7 @@ using Simpl.Fundamental.Net;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Deserializers.PullHandlers;
 using Simpl.Serialization.Deserializers.PullHandlers.StringFormats;
+using Simpl.Serialization.Serializers;
 using ecologylab.collections;
 using System.IO;
 using ecologylab.serialization;
@@ -16,17 +17,17 @@ namespace Simpl.Serialization
     /// <summary>
     /// 
     /// </summary>
-    public class TranslationScope
+    public class SimplTypesScope
     {
         /// <summary>
         /// 
         /// </summary>
         public const String STATE = "State";
 
-        private static Dictionary<String, TranslationScope> allTranslationScopes = new Dictionary<String, TranslationScope>();
+        private static Dictionary<string, SimplTypesScope> allTranslationScopes = new Dictionary<string, SimplTypesScope>();
 
         private String name = null;
-        private TranslationScope[] inheritedTranslationScopes = null;
+        private SimplTypesScope[] _inheritedSimplTypesScopes = null;
         private Scope<ClassDescriptor> entriesByClassSimpleName = new Scope<ClassDescriptor>();
         private Scope<ClassDescriptor> entriesByClassName = new Scope<ClassDescriptor>();
         private Scope<ClassDescriptor> entriesByTag = new Scope<ClassDescriptor>();
@@ -50,7 +51,7 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
-        public TranslationScope()
+        public SimplTypesScope()
         {
         }
 
@@ -58,7 +59,7 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="name"></param>
-        public TranslationScope(String name)
+        public SimplTypesScope(String name)
         {
             this.name = name;            
         }
@@ -67,31 +68,31 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="inheritedTranslationScope"></param>
-        public TranslationScope(String name, TranslationScope inheritedTranslationScope)
+        /// <param name="inheritedSimplTypesScope"></param>
+        public SimplTypesScope(String name, SimplTypesScope inheritedSimplTypesScope)
             : this(name)
         {
-            AddTranslations(inheritedTranslationScope);
-            TranslationScope[] inheritedTranslationScopes = new TranslationScope[1];
-            inheritedTranslationScopes[0] = inheritedTranslationScope;
-            this.inheritedTranslationScopes = inheritedTranslationScopes;
+            AddTranslations(inheritedSimplTypesScope);
+            SimplTypesScope[] _inheritedSimplTypesScopes = new SimplTypesScope[1];
+            _inheritedSimplTypesScopes[0] = inheritedSimplTypesScope;
+            this._inheritedSimplTypesScopes = _inheritedSimplTypesScopes;
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="inheritedTranslationScopes"></param>
-        public TranslationScope(String name, params TranslationScope[] inheritedTranslationScopes)
+        /// <param name="_inheritedSimplTypesScopes"></param>
+        public SimplTypesScope(String name, params SimplTypesScope[] _inheritedSimplTypesScopes)
             : this(name)
         {
 
-            if (inheritedTranslationScopes != null)
+            if (_inheritedSimplTypesScopes != null)
             {
-                this.inheritedTranslationScopes = inheritedTranslationScopes;
-                int n = inheritedTranslationScopes.Length;
+                this._inheritedSimplTypesScopes = _inheritedSimplTypesScopes;
+                int n = _inheritedSimplTypesScopes.Length;
                 for (int i = 0; i < n; i++)
-                    AddTranslations(inheritedTranslationScopes[i]);
+                    AddTranslations(_inheritedSimplTypesScopes[i]);
             }
         }
 
@@ -100,12 +101,12 @@ namespace Simpl.Serialization
         /// </summary>
         /// <param name="name"></param>
         /// <param name="baseTranslationsSet"></param>
-        public TranslationScope(String name, List<TranslationScope> baseTranslationsSet)
+        public SimplTypesScope(String name, List<SimplTypesScope> baseTranslationsSet)
             : this(name)
         {
-            foreach (TranslationScope thatTranslationScope in baseTranslationsSet)
+            foreach (SimplTypesScope thatTranslationScope in baseTranslationsSet)
                 AddTranslations(thatTranslationScope);
-             inheritedTranslationScopes		= (TranslationScope[]) baseTranslationsSet.ToArray();
+             _inheritedSimplTypesScopes		= (SimplTypesScope[]) baseTranslationsSet.ToArray();
         }
 
         /// <summary>
@@ -113,8 +114,8 @@ namespace Simpl.Serialization
         /// </summary>
         /// <param name="name"></param>
         /// <param name="translations"></param>
-        public TranslationScope(String name, params Type[] translations)
-            : this(name, (TranslationScope[])null, translations)
+        public SimplTypesScope(String name, params Type[] translations)
+            : this(name, (SimplTypesScope[])null, translations)
         {
             AddTranslationScope(name);
         }
@@ -123,10 +124,10 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="inheritedTranslationScopes"></param>
+        /// <param name="_inheritedSimplTypesScopes"></param>
         /// <param name="translations"></param>
-        public TranslationScope(String name, TranslationScope[] inheritedTranslationScopes, Type[] translations)
-            : this(name, inheritedTranslationScopes)
+        public SimplTypesScope(String name, SimplTypesScope[] _inheritedSimplTypesScopes, Type[] translations)
+            : this(name, _inheritedSimplTypesScopes)
         {   
 	         AddTranslations(translations);
         }
@@ -137,7 +138,7 @@ namespace Simpl.Serialization
         /// <param name="name"></param>
         /// <param name="inheritedTranslationsSet"></param>
         /// <param name="translations"></param>
-        public TranslationScope(String name, List<TranslationScope> inheritedTranslationsSet, Type[] translations)
+        public SimplTypesScope(String name, List<SimplTypesScope> inheritedTranslationsSet, Type[] translations)
             : this(name, inheritedTranslationsSet)
         {
 
@@ -150,10 +151,10 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="inheritedTranslationScope"></param>
+        /// <param name="inheritedSimplTypesScope"></param>
         /// <param name="translation"></param>
-        public TranslationScope(String name, TranslationScope inheritedTranslationScope, Type translation)
-            : this(name, inheritedTranslationScope)
+        public SimplTypesScope(String name, SimplTypesScope inheritedSimplTypesScope, Type translation)
+            : this(name, inheritedSimplTypesScope)
         {
             AddTranslation(translation);
             AddTranslationScope(name);
@@ -172,10 +173,10 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="inheritedTranslationScope"></param>
+        /// <param name="inheritedSimplTypesScope"></param>
         /// <param name="translations"></param>
-        private TranslationScope(String name, TranslationScope inheritedTranslationScope, Type[] translations)
-            : this(name, inheritedTranslationScope)
+        private SimplTypesScope(String name, SimplTypesScope inheritedSimplTypesScope, Type[] translations)
+            : this(name, inheritedSimplTypesScope)
         {
 
             AddTranslations(translations);
@@ -202,16 +203,16 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inheritedTranslationScope"></param>
-        public void AddTranslations(TranslationScope inheritedTranslationScope)
+        /// <param name="inheritedSimplTypesScope"></param>
+        public void AddTranslations(SimplTypesScope inheritedSimplTypesScope)
         {
-            if (inheritedTranslationScope != null)
+            if (inheritedSimplTypesScope != null)
             {
-                UpdateMapWithValues(inheritedTranslationScope.entriesByClassSimpleName, entriesByClassSimpleName, "classSimpleName");
-                UpdateMapWithValues(inheritedTranslationScope.entriesByClassName, entriesByClassName, "className");
-                UpdateMapWithValues(inheritedTranslationScope.entriesByTag, entriesByTag, "tagName");
+                UpdateMapWithValues(inheritedSimplTypesScope.entriesByClassSimpleName, entriesByClassSimpleName, "classSimpleName");
+                UpdateMapWithValues(inheritedSimplTypesScope.entriesByClassName, entriesByClassName, "className");
+                UpdateMapWithValues(inheritedSimplTypesScope.entriesByTag, entriesByTag, "tagName");
 
-                Dictionary<String, Type> inheritedNameSpaceClassesByURN = inheritedTranslationScope.nameSpaceClassesByURN;
+                Dictionary<string, Type> inheritedNameSpaceClassesByURN = inheritedSimplTypesScope.nameSpaceClassesByURN;
                 if (inheritedNameSpaceClassesByURN != null)
                 {
                     foreach (String urn in inheritedNameSpaceClassesByURN.Keys)
@@ -295,22 +296,22 @@ namespace Simpl.Serialization
         /// <param name="name"></param>
         /// <param name="translations"></param>
         /// <returns></returns>
-        public static TranslationScope Get(string name, params Type[] translations)
+        public static SimplTypesScope Get(string name, params Type[] translations)
         {
-            TranslationScope result = null;
+            SimplTypesScope result = null;
             if (!allTranslationScopes.TryGetValue(name, out result))
             {
-                result = new TranslationScope(name, translations);
+                result = new SimplTypesScope(name, translations);
             }
             return result;
         }
 
-        public static TranslationScope Get(string name, TranslationScope inheritedScope, params Type[] translations)
+        public static SimplTypesScope Get(string name, SimplTypesScope inheritedScope, params Type[] translations)
         {
-            TranslationScope result = null;
+            SimplTypesScope result = null;
             if (!allTranslationScopes.TryGetValue(name, out result))
             {
-                result = new TranslationScope(name, inheritedScope, translations);
+                result = new SimplTypesScope(name, inheritedScope, translations);
             }
             return result;
         }
@@ -321,7 +322,7 @@ namespace Simpl.Serialization
         /// <param name="name"></param>
         /// <param name="translations"></param>
         /// <returns></returns>
-        public static TranslationScope Get(string name)
+        public static SimplTypesScope Get(string name)
         {
             return Lookup(name);
         }
@@ -389,9 +390,9 @@ namespace Simpl.Serialization
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static TranslationScope Lookup(String name)
+        private static SimplTypesScope Lookup(String name)
         {
-            TranslationScope result = null;
+            SimplTypesScope result = null;
             allTranslationScopes.TryGetValue(name, out result);
             return result;
         }
@@ -409,6 +410,12 @@ namespace Simpl.Serialization
                                                                                              format);
 
             return pullDeserializer.Parse(inputString);
+        }
+
+        public static void Serialize(Object obj, StringFormat format, TextWriter textWriter)
+        {
+            FormatSerializer serializer = FormatSerializer.GetStringSerializer(format);
+            serializer.Serialize(obj, textWriter);
         }
     }   
 }

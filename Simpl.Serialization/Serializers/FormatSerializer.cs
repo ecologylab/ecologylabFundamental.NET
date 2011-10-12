@@ -89,7 +89,7 @@ namespace Simpl.Serialization.Serializers
 
         protected Boolean AlreadySerialized(Object obj, TranslationContext translationContext)
         {
-            return TranslationScope.graphSwitch == TranslationScope.GRAPH_SWITCH.ON
+            return SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON
                    && translationContext.AlreadyMarshalled(obj);
         }
 

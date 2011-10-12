@@ -21,22 +21,22 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
         /// <param name="deserializationHookStrategy"></param>
-        public JsonPullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext,
+        public JsonPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext,
                                     IDeserializationHookStrategy deserializationHookStrategy)
-            : base(inputTranslationScope, inputContext, deserializationHookStrategy)
+            : base(inputSimplTypesScope, inputContext, deserializationHookStrategy)
         {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="inputTranslationScope"></param>
+        /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
-        public JsonPullDeserializer(TranslationScope inputTranslationScope, TranslationContext inputContext)
-            : base(inputTranslationScope, inputContext)
+        public JsonPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext)
+            : base(inputSimplTypesScope, inputContext)
         {
         }
 
@@ -89,7 +89,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             Object root = null;
 
             // find the classdescriptor for the root element.
-            ClassDescriptor rootClassDescriptor = translationScope.GetClassDescriptorByTag(_jsonReader.Value.ToString());
+            ClassDescriptor rootClassDescriptor = simplTypesScope.GetClassDescriptorByTag(_jsonReader.Value.ToString());
 
             root = rootClassDescriptor.GetInstance();
 

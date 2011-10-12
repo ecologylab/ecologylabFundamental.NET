@@ -141,7 +141,7 @@
     <Compile Include="Context\IScalarUnmarshallingContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Context\TranslationContext.cs" />
-    <Compile Include="TranslationScope.cs" />
+    <Compile Include="SimplTypesScope.cs" />
     <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CLTypeConstants.cs" />
     <Compile Include="FieldDescriptor.cs" />
