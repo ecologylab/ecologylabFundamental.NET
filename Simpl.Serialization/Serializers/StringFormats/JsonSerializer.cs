@@ -348,9 +348,10 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="textWriter"></param>
         private static void WriteSimpRefAttribute(object obj, TextWriter textWriter)
         {
-            textWriter.Write(' ');
-            textWriter.Write(TranslationContext.SimplRef);
-            textWriter.Write('=');
+            textWriter.Write('"');
+            textWriter.Write(TranslationContext.JsonSimplRef);
+            textWriter.Write('"');
+            textWriter.Write(':');
             textWriter.Write('"');
             textWriter.Write(obj.GetHashCode().ToString());
             textWriter.Write('"');
