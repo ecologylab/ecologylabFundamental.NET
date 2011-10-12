@@ -62,6 +62,7 @@
     <Compile Include="ContainerTest.cs" />
     <Compile Include="ContainingClassTest.cs" />
     <Compile Include="ItemContainer.cs" />
+    <Compile Include="MapsWithinMapsTest.cs" />
     <Compile Include="PersonDirectoryTest.cs" />
     <Compile Include="RssTest.cs" />
     <Compile Include="ScalarCollectionTest.cs" />
