@@ -6,7 +6,7 @@ namespace Simpl.Serialization.Attributes
     ///     Annotation which defines other tags in serialized form
     ///     This is used to support old XML files.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class SimplOtherTags : Attribute
     {
         private String[] _otherTags;

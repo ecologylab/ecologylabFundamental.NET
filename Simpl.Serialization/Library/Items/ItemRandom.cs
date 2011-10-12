@@ -2,10 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Items
 {
-    class ItemRandom
+    [SimplTag("item_one")]
+    public class ItemRandom : ItemBase
     {
+        [SimplScalar] 
+        private String randomString;
+
+        public ItemRandom()
+        {
+
+        }
+
+        public ItemRandom(String pRandomString, int pVar)
+        {
+            randomString = pRandomString;
+            var = pVar;
+        }
     }
 }
