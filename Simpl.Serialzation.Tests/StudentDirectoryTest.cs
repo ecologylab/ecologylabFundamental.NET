@@ -25,10 +25,10 @@ namespace Simpl.Serialzation.Tests
                                        };
             StudentDirectory p = new StudentDirectory(students);
 
-            TranslationScope translationScope = TranslationScope.Get("studentDir", typeof(Person),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("studentDir", typeof(Person),
                                                                      typeof(Student), typeof(StudentDirectory));
 
-            TestMethods.TestSimplObject(p, translationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(p, simplTypesScope, StringFormat.Xml);
         }
 
 
@@ -45,10 +45,10 @@ namespace Simpl.Serialzation.Tests
                                          };
             StudentDirectory p = new StudentDirectory(students);
 
-            TranslationScope translationScope = TranslationScope.Get("studentDir", typeof (Person),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("studentDir", typeof (Person),
                                                                      typeof (Student), typeof (StudentDirectory));
 
-            TestMethods.TestSimplObject(p, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(p, simplTypesScope, StringFormat.Json);
         }
     }
 }

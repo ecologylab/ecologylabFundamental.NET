@@ -12,7 +12,7 @@ namespace Simpl.Serialzation.Tests
         public void CircleXml()
         {
             Circle c = new Circle(new Point(1, 3), 3);
-            TranslationScope circleTransaltionScope = TranslationScope.Get("circleTScope", typeof(Circle),
+            SimplTypesScope circleTransaltionScope = SimplTypesScope.Get("circleTScope", typeof(Circle),
                                                                           typeof(Point));
             TestMethods.TestSimplObject(c, circleTransaltionScope, StringFormat.Xml);
         }
@@ -21,7 +21,7 @@ namespace Simpl.Serialzation.Tests
         public void CircleJson()
         {
             Circle c = new Circle(new Point(1, 3), 3);
-            TranslationScope circleTransaltionScope = TranslationScope.Get("circleTScope", typeof(Circle),
+            SimplTypesScope circleTransaltionScope = SimplTypesScope.Get("circleTScope", typeof(Circle),
                                                                           typeof(Point));
             TestMethods.TestSimplObject(c, circleTransaltionScope, StringFormat.Json);
         }

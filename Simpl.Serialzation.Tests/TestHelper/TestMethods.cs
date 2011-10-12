@@ -11,20 +11,20 @@ namespace Simpl.Serialzation.Tests.TestHelper
         {
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
-            ClassDescriptor.Serialize(obj, format, sw);
+            SimplTypesScope.Serialize(obj, format, sw);
 
             PrettyPrint.Print(sb.ToString(), format);
 
             return sb.ToString();
         }
 
-        public static Object TestDeserialization(TranslationScope translationScope, String inputString, StringFormat format)
+        public static Object TestDeserialization(SimplTypesScope simplTypesScope, String inputString, StringFormat format)
         {
-            Object deserializedObj = translationScope.Deserialize(inputString, format);
+            Object deserializedObj = simplTypesScope.Deserialize(inputString, format);
             return deserializedObj;
         }
 
-        public static void TestSimplObject(Object obj, TranslationScope translationScope, StringFormat format)
+        public static void TestSimplObject(Object obj, SimplTypesScope simplTypesScope, StringFormat format)
         {
 
             Console.WriteLine("Serializing object " + obj);
@@ -32,16 +32,16 @@ namespace Simpl.Serialzation.Tests.TestHelper
             String serializedData = TestSerialization(obj, format);
 
             Console.WriteLine();
-            Object deserializedObj = TestDeserialization(translationScope, serializedData, format);
+            Object deserializedObj = TestDeserialization(simplTypesScope, serializedData, format);
 
             Console.WriteLine("Deserialized object " + deserializedObj);
             Console.WriteLine("-----------------------------------------------------------------------------");
             TestSerialization(deserializedObj, format);
         }
 
-        public static void TestSimplObject(Object obj, TranslationScope translationScope)
+        public static void TestSimplObject(Object obj, SimplTypesScope simplTypesScope)
          {
-             TestSimplObject(obj, translationScope, StringFormat.Xml);
+             TestSimplObject(obj, simplTypesScope, StringFormat.Xml);
          }
     }
 }

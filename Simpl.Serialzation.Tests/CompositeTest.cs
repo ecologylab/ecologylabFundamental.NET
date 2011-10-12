@@ -16,33 +16,33 @@ namespace Simpl.Serialzation.Tests
         public void CompositeBaseXml()
         {
             Container c = new Container(new WcBase(1));
-            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof (Container),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("compositeTScope", typeof (Container),
                                                                      typeof (WcBase), typeof (WcSubOne),
                                                                      typeof (WcSubTwo));
 
-            TestMethods.TestSimplObject(c, translationScope);
+            TestMethods.TestSimplObject(c, simplTypesScope);
         }
 
         [TestMethod]
         public void CompositeSubOneXml()
         {
             Container c = new Container(new WcSubOne("testing", 1));
-            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("compositeTScope", typeof(Container),
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, translationScope);
+            TestMethods.TestSimplObject(c, simplTypesScope);
         }
 
         [TestMethod]
         public void CompositeSubTwoXml()
         {
             Container c = new Container(new WcSubTwo(true, 1));
-            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("compositeTScope", typeof(Container),
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, translationScope);
+            TestMethods.TestSimplObject(c, simplTypesScope);
         }
 
 
@@ -50,33 +50,33 @@ namespace Simpl.Serialzation.Tests
         public void CompositeBaseJson()
         {
             Container c = new Container(new WcBase(1));
-            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("compositeTScope", typeof(Container),
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
         }
 
         [TestMethod]
         public void CompositeSubOneJson()
         {
             Container c = new Container(new WcSubOne("testing", 1));
-            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("compositeTScope", typeof(Container),
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
         }
 
         [TestMethod]
         public void CompositeSubTwoJson()
         {
             Container c = new Container(new WcSubTwo(true, 1));
-            TranslationScope translationScope = TranslationScope.Get("compositeTScope", typeof(Container),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("compositeTScope", typeof(Container),
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
         }
     }
 }

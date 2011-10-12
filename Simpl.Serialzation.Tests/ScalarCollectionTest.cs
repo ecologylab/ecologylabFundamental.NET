@@ -24,10 +24,10 @@ namespace Simpl.Serialzation.Tests
             sc.AddInt(6);
             sc.AddInt(7);
 
-            TranslationScope scalarCollectionTranslationScope = TranslationScope.Get(
+            SimplTypesScope scalarCollectionSimplTypesScope = SimplTypesScope.Get(
                 "scalarCollectionTScope", typeof (ScalarCollection));
 
-            TestMethods.TestSimplObject(sc, scalarCollectionTranslationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(sc, scalarCollectionSimplTypesScope, StringFormat.Xml);
 
         }
 
@@ -43,10 +43,10 @@ namespace Simpl.Serialzation.Tests
             sc.AddInt(6);
             sc.AddInt(7);
 
-            TranslationScope scalarCollectionTranslationScope = TranslationScope.Get(
+            SimplTypesScope scalarCollectionSimplTypesScope = SimplTypesScope.Get(
                 "scalarCollectionTScope", typeof(ScalarCollection));
 
-            TestMethods.TestSimplObject(sc, scalarCollectionTranslationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(sc, scalarCollectionSimplTypesScope, StringFormat.Json);
         }
     }
 }

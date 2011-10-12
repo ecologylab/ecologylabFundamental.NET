@@ -16,7 +16,7 @@ namespace Simpl.Serialzation.Tests
         [TestMethod]
         public void RssTestXml()
         {
-            TranslationScope translationScope = TranslationScope.Get("rss", typeof (Rss),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("rss", typeof (Rss),
                                                                      typeof (Channel),
                                                                      typeof (Item));
 
@@ -34,13 +34,13 @@ namespace Simpl.Serialzation.Tests
             Rss rss = new Rss(1.4f, c);
 
 
-            TestMethods.TestSimplObject(rss, translationScope);
+            TestMethods.TestSimplObject(rss, simplTypesScope);
         }
 
         [TestMethod]
         public void RssTestJson()
         {
-            TranslationScope translationScope = TranslationScope.Get("rss", typeof(Rss),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("rss", typeof(Rss),
                                                                      typeof(Channel),
                                                                      typeof(Item));
 
@@ -58,7 +58,7 @@ namespace Simpl.Serialzation.Tests
             Rss rss = new Rss(1.4f, c);
 
 
-            TestMethods.TestSimplObject(rss, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(rss, simplTypesScope, StringFormat.Json);
         }
     }
 }

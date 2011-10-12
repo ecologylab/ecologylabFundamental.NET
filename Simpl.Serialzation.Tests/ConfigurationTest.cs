@@ -23,10 +23,10 @@ namespace Simpl.Serialzation.Tests
             List<Pref> prefList = new List<Pref> {pref, prefInteger, prefDouble};
 
             Configuration c = new Configuration(prefInteger, prefList);
-            TranslationScope translationScope = TranslationScope.Get("configuration", typeof(Configuration),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("configuration", typeof(Configuration),
 				typeof(PrefInteger), typeof(PrefDouble), typeof(Pref));
 
-            TestMethods.TestSimplObject(c, translationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Xml);
         }
 
 
@@ -41,10 +41,10 @@ namespace Simpl.Serialzation.Tests
             List<Pref> prefList = new List<Pref> { pref, prefInteger, prefDouble };
 
             Configuration c = new Configuration(prefInteger, prefList);
-            TranslationScope translationScope = TranslationScope.Get("configuration", typeof(Configuration),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("configuration", typeof(Configuration),
                 typeof(PrefInteger), typeof(PrefDouble), typeof(Pref));
 
-            TestMethods.TestSimplObject(c, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
         }
     }
 }

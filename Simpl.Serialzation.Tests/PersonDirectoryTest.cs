@@ -26,10 +26,10 @@ namespace Simpl.Serialzation.Tests
                                        };
             PersonDirectory p = new PersonDirectory(persons);
 
-            TranslationScope translationScope = TranslationScope.Get("personDir", typeof(Person),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("personDir", typeof(Person),
 				typeof(Faculty), typeof(Student), typeof(PersonDirectory));
 
-             TestMethods.TestSimplObject(p, translationScope, StringFormat.Xml);
+             TestMethods.TestSimplObject(p, simplTypesScope, StringFormat.Xml);
         }
 
 
@@ -47,10 +47,10 @@ namespace Simpl.Serialzation.Tests
                                        };
             PersonDirectory p = new PersonDirectory(persons);
 
-            TranslationScope translationScope = TranslationScope.Get("personDir", typeof(Person),
+            SimplTypesScope simplTypesScope = SimplTypesScope.Get("personDir", typeof(Person),
                 typeof(Faculty), typeof(Student), typeof(PersonDirectory));
 
-            TestMethods.TestSimplObject(p, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(p, simplTypesScope, StringFormat.Json);
         }
     }
 }
