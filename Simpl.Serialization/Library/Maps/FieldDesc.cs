@@ -1,11 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Simpl.Serialization.Attributes;
+using Simpl.Serialization.Types.Element;
 
 namespace Simpl.Serialization.Library.Maps
 {
-    class FieldDesc
+    public class FieldDes : IMappable
     {
+        [SimplScalar] public String fieldName;
+
+        public FieldDes()
+        {
+            fieldName = "";
+        }
+
+        public FieldDes(String fieldName)
+        {
+            this.fieldName = fieldName;
+        }
+
+
+        public Object Key()
+        {
+            return this.fieldName;
+        }
     }
 }
