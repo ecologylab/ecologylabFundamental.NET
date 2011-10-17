@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\LRUCache.cs" />
+    <Compile Include="Collections\MultiAncestorScope.cs" />
     <Compile Include="Collections\Scope.cs" />
     <Compile Include="Generic\DictionaryExtension.cs" />
     <Compile Include="Generic\DictionaryList.cs" />
