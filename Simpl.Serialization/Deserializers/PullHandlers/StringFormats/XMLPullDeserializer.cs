@@ -172,8 +172,27 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 if (subRoot is IMappable)
                 {
                     Object key = ((IMappable) subRoot).Key();
-                    IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
-                    dictionary.Add(key, subRoot);
+                    if(key == null)
+                    {
+                        Debug.WriteLine("No Key provided for map object: " + subRoot);
+                        //throw new SimplTranslationException("No Key provided for map object: " + subRoot);
+                    }
+                    else
+                    {
+                        IDictionary dictionary = (IDictionary)fd.AutomaticLazyGetCollectionOrMap(root);
+                        if(dictionary.Contains(key))
+                            dictionary.Remove(key);
+                        try
+                        {
+                            dictionary.Add(key, subRoot);        
+                        }
+                        catch(ArgumentException e)
+                        {
+                            Debug.WriteLine("Key already exists in " + dictionary + " (key: " + key + ")");
+                        }
+                        
+                    }
+                    
                 }
                 if (_xmlReader.IsEmptyElement)
                     NextEvent();

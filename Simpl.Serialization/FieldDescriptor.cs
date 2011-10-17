@@ -94,7 +94,7 @@ namespace Simpl.Serialization
             declaringClassDescriptor = baseClassDescriptor;
             field = null;
             type = FieldTypes.Pseudo;
-            scalarType = null;
+            ScalarType = null;
             bibtexTag = baseClassDescriptor.BibtexType;
         }
 
@@ -220,7 +220,7 @@ namespace Simpl.Serialization
                         {
                             result = FieldTypes.CollectionScalar;
                             DeriveScalarSerialization(collectionElementType, field);
-                            if (scalarType == null)
+                            if (ScalarType == null)
                             {
                                 result = FieldTypes.IgnoredElement;
                                 String msg = "Can't identify ScalarType for serialization of " + collectionElementType;
@@ -354,9 +354,9 @@ namespace Simpl.Serialization
         {
             isEnum = XmlTools.IsEnum(scalarField);
             xmlHint = XmlTools.SimplHint(scalarField);
-            scalarType = TypeRegistry.GetScalarType(thatType);
+            ScalarType = TypeRegistry.GetScalarType(thatType);
 
-            if (scalarType == null)
+            if (ScalarType == null)
             {
                 String msg = "Can't find ScalarType to serialize field: \t\t" + thatType.Name
                              + "\t" + scalarField.Name + ";";
@@ -369,7 +369,7 @@ namespace Simpl.Serialization
 
             if (xmlHint != Hint.XmlAttribute)
             {
-                needsEscaping = scalarType.NeedsEscaping;
+                needsEscaping = ScalarType.NeedsEscaping;
                 isCDATA = xmlHint == Hint.XmlLeafCdata || xmlHint == Hint.XmlTextCdata;
             }
             return FieldTypes.Scalar;
@@ -460,12 +460,12 @@ namespace Simpl.Serialization
 
         public override string JavaTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.JavaTypeName : scalarType.JavaTypeName; }
+            get { return elementClassDescriptor != null ? elementClassDescriptor.JavaTypeName : ScalarType.JavaTypeName; }
         }
 
         public override string CSharpTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.CSharpTypeName : scalarType.CSharpTypeName; }
+            get { return elementClassDescriptor != null ? elementClassDescriptor.CSharpTypeName : ScalarType.CSharpTypeName; }
         }
 
         public override string ObjectiveCTypeName
@@ -474,13 +474,13 @@ namespace Simpl.Serialization
             {
                 return elementClassDescriptor != null
                            ? elementClassDescriptor.ObjectiveCTypeName
-                           : scalarType.ObjectiveCTypeName;
+                           : ScalarType.ObjectiveCTypeName;
             }
         }
 
         public override string DbTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.DbTypeName : scalarType.DbTypeName; }
+            get { return elementClassDescriptor != null ? elementClassDescriptor.DbTypeName : ScalarType.DbTypeName; }
         }
 
         public override List<string> OtherTags
@@ -504,7 +504,7 @@ namespace Simpl.Serialization
         /// </summary>
         public bool IsMarshallOnly
         {
-            get { return scalarType != null && scalarType.IsMarshallOnly; }
+            get { return ScalarType != null && ScalarType.IsMarshallOnly; }
         }
 
         public FieldInfo Field
@@ -606,21 +606,39 @@ namespace Simpl.Serialization
             get { return wrappedFD; }
         }
 
+        public ScalarType ScalarType
+        {
+            get { return scalarType; }
+            set { scalarType = value; }
+        }
+
+        public Regex FilterRegex
+        {
+            get { return filterRegex; }
+            set { filterRegex = value; }
+        }
+
+        public string FilterReplace
+        {
+            get { return filterReplace; }
+            set { filterReplace = value; }
+        }
+
         public bool IsDefaultValue(String value)
         {
-            return scalarType.IsDefaultValue(value);
+            return ScalarType.IsDefaultValue(value);
         }
 
         public void AppendValue(TextWriter textWriter, object obj, TranslationContext translationContext, Format format)
         {
-            scalarType.AppendValue(textWriter, this, obj, format);
+            ScalarType.AppendValue(textWriter, this, obj, format);
         }
 
         public bool IsDefaultValueFromContext(object context)
         {
             if (context != null)
             {
-                return scalarType.IsDefaultValue(field, context);
+                return ScalarType.IsDefaultValue(field, context);
             }
 
             return false;
@@ -629,7 +647,7 @@ namespace Simpl.Serialization
         public void AppendCollectionScalarValue(TextWriter textWriter, object obj, TranslationContext translationContext,
                                                 Format format)
         {
-            scalarType.AppendValue(obj, textWriter, !IsCdata, format);
+            ScalarType.AppendValue(obj, textWriter, !IsCdata, format);
         }
 
         public object GetObject(object obj)
@@ -639,9 +657,9 @@ namespace Simpl.Serialization
 
         public void SetFieldToScalar(object root, string value, TranslationContext translationContext)
         {
-            if (scalarType != null && !scalarType.IsMarshallOnly)
+            if (ScalarType != null && !ScalarType.IsMarshallOnly)
             {
-                scalarType.SetField(root, field, value, dataFormat, translationContext);
+                ScalarType.SetField(root, field, value, dataFormat, translationContext);
             }
         }
 
@@ -665,9 +683,9 @@ namespace Simpl.Serialization
                 return;
             }
 
-            if(scalarType != null)
+            if(ScalarType != null)
             {
-                Object typeConvertedValue = scalarType.GetInstance(value, dataFormat, translationContext);
+                Object typeConvertedValue = ScalarType.GetInstance(value, dataFormat, translationContext);
 
                 if(typeConvertedValue != null)
                 {

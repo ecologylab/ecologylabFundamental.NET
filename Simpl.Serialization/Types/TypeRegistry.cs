@@ -73,12 +73,11 @@ namespace Simpl.Serialization.Types
         /// </summary>
         public static void Init()
         {
-            if (!isInit)
-            {
-                isInit = true;
+            if (isInit) return;
 
-                new FundamentalTypes();
-            }
+            isInit = true;
+
+            new FundamentalTypes();
         }
 
         /// <summary>
@@ -148,6 +147,14 @@ namespace Simpl.Serialization.Types
             return false;
         }
 
+
+        public static void RegisterTypes(SimplType[] simplTypes)
+        {
+            foreach(var type in simplTypes)
+                RegisterSimplType(type);
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -176,6 +183,7 @@ namespace Simpl.Serialization.Types
                 _typesBySimpleName.Add(type.SimplName, type);
                 return false;
             }
+            _typesBySimpleName.Add(type.SimplName, type);
 
             return true;
         }
@@ -447,5 +455,7 @@ namespace Simpl.Serialization.Types
         {
             CollectionRegistry.DefaultMapType = ct;
         }
+
+
     }
 }

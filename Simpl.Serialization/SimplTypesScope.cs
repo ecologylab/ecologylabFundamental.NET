@@ -29,7 +29,7 @@ namespace Simpl.Serialization
         private String name = null;
         private SimplTypesScope[] _inheritedSimplTypesScopes = null;
         private Scope<ClassDescriptor> entriesByClassSimpleName = new Scope<ClassDescriptor>();
-        private Scope<ClassDescriptor> entriesByClassName = new Scope<ClassDescriptor>();
+        private Scope<ClassDescriptor>  entriesByClassName = new Scope<ClassDescriptor>();
         private Scope<ClassDescriptor> entriesByTag = new Scope<ClassDescriptor>();
         private Scope<Type> nameSpaceClassesByURN = new Scope<Type>();
 
@@ -208,8 +208,8 @@ namespace Simpl.Serialization
         {
             if (inheritedSimplTypesScope != null)
             {
-                UpdateMapWithValues(inheritedSimplTypesScope.entriesByClassSimpleName, entriesByClassSimpleName, "classSimpleName");
-                UpdateMapWithValues(inheritedSimplTypesScope.entriesByClassName, entriesByClassName, "className");
+                UpdateMapWithValues(inheritedSimplTypesScope.EntriesByClassSimpleName, EntriesByClassSimpleName, "classSimpleName");
+                UpdateMapWithValues(inheritedSimplTypesScope.EntriesByClassName, EntriesByClassName, "className");
                 UpdateMapWithValues(inheritedSimplTypesScope.entriesByTag, entriesByTag, "tagName");
 
                 Dictionary<string, Type> inheritedNameSpaceClassesByURN = inheritedSimplTypesScope.nameSpaceClassesByURN;
@@ -265,29 +265,31 @@ namespace Simpl.Serialization
             }
         }
 
+
+        public void AddTranslation(ClassDescriptor entry)
+        {
+            if (!entriesByTag.ContainsKey(entry.TagName)) 
+                entriesByTag.Add(entry.TagName, entry);
+            if (!EntriesByClassSimpleName.ContainsKey(entry.DescribedClassSimpleName))
+                EntriesByClassSimpleName.Add(entry.DescribedClassSimpleName, entry);
+            if (!EntriesByClassName.ContainsKey(entry.DescribedClassSimpleName))
+                EntriesByClassName.Add(entry.DescribedClassSimpleName, entry);
+
+            String[] otherTags = XmlTools.OtherTags(entry.DescribedClass);
+            if(otherTags != null)
+                foreach (string otherTag in otherTags.Where(otherTag => !string.IsNullOrEmpty(otherTag)))
+                {
+                    entriesByTag.Add(otherTag, entry);
+                }
+        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="thatClass"></param>
-        private void AddTranslation(Type thatClass)
+        public void AddTranslation(Type thatClass)
         {
             ClassDescriptor entry = ClassDescriptor.GetClassDescriptor(thatClass);
-            if (!entriesByTag.ContainsKey(entry.TagName)) 
-                entriesByTag.Add(entry.TagName, entry);
-            if (!entriesByClassSimpleName.ContainsKey(entry.DescribedClassSimpleName))
-                entriesByClassSimpleName.Add(entry.DescribedClassSimpleName, entry);
-            if (!entriesByClassName.ContainsKey(thatClass.Name))
-                entriesByClassName.Add(thatClass.Name, entry);
-
-            String[] otherTags = XmlTools.OtherTags(entry.DescribedClass);
-            if(otherTags != null)
-                foreach (String otherTag in otherTags)
-                {
-                    if (otherTag != null && otherTag.Length > 0)
-                    {
-                        entriesByTag.Add(otherTag, entry);
-                    }
-                }
+            AddTranslation(entry);
         }
 
         /// <summary>
@@ -337,11 +339,23 @@ namespace Simpl.Serialization
                 List<ClassDescriptor> result = classDescriptors;
                 if (result == null)
                 {
-                    result = entriesByClassSimpleName.Values.ToList();
+                    result = EntriesByClassSimpleName.Values.ToList();
                     this.classDescriptors = result;
                 }
                 return result;
             }
+        }
+
+        public Scope<ClassDescriptor> EntriesByClassName
+        {
+            get { return entriesByClassName; }
+            set { entriesByClassName = value; }
+        }
+
+        public Scope<ClassDescriptor> EntriesByClassSimpleName
+        {
+            get { return entriesByClassSimpleName; }
+            set { entriesByClassSimpleName = value; }
         }
 
         /// <summary>
@@ -407,6 +421,12 @@ namespace Simpl.Serialization
             graphSwitch = GRAPH_SWITCH.OFF;
         }
 
+        public Object DeserializeFile(string filename, StringFormat stringFormat)
+        {
+            FileStream f = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            StreamReader r = new StreamReader(f);
+            return Deserialize(r.ReadToEnd(), stringFormat);
+        }
 
         public Object Deserialize(String inputString, StringFormat format)
         {
@@ -427,5 +447,28 @@ namespace Simpl.Serialization
             FormatSerializer serializer = FormatSerializer.GetStringSerializer(format);
             serializer.Serialize(obj, textWriter);
         }
+
+        public SimplTypesScope GetAssignableSubset(string newName, Type superClassCriterion)
+        {
+            SimplTypesScope result = Lookup(newName);
+		    if (result == null)
+		    {
+                result = Lookup(newName);
+				if (result == null)
+				{
+					result = new SimplTypesScope(newName);
+					AddTranslationScope(newName);
+					foreach(ClassDescriptor classDescriptor in EntriesByClassName.Values)
+					{
+					    Type thatClass = classDescriptor.DescribedClass;
+						if (superClassCriterion.IsAssignableFrom(thatClass))
+							result.AddTranslation(thatClass);
+					}
+			    }
+		    }
+		    return result;
+        }
+
+        
     }   
 }

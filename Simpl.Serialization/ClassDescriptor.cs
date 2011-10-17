@@ -323,8 +323,8 @@ namespace Simpl.Serialization
             {
                 ResolveUnresolvedScopeAnnotationFDs();
             }
-            if (_allFieldDescriptorsByTagNames.ContainsKey(tagName))
-                return _allFieldDescriptorsByTagNames[tagName];
+            if (AllFieldDescriptorsByTagNames.ContainsKey(tagName))
+                return AllFieldDescriptorsByTagNames[tagName];
             return null;
         }
 
@@ -344,7 +344,7 @@ namespace Simpl.Serialization
             {
                 ResolveUnresolvedScopeAnnotationFDs();
             }
-            foreach (FieldDescriptor fd in _allFieldDescriptorsByTagNames.Values)
+            foreach (FieldDescriptor fd in AllFieldDescriptorsByTagNames.Values)
             {
                 if (fd == null)
                     continue;
@@ -381,13 +381,13 @@ namespace Simpl.Serialization
         {
             FieldDescriptor previousMapping;
 
-            if (_allFieldDescriptorsByTagNames.TryGetValue(tagName, out previousMapping))
+            if (AllFieldDescriptorsByTagNames.TryGetValue(tagName, out previousMapping))
             {
                 //Debug.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
-                _allFieldDescriptorsByTagNames.Remove(tagName);
+                AllFieldDescriptorsByTagNames.Remove(tagName);
             }
 
-            _allFieldDescriptorsByTagNames.Add(tagName, fdToMap);
+            AllFieldDescriptorsByTagNames.Add(tagName, fdToMap);
 
         }
 
@@ -600,6 +600,14 @@ namespace Simpl.Serialization
         public string BibtexType
         {
             get { return null; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Dictionary<string, FieldDescriptor> AllFieldDescriptorsByTagNames
+        {
+            get { return _allFieldDescriptorsByTagNames; }
         }
 
 

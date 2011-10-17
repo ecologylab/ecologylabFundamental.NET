@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.Types.Element;
 
@@ -11,19 +12,19 @@ namespace Simpl.Serialization.Library.Maps
         public String tagName;
 
         [SimplNoWrap] 
-        [SimplMap("field_descriptor")] 
-        public Dictionary<String, FieldDes> fieldDescriptorsByTagName;
+        [SimplMap("field_descriptor")]
+        public DictionaryList<String, FieldDes> fieldDescriptorsByTagName;
 
         public ClassDes()
         {
             tagName = "";
-            fieldDescriptorsByTagName = new Dictionary<String, FieldDes>();
+            fieldDescriptorsByTagName = new DictionaryList<String, FieldDes>();
         }
 
         public ClassDes(String tagName)
         {
             this.tagName = tagName;
-            fieldDescriptorsByTagName = new Dictionary<String, FieldDes>();
+            fieldDescriptorsByTagName = new DictionaryList<String, FieldDes>();
         }
 
 
