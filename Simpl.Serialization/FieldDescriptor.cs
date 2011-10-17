@@ -242,12 +242,12 @@ namespace Simpl.Serialization
                     break;
 
                 case FieldTypes.MapElement:
-                    if (!(thatField is IDictionary))
+                    if (!(typeof(IDictionary).IsAssignableFrom(thatField.FieldType)))
                     {
                         String msg = "In " + declaringClassDescriptor.DescribedClass + "\n\tCan't translate  "
                                      + "[SimplMap] " + field.Name
                                      + " because the annotated field is not an instance of " +
-                                     typeof (IList).Name
+                                     typeof (IDictionary).Name
                                      + ".";
 
                         Debug.WriteLine(msg);
@@ -260,7 +260,7 @@ namespace Simpl.Serialization
 
                     if (!IsPolymorphic)
                     {
-                        Type mapElementType = GetTypeArgs(thatField, 0);
+                        Type mapElementType = GetTypeArgs(thatField, 1);
                         if (String.IsNullOrEmpty(mapTag))
                         {
                             String msg = "In " + declaringClassDescriptor.DescribedClass

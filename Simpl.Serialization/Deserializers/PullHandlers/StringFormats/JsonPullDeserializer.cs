@@ -145,6 +145,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                             goto case FieldTypes.CollectionScalar;
                         if (currentFieldDescriptor.FdType == FieldTypes.CollectionElement)
                             goto case FieldTypes.CollectionElement;
+                        if (currentFieldDescriptor.FdType == FieldTypes.MapElement)
+                            goto case FieldTypes.MapElement;
+
                         break;
                 }
                 _jsonReader.Read();

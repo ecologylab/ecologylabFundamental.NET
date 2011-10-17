@@ -150,6 +150,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                             goto case FieldTypes.CollectionScalar;
                         if (currentFieldDescriptor.FdType == FieldTypes.CollectionElement)
                             goto case FieldTypes.CollectionElement;
+                        if (currentFieldDescriptor.FdType == FieldTypes.MapElement)
+                            goto case FieldTypes.MapElement;
                         break;
                     case FieldTypes.IgnoredElement:
                         _xmlReader.Skip();
@@ -173,7 +175,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
                     dictionary.Add(key, subRoot);
                 }
-                NextEvent();
+                if (_xmlReader.IsEmptyElement)
+                    NextEvent();
             }
         }
 
