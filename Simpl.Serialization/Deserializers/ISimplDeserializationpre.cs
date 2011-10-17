@@ -3,7 +3,7 @@ using Simpl.Serialization.Graph;
 
 namespace Simpl.Serialization.Deserializers
 {
-    interface ISimplDeserializationPre
+    public interface ISimplDeserializationPre
     {
         void DeserializationPreHook(TranslationContext translationContext);
     }

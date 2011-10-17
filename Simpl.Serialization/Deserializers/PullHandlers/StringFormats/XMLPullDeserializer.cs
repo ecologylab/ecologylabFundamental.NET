@@ -110,6 +110,12 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             return root;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="rootClassDescriptor"></param>
+        /// <param name="rootTag"></param>
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor, string rootTag)
         {
             while (NextEvent() && _xmlReader.NodeType != XmlNodeType.EndElement && !CurrentTag.Equals(rootTag))
@@ -163,6 +169,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="fd"></param>
         private void DeserializeCompositeMap(object root, FieldDescriptor fd)
         {
             while (fd.IsCollectionTag(CurrentTag))
@@ -199,6 +210,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="fd"></param>
         private void DeserializeCompositeCollection(object root, FieldDescriptor fd)
         {
             while(fd.IsCollectionTag(CurrentTag))
@@ -211,6 +227,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="fd"></param>
         private void DeserializeScalarCollection(object root, FieldDescriptor fd)
         {
             
@@ -224,12 +245,24 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
         private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
             Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
             currentFieldDescriptor.SetFieldToComposite(root, subRoot);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentFieldDescriptor"></param>
+        /// <param name="currentTagName"></param>
+        /// <param name="root"></param>
+        /// <returns></returns>
         private object GetSubRoot(FieldDescriptor currentFieldDescriptor, string currentTagName, object root)
         {
             Object subRoot = null;
@@ -244,12 +277,23 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             return subRoot;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
         private void DeserializeScalar(object root, FieldDescriptor currentFieldDescriptor)
         {
             String value = _xmlReader.ReadString();
             currentFieldDescriptor.SetFieldToScalar(root, value, translationContext);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="rootClassDescriptor"></param>
+        /// <returns></returns>
         private Boolean DeserializeAttributes(object root, ClassDescriptor rootClassDescriptor)
         {
             while (_xmlReader.MoveToNextAttribute())
@@ -271,6 +315,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             return _xmlReader.MoveToElement();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Boolean NextEvent()
         {
             Boolean returnValue;
@@ -285,6 +333,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             return returnValue;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string CurrentTag
         {
             get
