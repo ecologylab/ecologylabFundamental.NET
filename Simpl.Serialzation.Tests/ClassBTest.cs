@@ -12,7 +12,7 @@ namespace Simpl.Serialzation.Tests
     [TestClass]
     public class ClassBTest
     {
-        [TestMethod]
+//        [TestMethod]
         public void ClassBXml()
         {
             SimplTypesScope.EnableGraphSerialization();

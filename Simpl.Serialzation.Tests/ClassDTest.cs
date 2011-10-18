@@ -8,7 +8,7 @@ namespace Simpl.Serialzation.Tests
     [TestClass]
     public class ClassDTest
     {
-        [TestMethod]
+//        [TestMethod]
         public void ClassDXml()
         {
             SimplTypesScope.EnableGraphSerialization();
@@ -24,7 +24,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope.DisableGraphSerialization();
         }
 
-        [TestMethod]
+//        [TestMethod]
         public void ClassDJson()
         {
             SimplTypesScope.EnableGraphSerialization();
