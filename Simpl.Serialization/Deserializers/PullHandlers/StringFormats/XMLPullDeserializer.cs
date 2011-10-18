@@ -178,6 +178,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             while (fd.IsCollectionTag(CurrentTag))
             {
+                if (_xmlReader.NodeType == XmlNodeType.EndElement)
+                {
+                    NextEvent();
+                    continue;
+                }
                 String compositeTagName = CurrentTag;
                 Object subRoot = GetSubRoot(fd, compositeTagName, root);
                 if (subRoot is IMappable)
@@ -185,8 +190,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     Object key = ((IMappable) subRoot).Key();
                     if(key == null)
                     {
-                        Debug.WriteLine("No Key provided for map object: " + subRoot);
-                        //throw new SimplTranslationException("No Key provided for map object: " + subRoot);
+                        //Debug.WriteLine("No Key provided for map object: " + subRoot);
+                        throw new SimplTranslationException("No Key provided for map object: " + subRoot);
                     }
                     else
                     {
@@ -219,6 +224,12 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             while(fd.IsCollectionTag(CurrentTag))
             {
+                if (_xmlReader.NodeType == XmlNodeType.EndElement)
+                {
+                    NextEvent();
+                    continue;
+                }
+
                 String compositeTagName = CurrentTag;
                 Object subRoot = GetSubRoot(fd, compositeTagName, root);
                 IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
