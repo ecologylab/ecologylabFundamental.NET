@@ -29,6 +29,56 @@ namespace Simpl.Fundamental.Collections
             AddAncestors(ancestors);
         }
 
+
+        public T Get(string key)
+        {
+            var visited = new HashSet<Dictionary<string, T>>();
+            return GetHelper(key, visited);
+        }
+
+        private T GetHelper(string key, HashSet<Dictionary<string, T>> visited)
+        {
+            T result = null;
+            if (base.ContainsKey(key)) 
+                TryGetValue(key, out result);
+            
+            if (result == null)
+			    result = this.GetFromCache(key);
+		    if (result == null)
+		    {
+			    if (this.ancestors != null)
+				    foreach (var ancestor in this.ancestors)
+					    if (containsSame(visited, ancestor))
+						    continue;
+					    else
+					    {
+						    visited.Add(ancestor);
+						    if (ancestor is MultiAncestorScope<T>)
+							    result = ((MultiAncestorScope<T>) ancestor).GetHelper(key, visited);
+						    else
+							    ancestor.TryGetValue(key, out result);
+						    if (result != null)
+						    {
+							    this.PutToCache(key, result);
+							    break;
+						    }
+					    }
+		}
+		return result;
+        }
+
+        private void PutToCache(string key, T value)
+        {
+            if(queryCache == null)
+                queryCache = new LRUCache<string, T>();
+            queryCache.Add(key, value);
+        }
+
+        private T GetFromCache(string key)
+        {
+            return queryCache == null ? null : queryCache.Get(key);
+        }
+
         /// <summary>
         /// Ancestors of this scope
         /// </summary>

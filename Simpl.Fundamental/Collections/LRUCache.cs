@@ -23,7 +23,7 @@ namespace Simpl.Fundamental.Collections
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public V get(K key)
+        public V Get(K key)
         {
             LinkedListNode<LRUCacheItem<K, V>> node;
             if (cacheMap.TryGetValue(key, out node))
@@ -40,7 +40,7 @@ namespace Simpl.Fundamental.Collections
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void add(K key, V val)
+        public void Add(K key, V val)
         {
             if (cacheMap.Count >= capacity)
             {
