@@ -140,7 +140,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
                             foreach (Object collectionScalar in scalarCollection)
                             {
                                 WriteScalarCollectionLeaf(collectionScalar, fd, textWriter, translationContext);
-                            }
+                            } 
                             WriteWrap(fd, textWriter, true);
                         }
                         break;
