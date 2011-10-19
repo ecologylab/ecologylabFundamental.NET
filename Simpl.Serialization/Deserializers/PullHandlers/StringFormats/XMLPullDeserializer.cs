@@ -161,7 +161,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                                 DeserializeCompositeMap(root, currentFieldDescriptor);
                                 break;
                             case FieldTypes.CompositeElement:
-                                //TODO: wrapped composites in tlv?
+                                //TODO: wrapped composites
                                 break;
                         }
                         break;
