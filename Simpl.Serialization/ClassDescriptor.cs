@@ -340,6 +340,19 @@ namespace Simpl.Serialization
             {
                 _attributeFieldDescriptors.Add(fd);
             }
+
+            if (superClassDescriptor.UnresolvedScopeAnnotationFDs != null)
+            {
+                foreach (FieldDescriptor fd in superClassDescriptor.UnresolvedScopeAnnotationFDs)
+                {
+                    RegisterUnresolvedScopeAnnotationFD(fd);
+                }
+            }
+        }
+
+        protected List<FieldDescriptor> UnresolvedScopeAnnotationFDs
+        {
+            get { return _unresolvedScopeAnnotationFDs; }
         }
 
         /// <summary>
