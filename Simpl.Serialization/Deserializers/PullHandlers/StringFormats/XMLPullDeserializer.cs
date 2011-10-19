@@ -184,9 +184,17 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             String compositeTagName = CurrentTag;
             Object subRoot = GetSubRoot(fd, compositeTagName, root);
-            IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
-            Object key = ((IMappable) subRoot).Key();
-            dictionary.Add(key, subRoot);
+            if (subRoot != null)
+            {
+                IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
+                Object key = ((IMappable) subRoot).Key();
+                if (dictionary.Contains(key))
+                    dictionary[key] = subRoot;
+                else
+                {
+                    dictionary.Add(key, subRoot);
+                }
+            }
         }
 
         /// <summary>
@@ -198,8 +206,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             String compositeTagName = CurrentTag;
             Object subRoot = GetSubRoot(fd, compositeTagName, root);
-            IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
-            collection.Add(subRoot);
+            if (subRoot != null)
+            {
+                IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
+                collection.Add(subRoot);
+            }
         }
 
         /// <summary>
@@ -266,7 +277,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
             Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
-            currentFieldDescriptor.SetFieldToComposite(root, subRoot);
+            if (subRoot != null)
+                currentFieldDescriptor.SetFieldToComposite(root, subRoot);
         }
 
         /// <summary>
@@ -280,6 +292,12 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             Object subRoot = null;
             ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(currentTagName);
+
+            if(subRootClassDescriptor == null)
+            {
+                _xmlReader.Skip();
+                return null;
+            }
 
             subRoot = subRootClassDescriptor.GetInstance();
             DeserializeAttributes(subRoot, subRootClassDescriptor);

@@ -670,10 +670,20 @@ namespace Simpl.Serialization
 
         public ClassDescriptor ChildClassDescriptor(string currentTagName)
         {
-            ClassDescriptor childClassDescriptor = !IsPolymorphic
-                                                       ? elementClassDescriptor
-                                                       : polymorphClassDescriptors[currentTagName];
-            return childClassDescriptor;
+            //            ClassDescriptor childClassDescriptor = !IsPolymorphic
+            //                                                       ? elementClassDescriptor
+            //                                                       : polymorphClassDescriptors[currentTagName];
+            //
+            //            ClassDescriptor childClassDescriptor;
+
+            if (!IsPolymorphic)
+                return elementClassDescriptor;
+
+
+            if (polymorphClassDescriptors.ContainsKey(currentTagName))
+                return polymorphClassDescriptors[currentTagName];
+
+            return null;
         }
 
         public void AddLeafNodeToCollection(object root, string value, TranslationContext translationContext)
