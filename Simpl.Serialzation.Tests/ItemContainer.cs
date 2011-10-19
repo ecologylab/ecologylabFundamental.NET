@@ -22,7 +22,7 @@ namespace Simpl.Serialzation.Tests
                                                                             typeof (Container), typeof (ItemBase),
                                                                             typeof (ItemOne), typeof (ItemTwo),
                                                                             typeof (ItemRandom));
-
+             
             TestMethods.TestSimplObject(c, containerTranslationScope, StringFormat.Xml);
         }
     }
