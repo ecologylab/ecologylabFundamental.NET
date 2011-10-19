@@ -321,22 +321,22 @@ namespace Simpl.Serialization
 
         private void ReferFieldDescriptorsFrom(ClassDescriptor superClassDescriptor)
         {
-            foreach (String key in FieldDescriptorByFieldName.Keys)
+            foreach (String key in superClassDescriptor.FieldDescriptorByFieldName.Keys)
             {
-                _fieldDescriptorsByFieldName.Put(key, FieldDescriptorByFieldName[key]);
+                _fieldDescriptorsByFieldName.Put(key, superClassDescriptor.FieldDescriptorByFieldName[key]);
             }
 
-            foreach (String key in AllFieldDescriptorsByTagNames.Keys)
+            foreach (String key in superClassDescriptor.AllFieldDescriptorsByTagNames.Keys)
             {
-                _allFieldDescriptorsByTagNames.Put(key, FieldDescriptorByFieldName[key]);
+                _allFieldDescriptorsByTagNames.Put(key, superClassDescriptor.AllFieldDescriptorsByTagNames[key]);
             }
 
-            foreach (FieldDescriptor fd in ElementFieldDescriptors)
+            foreach (FieldDescriptor fd in superClassDescriptor.ElementFieldDescriptors)
             {
                 _elementFieldDescriptors.Add(fd);
             }
 
-            foreach (FieldDescriptor fd in AttributeFieldDescriptors)
+            foreach (FieldDescriptor fd in superClassDescriptor.AttributeFieldDescriptors)
             {
                 _attributeFieldDescriptors.Add(fd);
             }
