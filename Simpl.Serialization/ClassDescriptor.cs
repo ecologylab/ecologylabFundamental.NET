@@ -107,6 +107,9 @@ namespace Simpl.Serialization
         /// </summary>
         [SimplScalar] private bool _strictObjectGraphRequired = false;
 
+        [SimplScalar] private Type fieldDescriptorClass;
+        [SimplScalar] private Type classDescriptorClass;
+
         /// <summary>
         /// Whether a strict object graph is required
         /// </summary>
@@ -137,6 +140,14 @@ namespace Simpl.Serialization
             if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplUseEqualsEquals)))
             {
                 _strictObjectGraphRequired = true;
+            }
+
+            SimplDescriptorClasses descriptorsClassesAttribute =
+                (SimplDescriptorClasses) XmlTools.GetAnnotation(thatClass, typeof (SimplDescriptorClasses));
+            if(descriptorsClassesAttribute != null)
+            {
+                classDescriptorClass = descriptorsClassesAttribute.Classes[0];
+                fieldDescriptorClass = descriptorsClassesAttribute.Classes[1];
             }
         }
 
@@ -192,7 +203,7 @@ namespace Simpl.Serialization
                 }
                 GlobalClassDescriptorsMap.Add(className, result);
 
-                result.DeriveAndOrganizeFieldsRecursive(thatClass, fieldDesctriptorType);
+                result.DeriveAndOrganizeFieldsRecursive(thatClass);
                 result._isGetAndOrganizeComplete = true;
             }
 
@@ -211,15 +222,12 @@ namespace Simpl.Serialization
         ///     Used by recursive call from inside the function. Can be null if being called 
         ///     for the first time. 
         /// </param>
-        public void DeriveAndOrganizeFieldsRecursive(Type thatClass, Type fieldDescriptorClass)
+        public void DeriveAndOrganizeFieldsRecursive(Type thatClass)
         {
             if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplInherit)))
             {
-                Type superClass = thatClass.BaseType;
-
-                if (superClass != null)
-                    DeriveAndOrganizeFieldsRecursive(superClass, fieldDescriptorClass);
-
+                ClassDescriptor superClassDescriptor = GetClassDescriptor(thatClass.BaseType);
+                ReferFieldDescriptorsFrom(superClassDescriptor);
             }
 
             FieldInfo[] fields =
@@ -311,6 +319,29 @@ namespace Simpl.Serialization
             }
         }
 
+        private void ReferFieldDescriptorsFrom(ClassDescriptor superClassDescriptor)
+        {
+            foreach (String key in FieldDescriptorByFieldName.Keys)
+            {
+                _fieldDescriptorsByFieldName.Put(key, FieldDescriptorByFieldName[key]);
+            }
+
+            foreach (String key in AllFieldDescriptorsByTagNames.Keys)
+            {
+                _allFieldDescriptorsByTagNames.Put(key, FieldDescriptorByFieldName[key]);
+            }
+
+            foreach (FieldDescriptor fd in ElementFieldDescriptors)
+            {
+                _elementFieldDescriptors.Add(fd);
+            }
+
+            foreach (FieldDescriptor fd in AttributeFieldDescriptors)
+            {
+                _attributeFieldDescriptors.Add(fd);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -328,6 +359,11 @@ namespace Simpl.Serialization
             return null;
         }
 
+        public DictionaryList<String, FieldDescriptor> FieldDescriptorByFieldName
+        {
+            get { return _fieldDescriptorsByFieldName; }
+        }
+
 
         public FieldDescriptor GetFieldDescriptorByFieldName(String fieldName)
         {
@@ -336,6 +372,8 @@ namespace Simpl.Serialization
 
             return result;
         }
+
+        
 
         public IEnumerable<FieldDescriptor> GetAllFields()
         {
@@ -596,6 +634,7 @@ namespace Simpl.Serialization
                            : _describedClassPackageName + "." + DescribedClassSimpleName;
             }
         }
+       
 
         public string BibtexType
         {

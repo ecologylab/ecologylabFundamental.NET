@@ -189,7 +189,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
                 Object key = ((IMappable) subRoot).Key();
                 if (dictionary.Contains(key))
+                {
+                    //Note: overriding a key in map, duplicate data in xml. 
                     dictionary[key] = subRoot;
+                }
                 else
                 {
                     dictionary.Add(key, subRoot);
@@ -295,6 +298,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
             if(subRootClassDescriptor == null)
             {
+                Debug.WriteLine("ignoring element: " + currentTagName);
                 _xmlReader.Skip();
                 return null;
             }
