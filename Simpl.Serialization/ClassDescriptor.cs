@@ -190,16 +190,15 @@ namespace Simpl.Serialization
             {
                 var descriptorsAnnotation =
                     (SimplDescriptorClasses) XmlTools.GetAnnotation(thatClass, typeof (SimplDescriptorClasses), true);
-                Type fieldDesctriptorType = null;
                 if (descriptorsAnnotation == null)
                     result = new ClassDescriptor(thatClass);
                 else
                 {
                     //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
                     Type classDescriptorClass = descriptorsAnnotation.Classes[0];
-                    fieldDesctriptorType = descriptorsAnnotation.Classes[1];
                     object obj = Activator.CreateInstance(classDescriptorClass, new object[] {thatClass});
                     result = (ClassDescriptor) obj;
+                    result.fieldDescriptorClass = descriptorsAnnotation.Classes[1];
                 }
                 GlobalClassDescriptorsMap.Add(className, result);
 
