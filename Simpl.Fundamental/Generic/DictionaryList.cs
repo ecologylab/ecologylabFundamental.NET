@@ -32,7 +32,7 @@ namespace Simpl.Fundamental.Generic
             ArrayList = new List<TV>(capacity);
         }
 
-        public new List<TV> Values
+        public List<TV> ValuesInList
         {
             get { return ArrayList; }
         }
