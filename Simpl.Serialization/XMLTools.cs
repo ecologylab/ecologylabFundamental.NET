@@ -48,6 +48,80 @@ namespace Simpl.Serialization
             }
         }
 
+        public static String EscapeJson(String s)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < s.Length; i++)
+            {
+                char ch = s[i];
+                switch (ch)
+                {
+                    case '"':
+                        sb.Append("\\\"");
+                        break;
+                    case '\\':
+                        sb.Append("\\\\");
+                        break;
+                    case '\b':
+                        sb.Append("\\b");
+                        break;
+                    case '\f':
+                        sb.Append("\\f");
+                        break;
+                    case '\n':
+                        sb.Append("\\n");
+                        break;
+                    case '\r':
+                        sb.Append("\\r");
+                        break;
+                    case '\t':
+                        sb.Append("\\t");
+                        break;
+                    case '/':
+                        sb.Append("\\/");
+                        break;
+                    default:
+                        if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') ||
+                            (ch >= '\u2000' && ch <= '\u20FF'))
+                        {
+                            String ss = IntToHexString(ch);
+                            sb.Append("\\u");
+                            for (int k = 0; k < 4 - ss.Length; k++)
+                            {
+                                sb.Append('0');
+                            }
+                            sb.Append(ss.ToUpper());
+                        }
+                        else
+                        {
+                            sb.Append(ch);
+                        }
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static String IntToHexString(int n)
+        {
+            int num;
+            char[] hex = new char[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                num = n % 16;
+
+                if (num < 10)
+                    hex[3 - i] = (char)('0' + num);
+                else
+                    hex[3 - i] = (char)('A' + (num - 10));
+
+                n >>= 4;
+            }
+
+            return new string(hex);
+        }
+
         /// <summary>
         ///     
         /// </summary>

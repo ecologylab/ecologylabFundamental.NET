@@ -215,7 +215,7 @@ namespace Simpl.Serialization.Types
                         result = SecurityElement.Escape(marshalled);
                         break;
                     case Format.Json:
-                        result = marshalled.Replace("\"", "\\\"");
+                        result = XmlTools.EscapeJson(marshalled);
                         break;
                 }
                 textWriter.Write(result);
