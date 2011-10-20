@@ -361,7 +361,7 @@ namespace Simpl.Serialization
         public Scope<ClassDescriptor> EntriesByTag
         {
             get { return entriesByTag; }
-            set { entriesByTag = value; }
+            private set { entriesByTag = value; }
         }
 
         /// <summary>
