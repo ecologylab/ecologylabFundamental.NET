@@ -261,6 +261,8 @@ namespace Simpl.Serialization.Serializers.StringFormats
                 case FieldTypes.CollectionScalar:
                 case FieldTypes.MapScalar:
                     Object scalarCollectionObject = fd.GetObject(obj);
+                    if (scalarCollectionObject == null)
+                        return false;
                     ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
                     if (scalarCollection == null || scalarCollection.Count <= 0)
                         return false;

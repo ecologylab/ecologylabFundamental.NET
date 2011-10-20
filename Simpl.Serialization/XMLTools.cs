@@ -119,10 +119,11 @@ namespace Simpl.Serialization
         /// </summary>
         /// <param name="thatClass"></param>
         /// <param name="attributeType"></param>
+        /// <param name="considerInheritedAnnotations"></param>
         /// <returns></returns>
-        public static Attribute GetAnnotation(Type thatClass, Type attributeType)
+        public static Attribute GetAnnotation(Type thatClass, Type attributeType, bool considerInheritedAnnotations = false)
         {
-            Object[] attributes = thatClass.GetCustomAttributes(attributeType, false);
+            Object[] attributes = thatClass.GetCustomAttributes(attributeType, considerInheritedAnnotations);
             if (attributes != null && attributes.Length > 0)
             {
                 return (Attribute)attributes[0];
@@ -132,6 +133,8 @@ namespace Simpl.Serialization
                 return null;
             }
         }
+
+
 
         /// <summary>
         /// 

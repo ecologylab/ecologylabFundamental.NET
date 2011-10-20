@@ -112,8 +112,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             while (_jsonReader.Token != JsonToken.ObjectEnd)
             {
+                object jsonReaderValue = _jsonReader.Value;
+
                 FieldDescriptor currentFieldDescriptor =
-                    rootClassDescriptor.GetFieldDescriptorByTag(_jsonReader.Value.ToString());
+                    rootClassDescriptor.GetFieldDescriptorByTag(jsonReaderValue.ToString());
 
                 switch (currentFieldDescriptor.FdType)
                 {

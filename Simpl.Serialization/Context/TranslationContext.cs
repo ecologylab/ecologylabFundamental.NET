@@ -191,7 +191,12 @@ namespace Simpl.Serialization.Context
 
         public ParsedUri UriContext()
         {
-            return null;
+             return _baseDirPurl;
+        }
+
+        public void SetUriContext(ParsedUri purl)
+        {
+            _baseDirPurl = purl;
         }
 
         public object GetFromMap(string key)

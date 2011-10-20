@@ -37,7 +37,7 @@ namespace Simpl.Serialization.Types.Scalar
         public override Object GetInstance(String value, String[] formatStrings,
                                            IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            throw new NotImplementedException();
+            
            return null;
         }
 

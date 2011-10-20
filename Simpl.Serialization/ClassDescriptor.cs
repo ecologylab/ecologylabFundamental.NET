@@ -189,7 +189,7 @@ namespace Simpl.Serialization
             if (!GlobalClassDescriptorsMap.TryGetValue(className, out result))
             {
                 var descriptorsAnnotation =
-                    (SimplDescriptorClasses) XmlTools.GetAnnotation(thatClass, typeof (SimplDescriptorClasses));
+                    (SimplDescriptorClasses) XmlTools.GetAnnotation(thatClass, typeof (SimplDescriptorClasses), true);
                 Type fieldDesctriptorType = null;
                 if (descriptorsAnnotation == null)
                     result = new ClassDescriptor(thatClass);

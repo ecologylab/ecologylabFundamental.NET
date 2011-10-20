@@ -210,7 +210,7 @@ namespace Simpl.Serialization
             {
                 UpdateMapWithValues(inheritedSimplTypesScope.EntriesByClassSimpleName, EntriesByClassSimpleName, "classSimpleName");
                 UpdateMapWithValues(inheritedSimplTypesScope.EntriesByClassName, EntriesByClassName, "className");
-                UpdateMapWithValues(inheritedSimplTypesScope.entriesByTag, entriesByTag, "tagName");
+                UpdateMapWithValues(inheritedSimplTypesScope.EntriesByTag, EntriesByTag, "tagName");
 
                 Dictionary<string, Type> inheritedNameSpaceClassesByURN = inheritedSimplTypesScope.nameSpaceClassesByURN;
                 if (inheritedNameSpaceClassesByURN != null)
@@ -268,8 +268,8 @@ namespace Simpl.Serialization
 
         public void AddTranslation(ClassDescriptor entry)
         {
-            if (!entriesByTag.ContainsKey(entry.TagName)) 
-                entriesByTag.Add(entry.TagName, entry);
+            if (!EntriesByTag.ContainsKey(entry.TagName)) 
+                EntriesByTag.Add(entry.TagName, entry);
             if (!EntriesByClassSimpleName.ContainsKey(entry.DescribedClassSimpleName))
                 EntriesByClassSimpleName.Add(entry.DescribedClassSimpleName, entry);
             if (!EntriesByClassName.ContainsKey(entry.DescribedClassSimpleName))
@@ -279,7 +279,7 @@ namespace Simpl.Serialization
             if(otherTags != null)
                 foreach (string otherTag in otherTags.Where(otherTag => !string.IsNullOrEmpty(otherTag)))
                 {
-                    entriesByTag.Add(otherTag, entry);
+                    EntriesByTag.Add(otherTag, entry);
                 }
         }
         /// <summary>
@@ -358,6 +358,12 @@ namespace Simpl.Serialization
             set { entriesByClassSimpleName = value; }
         }
 
+        public Scope<ClassDescriptor> EntriesByTag
+        {
+            get { return entriesByTag; }
+            set { entriesByTag = value; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -366,7 +372,7 @@ namespace Simpl.Serialization
         public ClassDescriptor GetClassDescriptorByTag(string tagName)
         {
             ClassDescriptor result = null;
-            entriesByTag.TryGetValue(tagName, out result);
+            EntriesByTag.TryGetValue(tagName, out result);
             return result;
         }
 
@@ -392,7 +398,7 @@ namespace Simpl.Serialization
             if (result == null)
             {
                 // result = entriesByClassSimpleName.values();
-                result = entriesByTag.Values.ToList(); // we use entriesByTag so that overriding works well.
+                result = EntriesByTag.Values.ToList(); // we use entriesByTag so that overriding works well.
                 
                 this.classDescriptors = result;
             }
