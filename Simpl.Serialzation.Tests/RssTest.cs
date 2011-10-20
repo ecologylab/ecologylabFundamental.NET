@@ -45,7 +45,7 @@ namespace Simpl.Serialzation.Tests
                                                                      typeof(Item));
 
 
-            List<String> categorySet = new List<String> { "category1", "category2" };
+            List<String> categorySet = new List<String> { "cate\\dgory1", "category2" };
 
             Item item1 = new Item("testItem1", "testItem1Description", new ParsedUri("http://www.google.com"), "asdf",
                                   "nabeel", categorySet);
