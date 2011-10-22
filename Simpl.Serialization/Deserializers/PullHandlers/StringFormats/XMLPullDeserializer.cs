@@ -94,7 +94,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             if (rootClassDescriptor == null)
             {
                 throw new SimplTranslationException("cannot find the class descriptor for root element <"
-                                                    + rootTag + ">; make sure if translation scope is correct.");
+                                                    + rootTag + ">; make sure if simplTypesScope is correct.");
             }
 
             root = rootClassDescriptor.GetInstance();

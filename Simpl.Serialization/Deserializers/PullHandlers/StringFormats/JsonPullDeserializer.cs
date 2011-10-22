@@ -117,6 +117,14 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 FieldDescriptor currentFieldDescriptor =
                     rootClassDescriptor.GetFieldDescriptorByTag(jsonReaderValue.ToString());
 
+                if(currentFieldDescriptor == null)
+                {
+                    String ignoredTag = jsonReaderValue.ToString();
+                    IgnoreCurrentTag();
+                    Console.WriteLine("WARNING: ignoring tag " + ignoredTag);
+                    continue;
+                }
+
                 switch (currentFieldDescriptor.FdType)
                 {
                     case FieldTypes.Scalar:
@@ -153,6 +161,67 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                         break;
                 }
                 _jsonReader.Read();
+            }
+        }
+
+        private void IgnoreCurrentTag()
+        {
+            _jsonReader.Read();
+
+            switch (_jsonReader.Token)
+            {
+                case JsonToken.ObjectStart:
+                    Stack<JsonToken> objectStarts = new Stack<JsonToken>();
+                    objectStarts.Push(JsonToken.ObjectStart);
+                    while (_jsonReader.Read())
+                    {
+                        if (_jsonReader.Token == JsonToken.ObjectEnd)
+                        {
+                            objectStarts.Pop();
+                            if (objectStarts.Count <= 0)
+                            {
+                                _jsonReader.Read();
+                                break;
+                            }
+
+                        }
+                        if (_jsonReader.Token == JsonToken.ObjectStart)
+                        {
+                            objectStarts.Push(JsonToken.ObjectStart);
+                        }
+                    }
+                    break;
+                case JsonToken.ArrayStart:
+                    Stack<JsonToken> arrayStart = new Stack<JsonToken>();
+                    arrayStart.Push(JsonToken.ArrayStart);
+                    while (_jsonReader.Read())
+                    {
+                        if (_jsonReader.Token == JsonToken.ArrayEnd)
+                        {
+                            arrayStart.Pop();
+                            if (arrayStart.Count <= 0)
+                            {
+                                _jsonReader.Read();
+                                break;
+                            }
+
+                        }
+                        if (_jsonReader.Token == JsonToken.ArrayStart)
+                        {
+                            arrayStart.Push(JsonToken.ArrayStart);
+                        }
+                    }
+
+                    break;
+                case JsonToken.String:
+                case JsonToken.Double:
+                case JsonToken.Int:
+                case JsonToken.Long:
+                    _jsonReader.Read();
+                    break;
+                default:
+                    _jsonReader.Read();
+                    break;
             }
         }
 
