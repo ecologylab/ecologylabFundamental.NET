@@ -7,16 +7,37 @@ using Simpl.Serialization.Context;
 
 namespace Simpl.Serialization.Serializers.StringFormats
 {
-    public class StringSerializer : FormatSerializer
+    public abstract class StringSerializer : FormatSerializer
     {
-        public override void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="textWriter"></param>
+        public void Serialize(object obj, TextWriter textWriter)
         {
-            throw new NotImplementedException();
+            Serialize(obj, textWriter, new TranslationContext());
         }
 
-        public override void Serialize(object obj, FileStream fileStream, TranslationContext translationContext)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="stream"></param>
+        /// <param name="translationContext"></param>
+        public override void Serialize(object obj, Stream stream, TranslationContext translationContext)
         {
-            throw new NotImplementedException();
+            Serialize(obj, new StreamWriter(stream), new TranslationContext());
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="textWriter"></param>
+        /// <param name="translationContext"></param>
+        public abstract void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext);
+
+       
     }
 }

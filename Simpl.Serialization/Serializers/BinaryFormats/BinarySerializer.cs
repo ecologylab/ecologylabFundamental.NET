@@ -9,12 +9,7 @@ namespace Simpl.Serialization.Serializers.BinaryFormats
 {
     class BinarySerializer : FormatSerializer
     {
-        public override void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Serialize(object obj, FileStream fileStream, TranslationContext translationContext)
+        public override void Serialize(object obj, Stream stream, TranslationContext translationContext)
         {
             throw new NotImplementedException();
         }
