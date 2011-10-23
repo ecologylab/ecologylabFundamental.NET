@@ -8,6 +8,7 @@ using Simpl.Serialization.Context;
 using Simpl.Serialization.Deserializers.PullHandlers;
 using Simpl.Serialization.Deserializers.PullHandlers.StringFormats;
 using Simpl.Serialization.Serializers;
+using Simpl.Serialization.Serializers.StringFormats;
 using ecologylab.collections;
 using System.IO;
 using ecologylab.serialization;
@@ -448,9 +449,15 @@ namespace Simpl.Serialization
             return pullDeserializer.Parse(inputString);
         }
 
+        public static void Serialize(Object obj, Format format, Stream stream)
+        {
+            FormatSerializer serializer = FormatSerializer.GetSerializer(format);
+            serializer.Serialize(obj, stream);
+        }
+
         public static void Serialize(Object obj, StringFormat format, TextWriter textWriter)
         {
-            FormatSerializer serializer = FormatSerializer.GetStringSerializer(format);
+            StringSerializer serializer = FormatSerializer.GetStringSerializer(format);
             serializer.Serialize(obj, textWriter);
         }
 
