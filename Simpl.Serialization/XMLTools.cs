@@ -129,6 +129,9 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static ICollection GetCollection(Object thatReferenceObject)
         {
+            if (thatReferenceObject == null)
+                return null;
+
             ICollection result;
 
             if (thatReferenceObject is IList)

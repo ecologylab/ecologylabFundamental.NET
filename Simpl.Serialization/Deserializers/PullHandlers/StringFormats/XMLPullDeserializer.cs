@@ -127,7 +127,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
                 if (currentFieldDescriptor == null)
                 {
-                    break;
+                    Console.WriteLine("ignoring tag " + CurrentTag);
+                    _xmlReader.Skip();
+                    continue;
                 }
 
                 switch (currentFieldDescriptor.FdType)
@@ -343,7 +345,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 }
                 else
                 {
-                    Debug.WriteLine("ignoring attribute: " + tag);
+                    Console.WriteLine("ignoring attribute: " + tag);
                 }
             }
 

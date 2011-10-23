@@ -9,7 +9,7 @@ namespace Simpl.Serialization.Library.Rss
 {
     public class Channel
     {
-        [SimplWrap]
+        [SimplNoWrap]
         [SimplCollection("item")] 
         private List<Item> items;
 
@@ -36,6 +36,11 @@ namespace Simpl.Serialization.Library.Rss
             description = pDescription;
             link = pLink;
             items = pItems;
+        }
+
+        public List<Item> Items
+        {
+            get { return items; }
         }
     }
 }

@@ -17,8 +17,8 @@ namespace Simpl.Serialization.Library.Rss
         [SimplHints(new[] { Hint.XmlLeaf })]
         private String description;
 
-//        [SimplScalar]
-//        [SimplHints(new[] { Hint.XmlLeaf })]
+        [SimplScalar]
+        [SimplHints(new[] { Hint.XmlLeaf })]
         private ParsedUri link;
 
         [SimplScalar]
@@ -46,6 +46,30 @@ namespace Simpl.Serialization.Library.Rss
             guid = pGuid;
             author = pAuthor;
             categorySet = pCategorySet;
+        }
+
+        public string Title
+        {
+            get { return title; }
+            set { title = value; }
+        }
+
+        public string Description
+        {
+            get { return description; }
+            set { description = value; }
+        }
+
+        public string Author
+        {
+            get { return author; }
+            set { author = value; }
+        }
+
+        public ParsedUri Link
+        {
+            get { return link; }
+            set { link = value; }
         }
     }
 }

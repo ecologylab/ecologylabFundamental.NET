@@ -21,5 +21,10 @@ namespace Simpl.Serialization.Library.Rss
             version = pVersion;
             channel = pChannel;
         }
+
+        public Channel Channel
+        {
+            get { return channel; }
+        }
     }
 }
