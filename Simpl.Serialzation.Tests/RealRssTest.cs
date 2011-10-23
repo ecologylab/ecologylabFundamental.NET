@@ -46,7 +46,7 @@ namespace Simpl.Serialzation.Tests
 		         * tag of just the class name. Normally Simpl.Serialization uses a camel-case
 		         * translatio. Fields that are translated into attributes
 		         * and sub elements use a similar convention for determining identifiers.
-		         */
+		         */ 
                 Rss feed = (Rss) rssScope.Deserialize(rssContent, StringFormat.Xml);
 
                 /*
@@ -87,8 +87,8 @@ namespace Simpl.Serialzation.Tests
 
         private void PrintXmlData(string xmlData)
         {
-
             TestHelper.PrettyPrint.PrintXml(xmlData);
+            Console.WriteLine();
         }
     }
 }
