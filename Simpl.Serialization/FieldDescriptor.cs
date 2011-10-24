@@ -624,6 +624,18 @@ namespace Simpl.Serialization
             set { filterReplace = value; }
         }
 
+        public object BibtexTagName
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        public bool IsBibtexKey
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
         public bool IsDefaultValue(String value)
         {
             return ScalarType.IsDefaultValue(value);
@@ -670,12 +682,6 @@ namespace Simpl.Serialization
 
         public ClassDescriptor ChildClassDescriptor(string currentTagName)
         {
-            //            ClassDescriptor childClassDescriptor = !IsPolymorphic
-            //                                                       ? elementClassDescriptor
-            //                                                       : polymorphClassDescriptors[currentTagName];
-            //
-            //            ClassDescriptor childClassDescriptor;
-
             if (!IsPolymorphic)
                 return elementClassDescriptor;
 

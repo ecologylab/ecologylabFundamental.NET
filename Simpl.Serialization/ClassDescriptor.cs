@@ -661,6 +661,12 @@ namespace Simpl.Serialization
             get { return _allFieldDescriptorsByTagNames; }
         }
 
+        public FieldDescriptor ScalarValueFieldDescripotor
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
 
         public object GetInstance()
         {

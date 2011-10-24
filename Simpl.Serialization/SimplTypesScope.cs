@@ -406,6 +406,27 @@ namespace Simpl.Serialization
             return result;
         }
 
+        public SimplTypesScope GetAssignableSubset(string newName, Type superClassCriterion)
+        {
+            SimplTypesScope result = Lookup(newName);
+            if (result == null)
+            {
+                result = Lookup(newName);
+                if (result == null)
+                {
+                    result = new SimplTypesScope(newName);
+                    AddTranslationScope(newName);
+                    foreach (ClassDescriptor classDescriptor in EntriesByClassName.Values)
+                    {
+                        Type thatClass = classDescriptor.DescribedClass;
+                        if (superClassCriterion.IsAssignableFrom(thatClass))
+                            result.AddTranslation(thatClass);
+                    }
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -418,16 +439,28 @@ namespace Simpl.Serialization
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static void EnableGraphSerialization()
         {
             graphSwitch = GRAPH_SWITCH.ON;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static void DisableGraphSerialization()
         {
             graphSwitch = GRAPH_SWITCH.OFF;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="stringFormat"></param>
+        /// <returns></returns>
         public Object DeserializeFile(string filename, StringFormat stringFormat)
         {
             FileStream f = new FileStream(filename, FileMode.Open, FileAccess.Read);
@@ -435,11 +468,25 @@ namespace Simpl.Serialization
             return Deserialize(r.ReadToEnd(), stringFormat);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputString"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public Object Deserialize(String inputString, StringFormat format)
         {
             return Deserialize(inputString, new TranslationContext(), null, format);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputString"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="deserializationHookStrategy"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public Object Deserialize(String inputString, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, StringFormat format)
         {
             StringPullDeserializer pullDeserializer = PullDeserializer.GetStringDeserializer(this, translationContext,
@@ -450,17 +497,60 @@ namespace Simpl.Serialization
         }
 
         //Serialize methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="file"></param>
+        /// <param name="format"></param>
+        public static void Serialize(object obj, FileInfo file, Format format)
+        {
+            Serialize(obj, file, new TranslationContext(), format);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="file"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="format"></param>
+        public static void Serialize(object obj, FileInfo file, TranslationContext translationContext, Format format)
+        {
+            Serialize(obj, file.OpenWrite(), translationContext, format);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="stringBuilder"></param>
+        /// <param name="format"></param>
         public static void Serialize(object obj, StringBuilder stringBuilder, StringFormat format)
         {
             Serialize(obj, stringBuilder, new TranslationContext(), format);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="stringBuilder"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="format"></param>
         public static void Serialize(object obj, StringBuilder stringBuilder, TranslationContext translationContext, StringFormat format)
         {
             StringSerializer stringSerializer = FormatSerializer.GetStringSerializer(format);
             stringSerializer.Serialize(obj, stringBuilder, translationContext);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static String Serialize(object obj, StringFormat format)
         {
             return Serialize(obj, new TranslationContext(), format);
@@ -472,49 +562,52 @@ namespace Simpl.Serialization
             return stringSerializer.Serialize(obj, translationContext);
         }
 
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="stream"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="format"></param>
         public static void Serialize(object obj, Stream stream, TranslationContext translationContext, Format format)
         {
             FormatSerializer serializer = FormatSerializer.GetSerializer(format);
             serializer.Serialize(obj, stream, translationContext);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="textWriter"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="format"></param>
         public static void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext, StringFormat format)
         {
             StringSerializer serializer = FormatSerializer.GetStringSerializer(format);
             serializer.Serialize(obj, textWriter, translationContext);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="stream"></param>
+        /// <param name="format"></param>
         public static void Serialize(object obj, Stream stream, Format format)
         {
            Serialize(obj, stream, new TranslationContext(), format);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="textWriter"></param>
+        /// <param name="format"></param>
         public static void Serialize(object obj, TextWriter textWriter, StringFormat format)
         {
            Serialize(obj, textWriter, new TranslationContext(), format);
         }
-
-        public SimplTypesScope GetAssignableSubset(string newName, Type superClassCriterion)
-        {
-            SimplTypesScope result = Lookup(newName);
-		    if (result == null)
-		    {
-                result = Lookup(newName);
-				if (result == null)
-				{
-					result = new SimplTypesScope(newName);
-					AddTranslationScope(newName);
-					foreach(ClassDescriptor classDescriptor in EntriesByClassName.Values)
-					{
-					    Type thatClass = classDescriptor.DescribedClass;
-						if (superClassCriterion.IsAssignableFrom(thatClass))
-							result.AddTranslation(thatClass);
-					}
-			    }
-		    }
-		    return result;
-        }
-
-        
     }   
 }

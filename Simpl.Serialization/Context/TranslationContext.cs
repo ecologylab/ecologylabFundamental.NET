@@ -37,6 +37,11 @@ namespace Simpl.Serialization.Context
             get { return _needsAttributeHashCode.Count > 0; }
         }
 
+        public string Delimiter
+        {
+            get { return _delimiter; }
+        }
+
         /// <summary>
         /// Handle simpl Ids associated with the given element state object
         /// </summary>
