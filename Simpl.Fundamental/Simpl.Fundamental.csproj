@@ -68,6 +68,7 @@
     <Compile Include="Generic\DictionaryList.cs" />
     <Compile Include="Generic\IDictionaryList.cs" />
     <Compile Include="Generic\OneLevelNestingEnumerator.cs" />
+    <Compile Include="Generic\StringExtensions.cs" />
     <Compile Include="Net\ParsedUri.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
