@@ -42,6 +42,12 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
         }
 
+        public override object Parse(Stream stream)
+        {
+            ConfigureInput(stream);
+            return Parse();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -383,5 +389,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 return _xmlReader.LocalName;
             }
         }
+
+       
     }
 }

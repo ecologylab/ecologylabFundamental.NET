@@ -43,6 +43,17 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public override object Parse(Stream stream)
+        {
+            ConfigureInput(stream);
+            return Parse();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="inputString"></param>
         /// <returns></returns>
         public override Object Parse(String inputString)
@@ -386,5 +397,6 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             _jsonReader.Read();
             currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
         }
+
     }
 }
