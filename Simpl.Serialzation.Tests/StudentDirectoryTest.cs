@@ -28,7 +28,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope simplTypesScope = SimplTypesScope.Get("studentDir", typeof(Person),
                                                                      typeof(Student), typeof(StudentDirectory));
 
-            TestMethods.TestSimplObject(p, simplTypesScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(p, simplTypesScope, Format.Xml);
         }
 
 
@@ -48,7 +48,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope simplTypesScope = SimplTypesScope.Get("studentDir", typeof (Person),
                                                                      typeof (Student), typeof (StudentDirectory));
 
-            TestMethods.TestSimplObject(p, simplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(p, simplTypesScope, Format.Json);
         }
     }
 }

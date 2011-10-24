@@ -5,43 +5,74 @@ using Simpl.Serialization;
 
 namespace Simpl.Serialzation.Tests.TestHelper
 {
+    /// <summary>
+    /// Helper function to serialize and deserailze objects 
+    /// </summary>
     public static class TestMethods
     {
-        public static String TestSerialization(Object obj, StringFormat format)
+        /// <summary>
+        /// serializes data and returns an the serialized data as a stream for application to use. 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static Stream TestSerialization(Object obj, Format format)
         {
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            SimplTypesScope.Serialize(obj, sw, format);
-
-            PrettyPrint.Print(sb.ToString(), format);
-
-            return sb.ToString();
+            HelperStream hStream = new HelperStream();
+            SimplTypesScope.Serialize(obj, hStream, format);
+            switch (format)
+            {
+                case Format.Tlv:
+                    PrettyPrint.PrintBinary(hStream.BinaryData, format);
+                    break;
+                default:
+                    PrettyPrint.PrintString(hStream.StringData, format);
+                    break;
+            }
+            return new MemoryStream(hStream.BinaryData); 
         }
 
-        public static Object TestDeserialization(SimplTypesScope simplTypesScope, String inputString, StringFormat format)
+        /// <summary>
+        /// deseiralizes the data, given the input stream and format. returns object representation of the input data. 
+        /// </summary>
+        /// <param name="simplTypesScope"></param>
+        /// <param name="inputStream"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static Object TestDeserialization(SimplTypesScope simplTypesScope, Stream inputStream, Format format)
         {
-            Object deserializedObj = simplTypesScope.Deserialize(inputString, format);
+            Object deserializedObj = simplTypesScope.Deserialize(inputStream, format);
             return deserializedObj;
         }
 
-        public static void TestSimplObject(Object obj, SimplTypesScope simplTypesScope, StringFormat format)
+        /// <summary>
+        /// Helper methods to test de/serialization of and input object and simpl type scope in particular format
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="simplTypesScope"></param>
+        /// <param name="format"></param>
+        public static void TestSimplObject(Object obj, SimplTypesScope simplTypesScope, Format format)
         {
-
             Console.WriteLine("Serializing object " + obj);
             Console.WriteLine("-----------------------------------------------------------------------------");
-            String serializedData = TestSerialization(obj, format);
+            Stream outputStream = TestSerialization(obj, format);
 
             Console.WriteLine();
-            Object deserializedObj = TestDeserialization(simplTypesScope, serializedData, format);
+            Object deserializedObj = TestDeserialization(simplTypesScope, outputStream, format);
 
             Console.WriteLine("Deserialized object " + deserializedObj);
             Console.WriteLine("-----------------------------------------------------------------------------");
             TestSerialization(deserializedObj, format);
         }
 
+        /// <summary>
+        /// simplified overload method to test de/serialization in Xml only.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="simplTypesScope"></param>
         public static void TestSimplObject(Object obj, SimplTypesScope simplTypesScope)
-         {
-             TestSimplObject(obj, simplTypesScope, StringFormat.Xml);
-         }
+        {
+            TestSimplObject(obj, simplTypesScope, Format.Xml);
+        }
     }
 }

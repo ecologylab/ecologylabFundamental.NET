@@ -27,7 +27,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope scalarCollectionSimplTypesScope = SimplTypesScope.Get(
                 "scalarCollectionTScope", typeof (ScalarCollection));
 
-            TestMethods.TestSimplObject(sc, scalarCollectionSimplTypesScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(sc, scalarCollectionSimplTypesScope, Format.Xml);
 
         }
 
@@ -46,7 +46,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope scalarCollectionSimplTypesScope = SimplTypesScope.Get(
                 "scalarCollectionTScope", typeof(ScalarCollection));
 
-            TestMethods.TestSimplObject(sc, scalarCollectionSimplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(sc, scalarCollectionSimplTypesScope, Format.Json);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Simpl.Serialzation.Tests
             Circle c = new Circle(new Point(1, 3), 3);
             SimplTypesScope circleTransaltionScope = SimplTypesScope.Get("circleTScope", typeof(Circle),
                                                                           typeof(Point));
-            TestMethods.TestSimplObject(c, circleTransaltionScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(c, circleTransaltionScope, Format.Xml);
         }
 
         [TestMethod]
@@ -23,7 +23,16 @@ namespace Simpl.Serialzation.Tests
             Circle c = new Circle(new Point(1, 3), 3);
             SimplTypesScope circleTransaltionScope = SimplTypesScope.Get("circleTScope", typeof(Circle),
                                                                           typeof(Point));
-            TestMethods.TestSimplObject(c, circleTransaltionScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, circleTransaltionScope, Format.Json);
+        }
+
+//        [TestMethod]
+        public void CircleTlv()
+        {
+            Circle c = new Circle(new Point(1, 3), 3);
+            SimplTypesScope circleTransaltionScope = SimplTypesScope.Get("circleTScope", typeof(Circle),
+                                                                          typeof(Point));
+            TestMethods.TestSimplObject(c, circleTransaltionScope, Format.Tlv);
         }
     }
 }

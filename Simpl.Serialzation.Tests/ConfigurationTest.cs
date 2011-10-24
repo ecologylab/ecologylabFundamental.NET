@@ -26,7 +26,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope simplTypesScope = SimplTypesScope.Get("configuration", typeof(Configuration),
 				typeof(PrefInteger), typeof(PrefDouble), typeof(Pref));
 
-            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(c, simplTypesScope, Format.Xml);
         }
 
 
@@ -44,7 +44,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope simplTypesScope = SimplTypesScope.Get("configuration", typeof(Configuration),
                 typeof(PrefInteger), typeof(PrefDouble), typeof(Pref));
 
-            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, Format.Json);
         }
     }
 }

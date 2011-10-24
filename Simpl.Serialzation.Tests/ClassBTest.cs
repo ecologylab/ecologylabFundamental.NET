@@ -24,7 +24,7 @@ namespace Simpl.Serialzation.Tests
 
             SimplTypesScope tScope = SimplTypesScope.Get("classB", typeof(ClassA), typeof(ClassB));
 
-            TestMethods.TestSimplObject(test, tScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(test, tScope, Format.Xml);
 
             SimplTypesScope.DisableGraphSerialization();
         }
@@ -41,7 +41,7 @@ namespace Simpl.Serialzation.Tests
 
             SimplTypesScope tScope = SimplTypesScope.Get("classA", typeof(ClassA), typeof(ClassB));
 
-            TestMethods.TestSimplObject(test, tScope, StringFormat.Json);
+            TestMethods.TestSimplObject(test, tScope, Format.Json);
 
             SimplTypesScope.DisableGraphSerialization();
         }

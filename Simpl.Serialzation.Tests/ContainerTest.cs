@@ -21,7 +21,7 @@ namespace Simpl.Serialzation.Tests
             Container test = new Container().InitializeInstance();
             SimplTypesScope translationScope = SimplTypesScope.Get("testcollection", typeof (Container),
                                                                    typeof (ClassA));
-            TestMethods.TestSimplObject(test, translationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(test, translationScope, Format.Xml);
 
 
             SimplTypesScope.DisableGraphSerialization();
@@ -36,7 +36,7 @@ namespace Simpl.Serialzation.Tests
             Container test = new Container().InitializeInstance();
             SimplTypesScope translationScope = SimplTypesScope.Get("testcollection", typeof(Container),
                                                                    typeof(ClassA));
-            TestMethods.TestSimplObject(test, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(test, translationScope, Format.Json);
 
 
             SimplTypesScope.DisableGraphSerialization();

@@ -54,7 +54,7 @@ namespace Simpl.Serialzation.Tests
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, Format.Json);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace Simpl.Serialzation.Tests
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, Format.Json);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace Simpl.Serialzation.Tests
                                                                      typeof(WcBase), typeof(WcSubOne),
                                                                      typeof(WcSubTwo));
 
-            TestMethods.TestSimplObject(c, simplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(c, simplTypesScope, Format.Json);
         }
     }
 }

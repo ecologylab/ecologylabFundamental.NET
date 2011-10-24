@@ -89,6 +89,7 @@
     <Compile Include="RssTest.cs" />
     <Compile Include="ScalarCollectionTest.cs" />
     <Compile Include="StudentDirectoryTest.cs" />
+    <Compile Include="TestHelper\HelperStream.cs" />
     <Compile Include="TestHelper\PrettyPrint.cs" />
     <Compile Include="TestHelper\TestMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

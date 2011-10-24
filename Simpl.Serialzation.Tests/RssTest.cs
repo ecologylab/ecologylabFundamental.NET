@@ -58,7 +58,7 @@ namespace Simpl.Serialzation.Tests
             Rss rss = new Rss(1.4f, c);
 
 
-            TestMethods.TestSimplObject(rss, simplTypesScope, StringFormat.Json);
+            TestMethods.TestSimplObject(rss, simplTypesScope, Format.Json);
         }
     }
 }

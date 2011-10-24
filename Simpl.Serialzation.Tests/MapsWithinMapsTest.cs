@@ -20,7 +20,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope tScope = SimplTypesScope.Get("testScope", typeof (TranslationS),
                                                          typeof (ClassDes),
                                                          typeof (FieldDes));
-            TestMethods.TestSimplObject(test, tScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(test, tScope, Format.Xml);
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@ namespace Simpl.Serialzation.Tests
             SimplTypesScope tScope = SimplTypesScope.Get("testScope", typeof (TranslationS),
                                                          typeof (ClassDes),
                                                          typeof (FieldDes));
-            TestMethods.TestSimplObject(test, tScope, StringFormat.Json);
+            TestMethods.TestSimplObject(test, tScope, Format.Json);
         }
     }
 }

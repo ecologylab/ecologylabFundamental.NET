@@ -55,7 +55,7 @@ namespace Simpl.Serialzation.Tests
 		         * corresponding class it is simply ignored.
 		         */
                 PrintMessage("Feed Translated back to XML by Simpl.Serializaion");
-                TestHelper.TestMethods.TestSerialization(feed, StringFormat.Xml);
+                TestHelper.TestMethods.TestSerialization(feed, Format.Xml);
 
                 /*
 		         * Create our own item to add to the channel
@@ -74,7 +74,7 @@ namespace Simpl.Serialzation.Tests
                 feed.Channel.Items.Insert(0, ecologylabItem);
 
                 PrintMessage("Feed Translated back to XML with our added item");
-                TestHelper.TestMethods.TestSerialization(feed, StringFormat.Xml);
+                TestHelper.TestMethods.TestSerialization(feed, Format.Xml);
             }
         }
 

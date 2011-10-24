@@ -78,14 +78,32 @@ namespace Simpl.Serialzation.Tests.TestHelper
         /// </summary>
         /// <param name="serializedData"></param>
         /// <param name="format"></param>
-        public static void Print(String serializedData, StringFormat format)
+        public static void PrintBinary(byte[] serializedData, Format format)
         {
             switch (format)
             {
-                case StringFormat.Xml:
+                case Format.Tlv:
+                    PrintTlv(serializedData);
+                    break;
+                default:
+                    Console.WriteLine(serializedData);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serializedData"></param>
+        /// <param name="format"></param>
+        public static void PrintString(String serializedData, Format format)
+        {
+            switch (format)
+            {
+                case Format.Xml:
                     PrintXml(serializedData);
                     break;
-                case StringFormat.Json:
+                case Format.Json:
                     PrintJson(serializedData);
                     break;
                 default:

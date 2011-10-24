@@ -21,7 +21,7 @@ namespace Simpl.Serialzation.Tests
 
             ContainingClass ccb = new ContainingClass {TheField = new BaseClass()};
 
-            TestMethods.TestSimplObject(ccb, translationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(ccb, translationScope, Format.Xml);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace Simpl.Serialzation.Tests
                                                                    typeof(BaseClass));
             ContainingClass cc1 = new ContainingClass { TheField = new ChildClass1() };
 
-            TestMethods.TestSimplObject(cc1, translationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(cc1, translationScope, Format.Xml);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Simpl.Serialzation.Tests
 
             ContainingClass cc2 = new ContainingClass { TheField = new ChildClass2() };
 
-            TestMethods.TestSimplObject(cc2, translationScope, StringFormat.Xml);
+            TestMethods.TestSimplObject(cc2, translationScope, Format.Xml);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace Simpl.Serialzation.Tests
 
             ContainingClass ccb = new ContainingClass { TheField = new BaseClass() };
 
-            TestMethods.TestSimplObject(ccb, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(ccb, translationScope, Format.Json);
         }
 
         [TestMethod]
@@ -67,7 +67,7 @@ namespace Simpl.Serialzation.Tests
                                                                    typeof(BaseClass));
             ContainingClass cc1 = new ContainingClass { TheField = new ChildClass1() };
 
-            TestMethods.TestSimplObject(cc1, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(cc1, translationScope, Format.Json);
         }
 
         [TestMethod]
@@ -79,7 +79,7 @@ namespace Simpl.Serialzation.Tests
 
             ContainingClass cc2 = new ContainingClass { TheField = new ChildClass2() };
 
-            TestMethods.TestSimplObject(cc2, translationScope, StringFormat.Json);
+            TestMethods.TestSimplObject(cc2, translationScope, Format.Json);
         }
     }
 }
