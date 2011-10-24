@@ -672,5 +672,10 @@ namespace Simpl.Serialization
         {
             return XmlTools.GetInstance(_describedClass);
         }
+
+        public FieldDescriptor GetFieldDescriptorByTlvId(int blockType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using Simpl.Fundamental.Generic;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Graph;
 
@@ -20,10 +21,10 @@ namespace Simpl.Serialization.Context
         public const String JsonSimplRef = "simpl.ref";
         public const String JsonSimplId = "simpl.id";
 
-        private readonly MultiMap<Int32> _marshalledObjects = new MultiMap<Int32>();
-        private readonly MultiMap<Int32> _needsAttributeHashCode = new MultiMap<Int32>();
-        private readonly Dictionary<String, Object> _unmarshalledObjects = new Dictionary<String, Object>();
-        private readonly MultiMap<Int32> _visitedElements = new MultiMap<Int32>();
+        private MultiMap<Int32> _marshalledObjects = new MultiMap<Int32>();
+        private MultiMap<Int32> _needsAttributeHashCode = new MultiMap<Int32>();
+        private Dictionary<String, Object> _unmarshalledObjects = new Dictionary<String, Object>();
+        private MultiMap<Int32> _visitedElements = new MultiMap<Int32>();
 
         private ParsedUri _baseDirPurl;
         private String _delimiter = ",";
@@ -207,6 +208,21 @@ namespace Simpl.Serialization.Context
         public object GetFromMap(string key)
         {
             return _unmarshalledObjects[key];
+        }
+
+        public void MarkAsUnmarshalled(String value, Object elementState)
+        {
+            if (_unmarshalledObjects == null)
+                InitializeMultiMaps();
+            _unmarshalledObjects.Put(value, elementState);
+        }
+
+        public void InitializeMultiMaps()
+        {
+            _marshalledObjects = new MultiMap<Int32>();
+            _visitedElements = new MultiMap<Int32>();
+            _needsAttributeHashCode = new MultiMap<Int32>();
+            _unmarshalledObjects = new Dictionary<string, object>();
         }
     }
 }

@@ -26,6 +26,14 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
+        public Dictionary<string, ElementState> ElementById
+        {
+            get { return _elementById; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="translationContext"></param>
         public void SerializationPreHook(TranslationContext translationContext)
         {
@@ -58,6 +66,10 @@ namespace Simpl.Serialization
         {
             //add functionality if necessary
         }
-    }
 
+        public void SetupInParent(ElementState newParent)
+        {
+            _elementById = newParent.ElementById;
+        }
+    }
 }

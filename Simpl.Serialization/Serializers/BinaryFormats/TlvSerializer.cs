@@ -10,6 +10,9 @@ using Simpl.Serialization.Context;
 
 namespace Simpl.Serialization.Serializers.BinaryFormats
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class TlvSerializer : BinarySerializer
     {
         /// <summary>

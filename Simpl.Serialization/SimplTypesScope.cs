@@ -609,5 +609,10 @@ namespace Simpl.Serialization
         {
            Serialize(obj, textWriter, new TranslationContext(), format);
         }
+
+        public ClassDescriptor GetClassDescriptorByTlvId(int blockType)
+        {
+            throw new NotImplementedException();
+        }
     }   
 }

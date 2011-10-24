@@ -751,5 +751,10 @@ namespace Simpl.Serialization
                        ? polymorphClassDescriptors.ContainsKey(currentTag)
                        : collectionOrMapTagName.Equals(currentTag);
         }
+
+        public ClassDescriptor GetChildClassDescriptor(int tlvType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

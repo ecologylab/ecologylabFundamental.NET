@@ -15,7 +15,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
         /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
         /// <param name="deserializationHookStrategy"></param>
-        public BinaryPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext,
+        protected BinaryPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext,
                                       IDeserializationHookStrategy deserializationHookStrategy)
             : base(inputSimplTypesScope, inputContext, deserializationHookStrategy)
         {
@@ -26,11 +26,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
         /// </summary>
         /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
-        public BinaryPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext)
+        protected BinaryPullDeserializer(SimplTypesScope inputSimplTypesScope, TranslationContext inputContext)
             : base(inputSimplTypesScope, inputContext)
         {
         }
 
-        public abstract Object Parse(BinaryReader binaryWriter);
+        public abstract Object Parse(BinaryReader binaryReader);
     }
 }
