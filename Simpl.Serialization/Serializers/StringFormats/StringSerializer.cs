@@ -34,14 +34,16 @@ namespace Simpl.Serialization.Serializers.StringFormats
         }
        
         /// <summary>
-        /// 
+        /// closes the stream after serializing data. 
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="stream"></param>
         /// <param name="translationContext"></param>
         public override void Serialize(object obj, Stream stream, TranslationContext translationContext)
         {
-            Serialize(obj, new StreamWriter(stream), translationContext);
+            StreamWriter sw = new StreamWriter(stream, Encoding.Default);
+            Serialize(obj, sw, translationContext);
+            sw.Close();
         }
 
         /// <summary>

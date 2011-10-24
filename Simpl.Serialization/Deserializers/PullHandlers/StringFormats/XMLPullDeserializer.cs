@@ -65,7 +65,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputString"></param>
         private void ConfigureInput(String inputString)
         {
-            ConfigureInput(new MemoryStream(Encoding.ASCII.GetBytes(inputString)));
+            ConfigureInput(new MemoryStream(Encoding.Default.GetBytes(inputString)));
         }
         
         /// <summary>

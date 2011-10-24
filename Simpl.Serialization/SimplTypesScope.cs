@@ -471,6 +471,59 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="file"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public object Deserialize(FileInfo file, Format format)
+        {
+            return Deserialize(file, new TranslationContext(), null, format);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="deserializationHookStrategy"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public object Deserialize(FileInfo file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format)
+        {
+            return Deserialize(file.OpenRead(), translationContext, deserializationHookStrategy, format);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputStream"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public Object Deserialize(Stream inputStream, Format format)
+        {
+            PullDeserializer pullDeserializer = PullDeserializer.GetPullDeserializer(this, new TranslationContext(), 
+                                                                                     null, format);
+            return pullDeserializer.Parse(inputStream);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputStream"></param>
+        /// <param name="translationContext"></param>
+        /// <param name="deserializationHookStrategy"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public object Deserialize(Stream inputStream, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format)
+        {
+            PullDeserializer pullDeserializer = PullDeserializer.GetPullDeserializer(this, translationContext,
+                                                                                     deserializationHookStrategy, format);
+            return pullDeserializer.Parse(inputStream);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="inputString"></param>
         /// <param name="format"></param>
         /// <returns></returns>
@@ -495,9 +548,7 @@ namespace Simpl.Serialization
 
             return pullDeserializer.Parse(inputString);
         }
-
-        //Serialize methods
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -610,6 +661,11 @@ namespace Simpl.Serialization
            Serialize(obj, textWriter, new TranslationContext(), format);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="blockType"></param>
+        /// <returns></returns>
         public ClassDescriptor GetClassDescriptorByTlvId(int blockType)
         {
             throw new NotImplementedException();

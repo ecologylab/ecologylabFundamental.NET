@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Simpl.Serialization.Context;
+using Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats;
 using Simpl.Serialization.Deserializers.PullHandlers.StringFormats;
 
 namespace Simpl.Serialization.Deserializers.PullHandlers
@@ -52,23 +53,45 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="simplTypesScope"></param>
-        /// <param name="translationContext"></param>
-        /// <param name="hookStrategy"></param>
+        /// <param name="pSimplTypesScope"></param>
+        /// <param name="pTranslationContext"></param>
+        /// <param name="pDeserializationHookStrategy"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static StringPullDeserializer GetStringDeserializer(SimplTypesScope simplTypesScope,
-                                                                   TranslationContext translationContext,
-                                                                   IDeserializationHookStrategy hookStrategy,
-                                                                   StringFormat format)
+        public static StringPullDeserializer GetStringDeserializer(SimplTypesScope pSimplTypesScope, TranslationContext pTranslationContext, IDeserializationHookStrategy pDeserializationHookStrategy, StringFormat format)
         {
             switch (format)
             {
                 case StringFormat.Xml:
-                    return new XmlPullDeserializer(simplTypesScope, translationContext, hookStrategy);
+                    return new XmlPullDeserializer(pSimplTypesScope, pTranslationContext, pDeserializationHookStrategy);
                 case StringFormat.Json:
-                    return new JsonPullDeserializer(simplTypesScope, translationContext, hookStrategy);
+                    return new JsonPullDeserializer(pSimplTypesScope, pTranslationContext, pDeserializationHookStrategy);
                 case StringFormat.Bibtex:
+                default:
+                    throw new SimplTranslationException(format + "format not supported");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pSimplTypesScope"></param>
+        /// <param name="pTranslationContext"></param>
+        /// <param name="pDeserializationHookStrategy"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static PullDeserializer GetPullDeserializer(SimplTypesScope pSimplTypesScope, TranslationContext pTranslationContext, IDeserializationHookStrategy pDeserializationHookStrategy, Format format)
+        {
+            switch (format)
+            {
+                case Format.Xml:
+                    return new XmlPullDeserializer(pSimplTypesScope, pTranslationContext, pDeserializationHookStrategy);
+                case Format.Json:
+                    return new JsonPullDeserializer(pSimplTypesScope, pTranslationContext, pDeserializationHookStrategy);
+                case Format.Bibtex:
+                    throw new SimplTranslationException("bibtex serialization is not supported");
+                case Format.Tlv:
+                    return new TlvPullDeserializer(pSimplTypesScope, pTranslationContext, pDeserializationHookStrategy);
                 default:
                     throw new SimplTranslationException(format + "format not supported");
             }
@@ -106,5 +129,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers
                 ((ISimplDeserializationPre) obj).DeserializationPreHook(pTranslationContext);
             }
         }
+
+        
     }
 }

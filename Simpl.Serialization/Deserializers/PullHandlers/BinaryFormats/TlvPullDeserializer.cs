@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Types.Element;
@@ -64,7 +65,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
         /// <returns></returns>
         public override object Parse(Stream stream)
         {
-            _binaryReader = new BinaryReader(stream);
+            _binaryReader = new BinaryReader(stream, Encoding.Default);
             return Parse();
         }
 
