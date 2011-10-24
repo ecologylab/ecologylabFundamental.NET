@@ -520,5 +520,16 @@ namespace Simpl.Serialization
         {
             return CamelCaseFromXMLElementName(elementName, false);
         }
+
+        public static int CalculateHash(String input)
+        {
+            int h = 0;
+            int len = input.Length;
+            for (int i = 0; i < len; i++)
+            {
+                h = 31 * h + input[i];
+            }
+            return h;
+        }
     }
 }

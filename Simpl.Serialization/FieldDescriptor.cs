@@ -636,10 +636,24 @@ namespace Simpl.Serialization
             set { throw new NotImplementedException(); }
         }
 
-        public bool IsDefaultValue(String value)
+        public int TlvId
         {
-            return ScalarType.IsDefaultValue(value);
+            get { return ElementStart.GetTlvId(); }
         }
+
+        public int WrappedTLVId
+        {
+            get
+            {
+                int tempTlvId = 0;
+
+                if (tagName != null)
+                    tempTlvId = tagName.GetTlvId();
+
+                return tempTlvId; ;
+            }
+        }
+
 
         public void AppendValue(TextWriter textWriter, object obj, TranslationContext translationContext, Format format)
         {
@@ -654,6 +668,11 @@ namespace Simpl.Serialization
             }
 
             return false;
+        }
+
+        public bool IsDefaultValue(String value)
+        {
+            return ScalarType.IsDefaultValue(value);
         }
 
         public void AppendCollectionScalarValue(TextWriter textWriter, object obj, TranslationContext translationContext,
