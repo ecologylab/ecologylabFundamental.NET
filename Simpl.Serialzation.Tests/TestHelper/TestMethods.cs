@@ -11,7 +11,7 @@ namespace Simpl.Serialzation.Tests.TestHelper
         {
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
-            SimplTypesScope.Serialize(obj, format, sw);
+            SimplTypesScope.Serialize(obj, sw, format);
 
             PrettyPrint.Print(sb.ToString(), format);
 
