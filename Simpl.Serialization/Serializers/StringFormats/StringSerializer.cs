@@ -13,12 +13,26 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// 
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="textWriter"></param>
-        public void Serialize(object obj, TextWriter textWriter)
+        /// <param name="translationContext"></param>
+        /// <returns></returns>
+        public String Serialize(object obj, TranslationContext translationContext)
         {
-            Serialize(obj, textWriter, new TranslationContext());
+            StringBuilder sb = new StringBuilder();
+            Serialize(obj, sb, translationContext);
+            return sb.ToString();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="stringBuilder"></param>
+        /// <param name="translationContext"></param>
+        public void Serialize(object obj, StringBuilder stringBuilder, TranslationContext translationContext)
+        {
+            Serialize(obj, new StringWriter(stringBuilder), translationContext);
+        }
+       
         /// <summary>
         /// 
         /// </summary>
@@ -27,7 +41,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="translationContext"></param>
         public override void Serialize(object obj, Stream stream, TranslationContext translationContext)
         {
-            Serialize(obj, new StreamWriter(stream), new TranslationContext());
+            Serialize(obj, new StreamWriter(stream), translationContext);
         }
 
         /// <summary>
@@ -38,6 +52,6 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="translationContext"></param>
         public abstract void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext);
 
-       
+
     }
 }

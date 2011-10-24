@@ -17,17 +17,25 @@ namespace Simpl.Serialization.Serializers
     /// </summary>
     public abstract class FormatSerializer
     {
-        public abstract void Serialize(Object obj, Stream stream,
-                                      TranslationContext translationContext);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="file"></param>
+        /// <param name="translationContext"></param>
+        public void Serialize(object obj, FileInfo file, TranslationContext translationContext)
+        {
+            Serialize(obj, file.OpenWrite(), translationContext);
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="obj"></param>
-        public void Serialize(Object obj, Stream stream)
-        {
-            Serialize(obj, stream, new TranslationContext());
-        }
+        /// <param name="stream"></param>
+        /// <param name="translationContext"></param>
+        public abstract void Serialize(Object obj, Stream stream,
+                                       TranslationContext translationContext);
 
 
         /// <summary>

@@ -449,16 +449,49 @@ namespace Simpl.Serialization
             return pullDeserializer.Parse(inputString);
         }
 
-        public static void Serialize(Object obj, Format format, Stream stream)
+        //Serialize methods
+        public static void Serialize(object obj, StringBuilder stringBuilder, StringFormat format)
         {
-            FormatSerializer serializer = FormatSerializer.GetSerializer(format);
-            serializer.Serialize(obj, stream);
+            Serialize(obj, stringBuilder, new TranslationContext(), format);
         }
 
-        public static void Serialize(Object obj, StringFormat format, TextWriter textWriter)
+        public static void Serialize(object obj, StringBuilder stringBuilder, TranslationContext translationContext, StringFormat format)
+        {
+            StringSerializer stringSerializer = FormatSerializer.GetStringSerializer(format);
+            stringSerializer.Serialize(obj, stringBuilder, translationContext);
+        }
+
+        public static String Serialize(object obj, StringFormat format)
+        {
+            return Serialize(obj, new TranslationContext(), format);
+        }
+
+        public static String Serialize(object obj, TranslationContext translationContext, StringFormat format)
+        {
+            StringSerializer stringSerializer = FormatSerializer.GetStringSerializer(format);
+            return stringSerializer.Serialize(obj, translationContext);
+        }
+
+        public static void Serialize(object obj, Stream stream, TranslationContext translationContext, Format format)
+        {
+            FormatSerializer serializer = FormatSerializer.GetSerializer(format);
+            serializer.Serialize(obj, stream, translationContext);
+        }
+
+        public static void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext, StringFormat format)
         {
             StringSerializer serializer = FormatSerializer.GetStringSerializer(format);
-            serializer.Serialize(obj, textWriter);
+            serializer.Serialize(obj, textWriter, translationContext);
+        }
+
+        public static void Serialize(object obj, Stream stream, Format format)
+        {
+           Serialize(obj, stream, new TranslationContext(), format);
+        }
+
+        public static void Serialize(object obj, TextWriter textWriter, StringFormat format)
+        {
+           Serialize(obj, textWriter, new TranslationContext(), format);
         }
 
         public SimplTypesScope GetAssignableSubset(string newName, Type superClassCriterion)
