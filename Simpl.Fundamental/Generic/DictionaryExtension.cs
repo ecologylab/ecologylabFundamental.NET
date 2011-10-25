@@ -30,6 +30,7 @@ namespace Simpl.Fundamental.Generic
             }
             else
             {
+                oldValue = value;
                 dictionary.Add(key, value);
             }
 
