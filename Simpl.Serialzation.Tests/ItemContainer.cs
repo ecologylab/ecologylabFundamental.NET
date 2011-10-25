@@ -12,11 +12,17 @@ namespace Simpl.Serialzation.Tests
     [TestClass]
     public class ItemContainer
     {
-//        [TestMethod]
+        [TestMethod]
         public void ItemContainerXml()
         {
             Container c = new Container();
             c.PopulateContainer();
+
+            SimplTypesScope.Get("itemScope1", typeof (Container), typeof (ItemBase),
+                                typeof (ItemOne), typeof (ItemTwo));
+
+            SimplTypesScope.Get("itemScope2", typeof(Container), typeof(ItemBase),
+                                typeof(ItemTwo), typeof(ItemRandom));
 
             SimplTypesScope containerTranslationScope = SimplTypesScope.Get("containerScope",
                                                                             typeof (Container), typeof (ItemBase),
@@ -24,6 +30,26 @@ namespace Simpl.Serialzation.Tests
                                                                             typeof (ItemRandom));
              
             TestMethods.TestSimplObject(c, containerTranslationScope, Format.Xml);
+        }
+
+        [TestMethod]
+        public void ItemContainerJson()
+        {
+            Container c = new Container();
+            c.PopulateContainer();
+
+            SimplTypesScope.Get("itemScope1", typeof(Container), typeof(ItemBase),
+                                typeof(ItemOne), typeof(ItemTwo));
+
+            SimplTypesScope.Get("itemScope2", typeof(Container), typeof(ItemBase),
+                                typeof(ItemTwo), typeof(ItemRandom));
+
+            SimplTypesScope containerTranslationScope = SimplTypesScope.Get("containerScope",
+                                                                            typeof(Container), typeof(ItemBase),
+                                                                            typeof(ItemOne), typeof(ItemTwo),
+                                                                            typeof(ItemRandom));
+
+            TestMethods.TestSimplObject(c, containerTranslationScope, Format.Json);
         }
     }
 }

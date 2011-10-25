@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using Newtonsoft.Json;
+using Simpl.Fundamental.Generic;
 using Simpl.Serialization;
 
 namespace Simpl.Serialzation.Tests.TestHelper
@@ -53,13 +54,7 @@ namespace Simpl.Serialzation.Tests.TestHelper
 
             for (int i = 0; i < data.Length; i++)
             {
-
-                if (data[i] > -1 && data[i] < 16)
-                {
-                    s = s + "0";
-                }
-                s = s + String.Format("{0:X}", data[i] & 0xff); 
-
+                s = s +  data[i].ToString("X2") + " ";
                 if ((i + 1) % 16 == 0)
                 {
                     Console.WriteLine(s);

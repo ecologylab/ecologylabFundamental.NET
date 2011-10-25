@@ -12,7 +12,7 @@ namespace Simpl.Serialzation.Tests
     [TestClass]
     public class ContainerTest
     {
-//        [TestMethod]
+        [TestMethod]
         public void ContainerXml()
         {
 
