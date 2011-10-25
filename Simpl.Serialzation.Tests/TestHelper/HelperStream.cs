@@ -12,6 +12,22 @@ namespace Simpl.Serialzation.Tests.TestHelper
     public class HelperStream : MemoryStream
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public HelperStream()
+        {
+            
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="b"></param>
+        public HelperStream(byte[] b) : base(b)
+        {
+            
+        }
+
+        /// <summary>
         /// return the data as string using default system encoding
         /// </summary>
         public String StringData

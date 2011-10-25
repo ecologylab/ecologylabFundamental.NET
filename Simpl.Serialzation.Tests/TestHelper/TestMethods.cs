@@ -29,7 +29,7 @@ namespace Simpl.Serialzation.Tests.TestHelper
                     PrettyPrint.PrintString(hStream.StringData, format);
                     break;
             }
-            return new MemoryStream(hStream.BinaryData); 
+            return new HelperStream(hStream.BinaryData); 
         }
 
         /// <summary>
