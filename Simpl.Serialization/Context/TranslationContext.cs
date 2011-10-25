@@ -15,7 +15,9 @@ namespace Simpl.Serialization.Context
     public class TranslationContext : IScalarUnmarshallingContext
     {
         public const String SimplNamespace = "xmlns:simpl";
-        public const String SimplNamespaceAttribute = " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
+
+        public const String SimplNamespaceAttribute =
+            " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
         public const String SimplId = "simpl:id";
         public const String SimplRef = "simpl:ref";
@@ -159,7 +161,10 @@ namespace Simpl.Serialization.Context
 
         private bool AlreadyVisited(Object obj)
         {
-            return _visitedElements.Contains(obj.GetHashCode(), obj);
+            if(_unmarshalledObjects == null)
+                InitializeMultiMaps();
+
+            return _visitedElements.Contains(obj.GetHashCode(), obj) != -1;
         }
 
         /// <summary>
@@ -182,7 +187,10 @@ namespace Simpl.Serialization.Context
         /// <returns></returns>
         public bool AlreadyMarshalled(Object obj)
         {
-            return _marshalledObjects.Contains(obj.GetHashCode(), obj);
+            if (obj == null)
+                return false;
+
+            return _marshalledObjects.Contains(obj.GetHashCode(), obj) != -1;
         }
 
 
@@ -193,12 +201,12 @@ namespace Simpl.Serialization.Context
         /// <returns></returns>
         public bool NeedsHashCode(Object obj)
         {
-            return _needsAttributeHashCode.Contains(obj.GetHashCode(), obj);
+            return _needsAttributeHashCode.Contains(obj.GetHashCode(), obj) != -1;
         }
 
         public ParsedUri UriContext()
         {
-             return _baseDirPurl;
+            return _baseDirPurl;
         }
 
         public void SetUriContext(ParsedUri purl)
@@ -224,6 +232,17 @@ namespace Simpl.Serialization.Context
             _visitedElements = new MultiMap<Int32>();
             _needsAttributeHashCode = new MultiMap<Int32>();
             _unmarshalledObjects = new Dictionary<string, object>();
+        }
+
+        public String GetSimplId(Object obj)
+        {
+            int objectHashCode = ((int) obj.GetHashCode());
+            int orderedIndex = _marshalledObjects.Contains(objectHashCode, obj);
+
+            if (orderedIndex > 0)
+                return objectHashCode.ToString() + "," + orderedIndex.ToString();
+
+            return objectHashCode.ToString();
         }
     }
 }

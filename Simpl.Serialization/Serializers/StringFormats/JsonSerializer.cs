@@ -52,7 +52,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
 
             if (AlreadySerialized(obj, translationContext))
             {
-                WriteSimplRef(obj, rootObjectFieldDescriptor, textWriter, withTag);
+                WriteSimplRef(obj, rootObjectFieldDescriptor, textWriter, withTag, translationContext);
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
             {
                 if(translationContext.NeedsHashCode(obj))
                 {
-                    WriteSimplIdAttribute(obj, textWriter, allFieldDescriptors.Count() <= 0);
+                    WriteSimplIdAttribute(obj, textWriter, allFieldDescriptors.Count() <= 0, translationContext);
                 }
             }
 
@@ -314,14 +314,14 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="textWriter"></param>
-        private static void WriteSimplIdAttribute(object obj, TextWriter textWriter, Boolean last)
+        private static void WriteSimplIdAttribute(object obj, TextWriter textWriter, Boolean last, TranslationContext translationContext)
         {
             textWriter.Write('"');
             textWriter.Write(TranslationContext.JsonSimplId);
             textWriter.Write('"');
             textWriter.Write(':');
             textWriter.Write('"');
-            textWriter.Write(obj.GetHashCode());
+            textWriter.Write(translationContext.GetSimplId(obj));
 
             if (!last)
             {
@@ -336,10 +336,12 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="obj"></param>
         /// <param name="fd"></param>
         /// <param name="textWriter"></param>
-        private static void WriteSimplRef(object obj, FieldDescriptor fd, TextWriter textWriter, Boolean withTag)
+        /// <param name="withTag"></param>
+        /// <param name="translationContext"></param>
+        private static void WriteSimplRef(object obj, FieldDescriptor fd, TextWriter textWriter, Boolean withTag, TranslationContext translationContext)
         {
             WriteObjectStart(fd, textWriter, withTag);
-            WriteSimpRefAttribute(obj, textWriter);
+            WriteSimpRefAttribute(obj, textWriter, translationContext);
             WriteClose(textWriter);
         }
        
@@ -348,23 +350,24 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="textWriter"></param>
-        private static void WriteSimpRefAttribute(object obj, TextWriter textWriter)
+        /// <param name="translationContext"></param>
+        private static void WriteSimpRefAttribute(object obj, TextWriter textWriter, TranslationContext translationContext)
         {
             textWriter.Write('"');
             textWriter.Write(TranslationContext.JsonSimplRef);
             textWriter.Write('"');
             textWriter.Write(':');
             textWriter.Write('"');
-            textWriter.Write(obj.GetHashCode().ToString());
+            textWriter.Write(translationContext.GetSimplId(obj));
             textWriter.Write('"');
         }
 
         /// <summary>
         /// 
-        /// 
         /// </summary>
         /// <param name="fd"></param>
         /// <param name="textWriter"></param>
+        /// <param name="withTag"></param>
         private static void WriteObjectStart(FieldDescriptor fd, TextWriter textWriter, Boolean withTag)
         {
             if (withTag)

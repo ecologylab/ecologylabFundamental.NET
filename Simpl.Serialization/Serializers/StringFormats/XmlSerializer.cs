@@ -51,7 +51,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
 
             if (AlreadySerialized(obj, translationContext))
             {
-                WriteSimplRef(obj, rootObjectFieldDescriptor, textWriter);
+                WriteSimplRef(obj, rootObjectFieldDescriptor, textWriter, translationContext);
                 return;
             }
 
@@ -283,7 +283,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
             {
                 if (translationContext.NeedsHashCode(obj))
                 {
-                    WriteSimplIdAttribute(obj, textWriter);
+                    WriteSimplIdAttribute(obj, textWriter, translationContext);
                 }
 
                 if (_isRoot && translationContext.IsGraph)
@@ -308,13 +308,14 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="textWriter"></param>
-        private static void WriteSimplIdAttribute(object obj, TextWriter textWriter)
+        /// <param name="translationContext"></param>
+        private static void WriteSimplIdAttribute(object obj, TextWriter textWriter, TranslationContext translationContext)
         {
             textWriter.Write(' ');
             textWriter.Write(TranslationContext.SimplId);
             textWriter.Write('=');
             textWriter.Write('"');
-            textWriter.Write(obj.GetHashCode().ToString());
+            textWriter.Write(translationContext.GetSimplId(obj));
             textWriter.Write('"');
         }
 
@@ -349,10 +350,11 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="obj"></param>
         /// <param name="fd"></param>
         /// <param name="textWriter"></param>
-        private static void WriteSimplRef(object obj, FieldDescriptor fd, TextWriter textWriter)
+        /// <param name="translationContext"></param>
+        private static void WriteSimplRef(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
         {
             WriteObjectStart(fd, textWriter);
-            WriteSimpRefAttribute(obj, textWriter);
+            WriteSimpRefAttribute(obj, textWriter, translationContext);
             WriteCompleteClose(textWriter);
         }
 
@@ -366,18 +368,19 @@ namespace Simpl.Serialization.Serializers.StringFormats
             textWriter.Write('>');
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="textWriter"></param>
-        private static void WriteSimpRefAttribute(object obj, TextWriter textWriter)
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="obj"></param>
+       /// <param name="textWriter"></param>
+       /// <param name="translationContext"></param>
+        private static void WriteSimpRefAttribute(object obj, TextWriter textWriter, TranslationContext translationContext)
         {
             textWriter.Write(' ');
             textWriter.Write(TranslationContext.SimplRef);
             textWriter.Write('=');
             textWriter.Write('"');
-            textWriter.Write(obj.GetHashCode().ToString());
+            textWriter.Write(translationContext.GetSimplId(obj));
             textWriter.Write('"');
         }
 

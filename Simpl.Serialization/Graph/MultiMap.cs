@@ -38,7 +38,7 @@ namespace Simpl.Serialization.Graph
             else
             {
                 List<Object> collection = _map[key];
-                if (!ContainsValue(collection,value))
+                if (ContainsValue(collection,value) == -1)
                 {
                     collection.Add(value);
                     return true;
@@ -53,14 +53,14 @@ namespace Simpl.Serialization.Graph
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Contains(TK key, Object value)
+        public int Contains(TK key, Object value)
         {
             if (_map.ContainsKey(key))
             {
                 List<Object> collection = _map[key];
                 return ContainsValue(collection,value);                
             }
-            return false;
+            return -1;
         }
 
         /// <summary>
@@ -71,20 +71,40 @@ namespace Simpl.Serialization.Graph
             get { return _map.Count; }
         }
 
-        /// <summary>
-        /// Returns whether the given value is included in the given collection based on the equals operator
-        /// </summary>
-        /// <param name="collection"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private bool ContainsValue(IEnumerable<Object> collection, Object value)
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="collection"></param>
+       /// <param name="value"></param>
+       /// <returns></returns>
+        private int ContainsValue(IEnumerable<Object> collection, Object value)
         {
             ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(value.GetType());
+            int index = 0;
             if (classDescriptor.StrictObjectGraphRequired)
 		    {
-                return collection.Any(item => item == value);
+		        foreach (var item in collection)
+		        {
+		            if(item == value)
+		            {
+		                return index;
+		            }
+		            index++;
+		        }
+		        return -1;
 		    }
-            return collection.Contains(value);
+            else
+            {
+                foreach (var item in collection)
+                {
+                    if(item.Equals(value))
+                    {
+                        return index;
+                    }
+                    index++;
+                }
+                return -1;
+            }
         }
     }
 }
