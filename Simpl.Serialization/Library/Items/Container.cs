@@ -5,14 +5,14 @@ namespace Simpl.Serialization.Library.Items
 {
     public class Container
     {
-
-        [SimplWrap] 
+        [SimplNoWrap] 
         [SimplScope("itemScope1")] 
         [SimplCollection] 
         private List<ItemBase> itemCollection1;
 
-        // @simpl_scope("itemScope2")
-        // @simpl_collection
+        [SimplWrap]
+        [SimplScope("itemScope2")]
+        [SimplCollection] 
         private List<ItemBase> itemCollection2;
 
         public Container()

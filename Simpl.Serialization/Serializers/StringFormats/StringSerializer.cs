@@ -53,7 +53,5 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="textWriter"></param>
         /// <param name="translationContext"></param>
         public abstract void Serialize(object obj, TextWriter textWriter, TranslationContext translationContext);
-
-
     }
 }

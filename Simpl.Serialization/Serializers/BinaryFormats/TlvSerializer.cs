@@ -154,9 +154,9 @@ namespace Simpl.Serialization.Serializers.BinaryFormats
 
                 MemoryStream temp = new MemoryStream();
                 BinaryWriter tempStream = new BinaryWriter(temp);
-                tempStream.Write(value.ToString());
+                tempStream.Write(value.ToString().ToCharArray());
 
-                outputBuffer.Write(temp.Length);
+                outputBuffer.Write((int)temp.Length);
                 temp.WriteTo(outputBuffer.BaseStream);
             }
         }
@@ -199,9 +199,9 @@ namespace Simpl.Serialization.Serializers.BinaryFormats
 
                 MemoryStream temp = new MemoryStream();
                 BinaryWriter tempStream = new BinaryWriter(temp);
-                tempStream.Write(value.ToString());
+                tempStream.Write(value.ToString().ToCharArray());
 
-                outputBuffer.Write(temp.Length);
+                outputBuffer.Write((int)temp.Length);
                 temp.WriteTo(outputBuffer.BaseStream);
             }
         }
@@ -227,7 +227,7 @@ namespace Simpl.Serialization.Serializers.BinaryFormats
         private void WriteHeader(BinaryWriter binaryWriter, MemoryStream buffer, int tlvId)
         {
             binaryWriter.Write(tlvId);
-            binaryWriter.Write(buffer.Length);
+            binaryWriter.Write((int)buffer.Length);
             buffer.WriteTo(binaryWriter.BaseStream);
         }
 

@@ -6,7 +6,7 @@ using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Library.Items
 {
-    [SimplTag("item_one")]
+    [SimplTag("item_random")]
     public class ItemRandom : ItemBase
     {
         [SimplScalar] 

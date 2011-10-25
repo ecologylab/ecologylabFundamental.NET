@@ -124,7 +124,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="rootTag"></param>
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor, string rootTag)
         {
-            while (NextEvent() && _xmlReader.NodeType != XmlNodeType.EndElement && !CurrentTag.Equals(rootTag))
+            while (NextEvent() && (_xmlReader.NodeType != XmlNodeType.EndElement || !CurrentTag.Equals(rootTag)))
             {
                 if (_xmlReader.NodeType != XmlNodeType.Element)
                     continue;
@@ -172,9 +172,6 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                                 //TODO: wrapped composites
                                 break;
                         }
-                        break;
-                    case FieldTypes.IgnoredElement:
-                        _xmlReader.Skip();
                         break;
                     default:
                         NextEvent();
@@ -304,6 +301,13 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             Object subRoot = null;
             ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(currentTagName);
 
+            String simplReference;
+            if ((simplReference = GetSimplReference()) != null)
+            {
+                subRoot = translationContext.GetFromMap(simplReference);
+                return subRoot;
+            }
+
             if(subRootClassDescriptor == null)
             {
                 Debug.WriteLine("ignoring element: " + currentTagName);
@@ -318,6 +322,27 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 CreateObjectModel(subRoot, subRootClassDescriptor, currentTagName);
            
             return subRoot;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private string GetSimplReference()
+        {
+            String simplReference = null;
+            while (_xmlReader.MoveToNextAttribute())
+            {
+                String tag = _xmlReader.Name;
+                String value = _xmlReader.Value;
+
+               if(TranslationContext.SimplRef.Equals(tag))
+               {
+                   simplReference = value;
+               }
+            }
+            _xmlReader.MoveToElement();
+            return simplReference;
         }
 
         /// <summary>
@@ -344,14 +369,24 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 String tag = _xmlReader.Name;
                 String value = _xmlReader.Value;
 
-                FieldDescriptor attributeFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(tag);
-                if (attributeFieldDescriptor != null)
+                //silently ignore simpl namespace. 
+                if (tag.Equals(TranslationContext.SimplNamespace)) continue;
+
+                if(tag.Equals(TranslationContext.SimplId))
                 {
-                    attributeFieldDescriptor.SetFieldToScalar(root, value, translationContext);
+                    translationContext.MarkAsUnmarshalled(value, root);
                 }
                 else
                 {
-                    Console.WriteLine("ignoring attribute: " + tag);
+                    FieldDescriptor attributeFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(tag);
+                    if (attributeFieldDescriptor != null)
+                    {
+                        attributeFieldDescriptor.SetFieldToScalar(root, value, translationContext);
+                    }
+                    else
+                    {
+                        Console.WriteLine("ignoring attribute: " + tag);
+                    }   
                 }
             }
 
@@ -389,7 +424,6 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 return _xmlReader.LocalName;
             }
         }
-
        
     }
 }

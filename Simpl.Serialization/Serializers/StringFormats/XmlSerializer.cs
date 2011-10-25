@@ -300,7 +300,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="textWriter"></param>
         private static void WriteSimplNameSpace(TextWriter textWriter)
         {
-            textWriter.Write(TranslationContext.SimplNamespace);
+            textWriter.Write(TranslationContext.SimplNamespaceAttribute);
         }
 
         /// <summary>

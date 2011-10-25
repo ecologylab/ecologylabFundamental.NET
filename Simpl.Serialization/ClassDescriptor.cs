@@ -429,16 +429,13 @@ namespace Simpl.Serialization
         /// <param name="fdToMap"><c>FieldDescriptor</c> fdToMap to be added to the dictionary</param>
         private void MapTagToFdForTranslateFrom(String tagName, FieldDescriptor fdToMap)
         {
-            FieldDescriptor previousMapping;
-
-            if (AllFieldDescriptorsByTagNames.TryGetValue(tagName, out previousMapping))
+            if (!fdToMap.IsWrapped)
             {
-                //Debug.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.FieldName + "] overrides field[" + previousMapping.FieldName + "]");
-                AllFieldDescriptorsByTagNames.Remove(tagName);
+                FieldDescriptor previousMapping = _allFieldDescriptorsByTagNames.Put(tagName, fdToMap);
+                if (previousMapping != null && previousMapping != fdToMap)
+                    Debug.WriteLine(" tag <" + tagName + ">:\tfield[" + fdToMap.Name + "] overrides field[" +
+                                    previousMapping.Name + "]");
             }
-
-            AllFieldDescriptorsByTagNames.Add(tagName, fdToMap);
-
         }
 
         private FieldDescriptor NewFieldDescriptor(FieldInfo thatField, Int16 annotationType, Type fieldDescriptorClass)

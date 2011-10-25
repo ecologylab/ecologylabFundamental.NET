@@ -704,6 +704,11 @@ namespace Simpl.Serialization
             if (!IsPolymorphic)
                 return elementClassDescriptor;
 
+            if(polymorphClassDescriptors == null)
+            {
+                Debug.WriteLine("The field is declared polymorphic, but its polymorphic ClassDescriptor don't exist! Check annoation and is simplTypesScopes defined?");
+                return null;
+            }
 
             if (polymorphClassDescriptors.ContainsKey(currentTagName))
                 return polymorphClassDescriptors[currentTagName];

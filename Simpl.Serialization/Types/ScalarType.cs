@@ -207,7 +207,6 @@ namespace Simpl.Serialization.Types
                 textWriter.Write(marshalled);
             else
             {
-
                 String result = null;
                 switch (format)
                 {
@@ -216,6 +215,9 @@ namespace Simpl.Serialization.Types
                         break;
                     case Format.Json:
                         result = XmlTools.EscapeJson(marshalled);
+                        break;
+                    default:
+                        result = marshalled;
                         break;
                 }
                 textWriter.Write(result);

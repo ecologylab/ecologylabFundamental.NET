@@ -14,7 +14,8 @@ namespace Simpl.Serialization.Context
     /// </summary>
     public class TranslationContext : IScalarUnmarshallingContext
     {
-        public const String SimplNamespace = " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
+        public const String SimplNamespace = "xmlns:simpl";
+        public const String SimplNamespaceAttribute = " xmlns:simpl=\"http://ecologylab.net/research/simplGuide/serialization/index.html\"";
 
         public const String SimplId = "simpl:id";
         public const String SimplRef = "simpl:ref";

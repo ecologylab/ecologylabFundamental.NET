@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Collections;
+using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
 using ecologylab.serialization;
 
@@ -84,7 +85,7 @@ namespace Simpl.Serialization
                         if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') ||
                             (ch >= '\u2000' && ch <= '\u20FF'))
                         {
-                            String ss = IntToHexString(ch);
+                            String ss = ((Int32) ch).HexString();
                             sb.Append("\\u");
                             for (int k = 0; k < 4 - ss.Length; k++)
                             {
