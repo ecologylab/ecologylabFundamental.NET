@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simpl.Fundamental.Collections
 {
-    abstract class ResourcePool<T> where T : new()
+    public abstract class ResourcePool<T>
     {
         private readonly List<T> _pool;
 
