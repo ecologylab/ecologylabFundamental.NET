@@ -134,7 +134,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 if (currentFieldDescriptor == null)
                 {
                     Console.WriteLine("ignoring tag " + CurrentTag);
-                    _xmlReader.Skip();
+
+                    if (!_xmlReader.IsEmptyElement)
+                        SkipTag(CurrentTag);
                     continue;
                 }
 
@@ -177,6 +179,28 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                         NextEvent();
                         break;
                 }
+            }
+        }
+
+        private void SkipTag(string tag)
+        {
+            Stack<String> startElements = new Stack<string>();
+            startElements.Push(tag);
+            while (NextEvent())
+            {
+                switch (_xmlReader.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        if (CurrentTag.Equals(tag))
+                            startElements.Push(tag);
+                        break;
+                    case XmlNodeType.EndElement:
+                        if (CurrentTag.Equals(tag))
+                            startElements.Pop();
+                        break;
+                }
+                if (startElements.Count <= 0)
+                    break;
             }
         }
 
