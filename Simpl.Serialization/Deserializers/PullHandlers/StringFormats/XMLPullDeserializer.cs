@@ -12,7 +12,7 @@ using Simpl.Serialization.Types.Element;
 namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 {
     /// <summary>
-    /// 
+    /// XML specific deserializer, extends StringPullDeserializer and implements the parse method on input stream and input string. 
     /// </summary>
     class XmlPullDeserializer : StringPullDeserializer
     {
@@ -33,7 +33,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         }
 
         /// <summary>
-        /// 
+        /// Constructure to initialize loca data structures. 
         /// </summary>
         /// <param name="inputSimplTypesScope"></param>
         /// <param name="inputContext"></param>
@@ -42,6 +42,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
         }
 
+        /// <summary>
+        /// overriding the method from the base class to implement Xml specific deserialization
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
         public override object Parse(Stream stream)
         {
             ConfigureInput(stream);
