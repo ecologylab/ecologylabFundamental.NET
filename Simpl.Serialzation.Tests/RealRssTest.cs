@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization;
