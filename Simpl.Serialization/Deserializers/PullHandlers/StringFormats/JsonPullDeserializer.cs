@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -15,7 +14,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
     {
         private JsonReader _jsonReader;
 
-        private String test;
+//        private String test;
 
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputString"></param>
         private void ConfigureInput(String inputString)
         {
-            test = inputString;
+//            test = inputString;
             ConfigureInput(new MemoryStream(Encoding.ASCII.GetBytes(inputString)));
         }
 
@@ -97,12 +96,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             // move the first field in the document. typically it is the root element.
             _jsonReader.Read();
 
-            Object root = null;
-
             // find the classdescriptor for the root element.
             ClassDescriptor rootClassDescriptor = simplTypesScope.GetClassDescriptorByTag(_jsonReader.Value.ToString());
 
-            root = rootClassDescriptor.GetInstance();
+            object root = rootClassDescriptor.GetInstance();
 
             // move to the first field of the root element.
             _jsonReader.Read();

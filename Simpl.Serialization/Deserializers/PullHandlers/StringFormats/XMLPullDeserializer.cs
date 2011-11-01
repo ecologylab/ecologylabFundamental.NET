@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using Simpl.Serialization.Context;
@@ -88,8 +87,6 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <returns></returns>
         private object Parse()
         {
-            Object root = null;
-
             NextEvent();
 
             if (_xmlReader.NodeType != XmlNodeType.Element)
@@ -108,7 +105,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                                                     + rootTag + ">; make sure if simplTypesScope is correct.");
             }
 
-            root = rootClassDescriptor.GetInstance();
+            object root = rootClassDescriptor.GetInstance();
 
             DeserializationPreHook(root, translationContext);
             if (deserializationHookStrategy != null)
@@ -223,7 +220,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeCompositeMapElement(object root, FieldDescriptor fd)
         {
             String compositeTagName = CurrentTag;
-            Object subRoot = GetSubRoot(fd, compositeTagName, root);
+            Object subRoot = GetSubRoot(fd, compositeTagName);
             if (subRoot != null)
             {
                 IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
@@ -248,7 +245,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeCompositeCollectionElement(object root, FieldDescriptor fd)
         {
             String compositeTagName = CurrentTag;
-            Object subRoot = GetSubRoot(fd, compositeTagName, root);
+            Object subRoot = GetSubRoot(fd, compositeTagName);
             if (subRoot != null)
             {
                 IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
@@ -319,7 +316,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
-            Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
+            Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag);
             if (subRoot != null)
                 currentFieldDescriptor.SetFieldToComposite(root, subRoot);
         }
@@ -339,11 +336,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// </summary>
         /// <param name="currentFieldDescriptor"></param>
         /// <param name="currentTagName"></param>
-        /// <param name="root"></param>
         /// <returns></returns>
-        private object GetSubRoot(FieldDescriptor currentFieldDescriptor, string currentTagName, object root)
+        private object GetSubRoot(FieldDescriptor currentFieldDescriptor, string currentTagName)
         {
-            Object subRoot = null;
+            Object subRoot;
             ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(currentTagName);
 
             String simplReference;
@@ -407,7 +403,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="root"></param>
         /// <param name="rootClassDescriptor"></param>
         /// <returns></returns>
-        private Boolean DeserializeAttributes(object root, ClassDescriptor rootClassDescriptor)
+        private void DeserializeAttributes(object root, ClassDescriptor rootClassDescriptor)
         {
             while (_xmlReader.MoveToNextAttribute())
             {
@@ -435,7 +431,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 }
             }
 
-            return _xmlReader.MoveToElement();
+            _xmlReader.MoveToElement();
         }
 
         /// <summary>
