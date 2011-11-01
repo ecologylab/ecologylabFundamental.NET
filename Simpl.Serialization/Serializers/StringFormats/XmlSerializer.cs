@@ -7,7 +7,7 @@ using Simpl.Serialization.Context;
 namespace Simpl.Serialization.Serializers.StringFormats
 {
     /// <summary>
-    /// 
+    /// Xml serializer contains xml specific serialization funtionality. 
     /// </summary>
     public class XmlSerializer : StringSerializer
     {

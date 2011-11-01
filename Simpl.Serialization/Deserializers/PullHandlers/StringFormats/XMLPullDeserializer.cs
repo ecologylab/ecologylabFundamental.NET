@@ -176,7 +176,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                                 DeserializeCompositeMap(root, currentFieldDescriptor);
                                 break;
                             case FieldTypes.CompositeElement:
-                                //TODO: wrapped composites
+                                DeserializeWrappedComposite(root, currentFieldDescriptor);
                                 break;
                         }
                         break;
@@ -187,6 +187,12 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+       
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tag"></param>
         private void SkipTag(string tag)
         {
             Stack<String> startElements = new Stack<string>();
@@ -316,6 +322,16 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
             if (subRoot != null)
                 currentFieldDescriptor.SetFieldToComposite(root, subRoot);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
+        private void DeserializeWrappedComposite(object root, FieldDescriptor currentFieldDescriptor)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -453,6 +469,5 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 return _xmlReader.LocalName;
             }
         }
-       
     }
 }

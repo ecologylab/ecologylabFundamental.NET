@@ -175,6 +175,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void IgnoreCurrentTag()
         {
             _jsonReader.Read();
@@ -236,6 +239,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
         private void DeserializeCompositeMap(object root, FieldDescriptor currentFieldDescriptor)
         {
             String arrayTag = _jsonReader.Value != null ? _jsonReader.Value.ToString() : null;
@@ -289,6 +297,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
         private void DeserializeCompositeCollection(object root, FieldDescriptor currentFieldDescriptor)
         {
             String arrayTag = _jsonReader.Value != null ? _jsonReader.Value.ToString() : null;
@@ -332,6 +345,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="currentFieldDescriptor"></param>
         private void DeserializeScalarCollection(object root, FieldDescriptor currentFieldDescriptor)
         {
             _jsonReader.Read();
@@ -397,6 +415,5 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             _jsonReader.Read();
             currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
         }
-
     }
 }

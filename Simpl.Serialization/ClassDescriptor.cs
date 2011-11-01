@@ -510,11 +510,7 @@ namespace Simpl.Serialization
             get { return _tagName; }
         }
 
-        public override List<string> OtherTags
-        {
-            get { throw new NotImplementedException(); }
-        }
-
+       
         /// <summary>
         ///     Gets the Pseudo FieldDescriptor
         /// </summary>
@@ -662,6 +658,12 @@ namespace Simpl.Serialization
         {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
+        }
+
+
+        public override List<string> OtherTags
+        {
+            get { throw new NotImplementedException(); }
         }
 
 

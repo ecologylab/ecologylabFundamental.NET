@@ -7,6 +7,9 @@ using Simpl.Serialization.Context;
 
 namespace Simpl.Serialization.Serializers.StringFormats
 {
+    /// <summary>
+    /// abstract base class for string serializers. used for preparing input data to serialize into multiple possible data outputs. 
+    /// </summary>
     public abstract class StringSerializer : FormatSerializer
     {
         /// <summary>
