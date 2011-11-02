@@ -78,9 +78,9 @@ namespace Simpl.Serialization
                     case '\t':
                         sb.Append("\\t");
                         break;
-                    case '/':
-                        sb.Append("\\/");
-                        break;
+                    //case '/':
+                    //    sb.Append("\\/");
+                    //    break;
                     default:
                         if ((ch >= '\u0000' && ch <= '\u001F') || (ch >= '\u007F' && ch <= '\u009F') ||
                             (ch >= '\u2000' && ch <= '\u20FF'))
