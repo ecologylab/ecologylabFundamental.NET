@@ -71,7 +71,10 @@
     <Compile Include="Generic\IntExtensions.cs" />
     <Compile Include="Generic\OneLevelNestingEnumerator.cs" />
     <Compile Include="Generic\StringExtensions.cs" />
+    <Compile Include="Net\IConnectionHelper.cs" />
+    <Compile Include="Net\IConnectionHelperJustRemote.cs" />
     <Compile Include="Net\ParsedUri.cs" />
+    <Compile Include="Net\PURLConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,6 +9,10 @@ namespace Simpl.Fundamental.Net
     /// </summary>
     public class ParsedUri : Uri
     {
+        public const int CONNECT_TIMEOUT    = 15000;
+
+        public const int READ_TIMEOUT       = 25000;
+
         #region Caches
         
         String _domain;
