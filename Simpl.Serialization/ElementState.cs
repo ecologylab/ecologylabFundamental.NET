@@ -23,6 +23,18 @@ namespace Simpl.Serialization
 
         public ElementState Parent { get; set; }
 
+        private ClassDescriptor classDescriptor;
+
+        public ClassDescriptor ClassDescriptor
+        {
+            get
+            {
+                if (classDescriptor == null) classDescriptor = ClassDescriptor.GetClassDescriptor(this);
+                return classDescriptor;
+            }
+            private set { classDescriptor = value; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
