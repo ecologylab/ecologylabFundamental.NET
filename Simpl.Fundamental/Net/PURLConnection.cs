@@ -162,7 +162,15 @@ namespace Simpl.Fundamental.Net
                 Request.Timeout = connectionTimeout;
                 Request.ReadWriteTimeout = readTimeout;
 
-                Response = Request.GetResponse() as HttpWebResponse;
+                try
+                {
+                    Response = (HttpWebResponse)Request.GetResponse();
+
+                }
+                catch (WebException e)
+                {
+                    Console.WriteLine("Web Exception !!!!" + e.Message);
+                }
                 if (Response != null)
                 {
                     // TODO check charset (using mime type) and display error message if charset not supported.
