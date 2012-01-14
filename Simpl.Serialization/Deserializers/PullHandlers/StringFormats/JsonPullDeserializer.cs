@@ -105,6 +105,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             _jsonReader.Read();
             _jsonReader.Read();
 
+            DeserializationPreHook(root, translationContext);
+		    if (deserializationHookStrategy != null)
+			    deserializationHookStrategy.DeserializationPreHook(root, null);
+
             // complete the object model from root and recursively of the fields it is composed of
             CreateObjectModel(root, rootClassDescriptor);
 
@@ -170,6 +174,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 }
                 _jsonReader.Read();
             }
+
+            DeserializationPostHook(root, translationContext);
+		    if (deserializationHookStrategy != null)
+			    deserializationHookStrategy.DeserializationPostHook(root, null);
         }
 
         /// <summary>

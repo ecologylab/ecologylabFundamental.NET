@@ -174,6 +174,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
                         break;
                 }
             }
+
+            DeserializationPostHook(root, translationContext);
+		    if (deserializationHookStrategy != null)
+			    deserializationHookStrategy.DeserializationPostHook(root, null);
+
             return root;
         }
 

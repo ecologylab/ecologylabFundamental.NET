@@ -47,7 +47,7 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="translationContext"></param>
-        public void SerializationPreHook(TranslationContext translationContext)
+        public virtual void SerializationPreHook(TranslationContext translationContext)
         {
            //add functionality if necessary
         }
@@ -56,7 +56,7 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="translationContext"></param>
-        public void SerializationPostHook(TranslationContext translationContext)
+        public virtual void SerializationPostHook(TranslationContext translationContext)
         {
             //add functionality if necessary
         }
@@ -65,7 +65,7 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="translationContext"></param>
-        public void DeserializationPreHook(TranslationContext translationContext)
+        public virtual void DeserializationPreHook(TranslationContext translationContext)
         {
             //add functionality if necessary
         }
@@ -74,7 +74,7 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="translationContext"></param>
-        public void DeserializationPostHook(TranslationContext translationContext)
+        public virtual void DeserializationPostHook(TranslationContext translationContext)
         {
             //add functionality if necessary
         }

@@ -182,6 +182,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                         break;
                 }
             }
+
+            DeserializationPostHook(root, translationContext);
+			if (deserializationHookStrategy != null)
+				deserializationHookStrategy.DeserializationPostHook(root, null);
         }
 
        
@@ -357,6 +361,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
 
             subRoot = subRootClassDescriptor.GetInstance();
+
+            DeserializationPreHook(subRoot, translationContext);
+			if (deserializationHookStrategy != null)
+				deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
+
             DeserializeAttributes(subRoot, subRootClassDescriptor);
 
             if (!_xmlReader.IsEmptyElement)
