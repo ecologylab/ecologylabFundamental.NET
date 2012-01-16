@@ -369,7 +369,15 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             DeserializeAttributes(subRoot, subRootClassDescriptor);
 
             if (!_xmlReader.IsEmptyElement)
+            {
                 CreateObjectModel(subRoot, subRootClassDescriptor, currentTagName);
+            }
+            else
+            {
+                DeserializationPostHook(subRoot, translationContext);
+                if (deserializationHookStrategy != null)
+                    deserializationHookStrategy.DeserializationPostHook(subRoot, null);
+            }
            
             return subRoot;
         }
