@@ -111,5 +111,10 @@ namespace Simpl.Fundamental.Net
                 return _stripped; 
             }
         }
+
+        public override string ToString()
+        {
+            return AbsoluteUri;
+        }
     }
 }
