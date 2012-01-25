@@ -12,19 +12,31 @@ namespace Simpl.Fundamental.Net
     /// </summary>
     public class PURLConnection
     {
+        private static readonly string[] NoAlphaMimeStrings = { "image/jpeg", "image/bmp", };
+
+        private static readonly HashSet<string> NoAlphaMimeSet = new HashSet<string>(NoAlphaMimeStrings);
+
+        
+        public PURLConnection(ParsedUri purl)
+        {
+            PURL = purl;
+        }
+
+        public PURLConnection(ParsedUri purl, HttpWebRequest request, Stream inputStream)
+        {
+            PURL = purl;
+            Stream = inputStream;
+            Request = request;
+            Good = true;
+        }
+
         public ParsedUri PURL { get; private set; }
 
         private FileInfo file;
 
         public FileInfo File
         {
-            get
-            {
-                if (file == null)
-                    file = new FileInfo(PURL.PathAndQuery.Replace('/', Path.DirectorySeparatorChar));
-                return file;
-            }
-            private set { file = value; }
+            get { return file ?? (file = new FileInfo(PURL.PathAndQuery.Replace('/', Path.DirectorySeparatorChar))); }
         }
 
 
@@ -75,18 +87,6 @@ namespace Simpl.Fundamental.Net
             }
         }
 
-        public PURLConnection(ParsedUri purl)
-        {
-            this.PURL = purl;
-        }
-
-        public PURLConnection(ParsedUri purl, HttpWebRequest request, Stream inputStream)
-        {
-            this.PURL = purl;
-            this.Stream = inputStream;
-            this.Request = request;
-            this.Good = true;
-        }
 
         public void Connect(IConnectionHelper connectionHelper, String userAgent,
                             int connectionTimeout, int readTimeout)
@@ -165,11 +165,10 @@ namespace Simpl.Fundamental.Net
                 try
                 {
                     Response = (HttpWebResponse)Request.GetResponse();
-
                 }
                 catch (WebException e)
                 {
-                    Console.WriteLine("Web Exception !!!!" + e.Message);
+                    Console.WriteLine("Web Exception ::" + e.Message);
                 }
                 if (Response != null)
                 {
@@ -262,10 +261,6 @@ namespace Simpl.Fundamental.Net
         {
             return "PURLConnection[" + PURL + "]";
         }
-
-        private static readonly string[] NoAlphaMimeStrings = {"image/jpeg", "image/bmp",};
-
-        private static readonly HashSet<string> NoAlphaMimeSet = new HashSet<string>(NoAlphaMimeStrings);
 
         public bool IsNoAlpha()
         {
