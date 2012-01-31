@@ -183,7 +183,12 @@ namespace Simpl.Serialization
         /// </returns>
         public static ClassDescriptor GetClassDescriptor(Type thatClass)
         {
-            String className = thatClass.FullName;
+            String className = thatClass.FullName; // for generic classes, className could be null!
+            if (className == null)
+            {
+                int pos = thatClass.Name.IndexOf('`');
+                className = thatClass.Namespace + "." + thatClass.Name.Substring(0, pos);
+            }
             ClassDescriptor result;
 
             if (!GlobalClassDescriptorsMap.TryGetValue(className, out result))
