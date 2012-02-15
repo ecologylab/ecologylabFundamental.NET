@@ -403,6 +403,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 {
                     ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
                     subRoot = subRootClassDescriptor.GetInstance();
+
+                    DeserializationPreHook(subRoot, translationContext);
+			        if (deserializationHookStrategy != null)
+				        deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
+
                     CreateObjectModel(subRoot, subRootClassDescriptor);    
                 }
             }
