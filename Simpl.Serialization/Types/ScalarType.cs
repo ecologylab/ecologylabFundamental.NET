@@ -18,12 +18,12 @@ namespace Simpl.Serialization.Types
         /// <summary>
         ///     Default value for reference type objects is considered to be null
         /// </summary>
-        public const Object DefaultValue = null;
+        public static readonly Object DefaultValue = null;
 
         /// <summary>
         ///     When translating null objects the serialized value is String null
         /// </summary>
-        public const String DefaultValueString = "null";
+        public static readonly String DefaultValueString = "null";
 
         /// <summary>
         /// 
@@ -140,8 +140,9 @@ namespace Simpl.Serialization.Types
         ///     Serializes the objects to its string value 
         /// </summary>
         /// <param name="instance"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        public virtual String Marshall(object instance)
+        public virtual string Marshall(object instance, TranslationContext context = null)
         {
             return instance.ToString();
         }
@@ -202,7 +203,7 @@ namespace Simpl.Serialization.Types
         /// <param name="format">Format serializing to, each one has their own escaping requirements.</param>
         public void AppendValue(object instance, TextWriter textWriter, Boolean needsEscaping, Format format)
         {
-            String marshalled = Marshall(instance);
+            String marshalled = Marshall(instance, null);
             if (!needsEscaping)
                 textWriter.Write(marshalled);
             else
@@ -234,5 +235,30 @@ namespace Simpl.Serialization.Types
             Object fieldValue = field.GetValue(context);
             return fieldValue == null || DefaultValueString.Equals(fieldValue.ToString());
         }
-        }
+
+        /**
+	     * The string representation for a Field of this type. Reference scalar types should NOT override
+	     * this. They should simply override marshall(instance), which this method calls.
+	     * <p/>
+	     * Primitive types cannot create such an instance, from the value of a field, and so must
+	     * override.
+	     */
+	    public string ToString(FieldInfo field, Object context)
+	    {
+		    string result = "COULDNT CONVERT!";
+		    try
+		    {
+			    Object instance = field.GetValue(context);
+			    if (instance == null)
+				    result = DefaultValueString;
+			    else
+				    result = Marshall(instance);
+		    }
+		    catch (Exception e)
+		    {
+		        Console.Error.WriteLine(e.Message);
+		    }
+		    return result;
+	    }
+    }
 }

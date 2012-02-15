@@ -15,7 +15,7 @@ namespace Simpl.Serialization
 {
     public class FieldDescriptor : DescriptorBase
     {
-        public const String Null = ScalarType.DefaultValueString;
+        public static readonly String Null = ScalarType.DefaultValueString;
 
         [SimplScalar] protected FieldInfo field;
 
@@ -67,6 +67,7 @@ namespace Simpl.Serialization
 
         [SimplScalar] private String unresolvedScopeAnnotation = null;
 
+        private Type[]	unresolvedClassesAnnotation	= null;
 
         [SimplScalar] private String collectionOrMapTagName;
 
@@ -86,6 +87,14 @@ namespace Simpl.Serialization
         [SimplScalar] private String genericParametersString;
 
         private List<Type> dependencies = new List<Type>();
+
+        /**
+	     * Default constructor only for use by translateFromXML().
+	     */
+	    public FieldDescriptor() : base()
+	    {
+
+	    }
 
         public FieldDescriptor(ClassDescriptor baseClassDescriptor)
             : base(baseClassDescriptor.TagName, null)
@@ -533,6 +542,11 @@ namespace Simpl.Serialization
             }
         }
 
+        public bool IsScalar
+        {
+            get { return scalarType != null; }
+        }
+
         public String CollectionOrMapTagName
         {
             get { return collectionOrMapTagName; }
@@ -568,6 +582,39 @@ namespace Simpl.Serialization
             }
             return scope != null;
         }
+
+        public Boolean ResolveUnresolvedClassesAnnotation()
+        {
+            if (unresolvedClassesAnnotation == null)
+                return true;
+
+            Boolean result = ResolveClassesAnnotation(unresolvedClassesAnnotation);
+            if (result)
+            {
+                unresolvedClassesAnnotation = null;
+            }
+            return result;
+        }
+
+        /**
+	     * Generate tag -> class mappings for a @serial_scope declaration.
+	     * 
+	     * @param scopeAnnotation
+	     *          Name of the scope to lookup in the global space. Must be non-null.
+	     * 
+	     * @return true if the scope annotation is successfully resolved to a TranslationScope.
+	     */
+	    private Boolean ResolveClassesAnnotation(Type[] classesAnnotation)
+	    {
+		    InitPolymorphicClassDescriptorsList(classesAnnotation.Length);
+		    foreach (Type thatClass in classesAnnotation)
+		    {
+			    ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatClass);
+			    RegisterPolymorphicDescriptor(classDescriptor);
+			    polymorphClasses.Add(classDescriptor.TagName, classDescriptor.DescribedClass);
+		    }
+		    return true;
+	    }
 
         private void InitTagClassDescriptorsArrayList(int initialSize)
         {
@@ -686,6 +733,27 @@ namespace Simpl.Serialization
             return field.GetValue(obj);
         }
 
+        public object GetNested(object context)
+        {
+            return ReflectionTools.GetFieldValue(context, Field);
+        }
+
+        public ICollection GetCollection(Object context)
+	    {
+		    return (ICollection) ReflectionTools.GetFieldValue(context, field);
+	    }
+
+        public string GetValueString(object context)
+        {
+            string result = Null;
+		    if (context != null && IsScalar)
+		    {
+			    result = scalarType.ToString(field, context);
+
+		    }
+		    return result;
+        }
+
         public void SetFieldToScalar(object root, string value, TranslationContext translationContext)
         {
             if (ScalarType != null && !ScalarType.IsMarshallOnly)
@@ -761,5 +829,29 @@ namespace Simpl.Serialization
         {
             throw new NotImplementedException();
         }
+
+        #region Ignored FieldDescriptor
+
+        public static FieldDescriptor MakeIgnoredFieldDescriptor(string currentTag)
+        {
+            return new FieldDescriptor(currentTag);
+        }
+
+        FieldDescriptor(String tag) : base(tag, null)
+	    {
+		    this.tagName = tag;
+		    this.type = FieldTypes.IgnoredElement;
+		    this.field = null;
+		    this.declaringClassDescriptor = null;
+	    }
+
+	    public static readonly FieldDescriptor IGNORED_ELEMENT_FIELD_DESCRIPTOR;
+
+	    static FieldDescriptor()
+	    {
+		    IGNORED_ELEMENT_FIELD_DESCRIPTOR = new FieldDescriptor("IGNORED");
+        }
+
+        #endregion Ignored FieldDescriptor
     }
 }

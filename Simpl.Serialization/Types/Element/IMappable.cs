@@ -5,12 +5,12 @@ namespace Simpl.Serialization.Types.Element
     /// <summary>
     /// 
     /// </summary>
-    public interface IMappable
+    public interface IMappable<out TK>
     {
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Object Key();
+        TK Key();
     }
 }

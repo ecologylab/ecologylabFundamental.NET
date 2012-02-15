@@ -24,6 +24,11 @@ namespace Simpl.Serialization.Types
             this.name = name;
         }
 
+        protected SimplBaseType()
+        {
+            
+        }
+
         /// <summary>
         /// 
         /// </summary>s

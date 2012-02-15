@@ -271,9 +271,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
                     subRoot = GetSubRoot(currentFieldDescriptor, tagName);
 
-                    if (subRoot is IMappable)
+                    if (subRoot is IMappable<Object>)
                     {
-                        Object key = ((IMappable) subRoot).Key();
+                        Object key = ((IMappable<Object>) subRoot).Key();
                         IDictionary collection =
                             (IDictionary) currentFieldDescriptor.AutomaticLazyGetCollectionOrMap(root);
                         collection.Add(key, subRoot);
@@ -288,9 +288,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 while (_jsonReader.Read() && _jsonReader.Token != JsonToken.ArrayEnd)
                 {
                     subRoot = GetSubRoot(currentFieldDescriptor, arrayTag);
-                    if (subRoot is IMappable)
+                    if (subRoot is IMappable<Object>)
                     {
-                        Object key = ((IMappable) subRoot).Key();
+                        Object key = ((IMappable<Object>) subRoot).Key();
                         IDictionary collection =
                             (IDictionary) currentFieldDescriptor.AutomaticLazyGetCollectionOrMap(root);
                         collection.Add(key, subRoot);

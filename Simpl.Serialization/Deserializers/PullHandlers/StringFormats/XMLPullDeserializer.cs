@@ -126,16 +126,20 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="rootTag"></param>
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor, string rootTag)
         {
+            FieldDescriptor currentFieldDescriptor = new FieldDescriptor();
+
             while (NextEvent() && (_xmlReader.NodeType != XmlNodeType.EndElement || !CurrentTag.Equals(rootTag)))
             {
                 if (_xmlReader.NodeType != XmlNodeType.Element)
                     continue;
 
-                FieldDescriptor currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(CurrentTag);
+                if(currentFieldDescriptor.FdType != FieldTypes.Wrapper)
+                    currentFieldDescriptor = rootClassDescriptor.GetFieldDescriptorByTag(CurrentTag);
 
                 if (currentFieldDescriptor == null)
                 {
                     Console.WriteLine("ignoring tag " + CurrentTag);
+                    currentFieldDescriptor = FieldDescriptor.MakeIgnoredFieldDescriptor(CurrentTag);
 
                     if (!_xmlReader.IsEmptyElement)
                         SkipTag(CurrentTag);
@@ -176,6 +180,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                                 DeserializeWrappedComposite(root, currentFieldDescriptor);
                                 break;
                         }
+                        break;
+                    case FieldTypes.IgnoredElement:
+                        SkipTag(CurrentTag);
                         break;
                     default:
                         NextEvent();
@@ -228,7 +235,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             if (subRoot != null)
             {
                 IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
-                Object key = ((IMappable) subRoot).Key();
+                Object key = ((IMappable<Object>) subRoot).Key();
                 if (dictionary.Contains(key))
                 {
                     //Note: overriding a key in map, duplicate data in xml. 
@@ -332,7 +339,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeWrappedComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
-            throw new NotImplementedException();
+           String currentTag = CurrentTag;
+            while (NextEvent() && !(_xmlReader.NodeType == XmlNodeType.EndElement && CurrentTag.Equals(currentTag)))
+            {
+                DeserializeComposite(root, currentFieldDescriptor);
+            }
         }
 
         /// <summary>

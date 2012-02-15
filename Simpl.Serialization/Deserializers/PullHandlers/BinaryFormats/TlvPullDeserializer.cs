@@ -247,9 +247,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
             int length = _blockLength;
 
             object subRoot = GetSubRoot(fd, root);
-            if (subRoot is IMappable)
+            if (subRoot is IMappable<Object>)
             {
-                Object key = ((IMappable) subRoot).Key();
+                Object key = ((IMappable<Object>) subRoot).Key();
                 IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
                 if (dictionary.Contains(key))
                 {

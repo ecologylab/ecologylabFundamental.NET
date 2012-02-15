@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -24,7 +25,7 @@ namespace Simpl.Serialization
     ///     of annotation meta-language.
     ///     </para>
     /// </summary>
-    public class ClassDescriptor : DescriptorBase
+    public class ClassDescriptor : DescriptorBase, IEnumerable<FieldDescriptor>
     {
         /// <summary>
         ///     Holds the <c>Type</c> of the class described by this 
@@ -99,6 +100,8 @@ namespace Simpl.Serialization
             new Dictionary<String, ClassDescriptor>();
 
         private List<FieldDescriptor> _unresolvedScopeAnnotationFDs;
+
+        private List<FieldDescriptor> _unresolvedClassesAnnotationFDs;
 
         private FieldDescriptor _scalarValueFieldDescriptor;
 
@@ -368,12 +371,12 @@ namespace Simpl.Serialization
         {
 
             if (_unresolvedScopeAnnotationFDs != null)
-            {
                 ResolveUnresolvedScopeAnnotationFDs();
-            }
-            if (AllFieldDescriptorsByTagNames.ContainsKey(tagName))
-                return AllFieldDescriptorsByTagNames[tagName];
-            return null;
+
+            if (_unresolvedClassesAnnotationFDs != null)
+                ResolveUnresolvedClassesAnnotationFDs();
+
+            return (AllFieldDescriptorsByTagNames.ContainsKey(tagName)) ? AllFieldDescriptorsByTagNames[tagName] : null;
         }
 
         public DictionaryList<String, FieldDescriptor> FieldDescriptorByFieldName
@@ -423,7 +426,20 @@ namespace Simpl.Serialization
             _unresolvedScopeAnnotationFDs = null;
         }
 
-
+        public void ResolveUnresolvedClassesAnnotationFDs()
+        {
+            if (_unresolvedClassesAnnotationFDs != null)
+            {
+                for (int i = _unresolvedClassesAnnotationFDs.Count - 1; i >= 0; i--)
+                {
+                    FieldDescriptor fd = _unresolvedClassesAnnotationFDs[i];
+                    _unresolvedClassesAnnotationFDs.RemoveAt(i);
+                    fd.ResolveUnresolvedClassesAnnotation();
+                    this.MapTagClassDescriptors(fd);
+                    //this.MapTagClassDescriptors(fd);
+                }
+            }
+        }
 
         /// <summary>
         ///     Method to map tags to their fieldDescriptors in the 
@@ -681,5 +697,19 @@ namespace Simpl.Serialization
         {
             throw new NotImplementedException();
         }
+
+        #region Implementation of IEnumerable
+
+        public IEnumerator<FieldDescriptor> GetEnumerator()
+        {
+            return this._fieldDescriptorsByFieldName.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
     }
 }

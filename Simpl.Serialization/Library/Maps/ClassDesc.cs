@@ -6,7 +6,7 @@ using Simpl.Serialization.Types.Element;
 
 namespace Simpl.Serialization.Library.Maps
 {
-    public class ClassDes : IMappable
+    public class ClassDes : IMappable<String>
     {
         [SimplScalar] 
         public String tagName;
@@ -28,7 +28,7 @@ namespace Simpl.Serialization.Library.Maps
         }
 
 
-        public Object Key()
+        public String Key()
         {
             return tagName;
         }

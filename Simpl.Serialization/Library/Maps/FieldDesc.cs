@@ -4,7 +4,7 @@ using Simpl.Serialization.Types.Element;
 
 namespace Simpl.Serialization.Library.Maps
 {
-    public class FieldDes : IMappable
+    public class FieldDes : IMappable<String>
     {
         [SimplScalar] public String fieldName;
 
@@ -19,7 +19,7 @@ namespace Simpl.Serialization.Library.Maps
         }
 
 
-        public Object Key()
+        public String Key()
         {
             return this.fieldName;
         }

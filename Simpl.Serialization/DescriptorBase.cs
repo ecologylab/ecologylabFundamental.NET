@@ -54,6 +54,11 @@ namespace Simpl.Serialization
             this.tagName = tagName;
         }
 
+        protected DescriptorBase() : base()
+        {
+           
+        }
+
         /// <summary>
         /// 
         /// </summary>
