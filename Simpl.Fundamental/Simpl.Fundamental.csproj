@@ -70,6 +70,7 @@
     <Compile Include="Generic\IDictionaryList.cs" />
     <Compile Include="Generic\IntExtensions.cs" />
     <Compile Include="Generic\OneLevelNestingEnumerator.cs" />
+    <Compile Include="Generic\ReflectionTools.cs" />
     <Compile Include="Generic\StringExtensions.cs" />
     <Compile Include="Net\IConnectionHelper.cs" />
     <Compile Include="Net\IConnectionHelperJustRemote.cs" />
