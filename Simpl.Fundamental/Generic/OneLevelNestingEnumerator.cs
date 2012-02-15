@@ -18,6 +18,8 @@ namespace Simpl.Fundamental.Generic
 	
 	    protected IEnumerator<I>	_currentIterator;
 
+        private O _firstObject;
+
         private I _current;
 	
 	    ///<summary>
@@ -27,6 +29,7 @@ namespace Simpl.Fundamental.Generic
 	    public OneLevelNestingEnumerator(O firstObject, IEnumerator<O> iterableCollection)
 	    {
             this._firstIterator = firstObject.GetEnumerator();
+	        this._firstObject   = firstObject;
             this._currentObject = firstObject;
             this._collection    = iterableCollection;
 	    }
@@ -38,6 +41,7 @@ namespace Simpl.Fundamental.Generic
 	    public OneLevelNestingEnumerator(O firstObject, IEnumerable<O> iterableCollection)
 	    {
             this._firstIterator = firstObject.GetEnumerator();
+	        this._firstObject   = firstObject;
             this._currentObject = firstObject;
             this._collection    = (iterableCollection != null) ? iterableCollection.GetEnumerator() : null;
 	    }
@@ -57,7 +61,7 @@ namespace Simpl.Fundamental.Generic
             return _firstIterator.MoveNext() || CollectionHasNext();
         }
 
-	    public bool MoveNext() 
+	    public virtual bool MoveNext() 
 	    {
 		    if (_firstIterator.MoveNext())
             {
@@ -105,7 +109,10 @@ namespace Simpl.Fundamental.Generic
 
         public void Reset()
         {
-
+            _firstIterator.Reset();
+            _currentObject = _firstObject;
+            if (_collection != null)
+                _collection.Reset();
         }
 
         public void Dispose()
