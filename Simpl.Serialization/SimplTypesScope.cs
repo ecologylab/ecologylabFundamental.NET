@@ -459,13 +459,13 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         /// <param name="filename"></param>
-        /// <param name="stringFormat"></param>
+        /// <param name="format"></param>
+        /// <param name="encoding"></param>
         /// <returns></returns>
-        public Object DeserializeFile(string filename, StringFormat stringFormat)
+        public object DeserializeFile(string filename, Format format, Encoding encoding = null)
         {
-            FileStream f = new FileStream(filename, FileMode.Open, FileAccess.Read);
-            StreamReader r = new StreamReader(f);
-            return Deserialize(r.ReadToEnd(), stringFormat);
+            FileInfo f = new FileInfo(filename);
+            return Deserialize(f, format);
         }
 
         /// <summary>
@@ -473,10 +473,11 @@ namespace Simpl.Serialization
         /// </summary>
         /// <param name="file"></param>
         /// <param name="format"></param>
+        /// <param name="encoding"></param>
         /// <returns></returns>
-        public object Deserialize(FileInfo file, Format format)
+        public object Deserialize(FileInfo file, Format format, Encoding encoding = null)
         {
-            return Deserialize(file, new TranslationContext(), null, format);
+            return Deserialize(file, new TranslationContext(), null, format, encoding);
         }
 
         /// <summary>
@@ -486,10 +487,15 @@ namespace Simpl.Serialization
         /// <param name="translationContext"></param>
         /// <param name="deserializationHookStrategy"></param>
         /// <param name="format"></param>
+        /// <param name="encoding"></param>
         /// <returns></returns>
-        public object Deserialize(FileInfo file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format)
+        public object Deserialize(FileInfo file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format, Encoding encoding = null)
         {
-            return Deserialize(file.OpenRead(), translationContext, deserializationHookStrategy, format);
+            if (encoding == null)
+                encoding = Encoding.ASCII;
+
+            StreamReader fileStream = new StreamReader(file.OpenRead(), encoding);
+            return Deserialize(fileStream.BaseStream, translationContext, deserializationHookStrategy, format);
         }
 
 
