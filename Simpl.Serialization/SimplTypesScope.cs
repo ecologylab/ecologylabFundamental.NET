@@ -319,6 +319,16 @@ namespace Simpl.Serialization
             return result;
         }
 
+        public static SimplTypesScope Get(string name, SimplTypesScope[] inheritedScopes, params Type[] translations)
+        {
+            SimplTypesScope result = null;
+            if (!allTranslationScopes.TryGetValue(name, out result))
+            {
+                result = new SimplTypesScope(name, inheritedScopes, translations);
+            }
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -477,7 +487,7 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public object Deserialize(FileInfo file, Format format, Encoding encoding = null)
         {
-            return Deserialize(file, new TranslationContext(), null, format, encoding);
+            return Deserialize(file, new TranslationContext(file), null, format, encoding);
         }
 
         /// <summary>

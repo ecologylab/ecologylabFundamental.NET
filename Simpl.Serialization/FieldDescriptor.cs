@@ -403,13 +403,15 @@ namespace Simpl.Serialization
 
             if ((classesAttribute != null) && classesAttributeValue.Length > 0)
             {
-                InitPolymorphicClassDescriptorsList(classesAttributeValue.Length);
-                foreach (Type thatType in classesAttributeValue)
-                {
-                    ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatType);
-                    RegisterPolymorphicDescriptor(classDescriptor);
-                    polymorphClasses.Put(classDescriptor.TagName, classDescriptor.DescribedClass);
-                }
+                unresolvedClassesAnnotation = classesAttributeValue;
+                declaringClassDescriptor.RegisterUnresolvedScopeAnnotationFD(this);
+                //InitPolymorphicClassDescriptorsList(classesAttributeValue.Length);
+                //foreach (Type thatType in classesAttributeValue)
+                //{
+                //    ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatType);
+                //    RegisterPolymorphicDescriptor(classDescriptor);
+                //    polymorphClasses.Put(classDescriptor.TagName, classDescriptor.DescribedClass);
+                //}
             }
         }
 
@@ -774,7 +776,7 @@ namespace Simpl.Serialization
 
             if(polymorphClassDescriptors == null)
             {
-                Debug.WriteLine("The field is declared polymorphic, but its polymorphic ClassDescriptor don't exist! Check annoation and is simplTypesScopes defined?");
+                Debug.WriteLine("The " + this.Name + " field is declared polymorphic, but its polymorphic ClassDescriptor don't exist! Check annotation and is simplTypesScopes defined?");
                 return null;
             }
 

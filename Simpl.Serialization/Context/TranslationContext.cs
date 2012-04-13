@@ -6,6 +6,7 @@ using System.Reflection;
 using Simpl.Fundamental.Generic;
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Graph;
+using System.IO;
 
 namespace Simpl.Serialization.Context
 {
@@ -29,9 +30,32 @@ namespace Simpl.Serialization.Context
         private Dictionary<String, Object> _unmarshalledObjects = new Dictionary<String, Object>();
         private MultiMap<Int32> _visitedElements = new MultiMap<Int32>();
 
-        private ParsedUri _baseDirPurl;
-        private String _delimiter = ",";
+        private ParsedUri   _baseDirPurl;
+        private FileInfo    _baseDirFile;
+        private String      _delimiter = ",";
 
+
+        public TranslationContext()
+        {
+
+        }
+
+        public TranslationContext(FileInfo fileDirContext)
+        {
+            if (fileDirContext != null)
+                this.BaseDirFile = fileDirContext;
+        }
+
+        public FileInfo BaseDirFile
+        {
+            get { return _baseDirFile; }
+            set
+            {
+                this._baseDirFile = value;
+                this._baseDirPurl = new ParsedUri(value.FullName);
+            }
+               
+        }
 
         /// <summary>
         /// Return whether it is a graph
