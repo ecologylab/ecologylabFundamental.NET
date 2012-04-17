@@ -20,7 +20,7 @@ namespace Simpl.Serialization
         [SimplScalar] protected FieldInfo field;
 
 
-        [SimplComposite] private ClassDescriptor elementClassDescriptor;
+        [SimplComposite] private ClassDescriptor _elementClassDescriptor;
 
         [SimplScalar] private String mapKeyFieldName;
 
@@ -69,12 +69,12 @@ namespace Simpl.Serialization
 
         private Type[]	unresolvedClassesAnnotation	= null;
 
-        [SimplScalar] private String collectionOrMapTagName;
+        [SimplScalar] private String _collectionOrMapTagName;
 
         [SimplScalar] private String compositeTagName;
 
 
-        [SimplScalar] private Boolean wrapped;
+        [SimplScalar] private Boolean _wrapped;
 
         private MethodInfo setValueMethod;
 
@@ -87,6 +87,8 @@ namespace Simpl.Serialization
         [SimplScalar] private String genericParametersString;
 
         private List<Type> dependencies = new List<Type>();
+
+        private FieldDescriptor _clonedFrom;
 
         /**
 	     * Default constructor only for use by translateFromXML().
@@ -167,8 +169,8 @@ namespace Simpl.Serialization
                             return FieldTypes.IgnoredAttribute;
                         }
 
-                        elementClassDescriptor = ClassDescriptor.GetClassDescriptor(thatFieldType);
-                        elementClass = elementClassDescriptor.DescribedClass;
+                        _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(thatFieldType);
+                        elementClass = _elementClassDescriptor.DescribedClass;
                         compositeTag = XmlTools.GetXmlTagName(thatField);
                     }
                     else
@@ -222,8 +224,8 @@ namespace Simpl.Serialization
                         }
                         if (!TypeRegistry.ContainsScalarType(collectionElementType))
                         {
-                            elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementType);
-                            elementClass = elementClassDescriptor.DescribedClass;
+                            _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementType);
+                            elementClass = _elementClassDescriptor.DescribedClass;
                         }
                         else
                         {
@@ -246,7 +248,7 @@ namespace Simpl.Serialization
                                          + " because it is declared polymorphic with [SimplClasses].";
                         }
                     }
-                    collectionOrMapTagName = collectionTag;
+                    _collectionOrMapTagName = collectionTag;
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
 
@@ -288,8 +290,8 @@ namespace Simpl.Serialization
                         }
                         if (!TypeRegistry.ContainsScalarType(mapElementType))
                         {
-                            elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementType);
-                            elementClass = elementClassDescriptor.DescribedClass;
+                            _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementType);
+                            elementClass = _elementClassDescriptor.DescribedClass;
                         }
 
                     }
@@ -302,7 +304,7 @@ namespace Simpl.Serialization
                                          + " because it is declared polymorphic with [SimplClasses].";
                         }
                     }
-                    collectionOrMapTagName = mapTag;
+                    _collectionOrMapTagName = mapTag;
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
             }
@@ -312,13 +314,13 @@ namespace Simpl.Serialization
                 case FieldTypes.CollectionElement:
                 case FieldTypes.MapElement:
                     if (!XmlTools.IsAnnotationPresent(thatField, typeof (SimplNoWrap)))
-                        wrapped = true;
+                        _wrapped = true;
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
                 case FieldTypes.CompositeElement:
                     if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplWrap)))
                     {
-                        wrapped = true;
+                        _wrapped = true;
                     }
                     break;
             }
@@ -348,7 +350,7 @@ namespace Simpl.Serialization
 
         public bool IsPolymorphic
         {
-            get { return (polymorphClassDescriptors != null) || (unresolvedScopeAnnotation != null); }
+            get { return (polymorphClassDescriptors != null) || (unresolvedScopeAnnotation != null) || (unresolvedClassesAnnotation != null); }
         }
 
         private int DeriveScalarSerialization(FieldInfo scalarField)
@@ -456,7 +458,7 @@ namespace Simpl.Serialization
                 {
                     polymorphClassDescriptors.Put(scopeClassDescriptor.TagName, scopeClassDescriptor);
                     polymorphClasses.Put(scopeClassDescriptor.TagName, scopeClassDescriptor.DescribedClass);
-                    tlvClassDescriptors.Put(tagName.GetHashCode(), scopeClassDescriptor);
+                    tlvClassDescriptors.Put(_tagName.GetHashCode(), scopeClassDescriptor);
                 }
             }
 
@@ -471,27 +473,27 @@ namespace Simpl.Serialization
 
         public override string JavaTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.JavaTypeName : ScalarType.JavaTypeName; }
+            get { return _elementClassDescriptor != null ? _elementClassDescriptor.JavaTypeName : ScalarType.JavaTypeName; }
         }
 
         public override string CSharpTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.CSharpTypeName : ScalarType.CSharpTypeName; }
+            get { return _elementClassDescriptor != null ? _elementClassDescriptor.CSharpTypeName : ScalarType.CSharpTypeName; }
         }
 
         public override string ObjectiveCTypeName
         {
             get
             {
-                return elementClassDescriptor != null
-                           ? elementClassDescriptor.ObjectiveCTypeName
+                return _elementClassDescriptor != null
+                           ? _elementClassDescriptor.ObjectiveCTypeName
                            : ScalarType.ObjectiveCTypeName;
             }
         }
 
         public override string DbTypeName
         {
-            get { return elementClassDescriptor != null ? elementClassDescriptor.DbTypeName : ScalarType.DbTypeName; }
+            get { return _elementClassDescriptor != null ? _elementClassDescriptor.DbTypeName : ScalarType.DbTypeName; }
         }
 
         public override List<string> OtherTags
@@ -525,7 +527,8 @@ namespace Simpl.Serialization
 
         public Boolean IsWrapped
         {
-            get { return wrapped; }
+            get { return _wrapped; }
+            set { _wrapped = value; }
         }
 
         public bool IsCollection
@@ -551,7 +554,8 @@ namespace Simpl.Serialization
 
         public String CollectionOrMapTagName
         {
-            get { return collectionOrMapTagName; }
+            get { return _collectionOrMapTagName; }
+            set { _collectionOrMapTagName = value; }
         }
 
         public Boolean ResolveUnresolvedScopeAnnotation()
@@ -642,7 +646,7 @@ namespace Simpl.Serialization
 
         public String ElementStart
         {
-            get { return IsCollection ? collectionOrMapTagName : IsNested ? compositeTagName : tagName; }
+            get { return IsCollection ? _collectionOrMapTagName : IsNested ? compositeTagName : _tagName; }
         }
 
         public Boolean IsNested
@@ -696,8 +700,8 @@ namespace Simpl.Serialization
             {
                 int tempTlvId = 0;
 
-                if (tagName != null)
-                    tempTlvId = tagName.GetTlvId();
+                if (_tagName != null)
+                    tempTlvId = _tagName.GetTlvId();
 
                 return tempTlvId; ;
             }
@@ -772,7 +776,7 @@ namespace Simpl.Serialization
         public ClassDescriptor ChildClassDescriptor(string currentTagName)
         {
             if (!IsPolymorphic)
-                return elementClassDescriptor;
+                return _elementClassDescriptor;
 
             if(polymorphClassDescriptors == null)
             {
@@ -824,12 +828,24 @@ namespace Simpl.Serialization
         {
             return IsPolymorphic
                        ? polymorphClassDescriptors.ContainsKey(currentTag)
-                       : collectionOrMapTagName.Equals(currentTag);
+                       : _collectionOrMapTagName.Equals(currentTag);
         }
 
         public ClassDescriptor GetChildClassDescriptor(int tlvType)
         {
             throw new NotImplementedException();
+        }
+
+        public FieldDescriptor DescriptorClonedFrom
+        {
+            get { return _clonedFrom; }
+            set { _clonedFrom = value; }
+        }
+
+        public ClassDescriptor ElementClassDescriptor
+        {
+            get { return _elementClassDescriptor; }
+            set { _elementClassDescriptor = value; }
         }
 
         #region Ignored FieldDescriptor
@@ -841,7 +857,7 @@ namespace Simpl.Serialization
 
         FieldDescriptor(String tag) : base(tag, null)
 	    {
-		    this.tagName = tag;
+		    this._tagName = tag;
 		    this.type = FieldTypes.IgnoredElement;
 		    this.field = null;
 		    this.declaringClassDescriptor = null;

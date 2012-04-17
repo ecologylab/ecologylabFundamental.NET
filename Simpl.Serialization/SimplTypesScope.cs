@@ -437,6 +437,27 @@ namespace Simpl.Serialization
             return result;
         }
 
+        public SimplTypesScope GetSubtractedSubset(string newName, Type superClassCriterion)
+        {
+            SimplTypesScope result = Lookup(newName);
+            if (result == null)
+            {
+                result = Lookup(newName);
+                if (result == null)
+                {
+                    result = new SimplTypesScope(newName);
+                    AddTranslationScope(newName);
+                    foreach (ClassDescriptor classDescriptor in EntriesByClassName.Values)
+                    {
+                        Type thatClass = classDescriptor.DescribedClass;
+                        if (!superClassCriterion.IsAssignableFrom(thatClass))
+                            result.AddTranslation(thatClass);
+                    }
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>

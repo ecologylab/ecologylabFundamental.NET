@@ -16,7 +16,7 @@ namespace Simpl.Serialization
         /// 
         /// </summary>
         [SimplScalar] 
-        protected String tagName;
+        protected String _tagName;
 
         /// <summary>
         /// 
@@ -51,7 +51,7 @@ namespace Simpl.Serialization
             : base(name)
         {
             this.comment = comment;
-            this.tagName = tagName;
+            this._tagName = tagName;
         }
 
         protected DescriptorBase() : base()
@@ -62,7 +62,11 @@ namespace Simpl.Serialization
         /// <summary>
         /// 
         /// </summary>
-        public String TagName { get { return tagName; } }
+        public String TagName 
+        { 
+            get { return _tagName; } 
+            set { _tagName = value; } 
+        }
 
         /// <summary>
         /// 
