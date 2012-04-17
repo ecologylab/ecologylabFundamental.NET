@@ -19,6 +19,7 @@ namespace Simpl.Fundamental.Net
         String _domain;
         String _suffix;
         String _stripped;
+        FileInfo _file;
 
         #endregion
 
@@ -109,7 +110,21 @@ namespace Simpl.Fundamental.Net
                     _stripped = result;
                 }
 
-                return _stripped; 
+                return result; 
+            }
+        }
+
+        public FileInfo File
+        {
+            get
+            {
+                FileInfo result = _file;
+                if (result == null && this.IsFile)
+                {
+                    result = new FileInfo(this.LocalPath);
+                    _file = result;
+                }
+                return result;
             }
         }
 
