@@ -58,6 +58,8 @@ namespace Simpl.Serialization.Types
 
         public const String ObjCScope = "NSScope";
 
+        public const String ObjCRect = "NSRect";
+
         /*
          * C Sharp Scalar Types
          */
@@ -108,6 +110,8 @@ namespace Simpl.Serialization.Types
         public const String DotNetUuid = "GUID";
 
         public const String DotNetPattern = "System.Text.RegularExpressions.Regex";
+
+        public const String DotNetRect = "Rect";
 
         /*
          * Java Scalar Types

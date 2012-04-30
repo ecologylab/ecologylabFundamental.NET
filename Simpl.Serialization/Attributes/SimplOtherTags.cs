@@ -15,7 +15,7 @@ namespace Simpl.Serialization.Attributes
         /// 
         /// </summary>
         /// <param name="otherTags"></param>
-        public SimplOtherTags(String[] otherTags)
+        public SimplOtherTags(params String[] otherTags)
         {
             this._otherTags = otherTags;
         }

@@ -24,6 +24,7 @@ namespace Simpl.Serialization.Types
         public static ScalarType fieldInfoType      = new FieldInfoType();
         public static ScalarType typeType           = new TypeType();
         public static ScalarType scalarTypeType     = new ScalarTypeType();
+        public static ScalarType rectType           = new RectType();
 
 
         public static CollectionType listType       = new CollectionType(
