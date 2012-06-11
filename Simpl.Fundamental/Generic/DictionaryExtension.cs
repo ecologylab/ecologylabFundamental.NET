@@ -36,5 +36,61 @@ namespace Simpl.Fundamental.Generic
 
             return oldValue;
         }
+
+        /// <summary>
+        /// Helper add method which requires instantiation of a List<typeparamref name="TValue"/> if required.
+        /// Implementation resembles something like defaultdict(list) in python
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void AddToList<TKey, TValue>
+            (this IDictionary<TKey, List<TValue>> dictionary,
+                TKey key,
+                TValue value)
+        {
+            if ( (!typeof(TKey).IsValueType && key == null) || (!typeof(TKey).IsValueType && value == null))
+                return;
+
+            if(!dictionary.ContainsKey(key))
+            {
+                List<TValue> valueList = new List<TValue>();
+                dictionary.Add(key, valueList);
+            }
+            dictionary[key].Add(value);
+        }
+
+        /// <summary>
+        /// See <see cref="AddToList{TKey,TValue}"/>.
+        /// 
+        /// NOTE This method errors out silently if the key or the value doesn't exist.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void RemoveFromList<TKey, TValue>
+            (this IDictionary<TKey, List<TValue>> dictionary,
+                TKey key,
+                TValue value)
+        {
+            if ((!typeof(TKey).IsValueType && key == null) || (!typeof(TKey).IsValueType && value == null))
+                return;
+
+            if (!dictionary.ContainsKey(key) || !dictionary[key].Contains(value))
+                return;
+
+            dictionary[key].Remove(value);
+        }
+
+        public static bool IsEmpty<TKey, TValue>
+            (this IDictionary<TKey, List<TValue>> dictionary,
+                TKey key)
+        {
+            return dictionary.ContainsKey(key) && dictionary[key].Count == 0;
+        }
     }
 }
