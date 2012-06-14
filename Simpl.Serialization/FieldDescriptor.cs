@@ -10,6 +10,7 @@ using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Types;
+using Simpl.Serialization.PlatformSpecifics;
 
 namespace Simpl.Serialization
 {
@@ -29,7 +30,31 @@ namespace Simpl.Serialization
 
         [SimplScalar] private Type elementClass;
 
+        //generics
         [SimplScalar] private Boolean isGeneric;
+
+        ///<sumary>
+        ///<para>
+        ///if is null, this field is not a cloned one.
+        ///</para>
+        ///<para>
+        ///if not null, refers to the descriptor that this field is cloned from.
+        ///</para>
+        ///</sumary>
+        private FieldDescriptor clonedFrom;
+
+        ///<sumary>
+        ///<para>
+	    /// For composite or collection fields declared with generic type variables, this field stores the
+	    /// binding to the resolved generic type from the ClassDescriptor.
+	    /// </para>
+	    /// Note: this will require cloning this during inheritance, when subtypes instantiate the generic
+	    /// type var(s) with different values.
+	    ///</sumary>
+	    [SimplCollection("generic_type_var")] private List<GenericTypeVar> genericTypeVars;
+	
+	    private ClassDescriptor	genericTypeVarsContextCD;
+
 
         [SimplMap("polymorph_class_descriptor")] [SimplMapKeyField] private DictionaryList<String, ClassDescriptor>
             polymorphClassDescriptors;
@@ -124,7 +149,36 @@ namespace Simpl.Serialization
         {
             this.declaringClassDescriptor = declaringClassDescriptor;
             this.field = field;
+
             fieldType = field.FieldType.Name;
+
+            //generics
+            if (field.FieldType.IsGenericParameter || field.FieldType.IsGenericType)
+            {
+                Type realFieldType = field.FieldType;
+
+                while (realFieldType.IsGenericParameter)
+                {
+                    Type[] realFieldTypeConstraints = realFieldType.GetGenericParameterConstraints();
+
+                    if (realFieldTypeConstraints == null || realFieldTypeConstraints.Length == 0)
+                    {
+                        realFieldType = typeof(Object);
+                        break;
+                    }
+                    else
+                        realFieldType = realFieldTypeConstraints[0];
+                }
+
+                fieldType = realFieldType.Name;
+
+                if (realFieldType.IsGenericType)//can also be a generic parameter that extends a generic type
+                {
+                    int pos = fieldType.IndexOf('`');
+                    fieldType = fieldType.Substring(0, pos);
+                }
+            }
+
             if (XmlTools.IsAnnotationPresent(field, typeof (SimplMapKeyField)))
                 mapKeyFieldName =
                     ((SimplMapKeyField) XmlTools.GetAnnotation(field, typeof (SimplMapKeyField))).FieldName;
@@ -141,6 +195,10 @@ namespace Simpl.Serialization
 
             String fieldName = field.Name;
             StringBuilder capFieldName = new StringBuilder(fieldName);
+
+            //generics
+            Type genericType = field.DeclaringType;
+		    isGeneric = genericType.IsGenericType || genericType.IsGenericParameter;
         }
 
         private int DeriveNestedSerialization(FieldInfo thatField, int annotationType)
@@ -847,6 +905,57 @@ namespace Simpl.Serialization
             get { return _elementClassDescriptor; }
             set { _elementClassDescriptor = value; }
         }
+
+        //generics
+        public ClassDescriptor GenericTypeVarsContextCD
+        {
+            get { return genericTypeVarsContextCD; }
+            set { genericTypeVarsContextCD = value; }
+        }
+
+        ///<sumary>
+        ///lazy-evaluation method.
+        ///</sumary>
+        public List<GenericTypeVar> GetGenericTypeVars()
+	    {
+		    if (genericTypeVars == null)
+		    {
+				DeriveGenericTypeVariables();
+		    }
+
+		    return genericTypeVars;
+	    }
+
+        // added a setter to enable environment specific implementation -Fei
+        public void SetGenericTypeVars(List<GenericTypeVar> derivedGenericTypeVariables)
+	    {
+		    genericTypeVars = derivedGenericTypeVariables;
+	    }
+
+        public List<GenericTypeVar> GetGenericTypeVarsContext()
+        {
+            return genericTypeVarsContextCD.GetGenericTypeVars();
+        }
+
+        private void DeriveGenericTypeVariables()
+        {
+            FundamentalPlatformSpecifics.Get().DeriveFieldGenericTypeVars(this);
+        }
+
+        	/**
+	 * make a SHALLOW copy of this descriptor.
+	 */
+
+        public FieldDescriptor Clone()
+	    {
+		    FieldDescriptor cloned = null;
+
+            cloned = (FieldDescriptor) this.MemberwiseClone();
+			cloned.clonedFrom = this;
+
+		    return cloned;
+	    }
+
 
         #region Ignored FieldDescriptor
 

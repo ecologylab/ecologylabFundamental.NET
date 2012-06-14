@@ -291,7 +291,11 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public SimplType GetTypeBycSharpName(String cSharpName)
         {
-            return _typesBycSharpName[cSharpName];
+            if (_typesBycSharpName.ContainsKey(cSharpName))
+                return _typesBycSharpName[cSharpName];
+            else
+                //generics
+                return null;
         }
 
         /// <summary>
