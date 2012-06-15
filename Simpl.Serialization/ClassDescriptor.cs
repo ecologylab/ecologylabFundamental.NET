@@ -35,12 +35,6 @@ namespace Simpl.Serialization
         private readonly Type _describedClass;
 
         /// <summary>
-        ///     Holds the <c>String</c> tagName of the class described by this
-        ///     <c>ClassDescriptor</c>
-        /// </summary>
-        private readonly String _tagName;
-
-        /// <summary>
         ///     Holds the <c>String</c> simple name of the described class.
         /// </summary>
         private readonly String _describedClassSimpleName;
@@ -151,7 +145,6 @@ namespace Simpl.Serialization
             _describedClass = thatClass;
             _describedClassSimpleName = thatClass.Name;
             _describedClassPackageName = thatClass.Namespace;
-            _tagName = XmlTools.GetXmlTagName(thatClass, SimplTypesScope.STATE);
 
             //generics
             if (thatClass.IsGenericType)
@@ -168,7 +161,6 @@ namespace Simpl.Serialization
                     String tagName = _tagName.Substring(0, index);
 
                     this._tagName = tagName;
-                    base._tagName = tagName;
                 }
             }            
             
