@@ -14,9 +14,9 @@ namespace ecologylab.serialization
 		public OODSSMessages()
 		{ }
 
-		public static TranslationScope Get()
+		public static SimplTypesScope Get()
 		{
-			return TranslationScope.Get("OODSSMessages",
+            return SimplTypesScope.Get("OODSSMessages",
 				typeof(Pong),
 				typeof(ServiceMessage<object>),
 				typeof(InitConnectionRequest),
