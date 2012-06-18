@@ -6,6 +6,8 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
+using Simpl.Serialization.Attributes;
+
 namespace Simpl.OODSS.Messages 
 {
 	/// <summary>
