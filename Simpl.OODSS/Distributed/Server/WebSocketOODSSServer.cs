@@ -6,7 +6,7 @@ using Simpl.OODSS.Distributed.Impl;
 
 namespace Simpl.OODSS.Distributed.Server
 {
-    class WebSocketOODSSServer:AbstractServer,ServerMessages
+    class WebSocketOODSSServer:AbstractServer,IServerMessages
     {
     }
 }

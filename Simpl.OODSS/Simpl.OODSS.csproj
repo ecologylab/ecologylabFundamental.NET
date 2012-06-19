@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AsyncCtpLibrary">
+      <HintPath>C:\Users\fei\Documents\Microsoft Visual Studio Async CTP\Samples\AsyncCtpLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,6 +43,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Distributed\Client\ClientStatusListener.cs" />
+    <Compile Include="Distributed\Client\OODSSClient.cs" />
+    <Compile Include="Distributed\Client\ReconnectedBlocker.cs" />
+    <Compile Include="Distributed\Client\WebSocketOODSSClient.cs" />
+    <Compile Include="Distributed\Common\BaseStates.cs" />
+    <Compile Include="Distributed\Common\ClientConstants.cs" />
+    <Compile Include="Distributed\Common\NetworkConstants.cs" />
+    <Compile Include="Distributed\Common\ServerConstants.cs" />
+    <Compile Include="Distributed\Common\ServicesHostsAndPorts.cs" />
+    <Compile Include="Distributed\Common\SessionObjects.cs" />
+    <Compile Include="Distributed\Impl\AbstractServer.cs" />
+    <Compile Include="Distributed\Impl\Manager.cs" />
+    <Compile Include="Distributed\Impl\MessageWithMetadata.cs" />
+    <Compile Include="Distributed\Impl\MessageWithMetadataPool.cs" />
+    <Compile Include="Distributed\Impl\PreppedRequest.cs" />
+    <Compile Include="Distributed\Impl\PreppedRequestPool.cs" />
+    <Compile Include="Distributed\Impl\Shutdownable.cs" />
+    <Compile Include="Distributed\Server\ClientSessionManager\BaseSessionManager.cs" />
+    <Compile Include="Distributed\Server\ClientSessionManager\SessionHandle.cs" />
+    <Compile Include="Distributed\Server\ClientSessionManager\TCPClientSessionManager.cs" />
+    <Compile Include="Distributed\Server\ClientSessionManager\WebSocketClientSessionManager.cs" />
+    <Compile Include="Distributed\Server\IServerMessages.cs" />
+    <Compile Include="Distributed\Server\ServerProcessor.cs" />
+    <Compile Include="Distributed\Server\WebSocketOODSSServer.cs" />
+    <Compile Include="Exceptions\BadClientException.cs" />
+    <Compile Include="Exceptions\ClientOfflineException.cs" />
+    <Compile Include="Exceptions\MessageTooLargeException.cs" />
+    <Compile Include="Exceptions\SaveFailedException.cs" />
     <Compile Include="Logging\Epilogue.cs" />
     <Compile Include="Logging\LogEvent.cs" />
     <Compile Include="Logging\LogOps.cs" />
@@ -65,10 +96,10 @@
     <Compile Include="Messages\Pong.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
+    <Compile Include="Messages\SendableRequest.cs" />
     <Compile Include="Messages\ServiceMessage.cs" />
     <Compile Include="Messages\UpdateMessage.cs" />
     <Compile Include="Messages\UrlMessage.cs" />
-    <Compile Include="OODSSClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tscope\OODSSMessages.cs" />
   </ItemGroup>
@@ -82,6 +113,7 @@
       <Name>Simpl.Serialization</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -10,11 +10,11 @@ namespace Simpl.OODSS.Distributed.Common
         /// <summary>
         /// Number of reconnect attempts to make before giving up.
         /// </summary>
-        const int ReconnectAttempts = 50;
+        static readonly int ReconnectAttempts = 50;
 
         /// <summary>
         /// Number of milliseconds to sleep between attempts to reconnect.
         /// </summary>
-        const int WaitBetweenReconnectAttempts = 3000;
+        static readonly int WaitBetweenReconnectAttempts = 3000;
     }
 }

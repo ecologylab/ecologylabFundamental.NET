@@ -18,7 +18,7 @@ namespace ecologylab.serialization
 		{
             return SimplTypesScope.Get("OODSSMessages",
 				typeof(Pong),
-				typeof(ServiceMessage<object>),
+				typeof(ServiceMessage),
 				typeof(InitConnectionRequest),
 				typeof(LogEvent),
 				typeof(SendEpilogue),

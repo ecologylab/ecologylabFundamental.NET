@@ -10,7 +10,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 {
     public class SessionHandle
     {
-        private BaseSessionManager<Object> SessionManager { get; set; }
+        private BaseSessionManager<Scope<Object>,Scope<Object>> SessionManager { get; set; }
 
         public IPEndPoint GetSocketAddress()
         {
@@ -27,14 +27,14 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             return GetSocketAddress().Port;
         }
 
-        public void SendUpdate<T>(UpdateMessage<T> update)
+        public void SendUpdate<TScope>(UpdateMessage<TScope> update) where TScope : Scope<object>
         {
             SessionManager.SendUpdateToClient(update);
         }
 
-        public Scope<T> GetSessionScope<T>()
+        public Scope<Object> GetSessionScope()
         {
-            return SessionManager.GetScope<T>();
+            return SessionManager.GetScope();
         }
 
         public void Invalidate()

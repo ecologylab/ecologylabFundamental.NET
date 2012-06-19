@@ -11,7 +11,7 @@ using Simpl.Fundamental.Net;
 
 namespace Simpl.OODSS.Distributed.Impl
 {
-    abstract class AbstractServer<S, T>:Manager where S:Scope<T>
+    abstract class AbstractServer<S>:Manager where S:Scope<Object>
     {
         protected SimplTypesScope TranslationScope { get; set; }
 
