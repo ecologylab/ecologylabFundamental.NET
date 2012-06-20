@@ -13,12 +13,32 @@ namespace Simpl.OODSS.Distributed.Common
     /// </summary>
     static class SessionObjects
     {
-        public static readonly string MAIN_START_AND_STOPPABLE = "main_start_and_stoppable";
+        public static readonly string MainStartAndStoppable = "main_start_and_stoppable";
 
-        public static readonly string MAIN_SHUTDOWNABLE = "main_shutdownable";
+        public static readonly string MainShutdownable = "main_shutdownable";
 
-        public static readonly SimplTypesScope BROWSER_SERVICES_TRANSLATIONS = OODSSMessages.Get(); ???
+        public static readonly SimplTypesScope BrowserServicesTranslations = OODSSMessages.Get(); //TODO: is this correct? 
 
-        
+        public static readonly string Logging = "logging";
+
+        public static readonly string TopLevel = "top_level";
+
+        public static readonly string NamedStylesMap = "named_styles_map";
+
+        public static readonly string InterestModelSource = "interest_model_source";
+
+        public static readonly string GraphicsConiguration = "greaphics_configuration";
+
+        public static readonly string SessionsMap = "sessions_map";
+
+        public static readonly string SessionHandle = "SESSION_HANDLE";
+
+        public static readonly string ApplicationEnvironment = "application_environment";
+
+        public static readonly string SessionId = "session_id";
+
+        public static readonly string SessionsMapBySessionId = "sessions_map_by_session_id";
+
+        public static readonly string WebSocketOODSSServer = "oodss_websocket_server";
     }
 }

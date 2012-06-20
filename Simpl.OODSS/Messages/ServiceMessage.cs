@@ -9,7 +9,7 @@ namespace Simpl.OODSS.Messages
 	/// <summary>
     /// Abstract base class for ecologylab.oodss DCF request and response messages.
 	/// </summary>
-	public class ServiceMessage<S> : ElementState where S:Scope<Object>
+	public class ServiceMessage<TScope> : ElementState where TScope:Scope<Object>
 	{
         public ServiceMessage()
         { }

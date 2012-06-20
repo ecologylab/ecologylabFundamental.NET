@@ -4,11 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Simpl.OODSS.Messages;
+using Simpl.Serialization;
 using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 {
-    public abstract class BaseSessionManager<S, P> where S:Scope<Object> where P:Scope<Object>
+    public abstract class BaseSessionManager<TScope, TParentScope> 
+        where TScope:Scope<Object> 
+        where TParentScope:Scope<Object>
     {
         /// <summary>
         /// Indicates whether or not one or more messages are queued for execution by this ContextManager.
@@ -22,9 +25,12 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         protected string SessionId = null;
 
-        protected S LocalScope;
+        protected TScope LocalScope;
 
         protected long LastActivity = DateTime.Now.Ticks;
+
+        //TODO: selectionKey
+        // java: protected SelectionKey				socketKey;
 
         /// <summary>
         /// The frontend for the server that is running the ContextManager. This is needed in case the
@@ -50,7 +56,9 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         public static readonly string CLIENT_MANAGER = "CLIENT_MANAGER";
 
-        public BaseSessionManager(String sessionId, ServerProcessor frontend, P baseScope)
+        protected SimplTypesScope TranslationScope;
+
+        public BaseSessionManager(String sessionId, ServerProcessor frontend, TParentScope baseScope)
         {
             FrontEnd = frontend;
             SessionId = sessionId;
@@ -61,6 +69,13 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             LocalScope.Add(CLIENT_MANAGER, this);
         }
 
+        public BaseSessionManager(string sessionId, SimplTypesScope translationScope, TScope applicationObjectScope)
+        {
+            SessionId = sessionId;
+            LocalScope = applicationObjectScope;
+            TranslationScope = translationScope;
+        }
+
         /// <summary>
         /// Provides the context scope for the client attached to this session manager. The base
 	    /// implementation instantiates a new Scope<?> with baseScope as the argument. Subclasses may
@@ -69,9 +84,9 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// </summary>
         /// <param name="baseScope"></param>
         /// <returns></returns>
-        private S GenerateContextScope(P baseScope)
+        private TScope GenerateContextScope(TParentScope baseScope)
         {
-            return (S) new Scope<Object>(baseScope);
+            return (TScope) new Scope<Object>(baseScope);
         }
 
         /// <summary>
@@ -85,7 +100,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// <param name="requestMessage"></param>
         /// <param name="ipAddress"></param>
         /// <returns></returns>
-        protected ResponseMessage<S> PerformService(RequestMessage<S> requestMessage, IPAddress ipAddress)
+        protected ResponseMessage<TScope> PerformService(RequestMessage<TScope> requestMessage, IPAddress ipAddress)
         {
             requestMessage.Sender = ipAddress;
 
@@ -106,10 +121,10 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// <param name="request">- the request message to process.</param>
         /// <param name="ipAddress"></param>
         /// <returns></returns>
-        protected ResponseMessage<S> ProcessRequest(RequestMessage<S> request, IPAddress ipAddress)
+        protected ResponseMessage<TScope> ProcessRequest(RequestMessage<TScope> request, IPAddress ipAddress)
         {
             LastActivity = DateTime.Now.Ticks;
-            ResponseMessage<S> response = null;
+            ResponseMessage<TScope> response = null;
 
             if (request == null)
             {
@@ -120,25 +135,25 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
                 if (!Initialized)
                 {
                     // special processing for InitConnectionRequest
-                    if (request is InitConnectionRequest<S>)
+                    if (request is InitConnectionRequest<TScope>)
                     {
-                        string incomingSessionId = ((InitConnectionRequest<S>) request).SessionId;
+                        string incomingSessionId = ((InitConnectionRequest<TScope>) request).SessionId;
 
                         if (incomingSessionId == null)
                         {
                             // client is not expecting an old ContextManager
-                            response = new InitConnectionResponse<S>(SessionId);
+                            response = new InitConnectionResponse<TScope>(SessionId);
                         }
                         else
                         {
                             // client is expecting an old ContextManager
                             if (FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, this))
                             {
-                                response = new InitConnectionResponse<S>(incomingSessionId);
+                                response = new InitConnectionResponse<TScope>(incomingSessionId);
                             }
                             else
                             {
-                                response = new InitConnectionResponse<S>(SessionId);
+                                response = new InitConnectionResponse<TScope>(SessionId);
                             }
                         }
 
@@ -168,11 +183,24 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             return LastActivity;
         }
 
+        /// <summary>
+        /// Indicates whether there are any messages queued up to be processed.
+	    ///
+	    /// isMessageWaiting() should be overridden if getNextRequest() is overridden so that it properly
+	    /// reflects the way that getNextRequest() works; it may also be important to override
+	    /// enqueueRequest().
+        /// </summary>
+        /// <returns>true if getNextRequest() can return a value, false if it cannot.</returns>
         public bool IsMessageWaiting()
         {
             return MessageWaiting;
         }
 
+        /// <summary>
+        /// Indicates whether or not this context manager has been initialized. Normally, this means that
+	    /// it has shared a session id with the client.
+        /// </summary>
+        /// <returns></returns>
         public bool IsInitialized()
         {
             return Initialized;
@@ -180,7 +208,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         public abstract IPEndPoint GetAddress();
 
-        public abstract void SendUpdateToClient<TScope>(UpdateMessage<TScope> update) where TScope : Scope<object>;
+        public abstract void SendUpdateToClient(UpdateMessage<TScope> update);
 
         public Scope<Object> GetScope()
         {
@@ -206,7 +234,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// Hook method for having shutdown behavior.
         /// This method is called whenever the server is closing down the connection to this client.
         /// </summary>
-        public void shutdown()
+        public void Shutdown()
         {
         }
     } 

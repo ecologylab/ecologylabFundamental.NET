@@ -10,6 +10,13 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 {
     public class SessionHandle
     {
+        private TCPClientSessionManager<S, P> tCPClientSessionManager;
+
+        public SessionHandle(TCPClientSessionManager<S, P> tCPClientSessionManager)
+        {
+            // TODO: Complete member initialization
+            this.tCPClientSessionManager = tCPClientSessionManager;
+        }
         private BaseSessionManager<Scope<Object>,Scope<Object>> SessionManager { get; set; }
 
         public IPEndPoint GetSocketAddress()
