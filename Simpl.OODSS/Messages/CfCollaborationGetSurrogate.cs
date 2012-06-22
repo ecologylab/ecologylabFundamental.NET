@@ -8,6 +8,7 @@
 
 using System;
 using Simpl.Serialization.Attributes;
+using ecologylab.collections;
 
 namespace Simpl.OODSS.Messages
 {
@@ -15,7 +16,7 @@ namespace Simpl.OODSS.Messages
     /// missing java doc comments or could not find the source file.
     /// </summary>
     [SimplInherit]
-    public class CfCollaborationGetSurrogate : RequestMessage<ServiceMessage<object>>
+    public class CfCollaborationGetSurrogate : RequestMessage
     {
         /// <summary>
         /// missing java doc comments or could not find the source file.
@@ -28,6 +29,11 @@ namespace Simpl.OODSS.Messages
         {
             get { return _surrogateSetString; }
             set { _surrogateSetString = value; }
+        }
+
+        public override ResponseMessage PerformService(Scope<object> clientSessionScope)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,7 +5,7 @@ using ecologylab.collections;
 namespace Simpl.OODSS.Messages 
 {
 	[SimplInherit]
-	public abstract class RequestMessage<S> : ServiceMessage<S>, ISendableRequest where S : Scope<object>
+	public abstract class RequestMessage : ServiceMessage, ISendableRequest
 	{
 		public RequestMessage()
 		{
@@ -16,7 +16,7 @@ namespace Simpl.OODSS.Messages
         /// </summary>
         /// <param name="clientSessionScope">Context to perform it in/with.</param>
         /// <returns>Response to pass back to the (remote) caller.</returns>
-	    public abstract ResponseMessage<S> PerformService(S clientSessionScope);
+	    public abstract ResponseMessage PerformService(Scope<object> clientSessionScope);
 
         /// <summary>
         /// Indicates whether or not this type of message may be ignored by the server, if the server
@@ -41,7 +41,7 @@ namespace Simpl.OODSS.Messages
         /// <param name="clientSessionScope">
         /// Can be used to generate HTTP GET style arguments in the redirect URL.</param>
         /// <returns>null in this the base class case.</returns>
-        public ParsedUri OkRedirectUri(S clientSessionScope)
+        public ParsedUri OkRedirectUri(Scope<object> clientSessionScope)
         {
             return null;
         }
@@ -55,7 +55,7 @@ namespace Simpl.OODSS.Messages
         /// <param name="clientSessionScope">
         /// Can be used to generate HTTP GET style arguments in the redirect URL.</param>
         /// <returns>null in this the base class case.</returns>
-        public ParsedUri ErrorRedirectUri(S clientSessionScope)
+        public ParsedUri ErrorRedirectUri(Scope<object> clientSessionScope)
         {
             return null;
         }

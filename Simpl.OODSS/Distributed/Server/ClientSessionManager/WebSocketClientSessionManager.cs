@@ -10,21 +10,19 @@ using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 {
-    class WebSocketClientSessionManager<TScope,TParentScope> : BaseSessionManager<TScope,TParentScope> 
-        where TScope : Scope<object> 
-        where TParentScope : Scope<object>
+    public class WebSocketClientSessionManager: BaseSessionManager
     {
-        public WebSocketClientSessionManager(string sessionId, ServerProcessor frontend, TParentScope baseScope)
+        public WebSocketClientSessionManager(string sessionId, ServerProcessor frontend, Scope<object> baseScope)
             : base(sessionId, frontend, baseScope)
         {
         }
 
-        public WebSocketClientSessionManager(string seesionId, SimplTypesScope translationScope, TScope applicationObjectScope)
+        public WebSocketClientSessionManager(string seesionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope)
             : base(seesionId, translationScope , applicationObjectScope)
         {
         }
 
-        protected ResponseMessage<TScope> PerformService(RequestMessage<TScope> requestMessage)
+        protected ResponseMessage PerformService(RequestMessage requestMessage)
         {
             try
             {
@@ -37,11 +35,11 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             }
         }
 
-        public ResponseMessage<TScope> ProcessRequest(RequestMessage<TScope> requestMessage)
+        public ResponseMessage ProcessRequest(RequestMessage requestMessage)
         {
             LastActivity = DateTime.Now.Ticks;
 
-            ResponseMessage<TScope> response = null;
+            ResponseMessage response = null;
 
             if (requestMessage == null)
             {
@@ -54,22 +52,22 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             return response;
         }
 
-        public override void SendUpdateToClient(UpdateMessage<TScope> update)
+        public override void SendUpdateToClient(UpdateMessage update)
         {
             throw new NotImplementedException();
         }
 
-        public void SendUpdateToClient(UpdateMessage<TScope> update, string receivingSessionId)
+        public void SendUpdateToClient(UpdateMessage update, string receivingSessionId)
         {
             Console.WriteLine("Send Update Message Please");
             WebSocketOODSSServer server = (WebSocketOODSSServer) LocalScope.Get(SessionObjects.WebSocketOODSSServer);
             server.SendUpdateMessage(receivingSessionId, update);
         }
 
-        public RequestMessage<TScope> TranslateOODSSRequestJSON(string messageCharSequence)
+        public RequestMessage TranslateOODSSRequestJSON(string messageCharSequence)
         {
-            RequestMessage<TScope> requestMessage =
-                (RequestMessage<TScope>) TranslationScope.Deserialize(messageCharSequence, StringFormat.Json);
+            RequestMessage requestMessage =
+                (RequestMessage) TranslationScope.Deserialize(messageCharSequence, StringFormat.Json);
 
             return requestMessage;
         }

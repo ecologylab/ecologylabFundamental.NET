@@ -8,5 +8,13 @@ namespace Simpl.OODSS.Distributed.Impl
 {
     class MessageWithMetadataPool:ResourcePool<MessageWithMetadataPool>
     {
+        public MessageWithMetadataPool(int initialCapacity) : base(initialCapacity)
+        {
+        }
+
+        protected override MessageWithMetadataPool GenerateNewResource()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

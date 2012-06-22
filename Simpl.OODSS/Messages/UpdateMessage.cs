@@ -7,19 +7,17 @@ namespace Simpl.OODSS.Messages
     /// Abstract base class for asynchronous server-to-client updates.
 	/// </summary>
 	[SimplInherit]
-	public abstract class UpdateMessage<S> : ServiceMessage<S> where S : Scope<object>
+	public abstract class UpdateMessage : ServiceMessage
 	{
 		public UpdateMessage()
 		{
 		}
 
-        /// <summary>
-        /// Allows for custom processing of ResponseMessages by ServicesClient,
-        /// without extending that.
-        /// </summary>
-        /// <param name="objectRegistry">provide a context for response message processing.</param>
-        public void ProcessUpdate (S objectRegistry)
-        {
-        }
+	    /// <summary>
+	    /// Allows for custom processing of ResponseMessages by ServicesClient,
+	    /// without extending that.
+	    /// </summary>
+	    /// <param name="objectRegistry">provide a context for response message processing.</param>
+	    public abstract void ProcessUpdate(Scope<object> objectRegistry);
 	}
 }

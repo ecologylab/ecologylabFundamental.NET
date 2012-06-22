@@ -14,9 +14,14 @@ namespace Simpl.OODSS.Messages
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
 	[SimplInherit]
-    public class Pong : ResponseMessage<ServiceMessage<object>>
+    public class Pong : ResponseMessage
 	{
 		public Pong()
 		{ }
+
+	    public override bool IsOK()
+	    {
+	        throw new System.NotImplementedException();
+	    }
 	}
 }

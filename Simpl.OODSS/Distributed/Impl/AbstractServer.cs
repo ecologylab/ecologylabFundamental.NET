@@ -11,11 +11,11 @@ using Simpl.Fundamental.Net;
 
 namespace Simpl.OODSS.Distributed.Impl
 {
-    abstract class AbstractServer<TScope>:Manager where TScope:Scope<Object>
+    public abstract class AbstractServer:Manager
     {
         protected SimplTypesScope TranslationScope { get; set; }
 
-        protected TScope ApplicationObjectScope { get; set; }
+        protected Scope<object> ApplicationObjectScope { get; set; }
 
         /// <summary>
         /// Creates an instance of an NIOServer of some flavor. Creates the backend using the information
@@ -28,8 +28,8 @@ namespace Simpl.OODSS.Distributed.Impl
         /// <param name="objectRegistry"></param>
         /// <param name="idleConnectionTimeout"></param>
         /// <param name="maxMessageLength"></param>
-        protected AbstractServer(int portNumber, IPAddress[] ipAddresses, 
-            SimplTypesScope requestTranslationScope, TScope objectRegistry, int idleConnectionTimeout,
+        protected AbstractServer(int portNumber, IPAddress[] ipAddresses,
+            SimplTypesScope requestTranslationScope, Scope<object> objectRegistry, int idleConnectionTimeout,
             int maxMessageLength) 
         {
             Console.WriteLine("setting up server...");
@@ -37,7 +37,7 @@ namespace Simpl.OODSS.Distributed.Impl
             ApplicationObjectScope = objectRegistry;
         }
 
-        static readonly Type[] _ourTranslation = {typeof (InitConnectionRequest<TScope>)};
+        static readonly Type[] _ourTranslation = {typeof (InitConnectionRequest)};
 
         public static SimplTypesScope ComposeTranslations(int portNumber, IPAddress ipAddress, 
             SimplTypesScope requestTranslationSpace)
@@ -53,17 +53,17 @@ namespace Simpl.OODSS.Distributed.Impl
                                        newTranslations);
         }
 
-        protected AbstractServer(int portNumber, IPAddress ipAddress, SimplTypesScope requestTranslationSpace, 
-                TScope objectRegistry, int idleConnectionTimeout, int maxMessageLength)
+        protected AbstractServer(int portNumber, IPAddress ipAddress, SimplTypesScope requestTranslationSpace,
+                Scope<object> objectRegistry, int idleConnectionTimeout, int maxMessageLength)
             :this(portNumber, NetTools.WrapSingleAddress(ipAddress), requestTranslationSpace, 
                 objectRegistry, idleConnectionTimeout, maxMessageLength)
         {
         }
 
-        protected abstract WebSocketClientSessionManager<TScope, TParentScope> GenerateContextManager<TParentScope>(string seesionId,
+        protected abstract WebSocketClientSessionManager GenerateContextManager(string seesionId,
                                                                                 SelectionKey sk,
                                                                                 SimplTypesScope translationScope,
-                                                                                Scope<Object> globalScope) where TParentScope:Scope<Object>;
+                                                                                Scope<Object> globalScope);
 
         public Scope<Object> GetGlobalScope()
         {

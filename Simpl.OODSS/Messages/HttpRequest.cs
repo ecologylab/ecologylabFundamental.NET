@@ -8,6 +8,7 @@
 
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Attributes;
+using ecologylab.collections;
 
 namespace Simpl.OODSS.Messages 
 {
@@ -15,7 +16,7 @@ namespace Simpl.OODSS.Messages
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
 	[SimplInherit]
-    public class HttpRequest : RequestMessage<ServiceMessage<object>>
+    public class HttpRequest : RequestMessage
 	{
 		/// <summary>
 		/// missing java doc comments or could not find the source file.
@@ -43,5 +44,10 @@ namespace Simpl.OODSS.Messages
 			get{return _errorResponseUrl;}
 			set{_errorResponseUrl = value;}
 		}
+
+	    public override ResponseMessage PerformService(Scope<object> clientSessionScope)
+	    {
+	        throw new System.NotImplementedException();
+	    }
 	}
 }

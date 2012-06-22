@@ -8,7 +8,7 @@ namespace Simpl.OODSS.Messages
     /// Base class for all ResponseMessages that indicate errors.
 	/// </summary>
 	[SimplInherit]
-    public class ErrorResponse<S> : ExplanationResponse<S> where S : Scope<object>
+    public class ErrorResponse : ExplanationResponse
 	{
 		public ErrorResponse()
 		{ }

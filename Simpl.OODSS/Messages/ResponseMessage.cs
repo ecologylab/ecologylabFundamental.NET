@@ -7,7 +7,7 @@ namespace Simpl.OODSS.Messages
     /// Abstract base class for ecologylab.oodss DCF response messages.
 	/// </summary>
 	[SimplInherit]
-	public abstract class ResponseMessage<S> : ServiceMessage<S> where S : Scope<object>
+	public abstract class ResponseMessage : ServiceMessage
 	{
 		public ResponseMessage()
 		{
@@ -25,7 +25,7 @@ namespace Simpl.OODSS.Messages
         /// </summary>
         /// <param name="objectRegistry">
         /// provide a context for response message processing.</param>
-	    public void ProcessResponse(S objectRegistry)
+	    public void ProcessResponse(Scope<object> objectRegistry)
 	    {
 	    }
 	}

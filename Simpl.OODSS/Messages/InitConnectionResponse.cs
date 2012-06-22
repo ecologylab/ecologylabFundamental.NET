@@ -9,7 +9,7 @@ namespace Simpl.OODSS.Messages
     /// the server-assigned session identifier. If the connection failed, sessionId will be null.
 	/// </summary>
 	[SimplInherit]
-	public class InitConnectionResponse<S> : ResponseMessage<S> where S : Scope<object>
+	public class InitConnectionResponse : ResponseMessage
 	{
         /// <summary>
         /// The session identifier used for all communications between this client and the server. If the

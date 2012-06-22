@@ -11,7 +11,7 @@ namespace Simpl.OODSS.Distributed.Common
     /// Constants that define general ecologylab objects that get stored in the
     /// Session ObjectRegistry.
     /// </summary>
-    static class SessionObjects
+    public static class SessionObjects
     {
         public static readonly string MainStartAndStoppable = "main_start_and_stoppable";
 

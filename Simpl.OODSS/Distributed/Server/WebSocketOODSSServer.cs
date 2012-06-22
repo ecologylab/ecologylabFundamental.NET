@@ -7,23 +7,23 @@ using Simpl.Fundamental.Generic;
 using Simpl.OODSS.Distributed.Common;
 using Simpl.OODSS.Distributed.Impl;
 using Simpl.OODSS.Distributed.Server.ClientSessionManager;
+using Simpl.OODSS.Messages;
 using Simpl.Serialization;
 using SuperWebSocket;
 using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Server
 {
-    class WebSocketOODSSServer<TScope> : AbstractServer<TScope>, IServerMessages 
-        where TScope:Scope<Object>
+    public class WebSocketOODSSServer : AbstractServer, IServerMessages 
     {
         #region Data Members
 
         public WebSocketServer WebSocketServer;
 
-        private DictionaryList<object, WebSocketClientSessionManager<TScope,Scope<Object>>>
-            ClientSessionManagerMap = new DictionaryList<object, WebSocketClientSessionManager<TScope, Scope<Object>>>();
+        private DictionaryList<object, WebSocketClientSessionManager>
+            ClientSessionManagerMap = new DictionaryList<object, WebSocketClientSessionManager>();
 
-        private Dictionary<string, WebSocketClientSessionManager<TScope, Scope<Object>>> _sessionForSessionIdMap;
+        private Dictionary<string, WebSocketClientSessionManager> _sessionForSessionIdMap;
 
         private DictionaryList<object, SessionHandle> ClientSessionHandleMap = new DictionaryList<object, SessionHandle>();
 
@@ -33,9 +33,9 @@ namespace Simpl.OODSS.Distributed.Server
 
         protected int MaxMessageSize;
 
-        private static WebSocketOODSSServer<TScope> _serverInstance;
+        private static WebSocketOODSSServer _serverInstance;
 
-        public static WebSocketOODSSServer<TScope> ServerInstance
+        public static WebSocketOODSSServer ServerInstance
         {
             get
             {
@@ -48,7 +48,7 @@ namespace Simpl.OODSS.Distributed.Server
         #endregion Data Members
 
         #region Constructor
-        public WebSocketOODSSServer(SimplTypesScope requestTranslationScope, TScope applicationObjectScope,
+        public WebSocketOODSSServer(SimplTypesScope requestTranslationScope, Scope<object> applicationObjectScope,
 			int idleConnectionTimeout, int maxMessageSize)
             :base(0, Dns.GetHostAddresses(Dns.GetHostName()), requestTranslationScope, applicationObjectScope, 
             idleConnectionTimeout, maxMessageSize)
@@ -61,7 +61,7 @@ namespace Simpl.OODSS.Distributed.Server
 
             InstantiateBufferPools(MaxMessageSize);
 
-            _sessionForSessionIdMap = new Dictionary<string, WebSocketClientSessionManager<TScope, Scope<object>>>();
+            _sessionForSessionIdMap = new Dictionary<string, WebSocketClientSessionManager>();
             applicationObjectScope.Add(SessionObjects.SessionsMapBySessionId, _sessionForSessionIdMap);
 
             _serverInstance = this;
@@ -80,20 +80,20 @@ namespace Simpl.OODSS.Distributed.Server
             if (bytesRead > 0)
             {
                 // synchronized
-                WebSocketClientSessionManager<TScope, TParentScope> cm =
-                    (WebSocketClientSessionManager<TScope, TParentScope>) ClientSessionManagerMap.Get(sessionToken);
+                WebSocketClientSessionManager cm =
+                    (WebSocketClientSessionManager) ClientSessionManagerMap.Get(sessionToken);
 
                 if (cm == null)
                 {
                     Console.WriteLine("server creating context manager for " + sessionToken);
-                    ClientSessionManagerMap.Put<TParentScope>(sessionToken, cm);
+                    ClientSessionManagerMap.Put(sessionToken, cm);
                 }
 
                 // synchronized notify.
             }
         }
 
-        internal void SendUpdateMessage(string receivingSessionId, Messages.UpdateMessage<TScope> update)
+        internal void SendUpdateMessage(string receivingSessionId, Messages.UpdateMessage update)
         {
             throw new NotImplementedException();
         }
@@ -103,9 +103,8 @@ namespace Simpl.OODSS.Distributed.Server
             Console.WriteLine("Shutdown Impl");
         }
 
-        protected override WebSocketClientSessionManager<TScope, TParentScope> GenerateContextManager<TParentScope>(
+        protected override WebSocketClientSessionManager GenerateContextManager(
             string seesionId, SelectionKey sk, SimplTypesScope translationScope, Scope<object> globalScope) 
-            where TParentScope : Scope<object>
         {
             throw new NotImplementedException();
         }
@@ -115,9 +114,35 @@ namespace Simpl.OODSS.Distributed.Server
             WebSocketServer = (WebSocketServer) o;
         }
 
-        public string GetAPushFromWebSocket(string requestMessage, string sessionId)
+        public string GetAPushFromWebSocket(string requestString, string sessionId) 
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Just got GetAPushFromWebSocket: " + requestString);
+            ApplicationObjectScope.Add(SessionObjects.SessionId, sessionId);
+
+            WebSocketClientSessionManager theClientSessionManager = null;
+            if (_sessionForSessionIdMap.ContainsKey(sessionId))
+            {
+                theClientSessionManager = _sessionForSessionIdMap.Get(sessionId);
+            }
+            else
+            {
+                theClientSessionManager 
+                    = new WebSocketClientSessionManager(sessionId, TranslationScope, ApplicationObjectScope);
+                _sessionForSessionIdMap.Add(sessionId,theClientSessionManager);
+            }
+
+            RequestMessage requestMessage = null;
+            try
+            {
+                requestMessage = theClientSessionManager.TranslateOODSSRequestJSON(requestString);
+            }
+            catch(Exception e)
+            {
+            }
+            ResponseMessage responseMessage = theClientSessionManager.ProcessRequest(requestMessage);
+            StringBuilder pJSON = new StringBuilder();
+            SimplTypesScope.Serialize(responseMessage, pJSON, StringFormat.Json);
+            return pJSON.ToString();
         }
 
         public void NewClientAdded(string sessionId)
@@ -127,7 +152,7 @@ namespace Simpl.OODSS.Distributed.Server
 
         public bool Invalidate(string sessionId, bool forcePermanent)
         {
-            WebSocketClientSessionManager<TScope, TParentScope> cm = ClientSessionHandleMap.Get(sessionId);
+            WebSocketClientSessionManager cm = ClientSessionHandleMap.Get(sessionId);
 
             bool permanent = (forcePermanent ? true : (cm == null ? true : cm.IsInvalidating()));
 

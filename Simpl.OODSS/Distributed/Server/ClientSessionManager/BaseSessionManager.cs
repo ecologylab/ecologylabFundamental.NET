@@ -9,9 +9,7 @@ using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 {
-    public abstract class BaseSessionManager<TScope, TParentScope> 
-        where TScope:Scope<Object> 
-        where TParentScope:Scope<Object>
+    public abstract class BaseSessionManager
     {
         /// <summary>
         /// Indicates whether or not one or more messages are queued for execution by this ContextManager.
@@ -23,9 +21,12 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// </summary>
         protected SessionHandle Handle;
 
-        protected string SessionId = null;
+        protected string _sessionId = null;
 
-        protected TScope LocalScope;
+        public string SessionId { get; private set; }
+
+
+        protected Scope<object> LocalScope;
 
         protected long LastActivity = DateTime.Now.Ticks;
 
@@ -58,10 +59,10 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         protected SimplTypesScope TranslationScope;
 
-        public BaseSessionManager(String sessionId, ServerProcessor frontend, TParentScope baseScope)
+        public BaseSessionManager(String sessionId, ServerProcessor frontend, Scope<object> baseScope)
         {
             FrontEnd = frontend;
-            SessionId = sessionId;
+            sessionId = sessionId;
 
             LocalScope = GenerateContextScope(baseScope);
 
@@ -69,9 +70,9 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             LocalScope.Add(CLIENT_MANAGER, this);
         }
 
-        public BaseSessionManager(string sessionId, SimplTypesScope translationScope, TScope applicationObjectScope)
+        public BaseSessionManager(string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope)
         {
-            SessionId = sessionId;
+            sessionId = sessionId;
             LocalScope = applicationObjectScope;
             TranslationScope = translationScope;
         }
@@ -84,9 +85,9 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// </summary>
         /// <param name="baseScope"></param>
         /// <returns></returns>
-        private TScope GenerateContextScope(TParentScope baseScope)
+        private Scope<object> GenerateContextScope(Scope<object> baseScope)
         {
-            return (TScope) new Scope<Object>(baseScope);
+            return (Scope<object>)new Scope<Object>(baseScope);
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// <param name="requestMessage"></param>
         /// <param name="ipAddress"></param>
         /// <returns></returns>
-        protected ResponseMessage<TScope> PerformService(RequestMessage<TScope> requestMessage, IPAddress ipAddress)
+        protected ResponseMessage PerformService(RequestMessage requestMessage, IPAddress ipAddress)
         {
             requestMessage.Sender = ipAddress;
 
@@ -121,10 +122,10 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// <param name="request">- the request message to process.</param>
         /// <param name="ipAddress"></param>
         /// <returns></returns>
-        protected ResponseMessage<TScope> ProcessRequest(RequestMessage<TScope> request, IPAddress ipAddress)
+        protected ResponseMessage ProcessRequest(RequestMessage request, IPAddress ipAddress)
         {
             LastActivity = DateTime.Now.Ticks;
-            ResponseMessage<TScope> response = null;
+            ResponseMessage response = null;
 
             if (request == null)
             {
@@ -135,25 +136,25 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
                 if (!Initialized)
                 {
                     // special processing for InitConnectionRequest
-                    if (request is InitConnectionRequest<TScope>)
+                    if (request is InitConnectionRequest)
                     {
-                        string incomingSessionId = ((InitConnectionRequest<TScope>) request).SessionId;
+                        string incomingSessionId = ((InitConnectionRequest) request).SessionId;
 
                         if (incomingSessionId == null)
                         {
                             // client is not expecting an old ContextManager
-                            response = new InitConnectionResponse<TScope>(SessionId);
+                            response = new InitConnectionResponse(_sessionId);
                         }
                         else
                         {
                             // client is expecting an old ContextManager
                             if (FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, this))
                             {
-                                response = new InitConnectionResponse<TScope>(incomingSessionId);
+                                response = new InitConnectionResponse(incomingSessionId);
                             }
                             else
                             {
-                                response = new InitConnectionResponse<TScope>(SessionId);
+                                response = new InitConnectionResponse(_sessionId);
                             }
                         }
 
@@ -208,7 +209,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         public abstract IPEndPoint GetAddress();
 
-        public abstract void SendUpdateToClient(UpdateMessage<TScope> update);
+        public abstract void SendUpdateToClient(UpdateMessage update);
 
         public Scope<Object> GetScope()
         {
@@ -227,7 +228,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         public String GetSessionId()
         {
-            return SessionId;
+            return _sessionId;
         }
 
         /// <summary>

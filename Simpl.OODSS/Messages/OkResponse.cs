@@ -7,16 +7,16 @@ namespace Simpl.OODSS.Messages
     /// Base class for all ResponseMessages that were processed successfully.
 	/// </summary>
 	[SimplInherit]
-	public class OkResponse<S> : ResponseMessage<S> where S : Scope<object>
+	public class OkResponse: ResponseMessage
 	{
-        public static readonly OkResponse<S> reusableInstance = new OkResponse<S>(); 
+        public static readonly OkResponse ReusableInstance = new OkResponse(); 
 
 		public OkResponse()
 		{ }
 
-	    public static OkResponse<S> Get()
+	    public static OkResponse Get()
 	    {
-	        return reusableInstance;
+	        return ReusableInstance;
 	    }
 
 	    public override bool IsOK()

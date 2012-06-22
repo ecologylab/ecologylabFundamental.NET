@@ -15,7 +15,7 @@ namespace Simpl.OODSS.Messages
     /// </summary>
     /// <typeparam name="S"></typeparam>
 	[SimplInherit]
-	public class InitConnectionRequest<S> : RequestMessage<S> where S : Scope<object>
+	public class InitConnectionRequest : RequestMessage
 	{
 		[SimplScalar]
 		protected String sessionId;
@@ -40,7 +40,7 @@ namespace Simpl.OODSS.Messages
         /// </summary>
         /// <param name="clientSessionScope"></param>
         /// <returns></returns>
-	    public override ResponseMessage<S> PerformService(S clientSessionScope)
+        public override ResponseMessage PerformService(Scope<object> clientSessionScope)
         {
             return null;
         }

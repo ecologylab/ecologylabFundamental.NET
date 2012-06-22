@@ -5,7 +5,7 @@ using ecologylab.collections;
 namespace Simpl.OODSS.Messages 
 {
 	[SimplInherit]
-    public class UrlMessage<S> : RequestMessage<S> where S : Scope<object>
+    public class UrlMessage : RequestMessage
 	{
 		[SimplScalar]
 		protected String url;
@@ -28,9 +28,9 @@ namespace Simpl.OODSS.Messages
 			set{collection = value;}
 		}
 
-	    public override ResponseMessage<S> PerformService(S clientSessionScope)
+	    public override ResponseMessage PerformService(Scope<object> clientSessionScope)
 	    {
-	        return OkResponse<S>.Get();
+	        throw new NotImplementedException();
 	    }
 	}
 }

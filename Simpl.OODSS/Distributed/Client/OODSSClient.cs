@@ -18,7 +18,8 @@ using ecologylab.serialization;
 
 namespace Simpl.OODSS.Distributed.Client
 {
-    public class OODSSClient {
+    public class OODSSClient 
+    {
         public Socket clientSocket;
 
         public Task StartClient(string host,int port) 

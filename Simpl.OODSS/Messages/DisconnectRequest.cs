@@ -7,6 +7,7 @@
 //
 
 using Simpl.Serialization.Attributes;
+using ecologylab.collections;
 
 namespace Simpl.OODSS.Messages 
 {
@@ -14,9 +15,14 @@ namespace Simpl.OODSS.Messages
 	/// missing java doc comments or could not find the source file.
 	/// </summary>
 	[SimplInherit]
-	public class DisconnectRequest : RequestMessage<ServiceMessage<object>>
+	public class DisconnectRequest : RequestMessage
 	{
 		public DisconnectRequest()
 		{ }
+
+	    public override ResponseMessage PerformService(Scope<object> clientSessionScope)
+	    {
+	        throw new System.NotImplementedException();
+	    }
 	}
 }

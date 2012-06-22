@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Simpl.OODSS.Distributed.Impl
 {
-    abstract class Manager:Shutdownable
+    public abstract class Manager:Shutdownable
     {
         private List<Shutdownable> _shutdownDependents = new List<Shutdownable>();
 
