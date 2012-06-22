@@ -39,7 +39,7 @@ namespace Simpl.OODSS.Distributed.Client
     
         public ElementState GetResponse(ElementState request,SimplTypesScope ts=null)
         {
-            SimplTypesScope translationScope = OODSSMessages.Get();
+            SimplTypesScope translationScope = DefaultServicesTranslations.Get();
             if (ts != null)
                 translationScope.AddTranslations(ts); 
             ElementState responseElementState = null;
