@@ -6,6 +6,9 @@
 //  Copyright 2011 Interface Ecology Lab. 
 //
 
+using System;
+using Simpl.OODSS.Distributed.Common;
+using Simpl.OODSS.Distributed.Server.ClientSessionManager;
 using Simpl.Serialization.Attributes;
 using ecologylab.collections;
 
@@ -17,12 +20,18 @@ namespace Simpl.OODSS.Messages
 	[SimplInherit]
 	public class DisconnectRequest : RequestMessage
 	{
+        public static readonly DisconnectRequest ReusableInstance = new DisconnectRequest();
+
 		public DisconnectRequest()
 		{ }
 
-	    public override ResponseMessage PerformService(Scope<object> clientSessionScope)
+	    public override ResponseMessage PerformService(Scope<object> localScope)
 	    {
-	        throw new System.NotImplementedException();
+	        Console.WriteLine("***** running disconnect request *****");
+	        SessionHandle handle = (SessionHandle) localScope.Get(SessionObjects.SessionHandle);
+            if (handle!=null)
+                handle.Invalidate();
+	        return OkResponse.ReusableInstance;
 	    }
 	}
 }

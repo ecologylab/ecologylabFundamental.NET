@@ -6,33 +6,30 @@ using System.Text;
 using Simpl.OODSS.Distributed.Common;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization;
+using SuperWebSocket;
 using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 {
     public class WebSocketClientSessionManager: BaseSessionManager
     {
-        public WebSocketClientSessionManager(string sessionId, ServerProcessor frontend, Scope<object> baseScope)
-            : base(sessionId, frontend, baseScope)
+
+        public WebSocketSession Session { get; set; }
+
+        public WebSocketClientSessionManager(string seesionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope, ServerProcessor frontend)
+            : base(seesionId, translationScope , applicationObjectScope, frontend)
         {
         }
 
-        public WebSocketClientSessionManager(string seesionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope)
-            : base(seesionId, translationScope , applicationObjectScope)
+        public ResponseMessage ProcessString(string CurrentMessage, long uid)
         {
-        }
-
-        protected ResponseMessage PerformService(RequestMessage requestMessage)
-        {
-            try
+            ResponseMessage responseMessage = null;
+            var requestMessage = TranslationScope.Deserialize(CurrentMessage, StringFormat.Xml);
+            if (requestMessage is RequestMessage)
             {
-                return requestMessage.PerformService(LocalScope);
+                responseMessage = ProcessRequest((RequestMessage)requestMessage);
             }
-            catch (Exception e)
-            {
-
-                throw;
-            }
+            return responseMessage;
         }
 
         public ResponseMessage ProcessRequest(RequestMessage requestMessage)
@@ -47,15 +44,46 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             }
             else
             {
-                response = PerformService(requestMessage);
+                if (!Initialized)
+                {
+                    // special processing for InitConnectionRequest
+                    if (requestMessage is InitConnectionRequest)
+                    {
+                        string incomingSessionId = ((InitConnectionRequest)requestMessage).SessionId;
+
+                        if (incomingSessionId == null)
+                        {
+                            // client is not expecting an old ContextManager
+                            response = new InitConnectionResponse(SessionId);
+                        }
+                        else
+                        {
+                            // client is expecting an old ContextManager
+                            response = FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, this) ? new InitConnectionResponse(incomingSessionId) : new InitConnectionResponse(SessionId);
+                        }
+
+                        Initialized = true;
+                    }
+                }
+                else
+                {
+                    response = PerformService(requestMessage);
+                }
             }
+
             return response;
         }
 
-        public override void SendUpdateToClient(UpdateMessage update)
+        protected ResponseMessage PerformService(RequestMessage requestMessage)
         {
-            throw new NotImplementedException();
+            return requestMessage.PerformService(LocalScope);
         }
+
+        //public override void SendUpdateToClient(UpdateMessage update)
+        //{
+        //    Console.WriteLine("Send update...");
+        //    WebSocketOODSSServer server = (WebSocketOODSSServer) LocalScope.Get(SessionObjects.WebSocketOODSSServer);
+        //}
 
         public void SendUpdateToClient(UpdateMessage update, string receivingSessionId)
         {
@@ -64,17 +92,19 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             server.SendUpdateMessage(receivingSessionId, update);
         }
 
-        public RequestMessage TranslateOODSSRequestJSON(string messageCharSequence)
+        public RequestMessage TranslateOODSSRequest(string messageCharSequence)
         {
             RequestMessage requestMessage =
-                (RequestMessage) TranslationScope.Deserialize(messageCharSequence, StringFormat.Json);
+                (RequestMessage) TranslationScope.Deserialize(messageCharSequence, StringFormat.Xml);
 
             return requestMessage;
         }
 
-        public override IPEndPoint GetAddress()
-        {
-            throw new NotImplementedException();
-        }
+        //public override IPEndPoint GetAddress()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
     }
 }

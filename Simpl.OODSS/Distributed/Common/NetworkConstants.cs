@@ -10,7 +10,7 @@ namespace Simpl.OODSS.Distributed.Common
         /// <summary>
         /// the maximum size of message acceptable by server in encoded CHARs
         /// </summary>
-        public static readonly int DefaultMaxMessageLengthChars = 128*1024;    //128KB
+        public const int DefaultMaxMessageLengthChars = 128*1024;    //128KB
 
         public static readonly int DefaultIdleTimeout = 10000;
 

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simpl.OODSS.Distributed.Server.ClientSessionManager;
 
 namespace Simpl.OODSS.Distributed.Server
 {
-    public class ServerProcessor
+    public interface ServerProcessor
     {
-        internal bool RestoreContextManagerFromSessionId(string incomingSessionId, ClientSessionManager.BaseSessionManager<S, P, T> baseSessionManager)
-        {
-            throw new NotImplementedException();
-        }
+        bool RestoreContextManagerFromSessionId(string incomingSessionId, BaseSessionManager baseSessionManager);
     }
 }

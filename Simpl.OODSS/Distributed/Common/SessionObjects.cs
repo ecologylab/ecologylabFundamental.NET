@@ -17,7 +17,7 @@ namespace Simpl.OODSS.Distributed.Common
 
         public static readonly string MainShutdownable = "main_shutdownable";
 
-        public static readonly SimplTypesScope BrowserServicesTranslations = OODSSMessages.Get(); //TODO: is this correct? 
+        //public static readonly SimplTypesScope BrowserServicesTranslations = OODSSMessages.Get(); //TODO: is this correct? 
 
         public static readonly string Logging = "logging";
 

@@ -6,7 +6,7 @@ using Simpl.OODSS.Messages;
 
 namespace Simpl.OODSS.Distributed.Impl
 {
-    class MessageWithMetadata<M, A> : IComparable<MessageWithMetadata<M, A>> where M:ServiceMessage
+    public class MessageWithMetadata<M, A> : IComparable<MessageWithMetadata<M, A>> where M:ServiceMessage
     {
         private long _uid;
 
@@ -27,6 +27,10 @@ namespace Simpl.OODSS.Distributed.Impl
         {
             get { return _attachment; }
             set { _attachment = value; } 
+        }
+
+        public MessageWithMetadata()
+        {
         }
 
         public MessageWithMetadata(M response, long uid=-1, A attachment=default(A))

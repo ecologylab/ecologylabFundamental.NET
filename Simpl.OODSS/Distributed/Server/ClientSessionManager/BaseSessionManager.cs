@@ -21,9 +21,10 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// </summary>
         protected SessionHandle Handle;
 
-        protected string _sessionId = null;
-
-        public string SessionId { get; private set; }
+        public string SessionId { 
+            get;
+            private set;
+        }
 
 
         protected Scope<object> LocalScope;
@@ -59,22 +60,14 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         protected SimplTypesScope TranslationScope;
 
-        public BaseSessionManager(String sessionId, ServerProcessor frontend, Scope<object> baseScope)
+        public BaseSessionManager(string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope, ServerProcessor frontend)
         {
             FrontEnd = frontend;
-            sessionId = sessionId;
-
-            LocalScope = GenerateContextScope(baseScope);
-
-            LocalScope.Add(SESSION_ID, sessionId);
-            LocalScope.Add(CLIENT_MANAGER, this);
-        }
-
-        public BaseSessionManager(string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope)
-        {
-            sessionId = sessionId;
+            SessionId = sessionId;
             LocalScope = applicationObjectScope;
             TranslationScope = translationScope;
+            LocalScope.Add(SESSION_ID, sessionId);
+            LocalScope.Add(CLIENT_MANAGER, this);
         }
 
         /// <summary>
@@ -87,156 +80,156 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// <returns></returns>
         private Scope<object> GenerateContextScope(Scope<object> baseScope)
         {
-            return (Scope<object>)new Scope<Object>(baseScope);
+            return new Scope<Object>(baseScope);
         }
 
-        /// <summary>
-        /// Appends the sender's IP address to the incoming message and calls performService on the given
-	    /// RequestMessage using the local ObjectRegistry.
-	    /// 
-	    /// performService(RequestMessage) may be overridden by subclasses to provide more specialized
-	    /// functionality. Generally, overrides should then call super.performService(RequestMessage) so
-	    /// that the IP address is appended to the message.
-        /// </summary>
-        /// <param name="requestMessage"></param>
-        /// <param name="ipAddress"></param>
-        /// <returns></returns>
-        protected ResponseMessage PerformService(RequestMessage requestMessage, IPAddress ipAddress)
-        {
-            requestMessage.Sender = ipAddress;
+        ///// <summary>
+        ///// Appends the sender's IP address to the incoming message and calls performService on the given
+        ///// RequestMessage using the local ObjectRegistry.
+        ///// 
+        ///// performService(RequestMessage) may be overridden by subclasses to provide more specialized
+        ///// functionality. Generally, overrides should then call super.performService(RequestMessage) so
+        ///// that the IP address is appended to the message.
+        ///// </summary>
+        ///// <param name="requestMessage"></param>
+        ///// <param name="ipAddress"></param>
+        ///// <returns></returns>
+        //protected ResponseMessage PerformService(RequestMessage requestMessage, IPAddress ipAddress)
+        //{
+        //    requestMessage.Sender = ipAddress;
 
-            try
-            {
-                return requestMessage.PerformService(LocalScope);
-            }
-            catch (Exception e)
-            {
+        //    try
+        //    {
+        //        return requestMessage.PerformService(LocalScope);
+        //    }
+        //    catch (Exception e)
+        //    {
                 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
-        /// <summary>
-        /// Calls RequestMessage.performService(Scope) and returns the result.
-        /// </summary>
-        /// <param name="request">- the request message to process.</param>
-        /// <param name="ipAddress"></param>
-        /// <returns></returns>
-        protected ResponseMessage ProcessRequest(RequestMessage request, IPAddress ipAddress)
-        {
-            LastActivity = DateTime.Now.Ticks;
-            ResponseMessage response = null;
+        ///// <summary>
+        ///// Calls RequestMessage.performService(Scope) and returns the result.
+        ///// </summary>
+        ///// <param name="request">- the request message to process.</param>
+        ///// <param name="ipAddress"></param>
+        ///// <returns></returns>
+        //protected ResponseMessage ProcessRequest(RequestMessage request, IPAddress ipAddress)
+        //{
+        //    LastActivity = DateTime.Now.Ticks;
+        //    ResponseMessage response = null;
 
-            if (request == null)
-            {
-                Console.WriteLine("No request.");
-            }
-            else
-            {
-                if (!Initialized)
-                {
-                    // special processing for InitConnectionRequest
-                    if (request is InitConnectionRequest)
-                    {
-                        string incomingSessionId = ((InitConnectionRequest) request).SessionId;
+        //    if (request == null)
+        //    {
+        //        Console.WriteLine("No request.");
+        //    }
+        //    else
+        //    {
+        //        if (!Initialized)
+        //        {
+        //            // special processing for InitConnectionRequest
+        //            if (request is InitConnectionRequest)
+        //            {
+        //                string incomingSessionId = ((InitConnectionRequest) request).SessionId;
 
-                        if (incomingSessionId == null)
-                        {
-                            // client is not expecting an old ContextManager
-                            response = new InitConnectionResponse(_sessionId);
-                        }
-                        else
-                        {
-                            // client is expecting an old ContextManager
-                            if (FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, this))
-                            {
-                                response = new InitConnectionResponse(incomingSessionId);
-                            }
-                            else
-                            {
-                                response = new InitConnectionResponse(_sessionId);
-                            }
-                        }
+        //                if (incomingSessionId == null)
+        //                {
+        //                    // client is not expecting an old ContextManager
+        //                    response = new InitConnectionResponse(SessionId);
+        //                }
+        //                else
+        //                {
+        //                    // client is expecting an old ContextManager
+        //                    if (FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, this))
+        //                    {
+        //                        response = new InitConnectionResponse(incomingSessionId);
+        //                    }
+        //                    else
+        //                    {
+        //                        response = new InitConnectionResponse(SessionId);
+        //                    }
+        //                }
 
-                        Initialized = true;
-                    }
-                }
-                else
-                {
-                    response = PerformService(request, ipAddress);
-                }
+        //                Initialized = true;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            response = PerformService(request, ipAddress);
+        //        }
 
-                if (response == null)
-                {
-                    Console.WriteLine("Context manager did not produce a response message.");
-                }
-            }
+        //        if (response == null)
+        //        {
+        //            Console.WriteLine("Context manager did not produce a response message.");
+        //        }
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
-        /// <summary>
-        /// Indicates the last System timestamp was when the ContextManager had any activity.
-        /// </summary>
-        /// <returns></returns>
-        public long GetLastActivity()
-        {
-            return LastActivity;
-        }
+        ///// <summary>
+        ///// Indicates the last System timestamp was when the ContextManager had any activity.
+        ///// </summary>
+        ///// <returns></returns>
+        //public long GetLastActivity()
+        //{
+        //    return LastActivity;
+        //}
 
-        /// <summary>
-        /// Indicates whether there are any messages queued up to be processed.
-	    ///
-	    /// isMessageWaiting() should be overridden if getNextRequest() is overridden so that it properly
-	    /// reflects the way that getNextRequest() works; it may also be important to override
-	    /// enqueueRequest().
-        /// </summary>
-        /// <returns>true if getNextRequest() can return a value, false if it cannot.</returns>
-        public bool IsMessageWaiting()
-        {
-            return MessageWaiting;
-        }
+        ///// <summary>
+        ///// Indicates whether there are any messages queued up to be processed.
+        /////
+        ///// isMessageWaiting() should be overridden if getNextRequest() is overridden so that it properly
+        ///// reflects the way that getNextRequest() works; it may also be important to override
+        ///// enqueueRequest().
+        ///// </summary>
+        ///// <returns>true if getNextRequest() can return a value, false if it cannot.</returns>
+        //public bool IsMessageWaiting()
+        //{
+        //    return MessageWaiting;
+        //}
 
-        /// <summary>
-        /// Indicates whether or not this context manager has been initialized. Normally, this means that
-	    /// it has shared a session id with the client.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsInitialized()
-        {
-            return Initialized;
-        }
+        ///// <summary>
+        ///// Indicates whether or not this context manager has been initialized. Normally, this means that
+        ///// it has shared a session id with the client.
+        ///// </summary>
+        ///// <returns></returns>
+        //public bool IsInitialized()
+        //{
+        //    return Initialized;
+        //}
 
-        public abstract IPEndPoint GetAddress();
+        //public abstract IPEndPoint GetAddress();
 
-        public abstract void SendUpdateToClient(UpdateMessage update);
+        //public abstract void SendUpdateToClient(UpdateMessage update);
 
-        public Scope<Object> GetScope()
-        {
-            return LocalScope;
-        }
+        //public Scope<Object> GetScope()
+        //{
+        //    return LocalScope;
+        //}
 
-        public void SetInvalidating(bool invalidating)
-        {
-            _invalidating = invalidating;
-        }
+        //public void SetInvalidating(bool invalidating)
+        //{
+        //    _invalidating = invalidating;
+        //}
 
-        public Boolean IsInvalidating()
-        {
-            return _invalidating;
-        }
+        //public Boolean IsInvalidating()
+        //{
+        //    return _invalidating;
+        //}
 
-        public String GetSessionId()
-        {
-            return _sessionId;
-        }
+        //public String GetSessionId()
+        //{
+        //    return _sessionId;
+        //}
 
-        /// <summary>
-        /// Hook method for having shutdown behavior.
-        /// This method is called whenever the server is closing down the connection to this client.
-        /// </summary>
-        public void Shutdown()
-        {
-        }
+        ///// <summary>
+        ///// Hook method for having shutdown behavior.
+        ///// This method is called whenever the server is closing down the connection to this client.
+        ///// </summary>
+        //public void Shutdown()
+        //{
+        //}
     } 
 }

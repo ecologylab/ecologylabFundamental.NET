@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Simpl.OODSS.Distributed.Client
+namespace Simpl.OODSS.Distributed.Common
 {
-    public interface ReconnectedBlocker
+
+    public class MessageConverter
     {
-        void ReconnectBLock();
+        
     }
 }

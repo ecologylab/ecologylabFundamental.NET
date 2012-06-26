@@ -29,8 +29,8 @@ namespace Simpl.OODSS.Distributed.Impl
         /// <param name="idleConnectionTimeout"></param>
         /// <param name="maxMessageLength"></param>
         protected AbstractServer(int portNumber, IPAddress[] ipAddresses,
-            SimplTypesScope requestTranslationScope, Scope<object> objectRegistry, int idleConnectionTimeout,
-            int maxMessageLength) 
+            SimplTypesScope requestTranslationScope, Scope<object> objectRegistry, int idleConnectionTimeout=-1,
+            int maxMessageLength=-1) 
         {
             Console.WriteLine("setting up server...");
             TranslationScope = requestTranslationScope;
@@ -60,20 +60,10 @@ namespace Simpl.OODSS.Distributed.Impl
         {
         }
 
-        protected abstract WebSocketClientSessionManager GenerateContextManager(string seesionId,
-                                                                                SelectionKey sk,
-                                                                                SimplTypesScope translationScope,
-                                                                                Scope<Object> globalScope);
+        protected abstract BaseSessionManager GenerateContextManager(string seesionId,
+                                                                     SimplTypesScope translationScope,
+                                                                     Scope<Object> globalScope);
 
-        public Scope<Object> GetGlobalScope()
-        {
-            return ApplicationObjectScope;
-        }
-
-        public SimplTypesScope GetTranslationScope()
-        {
-            return TranslationScope;
-        }
 
         public void Start()
         {

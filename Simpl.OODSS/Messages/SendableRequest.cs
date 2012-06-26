@@ -10,7 +10,7 @@ namespace Simpl.OODSS.Messages
     /// client send methods, to allow other, more specific interfaces to be used (such as
     /// AuthenticationRequest).
     /// </summary>
-    interface ISendableRequest
+    public interface ISendableRequest
     {
         bool IsDisposable();
     }
