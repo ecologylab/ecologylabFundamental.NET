@@ -34,9 +34,9 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             return GetSocketAddress().Port;
         }
 
-        public void SendUpdate<TScope>(UpdateMessage update) where TScope : Scope<object>
+        public void SendUpdate<TScope>(UpdateMessage update, string receivingSessionId) where TScope : Scope<object>
         {
-            SessionManager.SendUpdateToClient(update);
+            SessionManager.SendUpdateToClient(update, receivingSessionId);
         }
 
         public Scope<Object> GetSessionScope()

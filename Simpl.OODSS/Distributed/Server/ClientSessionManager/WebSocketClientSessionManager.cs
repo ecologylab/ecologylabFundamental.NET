@@ -85,7 +85,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         //    WebSocketOODSSServer server = (WebSocketOODSSServer) LocalScope.Get(SessionObjects.WebSocketOODSSServer);
         //}
 
-        public void SendUpdateToClient(UpdateMessage update, string receivingSessionId)
+        public override void SendUpdateToClient(UpdateMessage update, string receivingSessionId)
         {
             Console.WriteLine("Send Update Message Please");
             WebSocketOODSSServer server = (WebSocketOODSSServer) LocalScope.Get(SessionObjects.WebSocketOODSSServer);
@@ -106,5 +106,9 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         //}
 
 
+        public override IPEndPoint GetAddress()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

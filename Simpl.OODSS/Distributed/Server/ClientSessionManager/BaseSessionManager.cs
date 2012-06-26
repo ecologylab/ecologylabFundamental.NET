@@ -168,68 +168,68 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         //    return response;
         //}
 
-        ///// <summary>
-        ///// Indicates the last System timestamp was when the ContextManager had any activity.
-        ///// </summary>
-        ///// <returns></returns>
-        //public long GetLastActivity()
-        //{
-        //    return LastActivity;
-        //}
+        /// <summary>
+        /// Indicates the last System timestamp was when the ContextManager had any activity.
+        /// </summary>
+        /// <returns></returns>
+        public long GetLastActivity()
+        {
+            return LastActivity;
+        }
 
-        ///// <summary>
-        ///// Indicates whether there are any messages queued up to be processed.
-        /////
-        ///// isMessageWaiting() should be overridden if getNextRequest() is overridden so that it properly
-        ///// reflects the way that getNextRequest() works; it may also be important to override
-        ///// enqueueRequest().
-        ///// </summary>
-        ///// <returns>true if getNextRequest() can return a value, false if it cannot.</returns>
-        //public bool IsMessageWaiting()
-        //{
-        //    return MessageWaiting;
-        //}
+        /// <summary>
+        /// Indicates whether there are any messages queued up to be processed.
+        ///
+        /// isMessageWaiting() should be overridden if getNextRequest() is overridden so that it properly
+        /// reflects the way that getNextRequest() works; it may also be important to override
+        /// enqueueRequest().
+        /// </summary>
+        /// <returns>true if getNextRequest() can return a value, false if it cannot.</returns>
+        public bool IsMessageWaiting()
+        {
+            return MessageWaiting;
+        }
 
-        ///// <summary>
-        ///// Indicates whether or not this context manager has been initialized. Normally, this means that
-        ///// it has shared a session id with the client.
-        ///// </summary>
-        ///// <returns></returns>
-        //public bool IsInitialized()
-        //{
-        //    return Initialized;
-        //}
+        /// <summary>
+        /// Indicates whether or not this context manager has been initialized. Normally, this means that
+        /// it has shared a session id with the client.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInitialized()
+        {
+            return Initialized;
+        }
 
-        //public abstract IPEndPoint GetAddress();
+        public abstract IPEndPoint GetAddress();
 
-        //public abstract void SendUpdateToClient(UpdateMessage update);
+        public abstract void SendUpdateToClient(UpdateMessage update, string receivingSessionId);
 
-        //public Scope<Object> GetScope()
-        //{
-        //    return LocalScope;
-        //}
+        public Scope<Object> GetScope()
+        {
+            return LocalScope;
+        }
 
-        //public void SetInvalidating(bool invalidating)
-        //{
-        //    _invalidating = invalidating;
-        //}
+        public void SetInvalidating(bool invalidating)
+        {
+            _invalidating = invalidating;
+        }
 
-        //public Boolean IsInvalidating()
-        //{
-        //    return _invalidating;
-        //}
+        public Boolean IsInvalidating()
+        {
+            return _invalidating;
+        }
 
-        //public String GetSessionId()
-        //{
-        //    return _sessionId;
-        //}
+        public String GetSessionId()
+        {
+            return SessionId;
+        }
 
-        ///// <summary>
-        ///// Hook method for having shutdown behavior.
-        ///// This method is called whenever the server is closing down the connection to this client.
-        ///// </summary>
-        //public void Shutdown()
-        //{
-        //}
+        /// <summary>
+        /// Hook method for having shutdown behavior.
+        /// This method is called whenever the server is closing down the connection to this client.
+        /// </summary>
+        public void Shutdown()
+        {
+        }
     } 
 }

@@ -62,14 +62,14 @@
     <Compile Include="Distributed\Common\ServicesHostsAndPorts.cs" />
     <Compile Include="Distributed\Common\SessionObjects.cs" />
     <Compile Include="Distributed\Impl\AbstractServer.cs" />
-    <Compile Include="Distributed\Impl\Manager.cs" />
     <Compile Include="Distributed\Impl\MessageWithMetadata.cs" />
     <Compile Include="Distributed\Impl\MessageWithMetadataPool.cs" />
     <Compile Include="Distributed\Impl\PreppedRequest.cs" />
     <Compile Include="Distributed\Impl\PreppedRequestPool.cs" />
-    <Compile Include="Distributed\Impl\Shutdownable.cs" />
     <Compile Include="Distributed\Server\ClientSessionManager\BaseSessionManager.cs" />
-    <Compile Include="Distributed\Server\ClientSessionManager\SessionHandle.cs" />
+    <Compile Include="Distributed\Server\ClientSessionManager\SessionHandle.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Distributed\Server\ClientSessionManager\WebSocketClientSessionManager.cs" />
     <Compile Include="Distributed\Server\ServerProcessor.cs" />
     <Compile Include="Distributed\Server\WebSocketOODSSServer.cs" />

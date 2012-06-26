@@ -9,6 +9,7 @@
 using System.Text;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization.Attributes;
+using ecologylab.collections;
 
 namespace Simpl.OODSS.Logging
 {
@@ -16,7 +17,7 @@ namespace Simpl.OODSS.Logging
     /// missing java doc comments or could not find the source file.
     /// </summary>
     [SimplInherit]
-    public class LogEvent : RequestMessage<ServiceMessage<object>>
+    public class LogEvent : RequestMessage
     {
         /// <summary>
         /// missing java doc comments or could not find the source file.
@@ -29,6 +30,11 @@ namespace Simpl.OODSS.Logging
         {
             get { return _bufferToLog; }
             set { _bufferToLog = value; }
+        }
+
+        public override ResponseMessage PerformService(Scope<object> clientSessionScope)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
