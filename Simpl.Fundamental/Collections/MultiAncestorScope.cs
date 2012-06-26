@@ -67,6 +67,16 @@ namespace Simpl.Fundamental.Collections
 		return result;
         }
 
+        ///<summary>
+        /// only put value into the scope when it is not null. this prevents shadowing values with the
+        /// same key in ancestors.
+        ///</summary>
+        public void AddIfValueNotNull(String key, T value)
+        {
+            if (value != null)
+                Add(key, value);
+        }
+
         private void PutToCache(string key, T value)
         {
             if(queryCache == null)
@@ -78,6 +88,44 @@ namespace Simpl.Fundamental.Collections
         {
             return queryCache == null ? null : queryCache.Get(key);
         }
+
+        /**
+         * get a List of values from this scope AND its ancestors. values ordered from near to far.
+         * 
+         * @param key
+         * @return
+         */
+        public List<T> GetAll(Object key)
+        {
+            List<T> results = new List<T>();
+            List<Dictionary<string, T>> visited = new List<Dictionary<string, T>>();
+            GetAllHelper(key, visited, results);
+            return results;
+        }
+
+	    private void GetAllHelper(Object key, List<Dictionary<string, T>> visited, List<T> results)
+	    {
+		    T result;
+            base.TryGetValue(key.ToString(), out result);
+		    if (result != null)
+			    results.Add(result);
+		    if (this.ancestors != null)
+			    foreach (Dictionary<string, T> ancestor in this.ancestors)
+				    if (containsSame(visited, ancestor))
+					    continue;
+				    else
+				    {
+					    visited.Add(ancestor);
+					    if (ancestor is MultiAncestorScope<T>)
+						    ((MultiAncestorScope<T>) ancestor).GetAllHelper(key, visited, results);
+					    else
+					    {
+                            ancestor.TryGetValue(key.ToString(), out result);
+						    if (result != null)
+							    results.Add(result);
+					    }
+				    }
+	    }
 
         /// <summary>
         /// Ancestors of this scope
@@ -95,7 +143,7 @@ namespace Simpl.Fundamental.Collections
                     AddAncestor(ancestor);
         }
 
-        private void AddAncestor(Dictionary<string, T> ancestor)
+        public void AddAncestor(Dictionary<string, T> ancestor)
         {
             if(ancestor == null || containsSame(Ancestors, ancestor))
                 return;
