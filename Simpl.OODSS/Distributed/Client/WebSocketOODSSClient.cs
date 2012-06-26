@@ -279,8 +279,8 @@ namespace Simpl.OODSS.Distributed.Client
             ResponseMessage message;
             while (!UnprocessedResponse.ContainsKey(uid))
             {
-                await Task.Delay(50);
-                
+                //await Task.Delay(50);
+                await Task.Factory.StartNew(WaitAWhile);
             }
             // contains the key
             lock (UnprocessedResponse)
@@ -289,6 +289,11 @@ namespace Simpl.OODSS.Distributed.Client
                 
             }
             return message;
+        }
+
+        private void WaitAWhile()
+        {
+            Thread.Sleep(50);
         }
 
         private void ProcessUpdate(UpdateMessage updateMessage)
