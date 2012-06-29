@@ -34,19 +34,29 @@
     <Reference Include="AsyncCtpLibrary">
       <HintPath>C:\Users\fei\Documents\Microsoft Visual Studio Async CTP\Samples\AsyncCtpLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="SuperSocket.Common">
+      <HintPath>..\Simpl.Serialization\Lib\SuperSocket.Common.dll</HintPath>
+    </Reference>
     <Reference Include="SuperSocket.SocketBase">
-      <HintPath>..\..\..\..\superwebsocket\Reference\SuperSocket\Net40\SuperSocket.SocketBase.dll</HintPath>
+      <HintPath>..\Simpl.Serialization\Lib\SuperSocket.SocketBase.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.SocketEngine">
-      <HintPath>..\..\..\..\websocket4net\Test\Reference\SuperSocket.SocketEngine.dll</HintPath>
+      <HintPath>..\Simpl.Serialization\Lib\SuperSocket.SocketEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperWebSocket">
+      <HintPath>..\Simpl.Serialization\Lib\SuperWebSocket.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebSocket4Net">
+      <HintPath>..\Simpl.Serialization\Lib\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Distributed\Client\BaseClient.cs" />
@@ -110,14 +120,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\superwebsocket\SuperWebSocket\SuperWebSocket.csproj">
-      <Project>{2DC79E40-BB70-4F6A-B378-905F2FBC6E97}</Project>
-      <Name>SuperWebSocket</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\websocket4net\WebSocket4Net\WebSocket4Net.csproj">
-      <Project>{6920447F-76B1-4739-822E-9CE3A2882718}</Project>
-      <Name>WebSocket4Net</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Simpl.Fundamental\Simpl.Fundamental.csproj">
       <Project>{9A755A5E-88AA-4000-A9A7-ABDED3193855}</Project>
       <Name>Simpl.Fundamental</Name>
