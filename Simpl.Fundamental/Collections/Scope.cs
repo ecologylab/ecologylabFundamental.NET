@@ -50,6 +50,9 @@ namespace ecologylab.collections
             T result;
             if (TryGetValue(name, out result))
                 return result;
+            
+            if (Parent.TryGetValue(name, out result))
+                return result;
             return default(T);
         }
     }
