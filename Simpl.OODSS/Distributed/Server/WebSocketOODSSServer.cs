@@ -14,6 +14,7 @@ using SuperSocket.SocketEngine;
 using SuperWebSocket;
 using ecologylab.collections;
 
+
 namespace Simpl.OODSS.Distributed.Server
 {
     public class WebSocketOODSSServer : AbstractServer, ServerProcessor
@@ -62,8 +63,10 @@ namespace Simpl.OODSS.Distributed.Server
             MaxMessageSize = maxMessageSize + NetworkConstants.MaxHttpHeaderLength;
             TranslationScope = requestTranslationScope;
 
-            applicationObjectScope.Add(SessionObjects.SessionsMap, ClientSessionManagerMap);
-            applicationObjectScope.Add(SessionObjects.WebSocketOODSSServer, this);
+            ApplicationObjectScope = applicationObjectScope;
+
+            ApplicationObjectScope.Add(SessionObjects.SessionsMap, ClientSessionManagerMap);
+            ApplicationObjectScope.Add(SessionObjects.WebSocketOODSSServer, this);
 
             _serverInstance = this;
 
@@ -121,13 +124,16 @@ namespace Simpl.OODSS.Distributed.Server
                 WebSocketClientSessionManager cm;
                 lock (ClientSessionManagerMap)
                 {
-                    if (!ClientSessionManagerMap.TryGetValue(session, out cm))
+                    if (!ClientSessionManagerMap.TryGetValue(session.SocketSession.SessionID, out cm))
                     {
-                        Console.WriteLine("server creating context manager for " + session);
-
-                        cm = (WebSocketClientSessionManager)GenerateContextManager(session.ToString(), TranslationScope, ApplicationObjectScope);
+                        Console.WriteLine("server creating context manager for " + session.SocketSession.RemoteEndPoint);
+                        
+                        string sessionId = session.SocketSession.SessionID;
+                        Console.WriteLine("sessionId: "+sessionId);
+                        cm = (WebSocketClientSessionManager)GenerateContextManager(sessionId, TranslationScope, ApplicationObjectScope);
                         cm.Session = session;
-                        ClientSessionManagerMap.Put(session.ToString(), cm);
+                        
+                        ClientSessionManagerMap.Put(sessionId, cm);
                     }  
                 }
 
@@ -174,13 +180,14 @@ namespace Simpl.OODSS.Distributed.Server
             StringBuilder responseMessageStringBuilder = new StringBuilder();
             SimplTypesScope.Serialize(message, responseMessageStringBuilder, StringFormat.Xml);
             string req = responseMessageStringBuilder.ToString();        
+            Console.WriteLine("send message: "+ req + " uid "+uid);
 
             byte[] uidBytes = BitConverter.GetBytes(uid);
             byte[] messageBytes = Encoding.UTF8.GetBytes(req);
             byte[] outMessage = new byte[uidBytes.Length + messageBytes.Length];
             Buffer.BlockCopy(uidBytes, 0, outMessage, 0, uidBytes.Length);
             Buffer.BlockCopy(messageBytes, 0, outMessage, uidBytes.Length, messageBytes.Length);
-            session.SendResponse(messageBytes);
+            session.SendResponse(outMessage);
         }
 
         /// <summary>

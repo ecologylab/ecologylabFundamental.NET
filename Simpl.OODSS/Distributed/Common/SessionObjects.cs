@@ -37,6 +37,8 @@ namespace Simpl.OODSS.Distributed.Common
 
         public static readonly string SessionId = "session_id";
 
+        public static readonly string ClientManager = "CLIENT_MANAGER";
+
         public static readonly string SessionsMapBySessionId = "sessions_map_by_session_id";
 
         public static readonly string WebSocketOODSSServer = "oodss_websocket_server";

@@ -72,7 +72,8 @@ namespace Simpl.OODSS.Distributed.Client
             string webSocketPrefix = "ws://";
             String uri = webSocketPrefix + ipAddress + ":" + portNumber + "/websocket";
 
-            _webSocketClient = new WebSocket(uri, "basic", version);
+            //_webSocketClient = new WebSocket(uri, "basic", version);
+            _webSocketClient = new WebSocket(uri);
             _webSocketClient.Opened += WebSocketClientOpened;
             _webSocketClient.Closed += WebSocketClientClosed;
             _webSocketClient.DataReceived += WebSocketClientDataReceived;
@@ -97,10 +98,12 @@ namespace Simpl.OODSS.Distributed.Client
 
                 if (initResponse is InitConnectionResponse)
                 {
+                    Console.WriteLine("Received initial connection response");
                     if (_sessionId == null)
                     {
                         // get a sesssion id
                         _sessionId = ((InitConnectionResponse) initResponse).SessionId;
+                        Console.WriteLine("SessionId: " + _sessionId);
                     }
                     else if (_sessionId == ((InitConnectionResponse) initResponse).SessionId)
                     {
@@ -399,7 +402,7 @@ namespace Simpl.OODSS.Distributed.Client
             byte[] messageBytes = new byte[messageBytesLength];
             Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
             CurrentMessage = Encoding.UTF8.GetString(messageBytes);
-            Console.WriteLine("Got the message: " + CurrentMessage);
+            Console.WriteLine("Got the message: " + CurrentMessage + " uid: "+ uid);
 
             ProcessString(CurrentMessage, uid);
 

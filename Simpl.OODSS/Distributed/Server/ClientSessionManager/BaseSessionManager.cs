@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Simpl.OODSS.Distributed.Common;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization;
 using ecologylab.collections;
@@ -54,20 +55,17 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         /// </summary>
         private bool _invalidating = false;
 
-        public static readonly string SESSION_ID = "SESSION_ID";
-
-        public static readonly string CLIENT_MANAGER = "CLIENT_MANAGER";
-
         protected SimplTypesScope TranslationScope;
 
         public BaseSessionManager(string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope, ServerProcessor frontend)
         {
             FrontEnd = frontend;
             SessionId = sessionId;
-            LocalScope = applicationObjectScope;
             TranslationScope = translationScope;
-            LocalScope.Add(SESSION_ID, sessionId);
-            LocalScope.Add(CLIENT_MANAGER, this);
+            
+            LocalScope = GenerateContextScope(applicationObjectScope);
+            LocalScope.Add(SessionObjects.SessionId, sessionId);
+            LocalScope.Add(SessionObjects.ClientManager, this);
         }
 
         /// <summary>
@@ -81,6 +79,7 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         private Scope<object> GenerateContextScope(Scope<object> baseScope)
         {
             return new Scope<Object>(baseScope);
+            
         }
 
         ///// <summary>
