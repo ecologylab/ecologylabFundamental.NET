@@ -6,7 +6,7 @@ namespace Simpl.Serialization.Attributes
     ///     Defines a new tag on a field. By default the field name is taken as 
     ///     the attribute of the field
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplTag : Attribute
     {
         private readonly String _tagName;

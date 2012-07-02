@@ -7,7 +7,7 @@ namespace Simpl.Serialization.Attributes
 {
     /// <summary>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplMapKeyField : Attribute
     {
         private readonly String _fieldName;

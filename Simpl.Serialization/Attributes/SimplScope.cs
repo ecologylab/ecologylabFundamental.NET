@@ -6,7 +6,7 @@ namespace Simpl.Serialization.Attributes
     ///     Takes a translation scope which binds classes to their XML
     ///     representation. This is used for polymorphic types.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplScope : Attribute
     {
         private readonly String _translationScope;

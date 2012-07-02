@@ -6,7 +6,7 @@ namespace Simpl.Serialization.Attributes
     ///     Annotation which describes the collection as wrapped 
     ///     collection.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplWrap : Attribute
     {
 

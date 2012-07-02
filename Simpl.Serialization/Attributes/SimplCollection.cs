@@ -7,7 +7,7 @@ namespace Simpl.Serialization.Attributes
     ///     This includes Lists which can be both mono-morphic and 
     ///     poly-morphic
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplCollection : Attribute
     {
         private readonly String _tagName;

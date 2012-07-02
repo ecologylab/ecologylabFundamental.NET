@@ -6,7 +6,7 @@ namespace Simpl.Serialization.Attributes
     ///     An array of classes used to bind the type of classes 
     ///     the annotated attribute can hold. 
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplDescriptorClasses : Attribute
     {
         private readonly Type[] _classes;
