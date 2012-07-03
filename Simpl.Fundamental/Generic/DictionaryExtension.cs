@@ -37,6 +37,20 @@ namespace Simpl.Fundamental.Generic
             return oldValue;
         }
 
+        public static void AddToCount<TKey>
+            (this IDictionary<TKey, int> dictionary,
+                TKey key)
+        {
+            if(!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, 1);
+            }
+            else
+            {
+                dictionary[key] += 1;
+            }
+        }
+
         /// <summary>
         /// Helper add method which requires instantiation of a List<typeparamref name="TValue"/> if required.
         /// Implementation resembles something like defaultdict(list) in python
