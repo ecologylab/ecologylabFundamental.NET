@@ -419,7 +419,10 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeBycSharpName(String cSharpClassName)
         {
-            return (CollectionType) collectionRegistry._typesBycSharpName[cSharpClassName];
+            if (collectionRegistry._typesBycSharpName.ContainsKey(cSharpClassName))
+                return (CollectionType)collectionRegistry._typesBycSharpName[cSharpClassName];
+            
+            return null;
         }
 
         /// <summary>
