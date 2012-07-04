@@ -388,8 +388,12 @@ namespace Simpl.Serialization
 
         private Type GetTypeArgs(FieldInfo thatField, int p)
         {
-            Type result;
+            Type result1 = FundamentalPlatformSpecifics.Get().GetTypeArgClass(field, p, this);
+
+/*            Type result;
             Type t = thatField.FieldType;
+
+
 
             Type[] typeArgs = t.GetGenericArguments();
 
@@ -402,8 +406,9 @@ namespace Simpl.Serialization
 
                 result = typeArgs[p];
             }
+*/
+            return result1;
 
-            return result;
         }
 
         public bool IsPolymorphic

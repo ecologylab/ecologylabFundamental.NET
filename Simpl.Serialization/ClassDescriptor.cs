@@ -583,6 +583,8 @@ namespace Simpl.Serialization
             args[0] = this;
             args[1] = thatField;
             args[2] = annotationType;
+            if (annotationType == 6)
+                annotationType += 0;
 
             return (FieldDescriptor) Activator.CreateInstance(fieldDescriptorClass, args);
         }

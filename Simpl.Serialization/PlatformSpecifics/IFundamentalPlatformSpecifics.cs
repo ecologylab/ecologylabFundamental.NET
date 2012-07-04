@@ -18,7 +18,7 @@ namespace Simpl.Serialization.PlatformSpecifics
 	// in ecologylab.serialization.FieldDescriptor;
 	void DeriveFieldGenericTypeVars(FieldDescriptor fieldDescriptor);
 
-	//Type GetTypeArgClass(FieldInfo field, int i, FieldDescriptor fiedlDescriptor);
+	Type GetTypeArgClass(FieldInfo field, int i, FieldDescriptor fiedlDescriptor);
 
 	// in ecologylab.serialization.GenericTypeVar;
 	void CheckBoundParameterizedTypeImpl(GenericTypeVar g, Type bound);

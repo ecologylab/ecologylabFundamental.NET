@@ -70,6 +70,56 @@ namespace Simpl.Serialization.PlatformSpecifics
 		    return returnValue;
 	    }
 
+        public Type GetTypeArgClass(FieldInfo field, int i, FieldDescriptor fiedlDescriptor)
+        {
+		    Type result = null;
+
+		    Type[] typeArgs; 
+            
+            Type realFieldType = field.FieldType;
+
+            while (!realFieldType.IsGenericType)
+            {
+                realFieldType = realFieldType.BaseType;
+            }
+
+            typeArgs = realFieldType.GetGenericArguments();
+
+
+            if (typeArgs != null)
+		    {
+			    int max = typeArgs.Length - 1;
+			    if (i > max)
+				    i = max;
+			    Type typeArg0 = typeArgs[i];
+
+                // case 1: arg is a concrete class
+			    if (!typeArg0.IsGenericParameter && !typeArg0.IsGenericType) 
+			    {
+				    result = typeArg0;
+			    }
+			    else if (typeArg0.IsGenericType)
+			    {
+				    // nested parameterized type
+				    
+				    result = typeArg0.GetGenericTypeDefinition();
+			    }
+			    else if (typeArg0.IsGenericParameter)
+			    {
+                    Type[] tviBounds = typeArg0.GetGenericParameterConstraints();
+				    result = tviBounds[0];
+				    Console.Out.WriteLine( "yo! " + result);
+			    }
+			    else
+			    {
+				    Console.Out.WriteLine("getTypeArgClass(" + field + ", " + i
+						    + " yucky! Consult s.im.mp serialization developers.");
+			    }
+		    }
+
+		    return result;
+        }
+
         // in ecologylab.serialization.GenericTypeVar;
         public void CheckBoundParameterizedTypeImpl(GenericTypeVar g, Type bound)
         {
