@@ -80,6 +80,10 @@ namespace Simpl.OODSS.Distributed.Server
         {
             WebSocketServer = new WebSocketServer();
             WebSocketServer.NewDataReceived += WebSocketServer_NewDataReceived;
+            WebSocketServer.NewMessageReceived += WebSocketServer_NewMessageReceived;
+            WebSocketServer.NewSessionConnected += WebSocketServer_NewSessionConnected;
+            WebSocketServer.SessionClosed += WebSocketServer_SessionClosed;
+
             WebSocketServer.Setup(new RootConfig(), new ServerConfig
             {
                 Port = 2018,
@@ -93,7 +97,37 @@ namespace Simpl.OODSS.Distributed.Server
 
         private void WebSocketServer_NewDataReceived(WebSocketSession session, byte[] e)
         {
-            ProcessRead(session, e);
+            Console.WriteLine("new data received");
+            // process the message
+            CurrentData = e;
+            //obtain Uid.
+            Console.WriteLine("this computer is little endian: {0}", BitConverter.IsLittleEndian);
+            long uid = BitConverter.ToInt64(CurrentData, 0);
+
+            //obtain message.
+            int messageBytesLength = CurrentData.Length - 8;
+            byte[] messageBytes = new byte[messageBytesLength];
+            Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
+            CurrentMessage = Encoding.UTF8.GetString(messageBytes);
+            Console.WriteLine("Got the message: " + CurrentMessage);
+            ProcessRead(session, uid, CurrentMessage);
+        }
+
+        private void WebSocketServer_NewMessageReceived(WebSocketSession session, string e)
+        {
+            Console.WriteLine("new message received");
+            byte[] messageBytes = Encoding.UTF8.GetBytes(e);
+            WebSocketServer_NewDataReceived(session, messageBytes);
+        }
+
+        private void WebSocketServer_NewSessionConnected(WebSocketSession session)
+        {
+            Console.WriteLine("Session connected: " + session.SocketSession.RemoteEndPoint);
+        }
+
+        private void WebSocketServer_SessionClosed(WebSocketSession session, CloseReason reason)
+        {
+            Console.WriteLine("Session "+ session.SocketSession.RemoteEndPoint +" closed because: " + reason);
         }
 
         protected void StartServer()
@@ -116,9 +150,9 @@ namespace Simpl.OODSS.Distributed.Server
         /// </summary>
         /// <param name="session"></param>
         /// <param name="e"></param>
-        public void ProcessRead(WebSocketSession session, byte[] e)
+        public void ProcessRead(WebSocketSession session, long uid, string message)
         {
-            if (e.Length > 0)
+            if (message.Length > 0)
             {
                 // check and add session to the clientSessionManagerMap.
                 WebSocketClientSessionManager cm;
@@ -137,19 +171,9 @@ namespace Simpl.OODSS.Distributed.Server
                     }  
                 }
 
-                // process the message
-                CurrentData = e;
-                //obtain Uid.
-                long uid = BitConverter.ToInt64(CurrentData, 0);
 
-                //obtain message.
-                int messageBytesLength = CurrentData.Length - 8;
-                byte[] messageBytes = new byte[messageBytesLength];
-                Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
-                CurrentMessage = Encoding.UTF8.GetString(messageBytes);
-                Console.WriteLine("Got the message: " + CurrentMessage);
 
-                ResponseMessage responseMessage = cm.ProcessString(CurrentMessage, uid);
+                ResponseMessage responseMessage = cm.ProcessString(message, uid);
 
                 // send responseMessage back.
                 CreatePacketFromMessageAndSend(uid, responseMessage, session);            
@@ -187,7 +211,8 @@ namespace Simpl.OODSS.Distributed.Server
             byte[] outMessage = new byte[uidBytes.Length + messageBytes.Length];
             Buffer.BlockCopy(uidBytes, 0, outMessage, 0, uidBytes.Length);
             Buffer.BlockCopy(messageBytes, 0, outMessage, uidBytes.Length, messageBytes.Length);
-            session.SendResponse(outMessage);
+            //session.SendResponse(outMessage);
+            session.SendResponse(Encoding.UTF8.GetString(outMessage));
         }
 
         /// <summary>
@@ -200,7 +225,7 @@ namespace Simpl.OODSS.Distributed.Server
             WebSocketClientSessionManager sessionManager;
             if(ClientSessionManagerMap.TryGetValue(receivingSessionId, out sessionManager))
             {            
-                CreatePacketFromMessageAndSend(-1, update, sessionManager.Session);
+                CreatePacketFromMessageAndSend(0, update, sessionManager.Session);
             }
         }
 

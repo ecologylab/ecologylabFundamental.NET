@@ -16,7 +16,7 @@ using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Client
 {
-    public class WebSocketOODSSClient : BaseClient
+    public class WebSocketOODSSClient
     {
         #region Data Member
 
@@ -45,7 +45,7 @@ namespace Simpl.OODSS.Distributed.Client
 
         #region WebSocketComponent
 
-        //private AutoResetEvent _messageReceiveEvent = new AutoResetEvent(false);
+        private AutoResetEvent _messageReceiveEvent = new AutoResetEvent(false);
         private AutoResetEvent _dataReceiveEvent = new AutoResetEvent(false);
         private AutoResetEvent _openedEvent = new AutoResetEvent(false);
         private AutoResetEvent _closeEevnt = new AutoResetEvent(false);
@@ -77,7 +77,7 @@ namespace Simpl.OODSS.Distributed.Client
             _webSocketClient.Opened += WebSocketClientOpened;
             _webSocketClient.Closed += WebSocketClientClosed;
             _webSocketClient.DataReceived += WebSocketClientDataReceived;
-            //_webSocketClient.MessageReceived += WebSocketClientMessageReceived;
+            _webSocketClient.MessageReceived += WebSocketClientMessageReceived;
         }
 
         #endregion Constructor
@@ -409,6 +409,26 @@ namespace Simpl.OODSS.Distributed.Client
             _dataReceiveEvent.Set();
         }
 
+        void WebSocketClientMessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            string message = e.Message;
+            byte[] receivedData = Encoding.UTF8.GetBytes(message);
+            CurrentData = receivedData;
+            //obtain Uid.
+            long uid = BitConverter.ToInt64(CurrentData, 0);
+
+            //obtain message.
+            int messageBytesLength = CurrentData.Length - 8;
+            byte[] messageBytes = new byte[messageBytesLength];
+            Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
+            CurrentMessage = Encoding.UTF8.GetString(messageBytes);
+            Console.WriteLine("Got the message: " + CurrentMessage + " uid: " + uid);
+
+            ProcessString(CurrentMessage, uid);
+
+            _messageReceiveEvent.Set();
+        }
+
         void WebSocketClientClosed(object sender, EventArgs e)
         {
             // TODO: handle client close event;
@@ -422,15 +442,6 @@ namespace Simpl.OODSS.Distributed.Client
 
         #endregion WebSocket Handler
 
-        #region thread related
-        public void Start()
-        {
-        }
-
-        public void Stop()
-        {
-        }
-        #endregion thread related
     }
 
 }
