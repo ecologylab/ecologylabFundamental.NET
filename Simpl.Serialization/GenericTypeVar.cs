@@ -94,6 +94,13 @@ namespace Simpl.Serialization
         [SimplComposite]
         GenericTypeVar referredGenericTypeVar = null;
 
+        [SimplScalar]
+        private string extends;
+
+        [SimplScalar]
+        private string arg;
+
+
         List<GenericTypeVar> scope;
 
         public GenericTypeVar()
@@ -161,6 +168,18 @@ namespace Simpl.Serialization
         {
             get { return scope; }
         }
+
+        public String Extends
+        {
+            get { return extends; }
+        }
+
+
+        public String Arg
+        {
+            get { return arg; }
+        }
+
 
         /// <summary>
         /// Creates a GenericTypeVar object as the definition of a new generic type var, from a java
