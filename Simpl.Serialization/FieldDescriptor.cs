@@ -961,6 +961,34 @@ namespace Simpl.Serialization
 		    return cloned;
 	    }
 
+        public Object GetMapKeyFieldValue(Object mapElement)
+        {
+            if (this.mapKeyFieldName != null)
+            {
+                ClassDescriptor cd = ClassDescriptor.GetClassDescriptor(mapElement);
+                if (cd != null)
+                {
+                    FieldDescriptor fd = cd.GetFieldDescriptorByFieldName(mapKeyFieldName);
+                    return fd.field.GetValue(mapElement);
+                }
+            }
+            return null;
+        }
+
+        public Object GetValue(Object context)
+        {
+            Object resultObject = null;
+            FieldInfo childField = this.Field;
+            try
+            {
+                resultObject = childField.GetValue(context);
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine("Can't access " + childField.Name);
+            }
+            return resultObject;
+        }
 
         #region Ignored FieldDescriptor
 
