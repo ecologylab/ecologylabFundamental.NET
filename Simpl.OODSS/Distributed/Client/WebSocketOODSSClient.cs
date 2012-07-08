@@ -87,6 +87,7 @@ namespace Simpl.OODSS.Distributed.Client
             _receiveMessageThread       = new Thread(ReceiveMessageWorker);
             _pendingRequests            = new ConcurrentDictionary<long, RequestQueueObject>();
             _requestQueue               = new BlockingCollection<RequestQueueObject>(new ConcurrentQueue<RequestQueueObject>());
+            _responseQueue              = new BlockingCollection<ResponseQueueObject>(new ConcurrentQueue<ResponseQueueObject>());
         }
 
         #endregion Constructor
@@ -109,6 +110,8 @@ namespace Simpl.OODSS.Distributed.Client
                 _webSocketClient.Closed += WebSocketClientClosed;
                 _webSocketClient.DataReceived += WebSocketClientDataReceived;
                 _webSocketClient.MessageReceived += WebSocketClientMessageReceived;
+                _sendMessageThread.Start();
+                _receiveMessageThread.Start();
             }
             catch (Exception e)
             {
