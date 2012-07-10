@@ -17,7 +17,7 @@ namespace Simpl.Serialization.Types.Scalar
         ///      Calls the parent constructor for int type
         /// </summary>
         public FileType()
-            : this(typeof (FileStream))
+            : this(typeof (FileInfo))
         {
         }
 
@@ -35,11 +35,15 @@ namespace Simpl.Serialization.Types.Scalar
        /// <param name="formatStrings"></param>
        /// <param name="scalarUnmarshallingContext"></param>
        /// <returns></returns>
-        public override Object GetInstance(String value, String[] formatStrings,
+        public override object GetInstance(String value, String[] formatStrings,
                                            IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            throw new NotImplementedException();
-           return null;
+            return new FileInfo(value);
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((FileInfo) instance).Name;
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace Simpl.Serialization.Types.Scalar
         /// <returns></returns>
         public override bool IsDefaultValue(FieldInfo field, Object context)
         {
-            return (DateTime) field.GetValue(context) == DefaultValue;
+            return field.GetValue(context).ToString() == DefaultValueString;
         }
 
     }

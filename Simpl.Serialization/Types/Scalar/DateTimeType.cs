@@ -26,19 +26,21 @@ namespace Simpl.Serialization.Types.Scalar
         }
 
 
-
-       /// <summary>
-       /// 
-       /// </summary>
-       /// <param name="value"></param>
-       /// <param name="formatStrings"></param>
-       /// <param name="scalarUnmarshallingContext"></param>
-       /// <returns></returns>
-        public override Object GetInstance(String value, String[] formatStrings,
-                                           IScalarUnmarshallingContext scalarUnmarshallingContext)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="formatStrings"></param>
+        /// <param name="scalarUnmarshallingContext"></param>
+        /// <returns></returns>
+        public override object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            
-           return null;
+            return Convert.ToDateTime(value);
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((DateTime) instance).ToString();
         }
 
         /// <summary>

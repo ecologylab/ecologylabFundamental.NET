@@ -16,7 +16,7 @@ namespace Simpl.Serialization.Types.Scalar
         {
         }
 
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             Object result = null;
             try
@@ -42,6 +42,11 @@ namespace Simpl.Serialization.Types.Scalar
             catch (ArgumentException e) { }
             
             return result;
-        } 
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((Rect) instance).ToString();
+        }
     }
 }

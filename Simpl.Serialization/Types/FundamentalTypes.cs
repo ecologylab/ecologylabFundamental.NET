@@ -25,7 +25,7 @@ namespace Simpl.Serialization.Types
         public static ScalarType typeType           = new TypeType();
         public static ScalarType scalarTypeType     = new ScalarTypeType();
         public static ScalarType rectType           = new RectType();
-
+        public static ScalarType binaryDataType     = new BinaryDataType();
 
         public static CollectionType listType       = new CollectionType(
                                                                     typeof (List<>),

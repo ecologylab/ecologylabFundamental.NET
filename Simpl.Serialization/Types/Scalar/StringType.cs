@@ -22,9 +22,14 @@ namespace Simpl.Serialization.Types.Scalar
       /// <param name="formatStrings"></param>
       /// <param name="scalarUnmarshallingContext"></param>
       /// <returns></returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return value; 
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return (string) instance;
         }
     }
 }

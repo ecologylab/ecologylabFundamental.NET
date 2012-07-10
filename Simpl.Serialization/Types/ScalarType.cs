@@ -45,10 +45,9 @@ namespace Simpl.Serialization.Types
         /// <param name="formatStrings"></param>
         /// <param name="unmarshallingContext"></param>
         /// <returns></returns>
-        public abstract Object GetInstance(String value, String[] formatStrings,
-                                           IScalarUnmarshallingContext unmarshallingContext);
+        public abstract object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext unmarshallingContext);
 
-        public Object GetInstance(String value)
+        public object GetInstance(String value)
         {
             return GetInstance(value, null, null);
         }
@@ -142,10 +141,7 @@ namespace Simpl.Serialization.Types
         /// <param name="instance"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public virtual string Marshall(object instance, TranslationContext context = null)
-        {
-            return instance.ToString();
-        }
+        public abstract string Marshall(object instance, TranslationContext context = null);
 
         /// <summary>
         /// 

@@ -30,7 +30,7 @@ namespace Simpl.Serialization.Types.Scalar
         }
 
         public LongType(Type type)
-            : base(type, CLTypeConstants.JavaLong, CLTypeConstants.JavaLong, null)
+            : base(type, CLTypeConstants.JavaLong, CLTypeConstants.ObjCLong, null)
         {
         }
 
@@ -41,9 +41,14 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns>int</returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return long.Parse(value);
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((long) instance).ToString();
         }
 
         public override bool IsDefaultValue(FieldInfo field, Object context)

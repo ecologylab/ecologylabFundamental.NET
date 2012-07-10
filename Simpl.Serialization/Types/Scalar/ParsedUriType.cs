@@ -26,7 +26,7 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="formatStrings"></param>
         /// <param name="scalarUnmarshallingContext"></param>
         /// <returns></returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             Object result = null;
             try
@@ -46,6 +46,11 @@ namespace Simpl.Serialization.Types.Scalar
                 Debug.WriteLine(e.Message + " :: " + value);
             }
             return result;
-        } 
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((ParsedUri) instance).ToString();
+        }
     }
 }

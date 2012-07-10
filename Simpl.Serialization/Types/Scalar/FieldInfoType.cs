@@ -18,5 +18,10 @@ namespace Simpl.Serialization.Types.Scalar
         {
             throw new NotImplementedException("Cannot instantate a Field type");
         }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return instance.ToString();
+        }
     }
 }

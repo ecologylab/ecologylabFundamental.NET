@@ -113,6 +113,8 @@ namespace Simpl.Serialization.Types
 
         public const String DotNetRect = "Rect";
 
+        public const String DotNetBinaryData = "MemoryStream";
+
         /*
          * Java Scalar Types
          */
@@ -165,5 +167,7 @@ namespace Simpl.Serialization.Types
         public const String JavaRectangle = "Rectangle";
 
         public const String JavaPattern = "Pattern";
+
+        public const String JavaBinaryData = "ByteBuffer";
     }
 }

@@ -47,14 +47,20 @@ namespace Simpl.Serialization.Types.Scalar
             }
             return returnValue;
         }
-/// <summary>
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return instance.ToString();
+        }
+
+        /// <summary>
 /// 
 /// </summary>
 /// <param name="value"></param>
 /// <param name="formatStrings"></param>
 /// <param name="scalarUnmarshallingContext"></param>
 /// <returns></returns>
-        public override object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return null;
         }

@@ -15,5 +15,10 @@ namespace Simpl.Serialization.Types.Scalar
         {
             throw new NotImplementedException();
         }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

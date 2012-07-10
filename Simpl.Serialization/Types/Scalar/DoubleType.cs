@@ -39,9 +39,14 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns>double</returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return Double.Parse(value);
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((Double) instance).ToString();
         }
 
         /// <summary>

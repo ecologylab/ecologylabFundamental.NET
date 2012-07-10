@@ -38,12 +38,17 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="value"></param>
         /// <param name="formatStrings"></param>
         /// <returns>float</returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
             return float.Parse(value);
         }
 
-       /// <summary>
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((float) instance).ToString();
+        }
+
+        /// <summary>
        /// 
        /// </summary>
        /// <param name="field"></param>

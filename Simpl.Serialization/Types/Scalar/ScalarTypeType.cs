@@ -25,9 +25,9 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="formatStrings"></param>
         /// <param name="scalarUnmarshallingContext"></param>
         /// <returns>int</returns>
-        public override Object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
+        public override object GetInstance(String value, String[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            ScalarType result = null;
+            object result = null;
             int length = value.Length;
             if ((length > 0))
             {
@@ -46,6 +46,11 @@ namespace Simpl.Serialization.Types.Scalar
                 result = TypeRegistry.GetScalarTypeBySimpleName(buffy.ToString());
             }
             return result;
+        }
+
+        public override string Marshall(object instance, TranslationContext context = null)
+        {
+            return ((ScalarType)instance).ToString();
         }
     }
 }
