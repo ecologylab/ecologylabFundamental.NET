@@ -36,5 +36,13 @@ namespace Simpl.OODSS.Messages
 	    {
 	        return sessionId != null;
 	    }
+
+        /*
+ * Called automatically by OODSS on client
+ */
+        public override void ProcessResponse(Scope<object> appObjScope)
+        {
+
+        }
 	}
 }

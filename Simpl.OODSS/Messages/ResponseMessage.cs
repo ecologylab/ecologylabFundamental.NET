@@ -25,7 +25,7 @@ namespace Simpl.OODSS.Messages
         /// </summary>
         /// <param name="objectRegistry">
         /// provide a context for response message processing.</param>
-	    public void ProcessResponse(Scope<object> objectRegistry)
+	    public virtual void ProcessResponse(Scope<object> objectRegistry)
 	    {
 	    }
 	}

@@ -60,6 +60,17 @@ namespace Simpl.OODSS.Distributed.Client
             Port                        = port;
             SimplTypesScope             = simplTypesScope;
             ObjectRegistry              = objectRegistry;
+
+            var initState = new InitConnectionRequest();
+            int uid = _uid;
+            QueueObject q = new QueueObject(initState, uid, null);
+            _requestQueue.Add(q);
+        }
+
+        public void AddRequest(RequestMessage obj)
+        {
+            QueueObject q = new QueueObject( obj, _uid, null);
+            _requestQueue.Add(q);
         }
 
         public void Start() 
@@ -77,11 +88,6 @@ namespace Simpl.OODSS.Distributed.Client
 
                 Console.WriteLine("Client socket with host ({0}) connected? {1}.", Host, _clientSocket.Connected);
 
-                var initState = new InitConnectionRequest();
-                int uid = _uid;
-                QueueObject q = new QueueObject(initState, uid, null);
-
-                _requestQueue.Add(q);
                 _sendMesssageThread.Start();
                 _receiveMesssageThread.Start();
             } 
