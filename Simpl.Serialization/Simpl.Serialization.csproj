@@ -225,6 +225,7 @@
     <Compile Include="FieldDescriptor.cs" />
     <Compile Include="Types\FundamentalTypes.cs" />
     <Compile Include="Types\ScalarType.cs" />
+    <Compile Include="Types\Scalar\BinaryDataType.cs" />
     <Compile Include="Types\Scalar\DateTimeType.cs" />
     <Compile Include="Types\Scalar\FieldInfoType.cs" />
     <Compile Include="Types\Scalar\FileType.cs" />
