@@ -58,16 +58,20 @@ namespace Simpl.OODSS.Distributed.Client
 
             Host                        = host;
             Port                        = port;
-            SimplTypesScope             = simplTypesScope;
             ObjectRegistry              = objectRegistry;
 
+            //Add the OODSS messages to the scope.
+            simplTypesScope.AddTranslations(ServicesTranslationScope);
+
+            SimplTypesScope             = simplTypesScope;
+            
             var initState = new InitConnectionRequest();
             int uid = _uid;
             QueueObject q = new QueueObject(initState, uid, null);
             _requestQueue.Add(q);
         }
 
-        public void AddRequest(RequestMessage obj)
+        private void AddRequest(RequestMessage obj)
         {
             QueueObject q = new QueueObject( obj, _uid, null);
             _requestQueue.Add(q);
@@ -98,13 +102,17 @@ namespace Simpl.OODSS.Distributed.Client
         }
 
 
-        public void StopClient()
+        public void Stop()
         {
             _isRunning = false;
             _cancellationTokenSource.Cancel();
         }
 
-        public void PerformDisconnect()
+        /// <summary>
+        /// Incomplete. 
+        /// TODO: Send and confirm that disconnect has occured
+        /// </summary>
+        private void PerformDisconnect()
         {
             Console.WriteLine("Performing Disconnect");
         }
