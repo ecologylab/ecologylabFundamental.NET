@@ -240,7 +240,9 @@ namespace Simpl.Serialization.Context
 
         public object GetFromMap(string key)
         {
-            return _unmarshalledObjects[key];
+//            if (_unmarshalledObjects.ContainsKey(key))
+                return _unmarshalledObjects[key];
+//            else return null;
         }
 
         public void MarkAsUnmarshalled(String value, Object elementState)
