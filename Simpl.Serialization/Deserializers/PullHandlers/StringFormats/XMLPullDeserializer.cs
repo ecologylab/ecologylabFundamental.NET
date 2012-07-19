@@ -231,7 +231,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeCompositeMapElement(object root, FieldDescriptor fd)
         {
             String compositeTagName = CurrentTag;
-            Object subRoot = GetSubRoot(fd, compositeTagName);
+            Object subRoot = GetSubRoot(fd, compositeTagName, root);
             if (subRoot != null)
             {
                 IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
@@ -257,7 +257,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeCompositeCollectionElement(object root, FieldDescriptor fd)
         {
             String compositeTagName = CurrentTag;
-            Object subRoot = GetSubRoot(fd, compositeTagName);
+            Object subRoot = GetSubRoot(fd, compositeTagName, root);
             if (subRoot != null)
             {
                 IList collection = (IList) fd.AutomaticLazyGetCollectionOrMap(root);
@@ -328,7 +328,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
-            Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag);
+            Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
             if (subRoot != null)
                 currentFieldDescriptor.SetFieldToComposite(root, subRoot);
         }
@@ -352,8 +352,9 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// </summary>
         /// <param name="currentFieldDescriptor"></param>
         /// <param name="currentTagName"></param>
+        /// <param name="root"> </param>
         /// <returns></returns>
-        private object GetSubRoot(FieldDescriptor currentFieldDescriptor, string currentTagName)
+        private object GetSubRoot(FieldDescriptor currentFieldDescriptor, string currentTagName, object root)
         {
             Object subRoot;
             ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(currentTagName);
@@ -377,6 +378,14 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             DeserializationPreHook(subRoot, translationContext);
 			if (deserializationHookStrategy != null)
 				deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
+
+            if (subRoot != null)
+			{
+				if (subRoot is ElementState && root is ElementState)
+				{
+				    ((ElementState) subRoot).Parent = root as ElementState;
+				}
+			}
 
             DeserializeAttributes(subRoot, subRootClassDescriptor);
 
