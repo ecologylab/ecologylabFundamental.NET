@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -586,6 +587,7 @@ namespace Simpl.Serialization
         public FieldInfo Field
         {
             get { return field; }
+            private set { field = value; }
         }
 
         public Boolean IsWrapped
@@ -799,7 +801,16 @@ namespace Simpl.Serialization
 
         public object GetObject(object obj)
         {
-            return field.GetValue(obj);
+            try
+            {
+                return field.GetValue(obj);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("cannot get value for " + field.Name);
+                return null;
+            }
+            
         }
 
         public object GetNested(object context)
@@ -979,14 +990,14 @@ namespace Simpl.Serialization
         {
             Object resultObject = null;
             FieldInfo childField = this.Field;
-            try
-            {
+            //try
+            //{
                 resultObject = childField.GetValue(context);
-            }
-            catch (Exception e)
-            {
-                Console.Out.WriteLine("Can't access " + childField.Name);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Out.WriteLine("Can't access " + childField.Name);
+            //}
             return resultObject;
         }
 
@@ -1013,5 +1024,18 @@ namespace Simpl.Serialization
         }
 
         #endregion Ignored FieldDescriptor
+
+        #region Resolve base class generic issue
+        public void SetFieldBaseClassGeneric(Type[] superClassGenericArguments)
+        {
+            if (superClassGenericArguments.Length > 0)
+            {
+                Type declaringType = Field.DeclaringType;
+                if (declaringType != null)
+                    Field = declaringType.MakeGenericType(superClassGenericArguments).GetField(Field.Name);
+            }
+        }
+
+        #endregion Resolve base class generic issue
     }
 }
