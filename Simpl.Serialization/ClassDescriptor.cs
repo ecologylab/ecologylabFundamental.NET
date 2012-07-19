@@ -229,11 +229,13 @@ namespace Simpl.Serialization
 
             if (thatClass.IsGenericType)//can also be a generic parameter that extends a generic type
             {
-                thatClass = thatClass.GetGenericTypeDefinition();
-
-                className = thatClass.FullName;
-                int pos = className.IndexOf('`');
-                className = className.Substring(0, pos);
+                if (thatClass.FullName == null)
+                    className = thatClass.GetGenericTypeDefinition().FullName;
+//                thatClass = thatClass.GetGenericTypeDefinition();
+//                
+//                className = thatClass.FullName;
+//                int pos = className.IndexOf('`');
+//                className = className.Substring(0, pos);
             }
 
             ClassDescriptor result;
@@ -275,15 +277,25 @@ namespace Simpl.Serialization
         /// </param>
         public void DeriveAndOrganizeFieldsRecursive(Type thatClass)
         {
-            FieldInfo[] fields2 =
-                thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-                                    BindingFlags.DeclaredOnly);
+//            if (thatClass.ContainsGenericParameters)
+//            {
+//                Type[] typeParameters = thatClass.GetGenericParameterConstraints();
+//                thatClass = thatClass.MakeGenericType(typeParameters);
+//            }
+
+            //FieldInfo[] fields2 =
+            //    thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
+            //                        BindingFlags.DeclaredOnly);
+
+            
 
             if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplInherit)))
             {
+                Type[] superClassGenericArguments = thatClass.BaseType.GetGenericArguments();
                 ClassDescriptor superClassDescriptor = GetClassDescriptor(thatClass.BaseType);
-                ReferFieldDescriptorsFrom(superClassDescriptor);
+                ReferFieldDescriptorsFrom(superClassDescriptor, superClassGenericArguments);
             }
+
 
             FieldInfo[] fields =
                 thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
@@ -377,7 +389,7 @@ namespace Simpl.Serialization
             }
         }
 
-        private void ReferFieldDescriptorsFrom(ClassDescriptor superClassDescriptor)
+        private void ReferFieldDescriptorsFrom(ClassDescriptor superClassDescriptor, Type[] superClassGenericArguments)
         {
             InitDeclaredGenericTypeVarNames();
 
