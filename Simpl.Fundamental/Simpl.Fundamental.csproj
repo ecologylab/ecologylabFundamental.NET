@@ -104,8 +104,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ChildPrefixMap.cs" />
     <Compile Include="Collections\LRUCache.cs" />
     <Compile Include="Collections\MultiAncestorScope.cs" />
+    <Compile Include="Collections\PrefixCollection.cs" />
+    <Compile Include="Collections\PrefixPhrase.cs" />
     <Compile Include="Collections\ResourcePool.cs" />
     <Compile Include="Collections\ResourcePoolWithSize.cs" />
     <Compile Include="Collections\Scope.cs" />
