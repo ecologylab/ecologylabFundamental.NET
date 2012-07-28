@@ -29,7 +29,7 @@ namespace Simpl.Serialization
 
         [SimplComposite] protected ClassDescriptor declaringClassDescriptor;
 
-        [SimplScalar] private Type elementClass;
+        [SimplScalar] private Type _elementClass;
 
         //generics
         [SimplScalar] private Boolean isGeneric;
@@ -89,6 +89,8 @@ namespace Simpl.Serialization
 
         private FieldDescriptor wrappedFD;
 
+        private FieldDescriptor wrapper;
+
         private Dictionary<Int32, ClassDescriptor> tlvClassDescriptors;
 
         [SimplScalar] private String unresolvedScopeAnnotation = null;
@@ -142,6 +144,7 @@ namespace Simpl.Serialization
         {
             declaringClassDescriptor = baseClassDescriptor;
             this.wrappedFD = wrappedFD;
+            wrappedFD.Wrapper = this;
             type = FieldTypes.Wrapper;
         }
 
@@ -229,7 +232,7 @@ namespace Simpl.Serialization
                         }
 
                         _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(thatFieldType);
-                        elementClass = _elementClassDescriptor.DescribedClass;
+                        _elementClass = _elementClassDescriptor.DescribedClass;
                         compositeTag = XmlTools.GetXmlTagName(thatField);
                     }
                     else
@@ -284,7 +287,7 @@ namespace Simpl.Serialization
                         if (!TypeRegistry.ContainsScalarType(collectionElementType))
                         {
                             _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementType);
-                            elementClass = _elementClassDescriptor.DescribedClass;
+                            _elementClass = _elementClassDescriptor.DescribedClass;
                         }
                         else
                         {
@@ -350,7 +353,7 @@ namespace Simpl.Serialization
                         if (!TypeRegistry.ContainsScalarType(mapElementType))
                         {
                             _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementType);
-                            elementClass = _elementClassDescriptor.DescribedClass;
+                            _elementClass = _elementClassDescriptor.DescribedClass;
                         }
 
                     }
@@ -722,6 +725,15 @@ namespace Simpl.Serialization
         public FieldDescriptor WrappedFd
         {
             get { return wrappedFD; }
+            set { wrappedFD = value;
+                value.Wrapper = this;
+            }
+        }
+
+        public FieldDescriptor Wrapper
+        {
+            get { return wrapper; }
+            set { wrapper = value; }
         }
 
         public ScalarType ScalarType
@@ -890,7 +902,7 @@ namespace Simpl.Serialization
 
             collection = field.GetValue(root);
             if(collection == null)
-            {
+            {                  
                 collection = Activator.CreateInstance(Field.FieldType); //TODO: use collectionType.Instance but first have generic type parameter specification system in S.IM.PL
                 field.SetValue(root, collection);
             }
@@ -922,7 +934,13 @@ namespace Simpl.Serialization
             set { _elementClassDescriptor = value; }
         }
 
-        //generics
+        public Type ElementClass
+        {
+            get { return _elementClass; }
+            private set { _elementClass = value; }
+        }
+
+       //generics
         public ClassDescriptor GenericTypeVarsContextCD
         {
             get { return genericTypeVarsContextCD; }
@@ -984,6 +1002,16 @@ namespace Simpl.Serialization
                 }
             }
             return null;
+        }
+
+        public void SetElementClassDescriptor(ClassDescriptor elementClassDescriptor)
+        {
+            ElementClassDescriptor = elementClassDescriptor;
+            Type newElementClass = elementClassDescriptor.DescribedClass;
+            if (newElementClass != null)
+            {
+                ElementClass = newElementClass;
+            }
         }
 
         public Object GetValue(Object context)
