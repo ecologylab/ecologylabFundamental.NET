@@ -895,6 +895,7 @@ namespace Simpl.Serialization
 
         public object GetInstance()
         {
+            Console.WriteLine(this.DescribedClass.Name);
             return XmlTools.GetInstance(_describedClass);
         }
 
@@ -916,5 +917,28 @@ namespace Simpl.Serialization
         }
 
         #endregion
+
+        public void Replace(FieldDescriptor oldFD, FieldDescriptor newFD)
+        {
+            if (oldFD != null)
+                AllFieldDescriptorsByTagNames.Remove(oldFD.TagName);
+            AllFieldDescriptorsByTagNames.Put(newFD.TagName, newFD);
+            if (oldFD != null)
+            {
+                Replace(AttributeFieldDescriptors, oldFD, newFD);
+                Replace(ElementFieldDescriptors, oldFD, newFD);
+            }
+        }
+
+        private static void Replace(List<FieldDescriptor> list, FieldDescriptor oldVal, FieldDescriptor newVal)
+        {
+            if (list == null)
+                return;
+            int i = list.IndexOf(oldVal);
+            if (i > 0 && i < list.Count)
+            {
+                list[i] = newVal;
+            }
+        }
     }
 }
