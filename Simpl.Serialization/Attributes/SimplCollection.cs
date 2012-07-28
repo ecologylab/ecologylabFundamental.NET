@@ -10,7 +10,7 @@ namespace Simpl.Serialization.Attributes
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class SimplCollection : Attribute
     {
-        private readonly String _tagName;
+        private readonly String _tagName = ""; 
 
         /// <summary>
         /// 
@@ -25,7 +25,7 @@ namespace Simpl.Serialization.Attributes
         /// <param name="tagName"></param>
         public SimplCollection(String tagName)
         {
-            this._tagName = tagName;
+            this._tagName = tagName ?? "";
         }
 
         /// <summary>
