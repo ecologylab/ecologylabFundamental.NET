@@ -55,5 +55,17 @@ namespace ecologylab.collections
                 return result;
             return default(T);
         }
+
+        public T Put(String key, T value)
+        {
+            T lastValue;
+
+            if (TryGetValue(key, out lastValue))
+                Remove(key);
+              
+            Add(key, value);
+
+            return lastValue;
+        }
     }
 }

@@ -185,5 +185,28 @@ namespace Simpl.Fundamental.Generic
   		    }
   		    return result;
   	    }
+
+        /**
+  	     * Find a PropertyInfo object if there is one in the context class, or return null if not.
+  	     * 
+  	     * @param context	Class to find the Property in.
+  	     * @param name		Name of the method.
+  	     * @return			The associated PropertyInfo object, or null if non is accessible.	
+  	     */
+        public static PropertyInfo GetProperty(Type context, String name)
+        {
+            PropertyInfo result = null;
+            try
+            {
+                result = context.GetProperty(name);
+            }
+            catch (AmbiguousMatchException e)
+            {
+            }
+            catch (ArgumentNullException e)
+            {
+            }
+            return result;
+        }
     }
 }
