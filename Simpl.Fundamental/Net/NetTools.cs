@@ -14,6 +14,10 @@ namespace Simpl.Fundamental.Net
             return wrappedAddress;
         }
 
+        /// <summary>
+        /// Get All IP Addresses for the local host 
+        /// </summary>
+        /// <returns>Array of Local IP Addresses</returns>
         public static IPAddress[] GetAllIPAddressesForLocalhost()
         {
             return Dns.GetHostAddresses(Dns.GetHostName());
