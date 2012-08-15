@@ -55,13 +55,20 @@ namespace Simpl.OODSS.Distributed.Server
         #endregion Data Members
 
         #region Constructor
-        public WebSocketOODSSServer(SimplTypesScope requestTranslationScope, Scope<object> applicationObjectScope,
+        /// <summary>
+        /// Initialize a websocket oodss server object
+        /// </summary>
+        /// <param name="serverTranslationScope">translationscope for the oodss messages</param>
+        /// <param name="applicationObjectScope">server object scope</param>
+        /// <param name="idleConnectionTimeout"></param>
+        /// <param name="maxMessageSize"></param>
+        public WebSocketOODSSServer(SimplTypesScope serverTranslationScope, Scope<object> applicationObjectScope,
 			int idleConnectionTimeout=-1, int maxMessageSize=-1)
-            :base(0, Dns.GetHostAddresses(Dns.GetHostName()), requestTranslationScope, applicationObjectScope, 
+            : base(0, Dns.GetHostAddresses(Dns.GetHostName()), serverTranslationScope, applicationObjectScope, 
             idleConnectionTimeout, maxMessageSize)
         {
             MaxMessageSize = maxMessageSize + NetworkConstants.MaxHttpHeaderLength;
-            TranslationScope = requestTranslationScope;
+            TranslationScope = serverTranslationScope;
 
             ApplicationObjectScope = applicationObjectScope;
 
@@ -130,11 +137,17 @@ namespace Simpl.OODSS.Distributed.Server
             Console.WriteLine("Session "+ session.SocketSession.RemoteEndPoint +" closed because: " + reason);
         }
 
+        /// <summary>
+        /// start server
+        /// </summary>
         protected void StartServer()
         {
             WebSocketServer.Start();
         }
 
+        /// <summary>
+        ///  stop server
+        /// </summary>
         public void StopServer()
         {
             WebSocketServer.Stop();
@@ -146,10 +159,13 @@ namespace Simpl.OODSS.Distributed.Server
         #region Member Methods
 
         /// <summary>
-        /// parse the 
+        /// process the recieved message and uid. 
+        /// if sessionManager does not exist, create add it to the client session manager map
+        /// process the message and send the response message back to the client
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="e"></param>
+        /// <param name="session">the client's websocket session</param>
+        /// <param name="uid">uid of the message</param>
+        /// <param name="message">message in serialized form</param>
         public void ProcessRead(WebSocketSession session, long uid, string message)
         {
             if (message.Length > 0)
@@ -183,22 +199,22 @@ namespace Simpl.OODSS.Distributed.Server
         /// <summary>
         /// Generate WebSocketClientSessionManager
         /// </summary>
-        /// <param name="sessionId"></param>
-        /// <param name="translationScope"></param>
-        /// <param name="globalScope"></param>
+        /// <param name="sessionId">client's session id</param>
+        /// <param name="translationScope">translation scope for the server</param>
+        /// <param name="applicationObjectScope">server's application scope</param>
         /// <returns></returns>
         protected override BaseSessionManager GenerateContextManager(
-            string sessionId, SimplTypesScope translationScope, Scope<object> globalScope)
+            string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope)
         {
-            return new WebSocketClientSessionManager(sessionId, translationScope, globalScope, this);
+            return new WebSocketClientSessionManager(sessionId, translationScope, applicationObjectScope, this);
         }
 
         /// <summary>
-        /// helper function generate and send byte array message to client session. 
+        /// helper function to generate and send byte array message to client session. 
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="message"></param>
-        /// <param name="session"></param>
+        /// <param name="uid">uid of the received message</param>
+        /// <param name="message">oodss message</param>
+        /// <param name="session">client's websocket session</param>
         private void CreatePacketFromMessageAndSend(long uid, ServiceMessage message, WebSocketSession session)
         {
             StringBuilder responseMessageStringBuilder = new StringBuilder();
@@ -218,14 +234,14 @@ namespace Simpl.OODSS.Distributed.Server
         /// <summary>
         /// called by the session manager to send out update message. 
         /// </summary>
-        /// <param name="receivingSessionId"></param>
-        /// <param name="update"></param>
-        internal void SendUpdateMessage(string receivingSessionId, UpdateMessage update)
+        /// <param name="sessionId">client's session id</param>
+        /// <param name="updateMessage">update message</param>
+        protected internal void SendUpdateMessage(string sessionId, UpdateMessage updateMessage)
         {
             WebSocketClientSessionManager sessionManager;
-            if(ClientSessionManagerMap.TryGetValue(receivingSessionId, out sessionManager))
-            {            
-                CreatePacketFromMessageAndSend(0, update, sessionManager.Session);
+            if (ClientSessionManagerMap.TryGetValue(sessionId, out sessionManager))
+            {
+                CreatePacketFromMessageAndSend(0, updateMessage, sessionManager.Session);
             }
         }
 
@@ -255,11 +271,11 @@ namespace Simpl.OODSS.Distributed.Server
         #endregion Member Methods
 
         /// <summary>
-        /// restore old sessionManager for recovered session.
+        /// restore old sessionManager for recovered session. returns true if the session is restored, false if the old session doesn't exist thus cannot be restored.
         /// </summary>
-        /// <param name="incomingSessionId"></param>
-        /// <param name="newSessionManager"></param>
-        /// <returns></returns>
+        /// <param name="incomingSessionId">received sesion id information</param>
+        /// <param name="newSessionManager">a new session manager</param>
+        /// <returns>whether the session can be restored</returns>
         public bool RestoreContextManagerFromSessionId(string incomingSessionId, BaseSessionManager newSessionManager)
         {
             WebSocketClientSessionManager oldSessionManager;

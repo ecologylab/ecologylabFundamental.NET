@@ -16,15 +16,21 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
 
         public WebSocketSession Session { get; set; }
 
-        public WebSocketClientSessionManager(string seesionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope, ServerProcessor frontend)
-            : base(seesionId, translationScope , applicationObjectScope, frontend)
+        public WebSocketClientSessionManager(string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope, ServerProcessor frontend)
+            : base(sessionId, translationScope , applicationObjectScope, frontend)
         {
         }
 
-        public ResponseMessage ProcessString(string CurrentMessage, long uid)
+        /// <summary>
+        /// process request message in serialized form, and return the response message
+        /// </summary>
+        /// <param name="requestMessageString">request message in serialized form</param>
+        /// <param name="uid">request message's uid</param>
+        /// <returns>response message</returns>
+        public virtual ResponseMessage ProcessString(string requestMessageString, long uid)
         {
             ResponseMessage responseMessage = null;
-            var requestMessage = TranslationScope.Deserialize(CurrentMessage, StringFormat.Xml);
+            var requestMessage = TranslationScope.Deserialize(requestMessageString, StringFormat.Xml);
             if (requestMessage is RequestMessage)
             {
                 responseMessage = ProcessRequest((RequestMessage)requestMessage);
@@ -32,7 +38,12 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             return responseMessage;
         }
 
-        public ResponseMessage ProcessRequest(RequestMessage requestMessage)
+        /// <summary>
+        /// process the deserialized request message
+        /// </summary>
+        /// <param name="requestMessage">deserialized request message</param>
+        /// <returns>response message</returns>
+        protected ResponseMessage ProcessRequest(RequestMessage requestMessage)
         {
             LastActivity = DateTime.Now.Ticks;
 
@@ -74,7 +85,12 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             return response;
         }
 
-        protected ResponseMessage PerformService(RequestMessage requestMessage)
+        /// <summary>
+        /// perform service that specified in the request message
+        /// </summary>
+        /// <param name="requestMessage">request message</param>
+        /// <returns>response message</returns>
+        protected virtual ResponseMessage PerformService(RequestMessage requestMessage)
         {
             return requestMessage.PerformService(LocalScope);
         }
@@ -85,6 +101,11 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
         //    WebSocketOODSSServer server = (WebSocketOODSSServer) LocalScope.Get(SessionObjects.WebSocketOODSSServer);
         //}
 
+        /// <summary>
+        /// send update message to client
+        /// </summary>
+        /// <param name="update">update message</param>
+        /// <param name="receivingSessionId">sessionId of the client</param>
         public override void SendUpdateToClient(UpdateMessage update, string receivingSessionId)
         {
             Console.WriteLine("Send Update Message Please");
@@ -92,20 +113,23 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
             server.SendUpdateMessage(receivingSessionId, update);
         }
 
-        public RequestMessage TranslateOODSSRequest(string messageCharSequence)
-        {
-            RequestMessage requestMessage =
-                (RequestMessage) TranslationScope.Deserialize(messageCharSequence, StringFormat.Xml);
-
-            return requestMessage;
-        }
+//        public RequestMessage TranslateOODSSRequest(string messageCharSequence)
+//        {
+//            RequestMessage requestMessage =
+//                (RequestMessage) TranslationScope.Deserialize(messageCharSequence, StringFormat.Xml);
+//
+//            return requestMessage;
+//        }
 
         //public override IPEndPoint GetAddress()
         //{
         //    throw new NotImplementedException();
         //}
 
-
+        /// <summary>
+        /// Get the client's Ip address
+        /// </summary>
+        /// <returns></returns>
         public override IPEndPoint GetAddress()
         {
             throw new NotImplementedException();

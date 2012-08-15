@@ -74,6 +74,15 @@ namespace Simpl.OODSS.Distributed.Client
 
         #region Constructor
 
+        /// <summary>
+        /// Initialze a websocket OODSS client object
+        /// </summary>
+        /// <param name="ipAddress">the server's ip address</param>
+        /// <param name="portNumber">the server's port number</param>
+        /// <param name="translationScope">TranslationScope for OODSS messages</param>
+        /// <param name="objectRegistry">application object scope</param>
+        /// <param name="maxMessageLengthChars">max message length</param>
+        /// <param name="version">websocket version</param>
         public WebSocketOODSSClient(String ipAddress, int portNumber, SimplTypesScope translationScope, Scope<object> objectRegistry,
             int maxMessageLengthChars=NetworkConstants.DefaultMaxMessageLengthChars, WebSocketVersion version = WebSocketVersion.Rfc6455) 
         {
@@ -94,6 +103,9 @@ namespace Simpl.OODSS.Distributed.Client
 
         #region Connection Related
 
+        /// <summary>
+        /// Starting the client
+        /// </summary>
         public void Start()
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -119,15 +131,22 @@ namespace Simpl.OODSS.Distributed.Client
             }
         }
 
+        /// <summary>
+        /// Stopping the client
+        /// </summary>
         public void StopClient()
         {
             _isRunning = false;
             _cancellationTokenSource.Cancel();
         }
 
+        /// <summary>
+        /// Disconnect the client
+        /// </summary>
         public void PerformDisconnect()
         {
             Console.WriteLine("Performing Disconnect");
+            Disconnect();
         }
 
         /// <summary>
@@ -188,7 +207,7 @@ namespace Simpl.OODSS.Distributed.Client
             return _webSocketClient.Handshaked;
         }
 
-        public void Disconnect()
+        private void Disconnect()
         {
             _webSocketClient.Close();
         }
@@ -284,6 +303,11 @@ namespace Simpl.OODSS.Distributed.Client
             }
         }
 
+        /// <summary>
+        /// Send Request Message asynchronously and get response
+        /// </summary>
+        /// <param name="request">request message</param>
+        /// <returns>response message</returns>
         public async Task<ResponseMessage> RequestAsync(RequestMessage request)
         {
             TaskCompletionSource<ResponseMessage> tcs = new TaskCompletionSource<ResponseMessage>();
@@ -325,7 +349,10 @@ namespace Simpl.OODSS.Distributed.Client
 //        }
 //
 
-//
+        /// <summary>
+        /// Generate a uid for the request message
+        /// </summary>
+        /// <returns></returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
         public long GenerateUid()
         {
@@ -393,8 +420,8 @@ namespace Simpl.OODSS.Distributed.Client
         /// process the incoming message. if it is a response message, add it to unprocessedResponse, 
         /// if it is an unpdate message, process it immediately
         /// </summary>
-        /// <param name="incomingMessage"></param>
-        /// <param name="incomingUid"></param>
+        /// <param name="incomingMessage">incoming message in serialized form</param>
+        /// <param name="incomingUid">incoming message's uid</param>
         private void ProcessString(string incomingMessage, long incomingUid)
         {
             ServiceMessage message = TranslateStringToServiceMessage(incomingMessage);
@@ -424,7 +451,7 @@ namespace Simpl.OODSS.Distributed.Client
         /// <summary>
         /// deserialize the incoming message to service message. 
         /// </summary>
-        /// <param name="incomingMessage"></param>
+        /// <param name="incomingMessage">incoming message in serialized form</param>
         /// <returns>deserialized service message</returns>
         private ServiceMessage TranslateStringToServiceMessage(string incomingMessage)
         {
@@ -438,8 +465,8 @@ namespace Simpl.OODSS.Distributed.Client
         /// <summary>
         /// Generate String from requestMessage
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request">request message</param>
+        /// <returns>request message in serialized form</returns>
         private string GenerateStringFromRequest(RequestMessage request)
         {
             StringBuilder requestStringBuilder = new StringBuilder();
@@ -448,7 +475,7 @@ namespace Simpl.OODSS.Distributed.Client
         }
 
         /// <summary>
-        /// prepare the message and send it out through websocket
+        /// prepare the message and send it to the websocket server
         /// </summary>
         /// <param name="requestObject"></param>
         private void CreatePacketFromMessageAndSend(RequestQueueObject requestObject)
@@ -464,6 +491,9 @@ namespace Simpl.OODSS.Distributed.Client
             SendDone.Set();
         }
 
+        /// <summary>
+        /// background worker getting request from the blocking queue and send it out.
+        /// </summary>
         private void SendMessageWorker()
         {
             Console.WriteLine("Entering OODSS Send Message Loop");
@@ -495,6 +525,9 @@ namespace Simpl.OODSS.Distributed.Client
             Console.WriteLine("Performing disconnect");
         }
 
+        /// <summary>
+        /// background worker getting response from the blocking queue and process it.
+        /// </summary>
         private void ReceiveMessageWorker()
         {
             Console.WriteLine("Entering OODSS Receive Message loop");
@@ -539,7 +572,7 @@ namespace Simpl.OODSS.Distributed.Client
         #region WebSocket Handler
         
         /// <summary>
-        /// When websocketclient receive a message. process the message.
+        /// When websocketclient receives something in binary data form. process the message.
         /// the first 64bit (long) is the uid.
         /// the rest is the message.
         /// after getting the uid and message, put a MessageWithMetadata object in the queue. 
@@ -570,6 +603,14 @@ namespace Simpl.OODSS.Distributed.Client
             _dataReceiveEvent.Set();
         }
 
+        /// <summary>
+        /// when websocketclient receives something in message form, transorm it to binary data, and process it
+        /// the first 64bit (long) is the uid.
+        /// the rest is the message.
+        /// after getting the uid and message, put a MessageWithMetadata object in the queue. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void WebSocketClientMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             string message = e.Message;
