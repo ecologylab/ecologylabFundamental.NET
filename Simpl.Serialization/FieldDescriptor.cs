@@ -183,19 +183,23 @@ namespace Simpl.Serialization
                 }
             }
 
-            if (XmlTools.IsAnnotationPresent(field, typeof (SimplMapKeyField)))
-                mapKeyFieldName =
-                    ((SimplMapKeyField) XmlTools.GetAnnotation(field, typeof (SimplMapKeyField))).FieldName;
-
+            if (XmlTools.IsAnnotationPresent<SimplMapKeyField>(field))
+            {
+                mapKeyFieldName = XmlTools.GetAnnotation<SimplMapKeyField>(field).FieldName;
+            }
 
             DerivePolymorphicDescriptors(field);
 
             type = FieldTypes.UnsetType;
 
             if (annotationType == FieldTypes.Scalar)
+            {
                 type = DeriveScalarSerialization(field);
+            }
             else
+            {
                 type = DeriveNestedSerialization(field, annotationType);
+            }
 
             String fieldName = field.Name;
             StringBuilder capFieldName = new StringBuilder(fieldName);
@@ -213,9 +217,8 @@ namespace Simpl.Serialization
             switch (annotationType)
             {
                 case FieldTypes.CompositeElement:
-                    String compositeTag =
-                        ((SimplComposite) XmlTools.GetAnnotation(thatField, typeof (SimplComposite))).TagName;
-                    Boolean isWrap = XmlTools.IsAnnotationPresent(thatField, typeof (SimplWrap));
+                    String compositeTag = XmlTools.GetAnnotation<SimplComposite>(thatField).TagName;
+                    Boolean isWrap = XmlTools.IsAnnotationPresent<SimplWrap>(thatField);
 
                     Boolean compositeTagIsNullOrEmpty = String.IsNullOrEmpty(compositeTag);
 
@@ -262,12 +265,12 @@ namespace Simpl.Serialization
                     }
 
 
-                    String collectionTag =
-                        ((SimplCollection) XmlTools.GetAnnotation(thatField, typeof (SimplCollection))).TagName;
+                    String collectionTag = XmlTools.GetAnnotation<SimplCollection>(thatField).TagName;
 
                     if (!IsPolymorphic)
                     {
                         Type collectionElementType = GetTypeArgs(thatField, 0);
+
                         if (String.IsNullOrEmpty(collectionTag))
                         {
                             String msg = "In " + declaringClassDescriptor.DescribedClass
@@ -276,6 +279,7 @@ namespace Simpl.Serialization
                             Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
+                        
                         if (collectionElementType == null)
                         {
                             String msg = "In " + declaringClassDescriptor.DescribedClass
@@ -284,6 +288,7 @@ namespace Simpl.Serialization
                             Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
+                        
                         if (!TypeRegistry.ContainsScalarType(collectionElementType))
                         {
                             _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementType);
@@ -310,6 +315,7 @@ namespace Simpl.Serialization
                                          + " because it is declared polymorphic with [SimplClasses].";
                         }
                     }
+
                     _collectionOrMapTagName = collectionTag;
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
@@ -328,9 +334,8 @@ namespace Simpl.Serialization
                     }
 
 
-                    String mapTag =
-                        ((SimplMap) XmlTools.GetAnnotation(thatField, typeof (SimplMap))).TagName;
-
+                    String mapTag = XmlTools.GetAnnotation<SimplMap>(thatField).TagName;
+                    
                     if (!IsPolymorphic)
                     {
                         Type mapElementType = GetTypeArgs(thatField, 1);
@@ -342,6 +347,7 @@ namespace Simpl.Serialization
                             Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
+
                         if (mapElementType == null)
                         {
                             String msg = "In " + declaringClassDescriptor.DescribedClass
@@ -350,6 +356,7 @@ namespace Simpl.Serialization
                             Debug.WriteLine(msg);
                             return FieldTypes.IgnoredElement;
                         }
+                        
                         if (!TypeRegistry.ContainsScalarType(mapElementType))
                         {
                             _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementType);
@@ -366,6 +373,7 @@ namespace Simpl.Serialization
                                          + " because it is declared polymorphic with [SimplClasses].";
                         }
                     }
+
                     _collectionOrMapTagName = mapTag;
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
@@ -375,12 +383,15 @@ namespace Simpl.Serialization
             {
                 case FieldTypes.CollectionElement:
                 case FieldTypes.MapElement:
-                    if (!XmlTools.IsAnnotationPresent(thatField, typeof (SimplNoWrap)))
+                    if (!XmlTools.IsAnnotationPresent<SimplNoWrap>(thatField))
+                    {
                         _wrapped = true;
+                    }
                     collectionType = TypeRegistry.GetCollectionType(thatField);
                     break;
+                
                 case FieldTypes.CompositeElement:
-                    if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplWrap)))
+                    if (XmlTools.IsAnnotationPresent<SimplWrap>(thatField))
                     {
                         _wrapped = true;
                     }
@@ -717,6 +728,9 @@ namespace Simpl.Serialization
             get { return IsCollection ? _collectionOrMapTagName : IsNested ? compositeTagName : _tagName; }
         }
 
+        /// <summary>
+        /// True if this type is a CompositeElement
+        /// </summary>
         public Boolean IsNested
         {
             get { return type == FieldTypes.CompositeElement; }
@@ -838,11 +852,21 @@ namespace Simpl.Serialization
         public string GetValueString(object context)
         {
             string result = Null;
-		    if (context != null && IsScalar)
-		    {
-			    result = scalarType.ToString(field, context);
 
-		    }
+            if (context != null && IsScalar)
+            {
+                result = scalarType.ToString(field, context);
+
+            }
+            else
+            {
+                //Apparently returning "Null" was deemed appropriate if it is null. That is not appropriate for Maps / Lists that cannot be returned as ValueStrings. x`
+                if (context != null)
+                {
+                    throw new ArgumentException(string.Format("Cannot GetValueString for field descriptor describing field \"{0}\" which is of type: {1}", this.Name, this.fieldType ?? "OH DEAR THAT VALUE IS NULL."));
+                }
+            }
+
 		    return result;
         }
 
@@ -1065,5 +1089,13 @@ namespace Simpl.Serialization
         }
 
         #endregion Resolve base class generic issue
+
+
+
+
+        public override string ToString()
+        {
+            return "";
+        }
     }
 }

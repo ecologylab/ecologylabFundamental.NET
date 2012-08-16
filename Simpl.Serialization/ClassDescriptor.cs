@@ -139,7 +139,7 @@ namespace Simpl.Serialization
         ///     <c>Type</c> of the class defined by this  
         ///     <c>ClassDescriptor</c>
         /// </param>
-        public ClassDescriptor(Type thatClass)
+        private ClassDescriptor(Type thatClass)
             : base(XmlTools.GetXmlTagName(thatClass, SimplTypesScope.STATE), thatClass.Name)
         {
             _describedClass = thatClass;
@@ -164,18 +164,19 @@ namespace Simpl.Serialization
                 }
             }            
             
-            if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplUseEqualsEquals)))
+            if (XmlTools.IsAnnotationPresent<SimplUseEqualsEquals>(thatClass))
             {
                 _strictObjectGraphRequired = true;
             }
 
-            SimplDescriptorClasses descriptorsClassesAttribute =
-                (SimplDescriptorClasses) XmlTools.GetAnnotation(thatClass, typeof (SimplDescriptorClasses));
+            SimplDescriptorClasses descriptorsClassesAttribute = XmlTools.GetAnnotation<SimplDescriptorClasses>(thatClass);
+            
             if(descriptorsClassesAttribute != null)
             {
                 classDescriptorClass = descriptorsClassesAttribute.Classes[0];
                 fieldDescriptorClass = descriptorsClassesAttribute.Classes[1];
             }
+            
             //generics
             AddGenericTypeVariables();
         }
@@ -187,7 +188,7 @@ namespace Simpl.Serialization
         /// <param name="tagName">
         ///     <c>String</c> tagName for the <c>ClassDescriptor</c>
         /// </param>
-        public ClassDescriptor(String tagName, String comment, String describedClassPackageName,
+        private ClassDescriptor(String tagName, String comment, String describedClassPackageName,
                                String describedClassSimpleName, ClassDescriptor superClass, List<String> interfaces)
             : base(tagName, describedClassPackageName + "." + describedClassSimpleName, comment)
         {
@@ -214,46 +215,51 @@ namespace Simpl.Serialization
         {
             String className = thatClass.FullName;// for generic classes, className could be null!
 
+
             //generics
             while (thatClass.IsGenericParameter)//e.g. where X : Media \n where I : X \n ... List<I> field;  
             {
                 Type[] thatClassConstraints = thatClass.GetGenericParameterConstraints();
-                
+
                 if (thatClassConstraints == null || thatClassConstraints.Length == 0)
+                {
                     thatClass = typeof(Object);
+                }
                 else
+                {
                     thatClass = thatClassConstraints[0];
-                
+                }
+
                 className = thatClass.FullName;
             }
 
             if (thatClass.IsGenericType)//can also be a generic parameter that extends a generic type
             {
                 if (thatClass.FullName == null)
+                {
                     className = thatClass.GetGenericTypeDefinition().FullName;
-//                thatClass = thatClass.GetGenericTypeDefinition();
-//                
-//                className = thatClass.FullName;
-//                int pos = className.IndexOf('`');
-//                className = className.Substring(0, pos);
+                }
             }
 
             ClassDescriptor result;
 
             if (!GlobalClassDescriptorsMap.TryGetValue(className, out result))
             {
-                var descriptorsAnnotation =
-                    (SimplDescriptorClasses) XmlTools.GetAnnotation(thatClass, typeof (SimplDescriptorClasses), true);
+                var descriptorsAnnotation = XmlTools.GetAnnotation<SimplDescriptorClasses>(thatClass, considerInheritedAnnotations: true);
+
                 if (descriptorsAnnotation == null)
+                {
                     result = new ClassDescriptor(thatClass);
+                }
                 else
                 {
                     //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
                     Type classDescriptorClass = descriptorsAnnotation.Classes[0];
-                    object obj = Activator.CreateInstance(classDescriptorClass, new object[] {thatClass});
-                    result = (ClassDescriptor) obj;
+                    object obj = Activator.CreateInstance(classDescriptorClass, new object[] { thatClass });
+                    result = (ClassDescriptor)obj;
                     result.fieldDescriptorClass = descriptorsAnnotation.Classes[1];
                 }
+
                 GlobalClassDescriptorsMap.Add(className, result);
 
                 result.DeriveAndOrganizeFieldsRecursive(thatClass);
@@ -276,55 +282,48 @@ namespace Simpl.Serialization
         ///     for the first time. 
         /// </param>
         public void DeriveAndOrganizeFieldsRecursive(Type thatClass)
-        {
-//            if (thatClass.ContainsGenericParameters)
-//            {
-//                Type[] typeParameters = thatClass.GetGenericParameterConstraints();
-//                thatClass = thatClass.MakeGenericType(typeParameters);
-//            }
-
-            //FieldInfo[] fields2 =
-            //    thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-            //                        BindingFlags.DeclaredOnly);
-
-            
-
-            if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplInherit)))
+        {        
+            if (XmlTools.IsAnnotationPresent<SimplInherit>(thatClass))
             {
                 Type[] superClassGenericArguments = thatClass.BaseType.GetGenericArguments();
                 ClassDescriptor superClassDescriptor = GetClassDescriptor(thatClass.BaseType);
                 ReferFieldDescriptorsFrom(superClassDescriptor, superClassGenericArguments);
             }
 
-
             FieldInfo[] fields =
                 thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
                                     BindingFlags.DeclaredOnly);
+            
+            // Iterate through all fields for the type
             foreach (FieldInfo thatField in fields)
             {
+                // We don't serialize static values in S.im.pl, continue on to the next field
                 if ((thatField.IsStatic)) continue;
 
+                
                 Int16 fieldType = FieldTypes.UnsetType;
 
                 if (XmlTools.IsScalar(thatField))
                 {
                     fieldType = FieldTypes.Scalar;
                 }
-                else if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplComposite)))
+                else if (XmlTools.IsAnnotationPresent<SimplComposite>(thatField))
                 {
                     fieldType = FieldTypes.CompositeElement;
                 }
-                else if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplCollection)))
+                else if (XmlTools.IsAnnotationPresent<SimplCollection>(thatField))
                 {
                     fieldType = FieldTypes.CollectionElement;
                 }
-                else if (XmlTools.IsAnnotationPresent(thatField, typeof (SimplMap)))
+                else if (XmlTools.IsAnnotationPresent<SimplMap>(thatField))
                 {
                     fieldType = FieldTypes.MapElement;
                 }
 
                 if (fieldType == FieldTypes.UnsetType)
+                {
                     continue; //not a simpl serialization annotated field
+                }
 
                 FieldDescriptor fieldDescriptor = NewFieldDescriptor(thatField, fieldType, fieldDescriptorClass);
 
@@ -373,13 +372,15 @@ namespace Simpl.Serialization
                     String tag = fieldDescriptor.IsCollection ? fieldDescriptor.CollectionOrMapTagName : fieldTagName;
                     MapTagToFdForTranslateFrom(tag, fieldDescriptor);
 
-                    var otherTagsAttributes =
-                        (SimplOtherTags) XmlTools.GetAnnotation(thatField, typeof (SimplOtherTags));
+                    var otherTagsAttributes = XmlTools.GetAnnotation<SimplOtherTags>(thatField);
                     String[] otherTags = XmlTools.OtherTags(otherTagsAttributes);
-                    if (otherTags != null && otherTags.Length > 0)
+
+                    if (otherTags != null)
                     {
                         foreach (String otherTag in otherTags)
+                        {
                             MapTagToFdForTranslateFrom(otherTag, fieldDescriptor);
+                        }
                     }
                 }
                 else
@@ -638,9 +639,14 @@ namespace Simpl.Serialization
             get
             {
                 foreach (FieldDescriptor fd in _attributeFieldDescriptors)
+                {
                     yield return fd;
+                }
+
                 foreach (FieldDescriptor fd in _elementFieldDescriptors)
+                {
                     yield return fd;
+                }
             }
         }
 

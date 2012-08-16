@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Simpl.Serialization.Attributes;
-
-namespace Simpl.Serialization.Library.Generics
+﻿namespace Simpl.Serialization.Library.Generics
 {
+    using Simpl.Serialization.Attributes;
+    
     [SimplInherit]
     public class Image : Media
     {
-
+        
 	    [SimplScalar]
 	    int	width;
 

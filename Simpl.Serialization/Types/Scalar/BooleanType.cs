@@ -1,19 +1,21 @@
-﻿using System;
-using System.Globalization;
-using System.Reflection;
-using Simpl.Serialization.Context;
-
-namespace Simpl.Serialization.Types.Scalar
+﻿namespace Simpl.Serialization.Types.Scalar
 {
+    using System;
+    using System.Reflection;
+    using Simpl.Serialization.Context;
+
+    /// <summary>
+    /// Represents a scalar value of True or False
+    /// </summary>
     class BooleanType : ScalarType
     {
         /// <summary>
-        /// 
+        /// The default value for a BooleanType, False
         /// </summary>
         public const bool DefaultValue = false;
 
         /// <summary>
-        /// 
+        /// The default value, represented as a string
         /// </summary>
         public const String DEFAULT_VALUE_STRING = "False";
 
@@ -25,6 +27,10 @@ namespace Simpl.Serialization.Types.Scalar
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
         public BooleanType(Type type)
             : base(type, CLTypeConstants.JavaBoolean, CLTypeConstants.ObjCBoolean, null)
         {

@@ -146,6 +146,14 @@ namespace Simpl.Serialization
             return result;
         }
 
+
+
+
+        public static Boolean IsAnnotationPresent<SimplAnnotation>(Type thatClass) where SimplAnnotation : Attribute
+        {
+            return IsAnnotationPresent(thatClass, typeof(SimplAnnotation));
+        }
+
         /// <summary>
         ///     Returns true if the given type of annotation is present
         ///     on the specified class
@@ -160,12 +168,13 @@ namespace Simpl.Serialization
             else return false;
         }
 
-        /// <summary>
-        ///     
-        /// </summary>
-        /// <param name="thatField"></param>
-        /// <param name="attributeType"></param>
-        /// <returns></returns>
+
+
+        public static Boolean IsAnnotationPresent<SimplAnnotation>(FieldInfo thatField) where SimplAnnotation : Attribute
+        {
+            return IsAnnotationPresent(thatField, typeof(SimplAnnotation));
+        }
+        
         public static Boolean IsAnnotationPresent(FieldInfo thatField, Type attributeType)
         {
             Object[] attributes = thatField.GetCustomAttributes(attributeType, true);
@@ -173,12 +182,13 @@ namespace Simpl.Serialization
             else return false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thatField"></param>
-        /// <param name="attributeType"></param>
-        /// <returns></returns>
+
+
+        public static SimplAnnotation GetAnnotation<SimplAnnotation>(FieldInfo thatField) where SimplAnnotation : Attribute
+        {
+            return (SimplAnnotation)GetAnnotation(thatField, typeof(SimplAnnotation));
+        }
+
         public static Attribute GetAnnotation(FieldInfo thatField, Type attributeType)
         {
             Object[] attributes = thatField.GetCustomAttributes(attributeType, true);
@@ -192,13 +202,12 @@ namespace Simpl.Serialization
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thatClass"></param>
-        /// <param name="attributeType"></param>
-        /// <param name="considerInheritedAnnotations"></param>
-        /// <returns></returns>
+
+        public static SimplAnnotation GetAnnotation<SimplAnnotation>(Type thatClass, bool considerInheritedAnnotations = false) where SimplAnnotation : Attribute
+        {
+            return (SimplAnnotation)GetAnnotation(thatClass, typeof(SimplAnnotation), considerInheritedAnnotations);
+        }
+        
         public static Attribute GetAnnotation(Type thatClass, Type attributeType, bool considerInheritedAnnotations = false)
         {
             Object[] attributes = thatClass.GetCustomAttributes(attributeType, considerInheritedAnnotations);
@@ -257,7 +266,7 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static string GetXmlTagName(Type thatClass, String suffix)
         {
-            SimplTag tagAnnotation = (SimplTag)GetAnnotation(thatClass, typeof(SimplTag));
+            SimplTag tagAnnotation = GetAnnotation<SimplTag>(thatClass);
             String result = null;
 
             if (tagAnnotation != null)
@@ -344,7 +353,7 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static string GetXmlTagName(FieldInfo field)
         {
-            SimplTag tagAnnotation = (SimplTag)GetAnnotation(field, typeof(SimplTag));
+            SimplTag tagAnnotation = GetAnnotation<SimplTag>(field);
 
             String result = null;
              
@@ -385,7 +394,7 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static bool IsScalar(FieldInfo thatField)
         {
-            return IsAnnotationPresent(thatField, typeof(SimplScalar));
+            return IsAnnotationPresent<SimplScalar>(thatField);
         }
 
         /// <summary>
@@ -415,7 +424,7 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static Hint SimplHint(FieldInfo field)
         {
-            SimplHints hintAnnotation = (SimplHints)GetAnnotation(field, typeof(SimplHints));
+            SimplHints hintAnnotation = GetAnnotation<SimplHints>(field);
             return (hintAnnotation == null) ? Hint.XmlAttribute : hintAnnotation.Value[0];
         }
 
@@ -431,7 +440,7 @@ namespace Simpl.Serialization
 
         public static bool IsCompositeAsScalarValue(FieldInfo field)
 	    {
-		    return IsAnnotationPresent(field, typeof(SimplCompositeAsScalar));
+		    return IsAnnotationPresent<SimplCompositeAsScalar>(field);
 	    }
 
         const int ISO_LATIN1_START = 128;

@@ -15,7 +15,7 @@ namespace Simpl.Fundamental.Collections
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class MultiAncestorScope<T> : Dictionary<string, T>
-        where T : class 
+        where T : class
     {
         /// <summary>
         /// Ancestors of this scope
@@ -39,32 +39,51 @@ namespace Simpl.Fundamental.Collections
         private T GetHelper(string key, HashSet<Dictionary<string, T>> visited)
         {
             T result = null;
-            if (base.ContainsKey(key)) 
+
+            if (base.ContainsKey(key))
+            {
                 TryGetValue(key, out result);
-            
+            }
+
             if (result == null)
-			    result = this.GetFromCache(key);
-		    if (result == null)
-		    {
-			    if (this.ancestors != null)
-				    foreach (var ancestor in this.ancestors)
-					    if (containsSame(visited, ancestor))
-						    continue;
-					    else
-					    {
-						    visited.Add(ancestor);
-						    if (ancestor is MultiAncestorScope<T>)
-							    result = ((MultiAncestorScope<T>) ancestor).GetHelper(key, visited);
-						    else
-							    ancestor.TryGetValue(key, out result);
-						    if (result != null)
-						    {
-							    this.PutToCache(key, result);
-							    break;
-						    }
-					    }
-		}
-		return result;
+            {
+                result = this.GetFromCache(key);
+            }
+
+            if (result == null)
+            {
+                if (this.ancestors != null)
+                {
+                    foreach (var ancestor in this.ancestors)
+                    {
+                        if (containsSame(visited, ancestor))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            visited.Add(ancestor);
+
+                            if (ancestor is MultiAncestorScope<T>)
+                            {
+                                result = ((MultiAncestorScope<T>)ancestor).GetHelper(key, visited);
+                            }
+                            else
+                            {
+                                ancestor.TryGetValue(key, out result);
+                            }
+
+                            if (result != null)
+                            {
+                                this.PutToCache(key, result);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         ///<summary>
@@ -74,19 +93,24 @@ namespace Simpl.Fundamental.Collections
         public void AddIfValueNotNull(String key, T value)
         {
             if (value != null)
-                Add(key, value);
+            {
+                this.Add(key, value);
+            }
         }
 
         private void PutToCache(string key, T value)
         {
-            if(queryCache == null)
-                queryCache = new LRUCache<string, T>();
-            queryCache.Add(key, value);
+            if (this.queryCache == null)
+            {
+                this.queryCache = new LRUCache<string, T>();
+            }
+
+            this.queryCache.Add(key, value);
         }
 
         private T GetFromCache(string key)
         {
-            return queryCache == null ? null : queryCache.Get(key);
+            return this.queryCache == null ? null : queryCache.Get(key);
         }
 
         /**
@@ -103,29 +127,29 @@ namespace Simpl.Fundamental.Collections
             return results;
         }
 
-	    private void GetAllHelper(Object key, List<Dictionary<string, T>> visited, List<T> results)
-	    {
-		    T result;
+        private void GetAllHelper(Object key, List<Dictionary<string, T>> visited, List<T> results)
+        {
+            T result;
             base.TryGetValue(key.ToString(), out result);
-		    if (result != null)
-			    results.Add(result);
-		    if (this.ancestors != null)
-			    foreach (Dictionary<string, T> ancestor in this.ancestors)
-				    if (containsSame(visited, ancestor))
-					    continue;
-				    else
-				    {
-					    visited.Add(ancestor);
-					    if (ancestor is MultiAncestorScope<T>)
-						    ((MultiAncestorScope<T>) ancestor).GetAllHelper(key, visited, results);
-					    else
-					    {
+            if (result != null)
+                results.Add(result);
+            if (this.ancestors != null)
+                foreach (Dictionary<string, T> ancestor in this.ancestors)
+                    if (containsSame(visited, ancestor))
+                        continue;
+                    else
+                    {
+                        visited.Add(ancestor);
+                        if (ancestor is MultiAncestorScope<T>)
+                            ((MultiAncestorScope<T>)ancestor).GetAllHelper(key, visited, results);
+                        else
+                        {
                             ancestor.TryGetValue(key.ToString(), out result);
-						    if (result != null)
-							    results.Add(result);
-					    }
-				    }
-	    }
+                            if (result != null)
+                                results.Add(result);
+                        }
+                    }
+        }
 
         /// <summary>
         /// Ancestors of this scope
@@ -138,14 +162,14 @@ namespace Simpl.Fundamental.Collections
 
         private void AddAncestors(IEnumerable<Dictionary<string, T>> additionalAncestors)
         {
-            if(additionalAncestors != null)
+            if (additionalAncestors != null)
                 foreach (var ancestor in additionalAncestors)
                     AddAncestor(ancestor);
         }
 
         public void AddAncestor(Dictionary<string, T> ancestor)
         {
-            if(ancestor == null || containsSame(Ancestors, ancestor))
+            if (ancestor == null || containsSame(Ancestors, ancestor))
                 return;
             ancestors.Add(ancestor);
         }

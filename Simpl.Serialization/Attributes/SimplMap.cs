@@ -15,7 +15,7 @@ namespace Simpl.Serialization.Attributes
          /// <summary>
         /// 
         /// </summary>
-        public SimplMap()
+        private SimplMap()
         {
         }
 
