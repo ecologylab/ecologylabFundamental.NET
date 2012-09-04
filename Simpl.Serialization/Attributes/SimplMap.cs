@@ -12,10 +12,10 @@ namespace Simpl.Serialization.Attributes
     {
         private readonly String _tagName;
 
-         /// <summary>
+        /// <summary>
         /// 
         /// </summary>
-        private SimplMap()
+        public SimplMap()
         {
         }
 
