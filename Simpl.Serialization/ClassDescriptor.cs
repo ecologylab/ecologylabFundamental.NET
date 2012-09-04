@@ -139,7 +139,7 @@ namespace Simpl.Serialization
         ///     <c>Type</c> of the class defined by this  
         ///     <c>ClassDescriptor</c>
         /// </param>
-        private ClassDescriptor(Type thatClass)
+        public ClassDescriptor(Type thatClass)
             : base(XmlTools.GetXmlTagName(thatClass, SimplTypesScope.STATE), thatClass.Name)
         {
             _describedClass = thatClass;
@@ -188,7 +188,7 @@ namespace Simpl.Serialization
         /// <param name="tagName">
         ///     <c>String</c> tagName for the <c>ClassDescriptor</c>
         /// </param>
-        private ClassDescriptor(String tagName, String comment, String describedClassPackageName,
+        public ClassDescriptor(String tagName, String comment, String describedClassPackageName,
                                String describedClassSimpleName, ClassDescriptor superClass, List<String> interfaces)
             : base(tagName, describedClassPackageName + "." + describedClassSimpleName, comment)
         {
@@ -539,7 +539,7 @@ namespace Simpl.Serialization
             yield break;
         }
 
-        private void ResolveUnresolvedScopeAnnotationFDs()
+        public void ResolveUnresolvedScopeAnnotationFDs()
         {
             if (_unresolvedScopeAnnotationFDs != null)
             {
