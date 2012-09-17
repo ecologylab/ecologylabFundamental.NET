@@ -55,5 +55,10 @@ namespace Simpl.Serialization.Types.Scalar
         {
             return (long)field.GetValue(context) == DEFAULT_VALUE;
         }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            return base.GenericSimplEquals<long>(left, right);
+        }
     }
 }

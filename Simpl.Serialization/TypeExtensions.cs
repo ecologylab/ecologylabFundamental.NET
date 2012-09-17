@@ -24,6 +24,16 @@
             return GetDependentTypesWithDuplicates(currentType, matchesPredicate).Distinct();
         }
 
+        /// <summary>
+        /// Determines if this currentType can be assigned to the TargetType
+        /// </summary>
+        /// <typeparam name="TargetType">Type to asign to</typeparam>
+        /// <param name="currentType">Our current Type</param>
+        /// <returns>True if so (If the targetType is assignable from the current type, the current type is assignable TO the target type)</returns>
+        public static bool IsAssignableTo<TargetType>(this Type currentType)
+        {
+            return typeof(TargetType).IsAssignableFrom(currentType);
+        }
 
         private static IEnumerable<Type> GetDependentTypesWithDuplicates(Type currentType, Func<MemberInfo, bool> matchesPredicate)
         {

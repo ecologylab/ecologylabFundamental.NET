@@ -4,134 +4,123 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Simpl.Fundamental.Generic
 {
+    /// <summary>
+    /// A static utility class containing tools that make reflection tasks easier.
+    /// </summary>
     public static class ReflectionTools
     {
-
-
-
-
-        /**
-	     * Get the parameterized type tokens that the generic Field was declared with.
-	     * 
-	     * @param reflectType
-	     * @return
-	     */
-	    public static Type[] GetParameterizedTypeTokens(FieldInfo field)
+        /// <summary>
+        /// Get the parameterized type tokens that the generic Field was declared with.        
+        /// </summary>
+        /// <param name="field">Field infor to obtain parametized types for.</param>
+        /// <returns> A type array of parametized types.</returns>
+        public static Type[] GetParameterizedTypeTokens(FieldInfo field)
 	    {
 	        return field.FieldType.GetGenericArguments();
 	    }
 
-        /**
-  	     * Find a Method object if there is one in the context class, or return null if not.
-  	     * 
-  	     * @param context	Class to find the Method in.
-  	     * @param name		Name of the method.
-  	     * @param types		Array of Class objects indicating parameter types.
-  	     * 
-  	     * @return			The associated Method object, or null if non is accessible.	
-  	     */
-  	    public static MethodInfo GetMethod(Type context, String name, Type[] types)
+        /// <summary>
+        /// Find a method object if there is one in the context class, or return null if not.
+        /// </summary>
+        /// <param name="context"> Class to find the method in</param>
+        /// <param name="name"> Name of the method to find</param>
+        /// <param name="types">Array of Type objects indicating desired parameter types</param>
+        /// <returns> the associated method object, or null if none is accessible or matches.</returns>
+  	    public static MethodInfo GetMethod(Type context, string name, Type[] types)
   	    {
+            // TODO: CONSIDER THROWING EXCEPTIONS HERE.
   		    MethodInfo result	= null;
+
   		    try
 		    {
-			    result		= context.GetMethod(name, types);
-		    } catch (AmbiguousMatchException e)
-		    {
-		    } catch (ArgumentNullException e)
-		    {
+			    result = context.GetMethod(name, types);
 		    }
-  		    return result;
+            catch (AmbiguousMatchException)
+		    {
+		        // Swallow this exception
+            }
+            catch (ArgumentNullException)
+		    {
+                // Swallow this exception
+		    }
+  		    
+            return result;
   	    }
 
-        /**
-         * Get the Field object with name fieldName, in thatClass.
-         * 
-         * @param thatClass
-         * @param fieldName
-         * 
-         * @return	The Field object in thatClass, or null if there is none accessible.
-         */
-        public static FieldInfo GetField(Type thatClass, String fieldName)
+        ///<summary>
+        ///Get the Field object with name fieldName, in thatClass.
+        ///</summary>
+        ///<param name="thatClass"> Context class to find fieldName in. </param>
+        ///<returns>The field in that class, unless it is unaccessible, then returns null.</returns>
+        public static FieldInfo GetField(Type thatClass, string fieldName)
         {
-            FieldInfo	result	= null;
+            FieldInfo result = null;
+            
             try
             {
-                result		= thatClass.GetField(fieldName);
-            } catch (ArgumentNullException e)
+                result = thatClass.GetField(fieldName);
+            } 
+            catch (ArgumentNullException)
             {
-            } catch (NotSupportedException e)
+                // Swallow this exception
+            } 
+            catch (NotSupportedException)
             {
+                // Swallow this exception
             }	
+
             return result;
         }
 
-        /**
-         * Get the Field object with name fieldName, in thatClass.
-         * 
-         * @param thatClass
-         * @param fieldName
-         * 
-         * @return	The Field object in thatClass, or null if there is none accessible.
-         */
-        public static FieldInfo GetDeclaredField(Type thatClass, String fieldName)
-        {
-   	       FieldInfo	result	= null;
-   	       try
-   	       {
-   		       result		= thatClass.GetField(fieldName);
-   	       } catch (ArgumentNullException e)
-   	       {
-   	       } catch (NotSupportedException e)
-   	       {
-   	       }	
-   	       return result;
-        }
-
-        public static readonly Object	BadAccess	= new Object();
+        /// <summary>
+        /// A new object, which represents "BAD ACCESS" 
+        /// TODO: Replace with exception
+        /// </summary>
+        public static readonly Object	BadAccess	= new object();
    
-        /**
-        * Return the value of the Field in the Object, or BAD_ACCESS if it can't be accessed.
-        * 
-        * @param that
-        * @param field
-        * @return
-        */
-        public static Object GetFieldValue(Object that, FieldInfo field)
+        /// <summary>
+        /// Return the value of the Field in the Object, or BAD_ACCESS if it can't be accessed.
+        /// </summary>
+        /// <param name="contextObject"> Context object to obtain value in</param>
+        /// <param name="field">Field to obtain value of</param>
+        public static object GetFieldValue(object contextObject, FieldInfo field)
         {
-            Object result	= null;
+            object result = null;
+            
             try
             {
-	            result		= field.GetValue(that);
-            } catch (Exception e)
+	            result = field.GetValue(contextObject);
+            } 
+            catch (Exception e)
             {
-	            result		= BadAccess;
+	            result = BadAccess;
 	            Console.Error.WriteLine(e.Message);
             }
             
             return result;
         }
    
-       /**
-        * Set a reference type Field to a value.
-        * 
-        * @param that		Object that the field is in.
-        * @param field		Reference type field within that object.
-        * @param value		Value to set the reference field to.
-        * 
-        * @return			true if the set succeeds.
-        */
-        public static bool SetFieldValue(Object that, FieldInfo field, Object value)
+        ///<summary>
+        /// Set a reference type Field to a value.
+        ///</summary.
+        ///<param name="that">Context object to set field value within</param>
+        ///<param name="field">Field info to set value within</param>
+        ///<param name="value">Value to set</param>
+        ///<returns>true if the set succeeds.</returns>
+        public static bool SetFieldValue(object that, FieldInfo field, object value)
         {
 	        bool result	= false;
-	        try
+	        
+            try
 	        {
 		        field.SetValue(that, value);
-		        result		= true;
-	        } catch (Exception e)
+		        result = true;
+	        }
+            catch (Exception e)
 	        {
 		       Console.Error.WriteLine(e.Message);
 	        }
@@ -139,29 +128,40 @@ namespace Simpl.Fundamental.Generic
 	        return result;
         }
 
-        /**
-         * Wraps the no argument getInstance() method.
-         * Checks to see if the class object passed in is null, or if
-         * any exceptions are thrown by newInstance().
-         * 
-         * @param thatClass
-         * @return	An instance of an object of the specified class, or null if the Class object was null or
-         * an InstantiationException or IllegalAccessException was thrown in the attempt to instantiate.
-         */
-  	    public static T GetInstance<T>(T thatClass) where T : class
+        ///<summary>
+        /// Wraps the no argument getInstance() method.
+         /// Checks to see if the class object passed in is null, or if
+         /// any exceptions are thrown by newInstance().
+         /// </summary>
+         ///<param name="thatClass"> Class to obtain new instance of... ... ... </param>
+         ///<typeparam name="T"> Type of the class... </typeparam>
+         ///<returns>An instance of an object of the specified class, or null if the Class object was null or
+        /// an InstantiationException or IllegalAccessException was thrown in the attempt to instantiate.
+        /// </returns>
+  	    public static T GetInstance<T>(Type thatClass, params object[] args) where T : class
   	    {
-  		    T result		= default(T);
-  		    if (thatClass != null)
-  		    {
-  			    try
-  			    {
-  				    result        	= Activator.CreateInstance<T>();
-  			    } catch (MissingMethodException e)
-  			    {
-  				    Console.Error.WriteLine(e.Message);
-  			    }
-  		    }
-  		    return result;
+            if(typeof(T).IsAssignableFrom(thatClass))
+            {
+                try
+                {
+                    if (args.Length == 0)
+                    {
+                        return (T)Activator.CreateInstance(thatClass, args);
+                    }
+                    else
+                    {
+                        return Activator.CreateInstance<T>();
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException(String.Format("Type given ({0}) cannot be created as ({1}) with given args.", thatClass.Name, typeof(T).Name), e);
+                }
+            }
+            else
+            {
+                throw new ArgumentException(String.Format("The given type ({0}) is not assignable to T ({1})", thatClass.Name, typeof(T).Name));
+            }
   	    }
 
   	    /**

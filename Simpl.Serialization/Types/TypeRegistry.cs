@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Simpl.Fundamental.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Simpl.Serialization.Types
 {
@@ -14,49 +16,60 @@ namespace Simpl.Serialization.Types
     /// </summary>
     public class TypeRegistry
     {
-
         /// <summary>
-        /// 
+        /// Collection of scalar types contained in this type registry
         /// </summary>
-        private static TypeRegistry scalarRegistry;
+        private static TypeCollection<ScalarType> scalarTypeCollection = new TypeCollection<ScalarType>();
 
         /// <summary>
-        /// 
+        /// Collection of collectionTypes contained in this type registry
         /// </summary>
-        private static TypeRegistry collectionRegistry;
+        private static TypeCollection<CollectionType> collectionTypeCollection = new TypeCollection<CollectionType>((t) => new CollectionType(t,t.Name,t.Name));
 
         /// <summary>
-        /// 
+        /// Collection of composite types contained in this type registry
         /// </summary>
-        private readonly Dictionary<String, SimplType> _typesByJavaName = new Dictionary<String, SimplType>();
+        private static TypeCollection<CompositeType> compositeTypeCollection = new TypeCollection<CompositeType>((t) => new CompositeType(t));
 
         /// <summary>
-        /// 
+        /// Collection of all simpl types contained in this type registry
         /// </summary>
-        private readonly Dictionary<String, SimplType> _typesByCrossPlatformName = new Dictionary<String, SimplType>();
+        private static TypeCollection<SimplType> simplTypeCollection = new TypeCollection<SimplType>();
+
+        public static TypeCollection<ScalarType> ScalarTypes
+        {
+            get
+            {
+                return scalarTypeCollection;
+            }
+        }
+
+        public static TypeCollection<CollectionType> CollectionTypes
+        {
+            get
+            {
+                return collectionTypeCollection;
+            }
+        }
+
+        public static TypeCollection<CompositeType> CompositeTypes
+        {
+            get
+            {
+                return compositeTypeCollection;
+            }
+        }
+
+        public static TypeCollection<SimplType> SimplTypes
+        {
+            get
+            {
+                return simplTypeCollection;
+            }
+        }
 
         /// <summary>
-        /// 
-        /// </summary>
-        private readonly Dictionary<String, SimplType> _typesBySimpleName = new Dictionary<String, SimplType>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private readonly Dictionary<String, SimplType> _typesBycSharpName = new Dictionary<String, SimplType>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private readonly Dictionary<String, SimplType> _typesByObjectiveCName = new Dictionary<String, SimplType>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private readonly Dictionary<String, SimplType> _typesByDbName = new Dictionary<String, SimplType>();
-
-        /// <summary>
-        /// 
+        /// Initializes the TypeRegistry
         /// </summary>
         static TypeRegistry()
         {
@@ -64,352 +77,108 @@ namespace Simpl.Serialization.Types
         }
 
         /// <summary>
-        /// 
+        /// Gets a value indicating if the TypeRegistry has been initialized
         /// </summary>
         private static Boolean isInit;
 
         /// <summary>
-        /// 
+        /// Initializes the TypeRegistry by adding all fundamental types to the Registry.
         /// </summary>
         public static void Init()
         {
-            if (isInit) return;
-
-            isInit = true;
-
-            new FundamentalTypes();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private static TypeRegistry ScalarRegistry
-        {
-            get
+            if (!isInit)
             {
-                TypeRegistry result = scalarRegistry;
+                // Add fundamental types to the TypeRegistry by creating all fundamental simpl types.
+                // (Every time a simpl_type object is created, it gets enrolled in the registry statically)
+                new FundamentalTypes();
 
-                if (result == null)
-                {
-                    lock (typeof (TypeRegistry))
-                    {
-                        result = scalarRegistry;
-                        if (result == null)
-                        {
-                            result = new TypeRegistry();
-                            scalarRegistry = result;
-                        }
-                    }
-                }
-                return result;
+                // We should always have scalar types registered... 
+                Contract.Requires(TypeRegistry.ScalarTypes.CSharpType.Count > 0, "Scalar types not added to TypeRegistry upon static initialization.");
+                
+                // We have initailized the TypeRegistry
+                isInit = true;
             }
         }
 
         /// <summary>
-        /// 
+        /// Registers a given SimplType into one of the relevant type registries.
         /// </summary>
-        private static TypeRegistry CollectionRegistry
+        /// <param name="type">Type to register</param>
+        /// <returns>True if it succeded, false if it was not registered, exception if an issue occurred or the type would not fit in a category.</returns>
+        public static bool RegisterSimplType(SimplType type)
         {
-            get
-            {
-                TypeRegistry result = collectionRegistry;
-                if (result == null)
-                {
-                    lock (typeof (TypeRegistry))
-                    {
-                        result = collectionRegistry;
-                        if (result == null)
-                        {
-                            result = new TypeRegistry();
-                            collectionRegistry = result;
-                        }
-                    }
-                }
-                return result;
-            }
-        }
+            bool result = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static Boolean RegisterSimplType(SimplType type)
-        {
-            if (type is CollectionType)
-            {
-                return CollectionRegistry.RegisterType(type);
-            }
-
-            if (type is ScalarType)
-                return ScalarRegistry.RegisterType(type);
-
-            return false;
-        }
-
-
-        public static void RegisterTypes(SimplType[] simplTypes)
-        {
-            foreach(var type in simplTypes)
-                RegisterSimplType(type);
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public Boolean RegisterType(SimplType type)
-        {
-
-            _typesBycSharpName.Add(type.CSharpTypeName, type);
-            _typesByCrossPlatformName.Add(type.Name, type);
-
-            if (type.JavaTypeName != null)
-                _typesByJavaName.Add(type.JavaTypeName, type);
-
-            if (type.ObjectiveCTypeName != null)
-                _typesByObjectiveCName.Add(type.ObjectiveCTypeName, type);
-
-            if (type.DbTypeName != null)
-                _typesByDbName.Add(type.DbTypeName, type);
-
-            if (_typesBySimpleName.ContainsKey(type.SimplName))
-            {
-                Debug.WriteLine("registerType(): Redefining type: " + type.SimplName);
-                _typesBySimpleName.Remove(type.SimplName);
-                _typesBySimpleName.Add(type.SimplName, type);
-                return false;
-            }
-            _typesBySimpleName.Add(type.SimplName, type);
-
-            return true;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static Boolean RegisterScalarType(ScalarType type)
-        {
-            return ScalarRegistry.RegisterType(type);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public Boolean RegisterTypeIfNew(SimplType type)
-        {
-            String javaTypeName = type.JavaTypeName;
-            return !_typesByJavaName.ContainsKey(javaTypeName) && RegisterType(type);
-        }
+            result |= ScalarTypes.TryAdd(type);
+            result |= CollectionTypes.TryAdd(type);
+            result |= CompositeTypes.TryAdd(type);
+            result |= SimplTypes.TryAdd(type);
         
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thatType"></param>
-        /// <returns></returns>
-        public static ScalarType GetScalarType(Type thatType)
-        {
-            if (XmlTools.IsEnum(thatType))
-            {
-                return (ScalarType) ScalarRegistry.GetTypeByType(typeof(Enum));
-            }
-            return (ScalarType) ScalarRegistry.GetTypeByType(thatType);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static Boolean ContainsScalarType(Type type)
-        {
-            return ScalarRegistry.Contains(type);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public Boolean Contains(Type type)
-        {
-            return ContainsBycSharpName(type.Name);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cSharpName"></param>
-        /// <returns></returns>
-        private Boolean ContainsBycSharpName(string cSharpName)
-        {
-            return _typesBycSharpName.ContainsKey(cSharpName);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="simpleName"></param>
-        /// <returns></returns>
-        public static ScalarType GetScalarTypeBySimpleName(String simpleName)
-        {
-            return (ScalarType) ScalarRegistry.GetTypeBySimpleName(simpleName);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="simpleName"></param>
-        /// <returns></returns>
-        private SimplType GetTypeBySimpleName(String simpleName)
-        {
-            return _typesBySimpleName[simpleName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cSharpType"></param>
-        /// <returns></returns>
-        public SimplType GetTypeByType(Type cSharpType)
-        {
-            return GetTypeBycSharpName(cSharpType.Name);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cSharpName"></param>
-        /// <returns></returns>
-        public SimplType GetTypeBycSharpName(String cSharpName)
-        {
-            if (_typesBycSharpName.ContainsKey(cSharpName))
-                return _typesBycSharpName[cSharpName];
-            else
-                //generics
-                return null;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="javaName"></param>
-        /// <returns></returns>
-        public SimplType GetTypeByJavaName(String javaName)
-        {
-            return _typesByJavaName[javaName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="objectiveCName"></param>
-        /// <returns></returns>
-        public SimplType GetTypeByObjectiveCName(String objectiveCName)
-        {
-            return _typesByObjectiveCName[objectiveCName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dbName"></param>
-        /// <returns></returns>
-        public SimplType GetTypeByDbName(String dbName)
-        {
-            return _typesByDbName[dbName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="collectionType"></param>
-        public static void RegisterCollectionType(CollectionType collectionType)
-        {
-            CollectionRegistry.RegisterType(collectionType);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="crossPlatformName"></param>
-        /// <returns></returns>
-        public static CollectionType GetCollectionTypeByCrossPlatformName(String crossPlatformName)
-        {
-            return (CollectionType) CollectionRegistry._typesByCrossPlatformName[crossPlatformName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cSharpName"></param>
-        /// <returns></returns>
-        public static CollectionType GetCollectionTypeByCSharpName(String cSharpName)
-        {
-            return (CollectionType) CollectionRegistry._typesBycSharpName[cSharpName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="objectiveCName"></param>
-        /// <returns></returns>
-        public static CollectionType GetCollectionTypeByObjectiveCName(String objectiveCName)
-        {
-            return (CollectionType)CollectionRegistry._typesByObjectiveCName[objectiveCName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="simpleName"></param>
-        /// <returns></returns>
-        public static CollectionType GetCollectionTypeBySimpleName(String simpleName)
-        {
-            return (CollectionType) CollectionRegistry._typesBySimpleName[simpleName];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cSharpField"></param>
-        /// <returns></returns>
-        public static CollectionType GetCollectionType(FieldInfo cSharpField)
-        {
-            return GetCollectionType(cSharpField.FieldType);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cSharpFieldType"></param>
-        /// <returns></returns>
-        public static CollectionType GetCollectionType(Type cSharpFieldType)
-        {
-            String cSharpName = cSharpFieldType.Name;
-            CollectionType result = GetCollectionTypeBycSharpName(cSharpName);
-            if (result == null)
-            {
-                if (cSharpFieldType.IsInterface || cSharpFieldType.IsAbstract)
-                {
-                    return cSharpFieldType is IDictionary
-                               ? collectionRegistry.DefaultMapType
-                               : collectionRegistry.DefaultCollectionType;
-                }
-                String crossPlatformName = SimplType.DeriveCrossPlatformName(cSharpFieldType, false);
-                Debug.WriteLine("No CollectionType was pre-defined for " + crossPlatformName +
-                                  ", so constructing one on the fly.\nCross-language code for fields defined with this type cannot be generated.");
-                result = new CollectionType(cSharpFieldType, null, null);
-            }
             return result;
+
+        }
+
+        /// <summary>
+        /// Registers an entire array of simplTypes
+        /// </summary>
+        /// <param name="simplTypes">Simpl Types to register</param>
+        /// <returns>True if all succeeded, false if any fail.</returns>
+        public static bool RegisterTypes(SimplType[] simplTypes)
+        {
+            bool result = true;
+
+            foreach (var type in simplTypes)
+            {
+                result &= RegisterSimplType(type);
+            }
+
+            return result;
+        }
+
+        //TODO: SIMPL WILL NOT HANDLE MULTIPLE ENUM TYPES IN A GIVEN SCOPE PROPERLY... I THINK. :P
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static CollectionType DefaultCollectionType { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static CollectionType DefaultMapType { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isDictionary"></param>
+        /// <returns></returns>
+        public static CollectionType GetDefaultCollectionOrMapType(Boolean isDictionary)
+        {
+            return isDictionary ? DefaultMapType : DefaultCollectionType;
+        }
+
+        public static void SetDefaultCollectionType(CollectionType ct)
+        {
+            DefaultCollectionType = ct;
+        }
+
+        public static void SetDefaultMapType(CollectionType ct)
+        {
+            DefaultMapType = ct;
+        }
+
+        internal static CollectionType GetCollectionType(FieldInfo thatField)
+        {
+            if (CollectionType.CanBeCreatedFrom(thatField.FieldType))
+            {
+                var created = new CollectionType(thatField.FieldType, javaName: thatField.Name, objCName: thatField.Name);
+                compositeTypeCollection.TryAdd(created);
+                return created;
+            }
+            else
+            {
+                throw new ArgumentException(String.Format("Field type is not a legitimate collection we can create. Type: {0}", thatField.FieldType));
+            }
         }
 
         /// <summary>
@@ -419,50 +188,7 @@ namespace Simpl.Serialization.Types
         /// <returns></returns>
         public static CollectionType GetCollectionTypeBycSharpName(String cSharpClassName)
         {
-            if (collectionRegistry._typesBycSharpName.ContainsKey(cSharpClassName))
-                return (CollectionType)collectionRegistry._typesBycSharpName[cSharpClassName];
-            
-            return null;
+            return CollectionTypes.CSharpName[cSharpClassName];
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static TypeRegistry ScalarTypeRegistry
-        {
-            get { return scalarRegistry; }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CollectionType DefaultCollectionType { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public CollectionType DefaultMapType { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="isDictionary"></param>
-        /// <returns></returns>
-        public static CollectionType GetDefaultCollectionOrMapType(Boolean isDictionary)
-        {
-            return isDictionary ? CollectionRegistry.DefaultMapType : CollectionRegistry.DefaultCollectionType;
-        }
-
-        public static void SetDefaultCollectionType(CollectionType ct)
-        {
-            CollectionRegistry.DefaultCollectionType = ct;
-        }
-
-        public static void SetDefaultMapType(CollectionType ct)
-        {
-            CollectionRegistry.DefaultMapType = ct;
-        }
-
-
     }
 }

@@ -23,5 +23,10 @@ namespace Simpl.Serialization.Types.Scalar
         {
             return instance.ToString();
         }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            return base.GenericSimplEquals<FieldInfo>(left, right);
+        }
     }
 }

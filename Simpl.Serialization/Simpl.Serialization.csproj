@@ -210,6 +210,7 @@
     <Compile Include="Serializers\StringFormats\JsonSerializer.cs" />
     <Compile Include="Serializers\StringFormats\StringSerializer.cs" />
     <Compile Include="Serializers\StringFormats\XmlSerializer.cs" />
+    <Compile Include="SimplEquality.cs" />
     <Compile Include="SimplTranslationException.cs" />
     <Compile Include="StringFormat.cs" />
     <Compile Include="ElementState.cs" />
@@ -224,6 +225,7 @@
     <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CLTypeConstants.cs" />
     <Compile Include="FieldDescriptor.cs" />
+    <Compile Include="Types\CompositeType.cs" />
     <Compile Include="Types\FundamentalTypes.cs" />
     <Compile Include="Types\ScalarType.cs" />
     <Compile Include="Types\Scalar\BinaryDataType.cs" />
@@ -244,6 +246,7 @@
     <Compile Include="Types\Scalar\ScalarTypeType.cs" />
     <Compile Include="Types\Scalar\StringBuilderType.cs" />
     <Compile Include="Types\Scalar\StringType.cs" />
+    <Compile Include="Types\TypeCollection.cs" />
     <Compile Include="Types\TypeRegistry.cs" />
     <Compile Include="Types\Scalar\ParsedUriType.cs" />
     <Compile Include="Types\SimplType.cs" />

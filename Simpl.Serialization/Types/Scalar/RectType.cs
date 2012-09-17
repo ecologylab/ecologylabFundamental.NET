@@ -23,7 +23,7 @@ namespace Simpl.Serialization.Types.Scalar
             {
                 double x = 0, y = 0, width = 0, height = 0;
                 string[] values = value.Split(' ');
-                
+
                 if (values.Length > 1)
                 {
                     x = double.Parse(values[0]);
@@ -38,15 +38,20 @@ namespace Simpl.Serialization.Types.Scalar
 
                 result = new Rect(x, y, width, height);
             }
-            catch (ArgumentNullException e) { }
-            catch (ArgumentException e) { }
-            
+            catch (ArgumentNullException) { }
+            catch (ArgumentException) { }
+
             return result;
         }
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
-            return ((Rect) instance).ToString();
+            return ((Rect)instance).ToString();
+        }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            return base.GenericSimplEquals<Rect>(left, right);
         }
     }
 }

@@ -12,7 +12,7 @@
         /// <summary>
         /// The default value for a BooleanType, False
         /// </summary>
-        public const bool DefaultValue = false;
+        public new const bool DefaultValue = false;
 
         /// <summary>
         /// The default value, represented as a string
@@ -62,6 +62,18 @@
         public override bool IsDefaultValue(FieldInfo field, Object context)
         {
             return (bool) field.GetValue(context) == DefaultValue;
-        } 
+        }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is bool && right is bool)
+            {
+               return Boolean.Equals(left, right);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

@@ -54,5 +54,10 @@ namespace Simpl.Serialization.Types.Scalar
             return (DateTime) field.GetValue(context) == DefaultValue;
         }
 
+
+        public override bool SimplEquals(object left, object right)
+        {
+            return base.GenericSimplEquals<DateTime>(left, right);
+        }
     }
 }

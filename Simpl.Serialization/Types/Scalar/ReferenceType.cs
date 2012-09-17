@@ -27,7 +27,7 @@ namespace Simpl.Serialization.Types.Scalar
         /// <param name="instance"></param>
         /// <param name="buffy"></param>
         /// <param name="needsEscaping"></param>
-        public new void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping)
+        public void AppendValue(object instance, StringBuilder buffy, Boolean needsEscaping)
         {
             String instanceString = Marshall(instance);
             if (NeedsEscaping)

@@ -15,6 +15,9 @@ using Simpl.Serialization.PlatformSpecifics;
 
 namespace Simpl.Serialization
 {
+    /// <summary>
+    /// A class that "Describes" the different aspects of a field in a given class that can be handled via S.im.pl
+    /// </summary>
     public class FieldDescriptor : DescriptorBase
     {
         public static readonly String Null = ScalarType.DefaultValueString;
@@ -70,6 +73,14 @@ namespace Simpl.Serialization
         [SimplScalar] private ScalarType scalarType;
 
         [SimplComposite] private CollectionType collectionType;
+
+        public CollectionType CollectionType
+        {
+            get
+            {
+                return this.collectionType;
+            }
+        }
 
         [SimplScalar] private Hint xmlHint;
 
@@ -289,7 +300,7 @@ namespace Simpl.Serialization
                             return FieldTypes.IgnoredElement;
                         }
                         
-                        if (!TypeRegistry.ContainsScalarType(collectionElementType))
+                        if (!TypeRegistry.ScalarTypes.Contains(collectionElementType))
                         {
                             _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(collectionElementType);
                             _elementClass = _elementClassDescriptor.DescribedClass;
@@ -357,7 +368,7 @@ namespace Simpl.Serialization
                             return FieldTypes.IgnoredElement;
                         }
                         
-                        if (!TypeRegistry.ContainsScalarType(mapElementType))
+                        if (!TypeRegistry.ScalarTypes.Contains(mapElementType))
                         {
                             _elementClassDescriptor = ClassDescriptor.GetClassDescriptor(mapElementType);
                             _elementClass = _elementClassDescriptor.DescribedClass;
@@ -443,7 +454,7 @@ namespace Simpl.Serialization
         {
             isEnum = XmlTools.IsEnum(scalarField);
             xmlHint = XmlTools.SimplHint(scalarField);
-            ScalarType = TypeRegistry.GetScalarType(thatType);
+            ScalarType = TypeRegistry.ScalarTypes[thatType];
 
             if (ScalarType == null)
             {
@@ -466,7 +477,7 @@ namespace Simpl.Serialization
 
         private void DerivePolymorphicDescriptors(FieldInfo pField)
         {
-            SimplScope scopeAttribute = (SimplScope) XmlTools.GetAnnotation(pField, typeof (SimplScope));
+            SimplScope scopeAttribute = XmlTools.GetAnnotation<SimplScope>(pField);
             String scopeAttributeValue = scopeAttribute == null ? null : scopeAttribute.TranslationScope;
 
             if (!String.IsNullOrEmpty(scopeAttributeValue))
@@ -478,7 +489,7 @@ namespace Simpl.Serialization
                 }
             }
 
-            SimplClasses classesAttribute = (SimplClasses) XmlTools.GetAnnotation(pField, typeof (SimplClasses));
+            SimplClasses classesAttribute = XmlTools.GetAnnotation<SimplClasses>(pField);
             Type[] classesAttributeValue = classesAttribute == null ? null : classesAttribute.Classes;
 
             if ((classesAttribute != null) && classesAttributeValue.Length > 0)
@@ -518,11 +529,17 @@ namespace Simpl.Serialization
         private void InitPolymorphicClassDescriptorsList(Int32 size)
         {
             if (polymorphClassDescriptors == null)
+            {
                 polymorphClassDescriptors = new DictionaryList<String, ClassDescriptor>(size);
+            }
             if (polymorphClasses == null)
+            {
                 polymorphClasses = new Dictionary<String, Type>(size);
+            }
             if (tlvClassDescriptors == null)
+            {
                 tlvClassDescriptors = new Dictionary<Int32, ClassDescriptor>(size);
+            }
         }
 
         private bool ResolveScopeAttribute(string scopeAttributeValue)
@@ -545,8 +562,15 @@ namespace Simpl.Serialization
 
         public String UnresolvedScopeAnnotation
         {
-            get { return unresolvedScopeAnnotation; }
-            set { unresolvedScopeAnnotation = value; }
+            get 
+            {
+                return unresolvedScopeAnnotation; 
+            }
+
+            set
+            {
+                unresolvedScopeAnnotation = value; 
+            }
         }
 
         public override string JavaTypeName
@@ -825,15 +849,21 @@ namespace Simpl.Serialization
             ScalarType.AppendValue(obj, textWriter, !IsCdata, format);
         }
 
-        public object GetObject(object obj)
+        /// <summary>
+        /// Obtains the value decribed by this FieldDescriptor, with the given object used as Context
+        /// </summary>
+        /// <param name="contextObject">The context object to obtain a field value for.</param>
+        /// <returns>The object value, or null if there is an exception</returns>
+        public object GetObject(object contextObject)
         {
             try
             {
-                return field.GetValue(obj);
+                return field.GetValue(contextObject);
             }
             catch (Exception e)
             {
-                Debug.WriteLine("cannot get value for " + field.Name);
+                // TODO: CONSIDER AN EXCEPTION HERE INSTEAD OF A NULL.
+                Debug.WriteLine(String.Format("cannot get value for field {0} due to exception: {1}",  field.Name, e.Message));
                 return null;
             }
             
@@ -1097,5 +1127,48 @@ namespace Simpl.Serialization
         {
             return "";
         }
+
+
+        private LazyCache<ScalarType> thisScalarType;
+       
+
+        /// <summary>
+        /// Performs a value equality check on the values in LHS and RHS described by this field. 
+        /// </summary>
+        /// <param name="leftContext">Left context object</param>
+        /// <param name="rightContext">Right context object</param>
+        /// <returns>True if the values described by each context are the same</returns>
+        public bool ContextSimplEquals(object leftContext, object rightContext)
+        {
+            var leftSideDescribedValue = this.GetValue(leftContext);
+            var rightSideDescribedValue = this.GetValue(rightContext);
+
+            if(leftSideDescribedValue.GetType().Equals(rightSideDescribedValue.GetType()))
+            {
+                if(this.IsNested)
+                {
+                    var compositetype = new CompositeType(leftSideDescribedValue.GetType());
+                    return compositetype.SimplEquals(leftSideDescribedValue, rightSideDescribedValue);
+                }
+                else if (this.IsCollection)
+                {
+                    return CollectionType.SimplEquals(leftSideDescribedValue, rightSideDescribedValue);
+                }
+                else if (this.IsScalar)
+                {
+                    return this.ScalarType.SimplEquals(leftSideDescribedValue, rightSideDescribedValue);
+                }
+                else
+                {
+                    throw new Exception("Unexpected type found at ContextSimplEquals!");
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
     }
 }

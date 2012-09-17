@@ -255,8 +255,7 @@ namespace Simpl.Serialization
                 {
                     //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
                     Type classDescriptorClass = descriptorsAnnotation.Classes[0];
-                    object obj = Activator.CreateInstance(classDescriptorClass, new object[] { thatClass });
-                    result = (ClassDescriptor)obj;
+                    result = ReflectionTools.GetInstance<ClassDescriptor>(classDescriptorClass, new object[] { thatClass });
                     result.fieldDescriptorClass = descriptorsAnnotation.Classes[1];
                 }
 
@@ -590,30 +589,39 @@ namespace Simpl.Serialization
         private FieldDescriptor NewFieldDescriptor(FieldInfo thatField, Int16 annotationType, Type fieldDescriptorClass)
         {
             if (fieldDescriptorClass == null)
+            {
                 return new FieldDescriptor(this, thatField, annotationType);
+            }
 
             Object[] args = new Object[3];
             args[0] = this;
             args[1] = thatField;
             args[2] = annotationType;
+            
+            //TODO: WAT? 
             if (annotationType == 6)
+            {
                 annotationType += 0;
+            }
 
-            return (FieldDescriptor) Activator.CreateInstance(fieldDescriptorClass, args);
+            return ReflectionTools.GetInstance<FieldDescriptor>(fieldDescriptorClass, args);
         }
 
         protected FieldDescriptor NewFieldDescriptor(FieldDescriptor wrappedFD, String wrapperTag,
                                                      Type fieldDescriptorClass)
         {
             if (fieldDescriptorClass == null)
+            {
                 return new FieldDescriptor(this, wrappedFD, wrapperTag);
+            }
 
             Object[] args = new Object[3];
             args[0] = this;
             args[1] = wrappedFD;
             args[2] = wrapperTag;
 
-            return (FieldDescriptor) Activator.CreateInstance(fieldDescriptorClass, args);
+            return ReflectionTools.GetInstance<FieldDescriptor>(fieldDescriptorClass, args);
+            
         }
 
         /// <summary>
@@ -737,10 +745,13 @@ namespace Simpl.Serialization
             DictionaryList<String, ClassDescriptor> tagClassDescriptors = fieldDescriptor.PolymorphClassDescriptors;
 
             if (tagClassDescriptors != null)
+            {
                 foreach (String tagName in tagClassDescriptors.Keys)
                 {
                     MapTagToFdForTranslateFrom(tagName, fieldDescriptor);
                 }
+            }
+
             MapTagToFdForTranslateFrom(fieldDescriptor.TagName, fieldDescriptor);
         }
 
@@ -873,6 +884,7 @@ namespace Simpl.Serialization
 	    }
        
  
+        // TODO: WAT?
         public string BibtexType
         {
             get { return null; }
@@ -944,6 +956,18 @@ namespace Simpl.Serialization
             if (i > 0 && i < list.Count)
             {
                 list[i] = newVal;
+            }
+        }
+
+        public static bool SimplEquals(object left, object right)
+        {
+            if (left is ClassDescriptor && right is ClassDescriptor)
+            {
+                return (left as ClassDescriptor).DescribedClass.Equals((right as ClassDescriptor).DescribedClass);
+            }
+            else
+            {
+                return false;
             }
         }
     }

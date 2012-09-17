@@ -4,7 +4,7 @@ using Simpl.Serialization.Context;
 namespace Simpl.Serialization.Types.Scalar
 {
     /// <summary>
-    ///     Class abstracting C# Float type
+    ///     Class abstracting C# String type
     /// </summary>
     class StringType : ScalarType
     {
@@ -30,6 +30,18 @@ namespace Simpl.Serialization.Types.Scalar
         public override string Marshall(object instance, TranslationContext context = null)
         {
             return (string) instance;
+        }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is string && right is string)
+            {
+                return (left as string).Equals(right as string);
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

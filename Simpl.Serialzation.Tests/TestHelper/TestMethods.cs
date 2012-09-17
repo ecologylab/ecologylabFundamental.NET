@@ -10,10 +10,9 @@
     using System.Diagnostics.Contracts;
     using Simpl.Serialization;
     using Simpl.Serialization.Attributes;
-
+    using Simpl.Serialization.Types;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    
     /// <summary>
     /// Helper function to serialize and deserialize objects 
     /// </summary>
@@ -38,16 +37,16 @@
                     PrettyPrint.PrintString(hStream.StringData, format);
                     break;
             }
-            return new HelperStream(hStream.BinaryData); 
+            return new HelperStream(hStream.BinaryData);
         }
 
         /// <summary>
         /// deseiralizes the data, given the input stream and format. returns object representation of the input data. 
         /// </summary>
-        /// <param name="simplTypesScope"></param>
-        /// <param name="inputStream"></param>
-        /// <param name="format"></param>
-        /// <returns></returns>
+        /// <param name="simplTypesScope">Simpl type scope for deserialization</param>
+        /// <param name="inputStream">Input stream of the serialized representaiton</param>
+        /// <param name="format">Format of the serialization</param>
+        /// <returns>a deserialized object from the type scope</returns>
         public static Object TestDeserialization(SimplTypesScope simplTypesScope, Stream inputStream, Format format)
         {
             Object deserializedObj = simplTypesScope.Deserialize(inputStream, format);
@@ -68,8 +67,8 @@
 
             Console.WriteLine();
             Object deserializedObj = TestDeserialization(simplTypesScope, originalStream, format);
-
-            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(originalObject, deserializedObj), "Original and deserialized objects are not equivilant!");
+    
+            TestMethods.AssertSimplTypesEqual(originalObject, deserializedObj);
 
             Console.WriteLine("Deserialized object " + deserializedObj);
             Console.WriteLine("-----------------------------------------------------------------------------");
@@ -96,32 +95,41 @@
         /// <param name="originalObject">Original object to test</param>
         /// <param name="deserializedObject">Deserialized representation</param>
         /// <returns>True if the objects are equal, false if they are not. True implies that roundtripping the original object worked as expected</returns>
-        public static bool CompareOriginalObjectToDeserializedObject(object originalObject, object deserializedObject)
+        public static List<SimplIssue> CompareOriginalObjectToDeserializedObject(object originalObject, object deserializedObject)
         {
             var orig = new List<object>();
             var deser = new List<object>();
-            return CompareObjectsRecursive(originalObject, deserializedObject, orig, deser);
+            var issues = new List<SimplIssue>();
+
+            CompareObjectsRecursive(originalObject, deserializedObject, orig, deser, issues);
+
+            return issues;
         }
 
+
+
+
+
+        /// <summary>
+        /// Determines iff one of the two items is null. Implies that the two are not equal and not both null
+        /// </summary>
+        /// <param name="originalObject">LHS of this operation</param>
+        /// <param name="deserializedObject">RHS of this operation</param>
+        /// <returns>True iff one is null</returns>
         private static bool OneIsNullAndOtherIsNot(object originalObject, object deserializedObject)
         {
-            if (originalObject == null)
-            {
-                if (deserializedObject != null)
-                {
-                    return true;
-                }
-            }
+            return ExactlyOneIsNull(originalObject, deserializedObject);
+        }
 
-            if (deserializedObject == null)
-            {
-                if (originalObject != null)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+        /// <summary>
+        /// Determines if exactly one object in the collection is null
+        /// </summary>
+        /// <param name="objects">All objects</param>
+        /// <returns>True if exactly one is null</returns>
+        private static bool ExactlyOneIsNull(params object[] objects)
+        {
+            // Exactly one equal to null. 
+            return objects.Where(obj => obj == null).Count() == 1;
         }
 
         /// <summary>
@@ -132,8 +140,9 @@
         /// <param name="deserializedObject">Deserialized representation, the result of round-tripping</param>
         /// <param name="originalCompared">List of compared composite objects, prevents graph infinite loops</param>
         /// <param name="derserializedCompared">List of compared composite objects, prevents graph infinite loops</param>
+        /// <param name="issues">List of issues found in the comparison</param>
         /// <returns>True if both are equal, false otherwise</returns>
-        private static bool CompareObjectsRecursive(object originalObject, object deserializedObject, List<object> originalCompared, List<object> derserializedCompared)
+        private static bool CompareObjectsRecursive(object originalObject, object deserializedObject, List<object> originalCompared, List<object> derserializedCompared, List<SimplIssue> issues)
         {
             if (originalObject == null && deserializedObject == null)
             {
@@ -146,6 +155,7 @@
                 // They are not equal here, obviously
                 if (OneIsNullAndOtherIsNot(originalObject, deserializedObject))
                 {
+                    issues.Add(new SimplIssue("One object null, the other wasn't.", originalObject, deserializedObject));
                     return false;
                 }
             }
@@ -154,6 +164,8 @@
             originalCompared.Add(originalObject);
             derserializedCompared.Add(deserializedObject);
 
+
+            
             // Compare object types... Make sure they are the same.
             if (originalObject.GetType().Equals(deserializedObject.GetType()))
             {
@@ -182,10 +194,10 @@
                         }
 
                         //Recurse and compare the inner objects
-                        bool result = CompareObjectsRecursive(originalDescribedObject, deserializedDescribedObject, originalCompared,derserializedCompared);
+                        bool result = CompareObjectsRecursive(originalDescribedObject, deserializedDescribedObject, originalCompared, derserializedCompared, issues);
                         if (!result)
                         {
-                            // The objects are not equal... return false;
+                            issues.Add(new SimplIssue("The composite objects are not equal.", originalDescribedObject, deserializedDescribedObject));
                             return false;
                         }
                     }
@@ -199,40 +211,30 @@
 
                             var collectionType = originalDescribedObject.GetType();
 
-                            if (typeof(IDictionary).IsAssignableFrom(collectionType))
+                            var comparator = new SimplObjectEqualityComparer();
+                            
+                            var result = comparator.Equals(originalDescribedObject, deserializedDescribedObject);
+                            
+                            if(!result)
                             {
-                                return AreSimplDictionariesEqual(originalDescribedObject as IDictionary, deserializedDescribedObject as IDictionary);
+                                issues.Add(new SimplIssue("Collections between two types differ in values", originalDescribedObject, deserializedDescribedObject));
                             }
-                            else if (typeof(IList).IsAssignableFrom(collectionType))
-                            {
-                                return AreSimplListsEqual(originalDescribedObject as IList, deserializedDescribedObject as IList);
-                            }
-                            else
-                            {
-                                throw new ArgumentException(string.Format("Invalid collection type, Field Descriptors are currently only emitted for IList and IDictionaries. Type given was {0}",collectionType.Name)); 
-                            }
+                            
+                            return result;
                         }
                         else
                         {
                             if (fieldDescriptor.IsScalar)
                             {
-                                // This method allows us to compare scalars that have string representations
-                                // but no clearly defined Equals behavior. 
-                                // A bit kludgy, but it works well enough. 
-
-                                var originalString = fieldDescriptor.GetValueString(originalObject);
-                                var deserializedString = fieldDescriptor.GetValueString(deserializedObject);
-
-
-                                if (!originalString.Equals(deserializedString))
+                                if(!fieldDescriptor.ContextSimplEquals(originalObject, deserializedObject))
                                 {
-                                    //Assert.Fail("Values for field {0} not the same between serialized form ({1}) and deserialized form ({2})", fieldDescriptor.Name, originalString, deserializedString);
+                                    issues.Add(new SimplIssue("RHS and LHS scalars are different", originalDescribedObject.ToString(), deserializedDescribedObject.ToString()));
                                     return false;
                                 }
                             }
                             else
                             {
-                                throw new ArgumentException("Given field descriptor cannot be compared in the test method yet. Type: {0}", fieldDescriptor.CSharpTypeName);                               
+                                throw new ArgumentException("Given field descriptor cannot be compared in the test method yet. Type: {0}", fieldDescriptor.CSharpTypeName);
                             }
                         }
                     }
@@ -240,14 +242,14 @@
             }
             else
             {
-                //                Assert.Fail("Object types must be same for serialized and deserialized object. Original type: {0} Deserialized type: {1}", originalObject.GetType().Name, deserializedObject.GetType().Name);
+                issues.Add(new SimplIssue("Types of original object and deserialized object differ.", originalObject.GetType(), deserializedObject.GetType()));
                 return false;
             }
 
             //If we didn't return false by now, the types are equal.
             return true;
         }
-        
+
         /// <summary>
         /// Array of SimplAttributes for Member operations
         /// </summary>
@@ -272,7 +274,14 @@
         /// <returns>An enumerable of simpl Properties</returns>
         public static IEnumerable<PropertyInfo> GetSimplProperties(Type objectType)
         {
-            return objectType.GetProperties().Where(prop => MemberHasSimplAttributes(prop));         
+            BindingFlags bindingParameters = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
+
+            return objectType.GetProperties(bindingParameters).Where(prop => MemberHasSimplAttributes(prop));
+        }
+
+        public static bool IsComposite(MemberInfo memberType)
+        {
+            return memberType.GetCustomAttributes(typeof(SimplComposite), true).Any();
         }
 
         /// <summary>
@@ -308,24 +317,25 @@
                 {
                     var value = e;
                     // Deubg.Log(e.message);
-                    ourDict.Add(propInfo,e);
+                    ourDict.Add(propInfo, e);
                 }
             }
 
-            foreach(var fieldInfo in GetSimplFields(someObject.GetType()))
+            foreach (var fieldInfo in GetSimplFields(someObject.GetType()))
             {
-                try{
+                try
+                {
 
                     var value = fieldInfo.GetValue(someObject);
-                    ourDict.Add(fieldInfo,value);
+                    ourDict.Add(fieldInfo, value);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     var value = e;
 
                     // Debug.Log(e.Message);
-                    
-                    ourDict.Add(fieldInfo,value);
+
+                    ourDict.Add(fieldInfo, value);
 
                 }
             }
@@ -350,14 +360,14 @@
         /// </summary>
         /// <param name="dictionary">Dictionary to compare</param>
         /// <returns>The ordered entries</returns>
-        private static IEnumerable<DictionaryEntry> getOrderedEntries(IDictionary dictionary)
+        internal static IEnumerable<DictionaryEntry> getOrderedEntries(IDictionary dictionary)
         {
-            foreach(var key in sortByHashCode(dictionary.Keys))
+            foreach (var key in sortByHashCode(dictionary.Keys))
             {
-                yield return new DictionaryEntry(key, dictionary[key]);   
+                yield return new DictionaryEntry(key, dictionary[key]);
             }
         }
-        
+
         /// <summary>
         /// Determines if two simpl dictionaries are equvilant
         /// </summary>
@@ -383,8 +393,19 @@
             Contract.Requires(left != null, "Left is null");
             Contract.Requires(right != null, "Right is null");
 
-            return Enumerable.SequenceEqual(sortByHashCode(left), sortByHashCode(right));
+            return Enumerable.SequenceEqual(left.Cast<object>(), right.Cast<object>());
         }
+
+        public static void AssertSimplTypesEqual(object left, object right, string message = "Issues with de/serialization! ")
+        {
+            var comparisonIssues = TestMethods.CompareOriginalObjectToDeserializedObject(left, right);
+
+            if (comparisonIssues.Any())
+            {
+                Assert.Fail(message + " Errors were: \r\n" + String.Join("\r\n", comparisonIssues.Select(issue => issue.ToString())));
+            }
+        }
+
     }
 
     /// <summary>
@@ -392,22 +413,142 @@
     /// </summary>
     public class SimplIssue
     {
+        /// <summary>
+        /// Creates an instance of <see cref="SimplIssue"/> representing an issue with serialization, givne a message, original value and desieralized value
+        /// </summary>
+        /// <param name="message">The message representing this particular issue</param>
+        /// <param name="original">The original value</param>
+        /// <param name="deserialized">the deserialized value</param>
+        public SimplIssue(string message, object original, object deserialized)
+        {
+            this.Message = message;
+            this.OriginalValue = original;
+            this.DeserializedValue = deserialized;
+        }
+
+        /// <summary>
+        /// Gets of sets a string representing a message
+        /// </summary>
         public string Message
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets or sets a object that represents the "original" value 
+        /// </summary>
         public object OriginalValue
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets or sets a value represneting the "deserialized" value
+        /// </summary>
         public object DeserializedValue
         {
             get;
             private set;
         }
+
+        /// <summary>
+        /// Returns a string representation of the Message, OriginalValue.TosTring() and DeserializedValue.ToString()
+        /// </summary>
+        /// <returns>The string represnetation of the issue</returns>
+        public override string ToString()
+        {
+            return String.Format("{0} OriginalValue: ({1}) DeserializedValue: ({2})", this.Message, NullOrValue(this.OriginalValue), NullOrValue(this.DeserializedValue));
+        }
+
+        /// <summary>
+        /// Returns a value
+        /// </summary>
+        /// <param name="obj">The object to print</param>
+        /// <returns>ToString() or "NULL"</returns>
+        private string NullOrValue(object obj)
+        {
+            return obj != null ? PrintCollectionsOrObjects(obj) : "NULL";
+        }
+
+        /// <summary>
+        /// Prints an object that could be an object, a collection or a map.
+        /// </summary>
+        /// <param name="obj">Object to print</param>
+        /// <returns>string rep of the object. </returns>
+        private string PrintCollectionsOrObjects(object obj)
+        {
+            if (obj is IDictionary)
+            {
+                return PrintDictionary(obj as IDictionary);
+            }
+
+            if (obj is IList)
+            {
+                return PrintList(obj as IList);
+            }
+
+            var simplValues = TestMethods.GetSimplValuesInObject(obj);
+
+            if (simplValues.Any())
+            {
+                var sb = new StringBuilder();
+
+                foreach (var kvp in simplValues)
+                {
+                    var valueString = kvp.Value.ToString();
+                    if(kvp.Value is IDictionary)
+                    {
+                        valueString = PrintDictionary(kvp.Value as IDictionary);
+                    }
+                    if(kvp.Value is IList)
+                    {
+                        valueString = PrintList(kvp.Value as IList);
+                    }
+
+                    sb.AppendFormat("{0} = {1}\r\n",kvp.Key.Name, kvp.Value.ToString());
+                }
+                return sb.ToString();
+
+            }
+            else
+            {
+                return obj.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Prints a dictionary to a string
+        /// </summary>
+        /// <param name="dict">Dictionary to print</param>
+        /// <returns>A string representation of the dictionary</returns>
+        private string PrintDictionary(IDictionary dict)
+        {
+            StringBuilder sb = new StringBuilder("[");
+
+            foreach (DictionaryEntry de in TestMethods.getOrderedEntries(dict))
+            {
+                // Preferred syntax: [ {key, value}, {key, value} ] 
+
+                sb.Append(String.Format("{{ {0} , ", de.Key.ToString()));
+                sb.Append(PrintCollectionsOrObjects(de.Value));
+                sb.Append("}}, ");
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Prints a given Ilist to a string
+        /// </summary>
+        /// <param name="list">The IList to print</param>
+        /// <returns>A string rep</returns>
+        private string PrintList(IList list)
+        {
+            // Preferred syntax: [ {value} , {value} ]
+            return "[ " + String.Join(",", list.Cast<object>().Select(obj => PrintCollectionsOrObjects(obj))) + " ]";
+        }    
     }
 }

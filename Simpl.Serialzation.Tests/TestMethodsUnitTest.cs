@@ -9,6 +9,8 @@
     using Simpl.Serialization.Library.Graph;
     using Simpl.Serialization.Attributes;
     using Simpl.Serialzation.Tests.TestHelper;
+    using Simpl.Serialization.Library.Maps;
+
 
 
     /// <summary>
@@ -94,8 +96,8 @@
             Assert.IsFalse(anotherA == test, "Should be different objects, Class A");
             Assert.IsFalse(anotherB == classB, "Should be different objects, Class B");
 
-            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(classB, anotherB), "ClassB's in both cases should be the same");
-            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(test, anotherA), "ClassA's should both be the same");
+            Assert.IsTrue(!TestMethods.CompareOriginalObjectToDeserializedObject(classB, anotherB).Any(), "ClassB's in both cases should be the same");
+            Assert.IsTrue(!TestMethods.CompareOriginalObjectToDeserializedObject(test, anotherA).Any(), "ClassA's should both be the same");
         }
 
         /// <summary>
@@ -115,8 +117,8 @@
             Assert.IsFalse(anotherA == test, "Should be different objects, Class A");
             Assert.IsFalse(anotherB == classB, "Should be different objects, Class B");
 
-            Assert.IsFalse(TestMethods.CompareOriginalObjectToDeserializedObject(classB, anotherB), "ClassB's in both cases should not be the same");
-            Assert.IsFalse(TestMethods.CompareOriginalObjectToDeserializedObject(test, anotherA), "ClassA's should not both be the same");
+            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(classB, anotherB).Any(), "ClassB's in both cases should not be the same");
+            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(test, anotherA).Any(), "ClassA's should not both be the same");
         }
 
 
@@ -209,7 +211,7 @@
 
             Assert.IsTrue(ClassDescriptor.GetClassDescriptor(classA.GetType()).AllFieldDescriptors.Count() == 2, "Incorrect number of field descriptors");
             Assert.IsFalse(classA == classB, "Should be different instances");
-            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(classA, classB), "Class A and B should be the same... their collections are equivilant.");
+            Assert.IsFalse(TestMethods.CompareOriginalObjectToDeserializedObject(classA, classB).Any(), "Class A and B should be the same... their collections are equivilant.");
         }
 
 
@@ -229,8 +231,25 @@
 
             Assert.IsFalse(baseInstance == differentListInstance, "A, B Should be different instances");
             Assert.IsFalse(baseInstance == differentMapInstance, "A and C should be different instances");
-            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(baseInstance, differentListInstance), "Class A and B should not be the same... B's list is different.");
-            Assert.IsFalse(TestMethods.CompareOriginalObjectToDeserializedObject(baseInstance, differentMapInstance), "Class A and C should not be the same... C's dictionary is different.");
+            Assert.IsFalse(TestMethods.CompareOriginalObjectToDeserializedObject(baseInstance, differentListInstance).Any(), "Class A and B should not be the same... B's list is different.");
+            Assert.IsTrue(TestMethods.CompareOriginalObjectToDeserializedObject(baseInstance, differentMapInstance).Any(), "Class A and C should not be the same... C's dictionary is different.");
+        }
+
+        /// <summary>
+        /// Checks that the MapsWithinMaps compare correctly
+        /// </summary>
+        [TestMethod]
+        public void MapsWithSimplValuesCompareCorrectly()
+        {
+            var instanceOne = MapsWithinMaps.CreateObject();
+            var instanceTwo = MapsWithinMaps.CreateObject();
+
+            var instanceOneDictionary = instanceOne.entriesByTag;
+            var instanceTwoDictionary = instanceTwo.entriesByTag;
+
+            TestMethods.AssertSimplTypesEqual(instanceOneDictionary, instanceTwoDictionary, "Dictionaries should be the same");
+            TestMethods.AssertSimplTypesEqual(instanceOne, instanceTwo, "Instances should be the same.");
+
         }
     }
 }

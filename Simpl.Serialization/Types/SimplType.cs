@@ -4,7 +4,7 @@ using Simpl.Serialization.Attributes;
 namespace Simpl.Serialization.Types
 {
     /// <summary>
-    /// 
+    /// Represents a type mapping in Simpl, handling marshalling to and from a string representation, equality, and other tasks.
     /// </summary>
     [SimplInherit]
     public abstract class SimplType : SimplBaseType
@@ -17,7 +17,7 @@ namespace Simpl.Serialization.Types
         /// <summary>
         /// 
         /// </summary>
-        [SimplScalar] 
+        [SimplScalar]
         protected String simpleName;
 
         /// <summary>
@@ -60,13 +60,12 @@ namespace Simpl.Serialization.Types
         /// <param name="dbTypeName"></param>
         protected SimplType(Type cSharpType, Boolean isScalar, String javaTypeName, String objectiveCTypeName,
                             String dbTypeName) :
-                                this(
+            this(
                                 cSharpType.IsPrimitive
                                     ? cSharpType.FullName
                                     : DeriveCrossPlatformName(cSharpType, isScalar), cSharpType, javaTypeName,
                                 objectiveCTypeName, dbTypeName)
         {
-
         }
 
         /// <summary>
@@ -92,8 +91,6 @@ namespace Simpl.Serialization.Types
                 nameSpaceName = cSharpType.Namespace;
 
             this.dbTypeName = dbTypeName;
-
-            TypeRegistry.RegisterSimplType(this);
         }
 
         /// <summary>
@@ -174,5 +171,15 @@ namespace Simpl.Serialization.Types
             String cSharpTypeName = cSharpType.FullName;
             return cSharpTypeName != null && cSharpTypeName.StartsWith("cSharp") ? (isScalar ? CLTypeConstants.SimplScalarTypesPrefix : CLTypeConstants.SimplCollectionTypesPrefix) + cSharpType.Name : cSharpTypeName;
         }
+
+
+        /// <summary>
+        /// Determines if two objects represented by the SimplType are equivilant.
+        /// </summary>
+        /// <param name="left">Left hand side</param>
+        /// <param name="right">Right hand side</param>
+        /// <returns>True if the two are equal</returns>
+        public abstract bool SimplEquals(object left, object right);
+
     }
 }

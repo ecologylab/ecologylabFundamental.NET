@@ -30,5 +30,17 @@ namespace Simpl.Serialization.Types.Scalar
         {
             return ((Regex) instance).ToString();
         }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is Regex && right is Regex)
+            {
+                return base.GenericSimplEquals<string>((left as Regex).ToString(), (right as Regex).ToString());
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

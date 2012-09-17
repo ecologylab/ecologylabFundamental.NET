@@ -31,5 +31,17 @@ namespace Simpl.Serialization.Types.Scalar
             return ((StringBuilder)instance).ToString();
         }
 
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is StringBuilder && right is StringBuilder)
+            {
+                return base.GenericSimplEquals<string>((left as StringBuilder).ToString(), (right as StringBuilder).ToString());
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

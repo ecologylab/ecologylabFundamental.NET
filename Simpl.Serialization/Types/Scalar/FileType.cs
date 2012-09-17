@@ -57,5 +57,20 @@ namespace Simpl.Serialization.Types.Scalar
             return field.GetValue(context).ToString() == DefaultValueString;
         }
 
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is FileInfo && right is FileInfo)
+            {
+                var leftFile = left as FileInfo;
+                var rightFile = right as FileInfo;
+
+                return base.GenericSimplEquals<string>(leftFile.FullName, rightFile.FullName);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

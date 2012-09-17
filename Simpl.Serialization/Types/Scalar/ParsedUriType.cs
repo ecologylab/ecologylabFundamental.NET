@@ -39,8 +39,8 @@ namespace Simpl.Serialization.Types.Scalar
                 else
                     result = new ParsedUri(value);
             }
-            catch (ArgumentNullException e){ }
-            catch (ArgumentException e){ }
+            catch (ArgumentNullException){ }
+            catch (ArgumentException){ }
             catch (UriFormatException e)
             {
                 Debug.WriteLine(e.Message + " :: " + value);
@@ -51,6 +51,11 @@ namespace Simpl.Serialization.Types.Scalar
         public override string Marshall(object instance, TranslationContext context = null)
         {
             return ((ParsedUri) instance).ToString();
+        }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            return base.GenericSimplEquals<ParsedUri>(left, right);
         }
     }
 }

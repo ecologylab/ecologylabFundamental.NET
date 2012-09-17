@@ -13,6 +13,16 @@ namespace Simpl.Serialization.Types
 {
     public abstract class ScalarType : SimplType
     {
+        /// <summary>
+        /// Determines if a simpl Collection Type can be created for the given C# TYpe
+        /// </summary>
+        /// <param name="aType">The type to consider</param>
+        /// <returns>True if a collection type can be made</returns>
+        public static bool CanBeCreatedFrom(Type aType)
+        {
+            return !CollectionType.CanBeCreatedFrom(aType);
+        }
+
         [SimplScalar] private Boolean _isPrimitive;
 
         /// <summary>
@@ -256,5 +266,25 @@ namespace Simpl.Serialization.Types
 		    }
 		    return result;
 	    }
+
+        /// <summary>
+        /// Utility method to compare two objects of a given T... if left and right are T, uses T's equal method. 
+        /// </summary>
+        /// <typeparam name="T">The type to expect</typeparam>
+        /// <param name="left">The left object</param>
+        /// <param name="right">The right object</param>
+        /// <returns>Returns true if they are both equal and non-null, false otherwise.</returns>
+        protected bool GenericSimplEquals<T>(object left, object right)
+        {
+            if (left is T && right is T)
+            {
+                return ((T)left).Equals((T)right);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
+
 }

@@ -33,6 +33,18 @@ namespace Simpl.Serialization.Types.Scalar
             byte[] bytes = ((MemoryStream) instance).GetBuffer();
             return System.Convert.ToBase64String(bytes);
         }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is MemoryStream && right is MemoryStream)
+            {
+                return Enumerable.SequenceEqual((left as MemoryStream).ToArray(), (right as MemoryStream).ToArray());
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
     
 }

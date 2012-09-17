@@ -10,7 +10,7 @@ namespace Simpl.Serialization.Library.Composite
     {
         [SimplComposite]
         [SimplClasses(new[] { typeof(WcBase), typeof(WcSubOne), typeof(WcSubTwo) })]
-        private WcBase wc;
+        public WcBase wc;
 
         public Container()
         {

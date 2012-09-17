@@ -62,7 +62,13 @@ namespace Simpl.Serialization.Types.Scalar
 /// <returns></returns>
         public override object GetInstance(String value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            return null;
+            throw new NotImplementedException(); 
+        }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            // TODO: This is probably not goign to work well at all. 
+            return base.GenericSimplEquals<Enum>(left, right);
         }
     }
 }

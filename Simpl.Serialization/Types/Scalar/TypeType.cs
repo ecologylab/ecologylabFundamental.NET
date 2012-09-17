@@ -20,5 +20,17 @@ namespace Simpl.Serialization.Types.Scalar
         {
             throw new NotImplementedException();
         }
+
+        public override bool SimplEquals(object left, object right)
+        {
+            if (left is Type && right is Type)
+            {
+                return left.Equals(right);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
