@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using Simpl.Serialization;
 using Simpl.Serialization.Attributes;
-using ecologylab.collections;
+using Ecologylab.Collections;
 
 namespace Simpl.OODSS.Messages 
 {
@@ -28,20 +28,20 @@ namespace Simpl.OODSS.Messages
 			set { timeStamp = value; }
 		}
 
-        /// <summary>
-        /// Contains the IP address of the host that sent this message. sender currently must be set by a
-	    /// server that receives the message and associates it with the IP address from it's packet and/or
-	    /// channel.
-        /// </summary>
-	    protected IPAddress sender;
-
-        /// <summary>
-        /// This method should be called by a server when it translates this message.
-        /// </summary>
-	    public IPAddress Sender
-	    {
-            get { return sender; }
-            set { sender = value; }
-	    }
+//        /// <summary>
+//        /// Contains the IP address of the host that sent this message. sender currently must be set by a
+//	    /// server that receives the message and associates it with the IP address from it's packet and/or
+//	    /// channel.
+//        /// </summary>
+//	    protected IPAddress sender;
+//
+//        /// <summary>
+//        /// This method should be called by a server when it translates this message.
+//        /// </summary>
+//	    public IPAddress Sender
+//	    {
+//            get { return sender; }
+//            set { sender = value; }
+//	    }
 	}
 }

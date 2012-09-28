@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simpl.Serialization;
-using ecologylab.serialization;
 
 namespace Simpl.OODSS.Distributed.Common
 {

@@ -1,7 +1,7 @@
 using System;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization.Attributes;
-using ecologylab.collections;
+using Ecologylab.Collections;
 
 namespace Simpl.OODSS.Messages 
 {

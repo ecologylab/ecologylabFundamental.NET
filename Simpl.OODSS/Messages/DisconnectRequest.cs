@@ -8,9 +8,10 @@
 
 using System;
 using Simpl.OODSS.Distributed.Common;
-using Simpl.OODSS.Distributed.Server.ClientSessionManager;
+//using Simpl.OODSS.Distributed.Server.ClientSessionManager;
 using Simpl.Serialization.Attributes;
-using ecologylab.collections;
+using Ecologylab.Collections;
+using DisconnectRequest = Simpl.OODSS.Messages.DisconnectRequest;
 
 namespace Simpl.OODSS.Messages 
 {
@@ -27,10 +28,10 @@ namespace Simpl.OODSS.Messages
 
 	    public override ResponseMessage PerformService(Scope<object> localScope)
 	    {
-	        Console.WriteLine("***** running disconnect request *****");
-	        SessionHandle handle = (SessionHandle) localScope.Get(SessionObjects.SessionHandle);
-            if (handle!=null)
-                handle.Invalidate();
+//	        Debug.WriteLine("***** running disconnect request *****");
+//	        SessionHandle handle = (SessionHandle) localScope.Get(SessionObjects.SessionHandle);
+//            if (handle!=null)
+//                handle.Invalidate();
 	        return OkResponse.ReusableInstance;
 	    }
 	}

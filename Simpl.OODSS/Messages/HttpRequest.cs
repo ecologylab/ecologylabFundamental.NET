@@ -8,7 +8,7 @@
 
 using Simpl.Fundamental.Net;
 using Simpl.Serialization.Attributes;
-using ecologylab.collections;
+using Ecologylab.Collections;
 
 namespace Simpl.OODSS.Messages 
 {
@@ -35,8 +35,8 @@ namespace Simpl.OODSS.Messages
 
 		public ParsedUri OkResponseUrl
 		{
-			get{return _okResponseUrl;}
-			set{_okResponseUrl = value;}
+            get { return _okResponseUrl; }
+            set { _okResponseUrl = value; }
 		}
 
 		public ParsedUri ErrorResponseUrl

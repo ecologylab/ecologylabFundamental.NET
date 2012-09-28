@@ -7,7 +7,6 @@
 //
 
 using Simpl.Serialization;
-using ecologylab.serialization;
 
 namespace Simpl.OODSS.Logging
 {

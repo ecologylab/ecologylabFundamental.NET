@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
+using Ecologylab.Collections;
 using Simpl.Fundamental.Generic;
 using Simpl.OODSS.Distributed.Common;
-using Simpl.OODSS.Distributed.Impl;
 using Simpl.OODSS.Messages;
+using Simpl.OODSS.PlatformSpecifics;
 using Simpl.Serialization;
-using WebSocket4Net;
-using ecologylab.collections;
 
 namespace Simpl.OODSS.Distributed.Client
 {
@@ -21,27 +21,23 @@ namespace Simpl.OODSS.Distributed.Client
     {
         #region Data Member
 
-        private readonly Thread _sendMessageThread;
-        private readonly Thread _receiveMessageThread;
+        private static readonly object SyncLock = new object();
 
         private readonly BlockingCollection<RequestQueueObject> _requestQueue;
         private readonly ConcurrentDictionary<long, RequestQueueObject> _pendingRequests;
-        private readonly BlockingCollection<ResponseQueueObject> _responseQueue; 
+        private readonly BlockingCollection<ResponseQueueObject> _responseQueue;
 
         public string ServerAddress { get; private set; }
         public int PortNumber { get; private set; }
 
         public Scope<object> ObjectRegistry { get; set; }
 
-        //protected readonly Dictionary<long, RequestMessage> UnfulfilledRequests = new Dictionary<long, RequestMessage>();
-
-        //protected readonly ConcurrentDictionary<long, ResponseMessage> UnprocessedResponse = new ConcurrentDictionary<long, ResponseMessage>(); 
-
         protected int ReconnectAttemps = ClientConstants.ReconnectAttempts;
         protected int WaitBetweenReconnectAttemps = ClientConstants.WaitBetweenReconnectAttempts;
         protected ReconnectedBlocker Blocker;
 
         private long _uidIndex = 1;
+        
 
         public SimplTypesScope TranslationScope { get; private set; }
 
@@ -52,23 +48,24 @@ namespace Simpl.OODSS.Distributed.Client
         private bool _isRunning = true;
 
         private static ManualResetEventSlim SendDone = new ManualResetEventSlim(false);
-        private static ManualResetEventSlim ReceiveDone = new ManualResetEventSlim(false);
+        //private static ManualResetEventSlim ReceiveDone = new ManualResetEventSlim(false);
 
         private static string _response = String.Empty;
 
-        #endregion
+        #endregion Data Member
 
         #region WebSocketComponent
 
-        private AutoResetEvent _messageReceiveEvent = new AutoResetEvent(false);
-        private AutoResetEvent _dataReceiveEvent = new AutoResetEvent(false);
-        private AutoResetEvent _openedEvent = new AutoResetEvent(false);
-        private AutoResetEvent _closeEevnt = new AutoResetEvent(false);
+        // in windowsRT, use Windows.Networking.Sockets.StreamWebSocket
+        // in .NET, use System.Net.WebSockets.ClientWebSocket
+        private object _webSocketClient;
 
-        private WebSocket _webSocketClient;
+        //TODO:  a large enough buffer, should be more careful about how to use buffer
+        private byte[] _readBuffer = new byte[100000];
+        private Uri _serverUri;
+        const string WebSocketPrefix = "ws://";
 
-        protected string CurrentMessage { get; private set; }
-        protected byte[] CurrentData { get; private set; }
+        // background working thread
 
         #endregion WebSocketComponent
 
@@ -77,107 +74,102 @@ namespace Simpl.OODSS.Distributed.Client
         /// <summary>
         /// Initialze a websocket OODSS client object
         /// </summary>
-        /// <param name="ipAddress">the server's ip address</param>
-        /// <param name="portNumber">the server's port number</param>
+        /// <param name="ipAddress">server's ip address</param>
+        /// <param name="portNumber">server's port number</param>
         /// <param name="translationScope">TranslationScope for OODSS messages</param>
         /// <param name="objectRegistry">application object scope</param>
-        /// <param name="maxMessageLengthChars">max message length</param>
-        /// <param name="version">websocket version</param>
-        public WebSocketOODSSClient(String ipAddress, int portNumber, SimplTypesScope translationScope, Scope<object> objectRegistry,
-            int maxMessageLengthChars=NetworkConstants.DefaultMaxMessageLengthChars, WebSocketVersion version = WebSocketVersion.Rfc6455) 
+        public WebSocketOODSSClient(String ipAddress, int portNumber, SimplTypesScope translationScope,
+                                    Scope<object> objectRegistry)
         {
-            ObjectRegistry              = objectRegistry;
-            TranslationScope            = translationScope;
+            ObjectRegistry = objectRegistry;
+            TranslationScope = translationScope;
             ObjectRegistry.Add(SessionObjects.SessionId, _sessionId);
-            ServerAddress               = ipAddress;
-            PortNumber                  = portNumber;
+            ServerAddress = ipAddress;
+            PortNumber = portNumber;
 
-            _sendMessageThread          = new Thread(SendMessageWorker);
-            _receiveMessageThread       = new Thread(ReceiveMessageWorker);
-            _pendingRequests            = new ConcurrentDictionary<long, RequestQueueObject>();
-            _requestQueue               = new BlockingCollection<RequestQueueObject>(new ConcurrentQueue<RequestQueueObject>());
-            _responseQueue              = new BlockingCollection<ResponseQueueObject>(new ConcurrentQueue<ResponseQueueObject>());
+
+            _pendingRequests = new ConcurrentDictionary<long, RequestQueueObject>();
+            _requestQueue = new BlockingCollection<RequestQueueObject>(new ConcurrentQueue<RequestQueueObject>());
+            _responseQueue = new BlockingCollection<ResponseQueueObject>(new ConcurrentQueue<ResponseQueueObject>());
+
+
         }
 
         #endregion Constructor
 
-        #region Connection Related
-
         /// <summary>
-        /// Starting the client
+        /// Starting the client, setting up the websocketclient
         /// </summary>
-        public void Start()
+        public async void StartAsync()
         {
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationTokenSource.Token.Register(PerformDisconnect);
+            
+            String uri = WebSocketPrefix + ServerAddress + ":" + PortNumber;
+            // create and connect
+            _webSocketClient = OODSSPlatformSpecifics.Get().CreateWebSocketClientObject();
+            // connect to the server
+            await OODSSPlatformSpecifics.Get().ConnectWebSocketClientAsync(_webSocketClient, new Uri(uri),
+                                                                     _cancellationTokenSource.Token);
 
-            try
-            {
-                string webSocketPrefix = "ws://";
-                String uri = webSocketPrefix + ServerAddress + ":" + PortNumber + "/websocket";
+            //// start background sending task
+            //Task.Factory.StartNew(SendMessageWorker, _cancellationTokenSource.Token);
+            
+            //// start background receiving task
+            //Task.Factory.StartNew(ReceiveMessageWorker, _cancellationTokenSource.Token);
 
-                //_webSocketClient = new WebSocket(uri, "basic", version);
-                _webSocketClient = new WebSocket(uri);
-                _webSocketClient.Opened += WebSocketClientOpened;
-                _webSocketClient.Closed += WebSocketClientClosed;
-                _webSocketClient.DataReceived += WebSocketClientDataReceived;
-                _webSocketClient.MessageReceived += WebSocketClientMessageReceived;
-                _sendMessageThread.Start();
-                _receiveMessageThread.Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            //// start background websocket data receiver
+            //Task.Factory.StartNew(WebSocketDataReceiver, _cancellationTokenSource.Token);
+            OODSSPlatformSpecifics.Get().CreateWorkingThreadAndStart(SendMessageWorker, ReceiveMessageWorker, WebSocketDataReceiver, _cancellationTokenSource.Token);
+
+            await ConnectOODSSServerAsync();
         }
 
-        /// <summary>
-        /// Stopping the client
-        /// </summary>
         public void StopClient()
         {
             _isRunning = false;
             _cancellationTokenSource.Cancel();
         }
 
-        /// <summary>
-        /// Disconnect the client
-        /// </summary>
         public void PerformDisconnect()
         {
-            Console.WriteLine("Performing Disconnect");
-            Disconnect();
+            Debug.WriteLine("Performing Disconnect");
+            OODSSPlatformSpecifics.Get().DisconnectWebSocketClient(_webSocketClient);
+        }
+
+        private void UnableToRestorePreviousConnection(string sessionId, string newId)
+        {
+            // do something;
         }
 
         /// <summary>
-        /// make connection to the websocket server. when connection is made, send an initConnectionRequest
-        /// to get a sessionId. 
+        /// establishing the oodss protocol by sending initConnectionRequest
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> ConnectAsync()
+        public async Task<bool> ConnectOODSSServerAsync()
         {
             if (ConnectedImpl())
             {
                 // get initResponse to see if it is correct; 
                 ResponseMessage initResponse = await RequestAsync(new InitConnectionRequest(_sessionId));
-
-                if (initResponse is InitConnectionResponse)
+                var initConnectionResponse = initResponse as InitConnectionResponse;
+                if (initConnectionResponse != null)
                 {
-                    Console.WriteLine("Received initial connection response");
+                    Debug.WriteLine("Received initial connection response");
                     if (_sessionId == null)
                     {
                         // get a sesssion id
-                        _sessionId = ((InitConnectionResponse) initResponse).SessionId;
-                        Console.WriteLine("SessionId: " + _sessionId);
+                        _sessionId = initConnectionResponse.SessionId;
+                        Debug.WriteLine("SessionId: " + _sessionId);
                     }
-                    else if (_sessionId == ((InitConnectionResponse) initResponse).SessionId)
+                    else if (_sessionId == initConnectionResponse.SessionId)
                     {
                         // received the same session id, do nothing;
                     }
                     else
                     {
                         // update the sessionId
-                        string newId = ((InitConnectionResponse) initResponse).SessionId;
+                        string newId = initConnectionResponse.SessionId;
                         UnableToRestorePreviousConnection(_sessionId, newId);
                         _sessionId = newId;
                     }
@@ -195,112 +187,14 @@ namespace Simpl.OODSS.Distributed.Client
         {
             if (!Connected())
             {
-                _webSocketClient.Open();
-                if (!_openedEvent.WaitOne(2000))
-                Console.WriteLine("Handshake failed");
+                OODSSPlatformSpecifics.Get().ConnectWebSocketClientAsync(_webSocketClient, _serverUri, CancellationToken.None);
             }
             return Connected();
         }
-
+        
         private bool Connected()
         {
-            return _webSocketClient.Handshaked;
-        }
-
-        private void Disconnect()
-        {
-            _webSocketClient.Close();
-        }
-
-        ///// <summary>
-        ///// reconnect to the server, restore the queue. how to restore in websocket
-        ///// </summary>
-        //protected void Reconnect()
-        //{
-        //    Console.WriteLine("attempting to reconnect...");
-        //    int reconnectsRemaining = ReconnectAttemps;
-        //    if (reconnectsRemaining < 0)
-        //    {
-        //        reconnectsRemaining = 1;
-        //    }
-
-        //    while (!Connected() && reconnectsRemaining > 0)
-        //    {
-        //        NullOut();
-        //        if (!ConnectAsync() && --reconnectsRemaining < 0)
-        //        {
-        //            //wait some time
-        //        }
-        //    }
-
-        //    if (Connected())
-        //    {
-        //        // put unfulfilled requests back to the queue
-        //        lock (UnfulfilledRequests)
-        //        {
-        //            List<PreppedRequest> rerequests = new List<PreppedRequest>(UnfulfilledRequests.Values);
-        //            rerequests.Sort();
-        //            foreach (PreppedRequest req in rerequests)
-        //            {
-        //                EnqueueRequestForSending(req);
-        //            }
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        Stop();
-        //    }
-        //}
-
-//        protected void HandleDisconnectingMessages()
-//        {
-//            Console.WriteLine("sending disconnect request");
-//            SendMessageAsync(DisconnectRequest.ReusableInstance);
-//        }
-//
-        private void UnableToRestorePreviousConnection(string sessionId, string newId)
-        {
-            // do nothing;
-        }
-//
-//        protected void NullOut()
-//        {
-//            // do something to clear the socket.
-//        }
-//
-//        protected bool ShutdownOK()
-//        {
-//            return !(UnfulfilledRequests.Count > 0);
-//        }
-
-        #endregion Connection Related
-
-        #region OODSS message related
-
-        private class RequestQueueObject
-        {
-            public RequestMessage RequestMessage { get; private set; }
-            public long Uid { get; private set; }
-            public TaskCompletionSource<ResponseMessage> Tcs { get; private set; }
-
-            public RequestQueueObject(RequestMessage requestMessage, long uid, TaskCompletionSource<ResponseMessage> tcs)
-            {
-                RequestMessage = requestMessage;
-                Uid = uid;
-                Tcs = tcs;
-            }
-        }
-
-        private class ResponseQueueObject
-        {
-            public ResponseMessage ResponseMessage { get; private set; }
-            public long Uid { get; private set; }
-            public ResponseQueueObject(ResponseMessage responseMessage, long uid)
-            {
-                ResponseMessage = responseMessage;
-                Uid = uid;
-            }
+            return OODSSPlatformSpecifics.Get().WebSocketIsConnected(_webSocketClient);
         }
 
         /// <summary>
@@ -321,88 +215,16 @@ namespace Simpl.OODSS.Distributed.Client
             return await tcs.Task;
         }
 
-//        /// <summary>
-//        /// send a requestMessage, wait for the response, and process the response. 
-//        /// </summary>
-//        /// <param name="request"></param>
-//        /// <param name="timeOutMillis"></param>
-//        /// <returns>response message</returns>
-//        public async Task<ResponseMessage> SendMessageAsync (RequestMessage request)
-//        {
-//            //Prepare the request, add to the unfulfilledRequests;
-//            string requestString = GenerateStringFromRequest(request);
-//            long currentMessageUid = GenerateUid();
-//
-//            AddToUnfulfilledRequests(currentMessageUid, request);
-//
-//            CreatePacketFromMessageAndSend(currentMessageUid, requestString);
-//
-//            // get response
-//            ResponseMessage responseMessage = await GetResponseMessageAsync(currentMessageUid);
-//            ProcessResponse(responseMessage);
-//            
-//            // remove the response and request from the dictionary. 
-//            RemoveFromUnprocessedResponse(currentMessageUid);
-//            RemoveFromUnfulfilledRequests(currentMessageUid); 
-//
-//            return responseMessage;
-//        }
-//
 
         /// <summary>
         /// Generate a uid for the request message
         /// </summary>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public long GenerateUid()
         {
-            return _uidIndex++;
+            lock (SyncLock)
+                return _uidIndex++;
         }
-//
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        private void AddToUnfulfilledRequests(long uid, RequestMessage request)
-//        {
-//            UnfulfilledRequests.Add(uid, request);
-//        }
-//
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        private void RemoveFromUnprocessedResponse(long uid)
-//        {
-//            UnprocessedResponse.Remove(uid);
-//        }
-//
-//        [MethodImpl(MethodImplOptions.Synchronized)]
-//        private void RemoveFromUnfulfilledRequests(long uid)
-//        {
-//            UnfulfilledRequests.Remove(uid);
-//        }
-//
-//        /// <summary>
-//        /// query the collection of unprocessed responses. obtain the one with the correct uid.
-//        /// </summary>
-//        /// <param name="uid"></param>
-//        /// <returns>response message</returns>
-//        private async Task<ResponseMessage> GetResponseMessageAsync(long uid)
-//        {
-//            ResponseMessage message;
-//            while (!UnprocessedResponse.ContainsKey(uid))
-//            {
-//                //await Task.Delay(50);
-//                await Task.Factory.StartNew(WaitAWhile);
-//            }
-//            // contains the key
-//            lock (UnprocessedResponse)
-//            {
-//                UnprocessedResponse.TryGetValue(uid, out message);
-//                
-//            }
-//            return message;
-//        }
-//
-//        private void WaitAWhile()
-//        {
-//            Thread.Sleep(50);
-//        }
 
         private void ProcessUpdate(UpdateMessage updateMessage)
         {
@@ -413,8 +235,6 @@ namespace Simpl.OODSS.Distributed.Client
         {
             responseMessage.ProcessResponse(ObjectRegistry);
         }
-
-
 
         /// <summary>
         /// process the incoming message. if it is a response message, add it to unprocessedResponse, 
@@ -427,22 +247,22 @@ namespace Simpl.OODSS.Distributed.Client
             ServiceMessage message = TranslateStringToServiceMessage(incomingMessage);
             if (message == null)
             {
-                Console.WriteLine("Deserialized failed");
+                Debug.WriteLine("Deserialized failed");
             }
             else
             {
                 if (message is ResponseMessage)
                 {
-                    Console.WriteLine("Got a response message");
-                    
+                    Debug.WriteLine("Got a response message");
+
                     // add the _reponse to the queue of response. 
                     _responseQueue.Add(new ResponseQueueObject((ResponseMessage)message, incomingUid));
                 }
                 else if (message is UpdateMessage)
                 {
                     // if it is an update message, process it immediately 
-                    Console.WriteLine("Got an updateMessage");
-                    ProcessUpdate((UpdateMessage) message);
+                    Debug.WriteLine("Got an updateMessage");
+                    ProcessUpdate((UpdateMessage)message);
                 }
             }
             //return _response;
@@ -478,51 +298,52 @@ namespace Simpl.OODSS.Distributed.Client
         /// prepare the message and send it to the websocket server
         /// </summary>
         /// <param name="requestObject"></param>
-        private void CreatePacketFromMessageAndSend(RequestQueueObject requestObject)
+        private async Task CreatePacketFromMessageAndSend(RequestQueueObject requestObject)
         {
             long uid = requestObject.Uid;
             string requestString = GenerateStringFromRequest(requestObject.RequestMessage);
             byte[] uidBytes = BitConverter.GetBytes(uid);
             byte[] messageBytes = Encoding.UTF8.GetBytes(requestString);
-            byte[] outMessage = new byte[uidBytes.Length+messageBytes.Length];
+            byte[] outMessage = new byte[uidBytes.Length + messageBytes.Length];
             Buffer.BlockCopy(uidBytes, 0, outMessage, 0, uidBytes.Length);
             Buffer.BlockCopy(messageBytes, 0, outMessage, uidBytes.Length, messageBytes.Length);
-            _webSocketClient.Send(outMessage, 0, outMessage.Length);
-            SendDone.Set();
+            await OODSSPlatformSpecifics.Get().SendMessageFromWebSocketClientAsync(_webSocketClient, outMessage);
         }
+
+        #region Websocket send and receive
 
         /// <summary>
         /// background worker getting request from the blocking queue and send it out.
         /// </summary>
         private void SendMessageWorker()
         {
-            Console.WriteLine("Entering OODSS Send Message Loop");
-            while(_isRunning)
+            Debug.WriteLine("Entering OODSS Send Message Loop");
+            while (_isRunning)
             {
                 try
                 {
                     //Hold the thread here until it receives a request to be processed.
                     RequestQueueObject q = _requestQueue.Take(_cancellationTokenSource.Token);
 
-                    //Push pull
-                    Console.WriteLine("Trying to send the string: " + q.Uid);
-
-                    SendDone = new ManualResetEventSlim(false);
+                    // push pull
+                    Debug.WriteLine("Trying to send the string: {0}", q.Uid);
+                    
+                    //SendDone = new ManualResetEventSlim(false);
                     CreatePacketFromMessageAndSend(q);
-                    SendDone.Wait(_cancellationTokenSource.Token);
-                    Console.WriteLine("---sent Request: {0}", q.Uid);        
-                }
-                catch (OperationCanceledException e)
-                {
-                    Console.WriteLine("The operation was cancelled." + e.TargetSite);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Caught Exception :\n " + e.StackTrace);
-                }
+                    //SendDone.Wait(_cancellationTokenSource.Token);
 
+                    Debug.WriteLine("---sent Request: {0}", q.Uid);
+
+                }
+                catch(OperationCanceledException e)
+                {
+                    Debug.WriteLine("The operation was cancelled." + e.CancellationToken);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Caught Exception :\n " + e.StackTrace);
+                }
             }
-            Console.WriteLine("Performing disconnect");
         }
 
         /// <summary>
@@ -530,119 +351,58 @@ namespace Simpl.OODSS.Distributed.Client
         /// </summary>
         private void ReceiveMessageWorker()
         {
-            Console.WriteLine("Entering OODSS Receive Message loop");
-            while(_isRunning)
+            Debug.WriteLine("Entering OODSS Receive Message Loop");
+            while (_isRunning)
             {
                 try
                 {
                     ResponseQueueObject responseQueueObject = _responseQueue.Take(_cancellationTokenSource.Token);
-             
                     ProcessResponse(responseQueueObject.ResponseMessage);
 
                     RequestQueueObject requestQueueObject;
                     _pendingRequests.TryGetValue(responseQueueObject.Uid, out requestQueueObject);
                     if (requestQueueObject == null)
                     {
-                        Console.WriteLine("No pending request with Uid: {0}", responseQueueObject.Uid);
+                        Debug.WriteLine("No pending request with Uid: {0}", responseQueueObject.Uid);
                     }
                     else
                     {
                         TaskCompletionSource<ResponseMessage> taskCompletionSource = requestQueueObject.Tcs;
                         if (taskCompletionSource != null)
                         {
-                            Console.WriteLine("--- Finished Request : {0}", requestQueueObject.Uid);
+                            Debug.WriteLine("---Finished Request: {0}", requestQueueObject.Uid);
                             taskCompletionSource.TrySetResult(responseQueueObject.ResponseMessage);
                         }
                     }
                 }
-                catch (OperationCanceledException e)
+                catch(OperationCanceledException e)
                 {
-                    Console.WriteLine("The operation was cancelled." + e.TargetSite);
+                    Debug.WriteLine("The operation was cancelled." + e.CancellationToken);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Caught Exception :\n " + e.StackTrace);
+                    Debug.WriteLine("Caught Exception :\n " + e.StackTrace);
                 }
             }
         }
 
-        #endregion OODSS message related
-
-
-        #region WebSocket Handler
-        
-        /// <summary>
-        /// When websocketclient receives something in binary data form. process the message.
-        /// the first 64bit (long) is the uid.
-        /// the rest is the message.
-        /// after getting the uid and message, put a MessageWithMetadata object in the queue. 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void WebSocketClientDataReceived(object sender, DataReceivedEventArgs e)
+        private async void WebSocketDataReceiver()
         {
-            //if (!_firstMessageSent)
-            //{
-            //    _firstMessageSent = true;
-            //    return;
-            //}
+             while (_isRunning)
+             {
+                 // websocket client receive data from stream
+                 await
+                     OODSSPlatformSpecifics.Get().ReceiveMessageFromWebSocketClientAsync(_webSocketClient, _readBuffer,
+                                                                                         _cancellationTokenSource.Token);
+                 // process the byte data
+                 long uid = BitConverter.ToInt64(_readBuffer, 0);
+                 string message = Encoding.UTF8.GetString(_readBuffer, 8, _readBuffer.Length-8).TrimEnd('\0');
+                 Debug.WriteLine("Got the message: " + message + " uid: " + uid);
 
-            CurrentData = e.Data;
-            //obtain Uid.
-            long uid = BitConverter.ToInt64(CurrentData, 0);
-
-            //obtain message.
-            int messageBytesLength = CurrentData.Length - 8;
-            byte[] messageBytes = new byte[messageBytesLength];
-            Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
-            CurrentMessage = Encoding.UTF8.GetString(messageBytes);
-            Console.WriteLine("Got the message: " + CurrentMessage + " uid: "+ uid);
-
-            ProcessString(CurrentMessage, uid);
-
-            _dataReceiveEvent.Set();
+                 ProcessString(message, uid);
+             }
         }
 
-        /// <summary>
-        /// when websocketclient receives something in message form, transorm it to binary data, and process it
-        /// the first 64bit (long) is the uid.
-        /// the rest is the message.
-        /// after getting the uid and message, put a MessageWithMetadata object in the queue. 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void WebSocketClientMessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            string message = e.Message;
-            byte[] receivedData = Encoding.UTF8.GetBytes(message);
-            CurrentData = receivedData;
-            //obtain Uid.
-            long uid = BitConverter.ToInt64(CurrentData, 0);
-
-            //obtain message.
-            int messageBytesLength = CurrentData.Length - 8;
-            byte[] messageBytes = new byte[messageBytesLength];
-            Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
-            CurrentMessage = Encoding.UTF8.GetString(messageBytes);
-            Console.WriteLine("Got the message: " + CurrentMessage + " uid: " + uid);
-
-            ProcessString(CurrentMessage, uid);
-
-            _messageReceiveEvent.Set();
-        }
-
-        void WebSocketClientClosed(object sender, EventArgs e)
-        {
-            _closeEevnt.Set();
-        }
-
-        void WebSocketClientOpened(object sender, EventArgs e)
-        {
-            _openedEvent.Set();
-        }
-
-        #endregion WebSocket Handler
-
+        #endregion
     }
-
 }
