@@ -218,7 +218,7 @@ namespace Simpl.Serialization.Types
                 switch (format)
                 {
                     case Format.Xml:
-                        result = SecurityElement.Escape(marshalled);
+                        result = XmlTools.EscapeXml(marshalled);
                         break;
                     case Format.Json:
                         result = XmlTools.EscapeJson(marshalled);
@@ -262,7 +262,7 @@ namespace Simpl.Serialization.Types
 		    }
 		    catch (Exception e)
 		    {
-		        Console.Error.WriteLine(e.Message);
+		        Debug.WriteLine("Error: " + e.Message);
 		    }
 		    return result;
 	    }

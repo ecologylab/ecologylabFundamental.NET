@@ -65,7 +65,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
         /// <returns></returns>
         public override object Parse(Stream stream)
         {
-            _binaryReader = new BinaryReader(stream, Encoding.Default);
+            _binaryReader = new BinaryReader(stream, Encoding.UTF8);
             return Parse();
         }
 
@@ -333,7 +333,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
         private int DeserializeScalarCollectionElement(Object root, FieldDescriptor fd)
         {
             byte[] value = _binaryReader.ReadBytes(_blockLength);
-            String stringValue = System.Text.Encoding.ASCII.GetString(value);
+            String stringValue = System.Text.Encoding.UTF8.GetString(value,0,value.Length);
             fd.AddLeafNodeToCollection(root, stringValue, translationContext);
             return _blockLength;
         }
@@ -347,7 +347,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.BinaryFormats
         private int DeserializeScalar(Object root, FieldDescriptor currentFieldDescriptor)
         {
             byte[] value = _binaryReader.ReadBytes(_blockLength);
-            String stringValue = System.Text.Encoding.ASCII.GetString(value);
+            String stringValue = System.Text.Encoding.UTF8.GetString(value,0,value.Length);
             currentFieldDescriptor.SetFieldToScalar(root, stringValue, translationContext);
             return _blockLength;
         }

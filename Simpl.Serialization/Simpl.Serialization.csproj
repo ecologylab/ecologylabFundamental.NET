@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2B7A3C03-D3F8-485D-9AA1-EDC9AB43E42D}</ProjectGuid>
+    <ProjectGuid>{16C61DD8-68B1-4509-8E18-6F7E80B605A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Simpl.Serialization</RootNamespace>
     <AssemblyName>Simpl.Serialization</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile5</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,84 +32,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28x64%29|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug %28x64%29\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28x64%29|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug %28x64%29\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28x64%29|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug %28x64%29\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LitJson, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\LitJson.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <Content Include="Lib\AsyncCtpLibrary.dll" />
+    <Content Include="Lib\AsyncCtpLibrary.xml" />
+    <Content Include="Lib\AsyncCtpLibrary_Silverlight.dll" />
+    <Content Include="Lib\AsyncCtpLibrary_Silverlight.xml" />
+    <Content Include="Lib\LitJson.dll" />
+    <Content Include="Lib\SuperSocket.Common.dll" />
+    <Content Include="Lib\SuperSocket.SocketBase.dll" />
+    <Content Include="Lib\SuperSocket.SocketEngine.dll" />
+    <Content Include="Lib\SuperWebSocket.dll" />
+    <Content Include="Lib\System.Threading.Tasks.Dataflow.dll" />
+    <Content Include="Lib\System.Threading.Tasks.Dataflow.xml" />
+    <Content Include="Lib\System.Windows.Controls.Toolkit.dll" />
+    <Content Include="Lib\System.Windows.Controls.Toolkit.Internals.dll" />
+    <Content Include="Lib\System.Windows.Controls.Toolkit.xml" />
+    <Content Include="Lib\WebSocket4Net.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\SimplMapKeyField.cs" />
-    <Compile Include="Attributes\Hint.cs" />
     <Compile Include="Attributes\SimplClasses.cs" />
     <Compile Include="Attributes\SimplCollection.cs" />
     <Compile Include="Attributes\SimplComposite.cs" />
@@ -116,40 +59,57 @@
     <Compile Include="Attributes\SimplHints.cs" />
     <Compile Include="Attributes\SimplInherit.cs" />
     <Compile Include="Attributes\SimplMap.cs" />
+    <Compile Include="Attributes\SimplMapKeyField.cs" />
     <Compile Include="Attributes\SimplNoWrap.cs" />
+    <Compile Include="Attributes\SimplOtherTags.cs" />
     <Compile Include="Attributes\SimplScalar.cs" />
     <Compile Include="Attributes\SimplScope.cs" />
+    <Compile Include="Attributes\SimplTag.cs" />
     <Compile Include="Attributes\SimplUseEqualsEquals.cs" />
     <Compile Include="Attributes\SimplWrap.cs" />
-    <Compile Include="Attributes\SimplOtherTags.cs" />
-    <Compile Include="Attributes\SimplTag.cs" />
-    <Compile Include="ClassDescriptor.cs" />
     <Compile Include="BinaryFormat.cs" />
+    <Compile Include="ClassDescriptor.cs" />
+    <Compile Include="Context\IDeserializationHookStrategy.cs" />
+    <Compile Include="Context\IScalarUnmarshallingContext.cs" />
+    <Compile Include="Context\TranslationContext.cs" />
     <Compile Include="DescriptorBase.cs" />
     <Compile Include="Deserializers\ISimplDeserializationPost.cs" />
-    <Compile Include="Deserializers\ISimplDeserializationPre.cs" />
+    <Compile Include="Deserializers\ISimplDeserializationpre.cs" />
     <Compile Include="Deserializers\Parsers\Json\IJSONContentHandler.cs" />
     <Compile Include="Deserializers\Parsers\Json\IJSONErrorHandler.cs" />
     <Compile Include="Deserializers\Parsers\Json\JSONParser.cs" />
-    <Compile Include="Deserializers\Parsers\Xml\ISAXContentHandler.cs" />
-    <Compile Include="Deserializers\Parsers\Xml\ISAXErrorHandler.cs" />
-    <Compile Include="Deserializers\Parsers\Xml\SAXHelpers.cs" />
-    <Compile Include="Deserializers\Parsers\Xml\SAXParser.cs" />
+    <Compile Include="Deserializers\Parsers\Xml\ISAXContentHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Deserializers\Parsers\Xml\ISAXErrorHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Deserializers\Parsers\Xml\SAXHelpers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Deserializers\Parsers\Xml\SAXParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Deserializers\PullHandlers\BinaryFormats\BinaryPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\BinaryFormats\TlvPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\PullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\BibtexPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\JsonPullDeserializer.cs" />
     <Compile Include="Deserializers\PullHandlers\StringFormats\StringPullDeserializer.cs" />
-    <Compile Include="Deserializers\PullHandlers\StringFormats\XmlPullDeserializer.cs" />
+    <Compile Include="Deserializers\PullHandlers\StringFormats\XmlDeserializerHelper.cs" />
+    <Compile Include="Deserializers\PullHandlers\StringFormats\XMLPullDeserializer.cs" />
+    <Compile Include="ElementState.cs" />
+    <Compile Include="FieldDescriptor.cs" />
+    <Compile Include="FieldTypes.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="GenericTypeVar.cs" />
+    <Compile Include="Graph\MultiMap.cs" />
     <Compile Include="Library\Circle\Circle.cs" />
     <Compile Include="Library\Circle\Point.cs" />
     <Compile Include="Library\Composite\Container.cs" />
-    <Compile Include="Library\Composite\WcBase.cs" />
-    <Compile Include="Library\Composite\WcSubOne.cs" />
-    <Compile Include="Library\Composite\WcSubTwo.cs" />
+    <Compile Include="Library\Composite\WCBase.cs" />
+    <Compile Include="Library\Composite\WCSubOne.cs" />
+    <Compile Include="Library\Composite\WCSubTwo.cs" />
     <Compile Include="Library\Configuration\Configuration.cs" />
     <Compile Include="Library\Configuration\Pref.cs" />
     <Compile Include="Library\Configuration\PrefDouble.cs" />
@@ -198,9 +158,9 @@
     <Compile Include="Library\Rss\Item.cs" />
     <Compile Include="Library\Rss\Rss.cs" />
     <Compile Include="Library\Scalar\ScalarCollection.cs" />
-    <Compile Include="PlatformSpecifics\FundamentalPlatformSpecifics.cs" />
-    <Compile Include="PlatformSpecifics\FundamentalPlatformSpecificsCSharp.cs" />
-    <Compile Include="PlatformSpecifics\IFundamentalPlatformSpecifics.cs" />
+    <Compile Include="PlatformSpecifics\SerializationPlatformSpecifics.cs" />
+    <Compile Include="PlatformSpecifics\ISerializationPlatformSpecifics.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializers\BinaryFormats\BinarySerializer.cs" />
     <Compile Include="Serializers\BinaryFormats\TlvSerializer.cs" />
     <Compile Include="Serializers\FormatSerializer.cs" />
@@ -210,69 +170,52 @@
     <Compile Include="Serializers\StringFormats\JsonSerializer.cs" />
     <Compile Include="Serializers\StringFormats\StringSerializer.cs" />
     <Compile Include="Serializers\StringFormats\XmlSerializer.cs" />
-    <Compile Include="SimplEquality.cs" />
     <Compile Include="SimplTranslationException.cs" />
-    <Compile Include="StringFormat.cs" />
-    <Compile Include="ElementState.cs" />
-    <Compile Include="FieldTypes.cs" />
-    <Compile Include="Graph\MultiMap.cs" />
-    <Compile Include="Context\IDeserializationHookStrategy.cs" />
-    <Compile Include="Context\IScalarUnmarshallingContext.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Context\TranslationContext.cs" />
     <Compile Include="SimplTypesScope.cs" />
+    <Compile Include="StringFormat.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CLTypeConstants.cs" />
-    <Compile Include="FieldDescriptor.cs" />
+    <Compile Include="Types\CollectionType.cs" />
     <Compile Include="Types\CompositeType.cs" />
+    <Compile Include="Types\Element\IMappable.cs" />
     <Compile Include="Types\FundamentalTypes.cs" />
     <Compile Include="Types\ScalarType.cs" />
     <Compile Include="Types\Scalar\BinaryDataType.cs" />
-    <Compile Include="Types\Scalar\DateTimeType.cs" />
-    <Compile Include="Types\Scalar\FieldInfoType.cs" />
-    <Compile Include="Types\Scalar\FileType.cs" />
-    <Compile Include="Types\Scalar\RectType.cs" />
-    <Compile Include="Types\SimplBaseType.cs" />
-    <Compile Include="Types\Element\IMappable.cs" />
     <Compile Include="Types\Scalar\BooleanType.cs" />
+    <Compile Include="Types\Scalar\DateTimeType.cs" />
     <Compile Include="Types\Scalar\DoubleType.cs" />
     <Compile Include="Types\Scalar\EnumeratedType.cs" />
+    <Compile Include="Types\Scalar\FieldInfoType.cs" />
+    <Compile Include="Types\Scalar\FileTypeBase.cs" />
     <Compile Include="Types\Scalar\FloatType.cs" />
     <Compile Include="Types\Scalar\IntType.cs" />
     <Compile Include="Types\Scalar\LongType.cs" />
+    <Compile Include="Types\Scalar\ParsedUriType.cs" />
+    <Compile Include="Types\Scalar\RectTypeBase.cs" />
     <Compile Include="Types\Scalar\ReferenceType.cs" />
     <Compile Include="Types\Scalar\RegexType.cs" />
     <Compile Include="Types\Scalar\ScalarTypeType.cs" />
     <Compile Include="Types\Scalar\StringBuilderType.cs" />
     <Compile Include="Types\Scalar\StringType.cs" />
+    <Compile Include="Types\Scalar\TypeType.cs" />
+    <Compile Include="Types\SimplBaseType.cs" />
+    <Compile Include="Types\SimplType.cs" />
     <Compile Include="Types\TypeCollection.cs" />
     <Compile Include="Types\TypeRegistry.cs" />
-    <Compile Include="Types\Scalar\ParsedUriType.cs" />
-    <Compile Include="Types\SimplType.cs" />
-    <Compile Include="Types\Scalar\TypeType.cs" />
-    <Compile Include="XmlTools.cs" />
+    <Compile Include="XMLTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simpl.Fundamental\Simpl.Fundamental.csproj">
-      <Project>{9A755A5E-88AA-4000-A9A7-ABDED3193855}</Project>
+      <Project>{10287dd6-0c07-4737-9469-0aa21b7723bf}</Project>
       <Name>Simpl.Fundamental</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\AsyncCtpLibrary.dll" />
-    <Content Include="Lib\AsyncCtpLibrary.xml" />
-    <Content Include="Lib\AsyncCtpLibrary_Silverlight.dll" />
-    <Content Include="Lib\AsyncCtpLibrary_Silverlight.xml" />
-    <Content Include="Lib\LitJson.dll" />
-    <Content Include="Lib\System.Threading.Tasks.Dataflow.dll" />
-    <Content Include="Lib\System.Threading.Tasks.Dataflow.xml" />
-    <Content Include="Lib\System.Windows.Controls.Toolkit.dll" />
-    <Content Include="Lib\System.Windows.Controls.Toolkit.Internals.dll" />
-    <Content Include="Lib\System.Windows.Controls.Toolkit.xml" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

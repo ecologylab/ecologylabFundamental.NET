@@ -13,12 +13,12 @@ namespace Simpl.Serialization.Types.Scalar
 
         public override object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext unmarshallingContext)
         {
-            throw new NotImplementedException();
+            return Type.GetType(value);
         }
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
-            throw new NotImplementedException();
+            return instance.ToString();
         }
 
         public override bool SimplEquals(object left, object right)

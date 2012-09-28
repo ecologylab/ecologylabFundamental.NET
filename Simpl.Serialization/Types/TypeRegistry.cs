@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Simpl.Fundamental.Generic;
 using System.Diagnostics.Contracts;
+using Simpl.Serialization.PlatformSpecifics;
 
 namespace Simpl.Serialization.Types
 {
@@ -41,16 +42,16 @@ namespace Simpl.Serialization.Types
             get
             {
                 return scalarTypeCollection;
-            }
-        }
+                        }
+                    }
 
         public static TypeCollection<CollectionType> CollectionTypes
         {
             get
             {
                 return collectionTypeCollection;
-            }
-        }
+                        }
+                    }
 
         public static TypeCollection<CompositeType> CompositeTypes
         {
@@ -67,6 +68,7 @@ namespace Simpl.Serialization.Types
                 return simplTypeCollection;
             }
         }
+        
 
         /// <summary>
         /// Initializes the TypeRegistry
@@ -80,7 +82,7 @@ namespace Simpl.Serialization.Types
         /// Gets a value indicating if the TypeRegistry has been initialized
         /// </summary>
         private static Boolean isInit;
-
+        
         /// <summary>
         /// Initializes the TypeRegistry by adding all fundamental types to the Registry.
         /// </summary>
@@ -94,9 +96,11 @@ namespace Simpl.Serialization.Types
 
                 // We should always have scalar types registered... 
                 Contract.Requires(TypeRegistry.ScalarTypes.CSharpType.Count > 0, "Scalar types not added to TypeRegistry upon static initialization.");
-                
+
                 // We have initailized the TypeRegistry
                 isInit = true;
+
+                SerializationPlatformSpecifics.Get().InitializePlatformSpecificTypes();
             }
         }
 
@@ -113,7 +117,7 @@ namespace Simpl.Serialization.Types
             result |= CollectionTypes.TryAdd(type);
             result |= CompositeTypes.TryAdd(type);
             result |= SimplTypes.TryAdd(type);
-        
+
             return result;
 
         }
@@ -168,13 +172,13 @@ namespace Simpl.Serialization.Types
         }
 
         internal static CollectionType GetCollectionType(FieldInfo thatField)
-        {
-            if (CollectionType.CanBeCreatedFrom(thatField.FieldType))
             {
+            if (CollectionType.CanBeCreatedFrom(thatField.FieldType))
+                {
                 var created = new CollectionType(thatField.FieldType, javaName: thatField.Name, objCName: thatField.Name);
                 compositeTypeCollection.TryAdd(created);
                 return created;
-            }
+                }
             else
             {
                 throw new ArgumentException(String.Format("Field type is not a legitimate collection we can create. Type: {0}", thatField.FieldType));

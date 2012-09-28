@@ -18,7 +18,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <summary>
         /// 
         /// </summary>
-        private XmlTextReader _xmlReader; 
+        private XmlReader _xmlReader; 
 
         /// <summary>
         /// 
@@ -69,7 +69,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputString"></param>
         private void ConfigureInput(String inputString)
         {
-            ConfigureInput(new MemoryStream(Encoding.Default.GetBytes(inputString)));
+            ConfigureInput(new MemoryStream(Encoding.UTF8.GetBytes(inputString)));
         }
         
         /// <summary>
@@ -78,7 +78,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputStream"></param>
         private void ConfigureInput(Stream inputStream)
         {
-            _xmlReader = new XmlTextReader(inputStream);
+            _xmlReader = XmlReader.Create(inputStream);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
                 if (currentFieldDescriptor == null)
                 {
-                    Console.WriteLine("ignoring tag " + CurrentTag);
+                    Debug.WriteLine("ignoring tag " + CurrentTag);
                     currentFieldDescriptor = FieldDescriptor.MakeIgnoredFieldDescriptor(CurrentTag);
 
                     if (!_xmlReader.IsEmptyElement)
@@ -304,6 +304,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             while (NextEvent() && !(_xmlReader.NodeType == XmlNodeType.EndElement && CurrentTag.Equals(currentTag)))
             {
                 DeserializeCompositeCollectionElement(root, fd);
+                var type = _xmlReader.Value;
             } 
         }
 
@@ -464,7 +465,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     }
                     else
                     {
-                        Console.WriteLine("ignoring attribute: " + tag);
+                        Debug.WriteLine("ignoring attribute: " + tag);
                     }   
                 }
             }

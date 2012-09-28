@@ -41,7 +41,7 @@ namespace Simpl.Serialization.Types.Scalar
             }
             catch (ArgumentNullException){ }
             catch (ArgumentException){ }
-            catch (UriFormatException e)
+            catch (FormatException e)
             {
                 Debug.WriteLine(e.Message + " :: " + value);
             }

@@ -44,9 +44,9 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="translationContext"></param>
         public override void Serialize(object obj, Stream stream, TranslationContext translationContext)
         {
-            StreamWriter sw = new StreamWriter(stream, Encoding.Default);
+            StreamWriter sw = new StreamWriter(stream, Encoding.UTF8);
             Serialize(obj, sw, translationContext);
-            sw.Close();
+            sw.Dispose();
         }
 
         /// <summary>

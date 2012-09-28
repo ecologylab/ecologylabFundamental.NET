@@ -3,64 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylab.serialization.json
+namespace Simpl.Serialization.Deserializers.Parsers.Json
 {
     /// <summary>
     ///     Interface to handle errors raised by SAX Parser
     /// </summary>
-    public interface IJSONErrorHandler
+    public interface IJsonErrorHandler
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="exception"></param>
-        void warning(JSONParseException exception);
+        void Warning(JsonParseException exception);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="exception"></param>
-        void error(JSONParseException exception);
+        void Error(JsonParseException exception);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="exception"></param>
-        void fatalError(JSONParseException exception);
+        void FatalError(JsonParseException exception);
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public class JSONParseException
+    public class JsonParseException
     {
         /// <summary>
         /// 
         /// </summary>
-        private String message;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public JSONParseException()
+        public JsonParseException()
         {
-            message = "";
+            Message = "";
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public String Message
-        {
-            get
-            {
-                return message;
-            }
-            set
-            {
-                message = value;
-            }
-        }
+        public string Message { get; set; }
     }
 
 }

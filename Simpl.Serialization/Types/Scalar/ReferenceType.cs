@@ -32,7 +32,7 @@ namespace Simpl.Serialization.Types.Scalar
             String instanceString = Marshall(instance);
             if (NeedsEscaping)
             {
-                XmlTools.EscapeXML(buffy, instanceString);
+                XmlTools.EscapeXml(buffy, instanceString);
             }
             else
             {

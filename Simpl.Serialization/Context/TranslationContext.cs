@@ -5,8 +5,10 @@ using System.Diagnostics;
 using System.Reflection;
 using Simpl.Fundamental.Generic;
 using Simpl.Fundamental.Net;
+using Simpl.Fundamental.PlatformSpecifics;
 using Simpl.Serialization.Graph;
 using System.IO;
+using Simpl.Serialization.PlatformSpecifics;
 
 namespace Simpl.Serialization.Context
 {
@@ -31,7 +33,7 @@ namespace Simpl.Serialization.Context
         private MultiMap<Int32> _visitedElements = new MultiMap<Int32>();
 
         private ParsedUri   _baseDirPurl;
-        private FileInfo    _baseDirFile;
+        private object    _baseDirFile;
         private String      _delimiter = ",";
 
 
@@ -40,21 +42,20 @@ namespace Simpl.Serialization.Context
 
         }
 
-        public TranslationContext(FileInfo fileDirContext)
+        public TranslationContext(object fileDirContext)
         {
             if (fileDirContext != null)
                 this.BaseDirFile = fileDirContext;
         }
 
-        public FileInfo BaseDirFile
+        public object BaseDirFile
         {
             get { return _baseDirFile; }
             set
             {
                 this._baseDirFile = value;
-                this._baseDirPurl = new ParsedUri(value.FullName);
-            }
-               
+                this._baseDirPurl = new ParsedUri(FundamentalPlatformSpecifics.Get().GetDirFullNameFromFile(value));
+            }             
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Simpl.Serialization.Context
                     {
                         thatReferenceObject = childField.GetValue(obj);
                     }
-                    catch (FieldAccessException e)
+                    catch (MemberAccessException e)
                     {
                         Debug.WriteLine("WARNING re-trying access! " + e.StackTrace);
 
@@ -123,7 +124,7 @@ namespace Simpl.Serialization.Context
                         {
                             thatReferenceObject = childField.GetValue(obj);
                         }
-                        catch (FieldAccessException e1)
+                        catch (MemberAccessException e1)
                         {
                             Debug.WriteLine("Can't access " + childField.Name);
                             Debug.WriteLine(e1.StackTrace);

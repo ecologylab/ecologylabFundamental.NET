@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ecologylab.serialization.json
+namespace Simpl.Serialization.Deserializers.Parsers.Json
 {
     /// <summary>
     /// 
     /// </summary>
-    interface IJSONContentHandler
+    interface IJsonContentHandler
     {
         /// <summary>
         /// 
         /// </summary>
-        void StartJSON();
+        void StartJson();
 
         /// <summary>
         /// 
@@ -40,7 +40,7 @@ namespace ecologylab.serialization.json
         /// <summary>
         /// 
         /// </summary>
-        void EndJSON();
+        void EndJson();
 
         /// <summary>
         /// 

@@ -30,7 +30,7 @@ namespace Simpl.Serialization.Types.Scalar
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
-            byte[] bytes = ((MemoryStream) instance).GetBuffer();
+            byte[] bytes = ((MemoryStream) instance).ToArray();
             return System.Convert.ToBase64String(bytes);
         }
 

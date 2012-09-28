@@ -232,7 +232,7 @@ namespace Simpl.Serialization
             }
 
             // case 3: arg is parameterized
-            checkTypeParameterizedTypeImpl(g, type);
+            CheckTypeParameterizedTypeImpl(g, type);
 		
             g.scope = null;
             return g;
@@ -270,7 +270,7 @@ namespace Simpl.Serialization
             }
 
             // case 3: constraint is parameterized -- the most complicated case
-            checkBoundParameterizedTypeImpl(g, bound);
+            CheckBoundParameterizedTypeImpl(g, bound);
         }
 
         /// <sumary>
@@ -304,17 +304,37 @@ namespace Simpl.Serialization
             }
 		
             // case 3: constraint is parameterized -- the most complicated case
-            checkBoundParameterizedTypeImpl(g, bound);
+            CheckBoundParameterizedTypeImpl(g, bound);
         }
         
-        public static void checkBoundParameterizedTypeImpl (GenericTypeVar g, Type bound)
+        public static void CheckBoundParameterizedTypeImpl (GenericTypeVar g, Type bound)
         {
-            FundamentalPlatformSpecifics.Get().CheckBoundParameterizedTypeImpl(g, bound);
+            if (bound.IsGenericType)
+            {
+                g.ConstraintClassDescriptor = ClassDescriptor.GetClassDescriptor(bound);
+
+                Type[] types = bound.GetGenericArguments();
+
+                foreach (Type type in types)
+                {
+                    g.AddContraintGenericTypeVarArg(GenericTypeVar.GetGenericTypeVarRef(type, g.Scope));
+                }
+            }
         }
 		
-        public static void checkTypeParameterizedTypeImpl(GenericTypeVar g, Type type)
+        public static void CheckTypeParameterizedTypeImpl(GenericTypeVar g, Type type)
         {
-            FundamentalPlatformSpecifics.Get().CheckTypeParameterizedTypeImpl(g, type);
+            if (type.IsGenericType)
+            {
+                g.ClassDescriptor = ClassDescriptor.GetClassDescriptor(type);
+
+                Type[] types = type.GetGenericArguments();
+
+                foreach (Type t in types)
+                {
+                    g.AddGenericTypeVarArg(GenericTypeVar.GetGenericTypeVarRef(t, g.Scope));
+                }
+            }
         }
         
         public bool IsDef()

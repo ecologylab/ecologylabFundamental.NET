@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simpl.Fundamental.Generic;
+using Simpl.Serialization.Types;
 using Simpl.Serialization.Types.Scalar;
 
 namespace Simpl.Serialization.Types
 {
+    /// <summary>
+    /// FileType and RectType are platform specific. initiatated in the platformspecific code.
+    /// </summary>
     public class FundamentalTypes
     {
-
         public static List<ScalarType> ScalarTypes
         {
             get
@@ -27,11 +30,9 @@ namespace Simpl.Serialization.Types
                             ,new RegexType()
                             ,new StringBuilderType()
                             ,new DateTimeType()
-                            ,new FileType()
                             ,new FieldInfoType()
                             ,new TypeType()
                             ,new ScalarTypeType()
-                            ,new RectType()
                             ,new BinaryDataType()
                 };
             }

@@ -7,7 +7,6 @@ using System.IO;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Deserializers;
 using Simpl.Serialization.Serializers;
-using ecologylab.serialization;
 
 namespace Simpl.Serialization
 {

@@ -3,7 +3,6 @@ using System.IO;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Serializers.BinaryFormats;
 using Simpl.Serialization.Serializers.StringFormats;
-using ecologylab.serialization;
 
 
 namespace Simpl.Serialization.Serializers

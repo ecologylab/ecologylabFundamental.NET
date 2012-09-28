@@ -1,4 +1,4 @@
-namespace ecologylab.serialization.sax
+namespace Simpl.Serialization.Deserializers.Parsers.Xml
 {
     /// <summary>
     ///     Interface to handle errors raised by SAX Parser

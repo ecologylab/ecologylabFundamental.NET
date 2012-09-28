@@ -412,29 +412,54 @@ namespace Simpl.Serialization
             return result;
         }
 
-        private Type GetTypeArgs(FieldInfo thatField, int p)
+        private Type GetTypeArgs(FieldInfo thatField, int i)
         {
-            Type result1 = FundamentalPlatformSpecifics.Get().GetTypeArgClass(field, p, this);
+            Type result = null;
 
-/*            Type result;
-            Type t = thatField.FieldType;
+            Type[] typeArgs;
+
+            Type realFieldType = field.FieldType;
+
+            while (!realFieldType.IsGenericType)
+            {
+                realFieldType = realFieldType.BaseType;
+            }
+
+            typeArgs = realFieldType.GetGenericArguments();
 
 
-
-            Type[] typeArgs = t.GetGenericArguments();
-
+            if (typeArgs != null)
             {
                 int max = typeArgs.Length - 1;
-                if (p > max)
+                if (i > max)
+                    i = max;
+                Type typeArg0 = typeArgs[i];
+
+                // case 1: arg is a concrete class
+                if (!typeArg0.IsGenericParameter && !typeArg0.IsGenericType)
                 {
-                    p = max;
+                    result = typeArg0;
                 }
+                else if (typeArg0.IsGenericType)
+                {
+                    // nested parameterized type
 
-                result = typeArgs[p];
+                    result = typeArg0.GetGenericTypeDefinition();
+                }
+                else if (typeArg0.IsGenericParameter)
+                {
+                    Type[] tviBounds = typeArg0.GetGenericParameterConstraints();
+                    result = tviBounds[0];
+                    Debug.WriteLine("yo! " + result);
+                }
+                else
+                {
+                    Debug.WriteLine("getTypeArgClass(" + field + ", " + i
+                            + " yucky! Consult s.im.mp serialization developers.");
+                }
             }
-*/
-            return result1;
 
+            return result;
         }
 
         public bool IsPolymorphic
@@ -452,9 +477,13 @@ namespace Simpl.Serialization
 
         private int DeriveScalarSerialization(Type thatType, FieldInfo scalarField)
         {
+            string s = scalarField.Name;
             isEnum = XmlTools.IsEnum(scalarField);
             xmlHint = XmlTools.SimplHint(scalarField);
-            ScalarType = TypeRegistry.ScalarTypes[thatType];
+            if (isEnum)
+                ScalarType = TypeRegistry.ScalarTypes[typeof(Enum)];
+            else
+                ScalarType = TypeRegistry.ScalarTypes[thatType];
 
             if (ScalarType == null)
             {
@@ -1027,13 +1056,37 @@ namespace Simpl.Serialization
 
         private void DeriveGenericTypeVariables()
         {
-            FundamentalPlatformSpecifics.Get().DeriveFieldGenericTypeVars(this);
+            //FieldInfo field = fieldDescriptor.Field;
+            Type genericType = Field.FieldType;
+            List<GenericTypeVar> derivedGenericTypeVars = new List<GenericTypeVar>();
+
+            if (genericType.IsGenericParameter)
+            {
+                GenericTypeVar g = GenericTypeVar.GetGenericTypeVarRef(genericType, GetGenericTypeVarsContext());
+                derivedGenericTypeVars.Add(g);
+            }
+            else if (genericType.IsGenericType)
+            {
+                Type[] types = genericType.GetGenericArguments();
+
+                if (types == null | types.Length <= 0)
+                    return;
+
+                foreach (Type t in types)
+                {
+                    GenericTypeVar g = GenericTypeVar.GetGenericTypeVarRef(t, GetGenericTypeVarsContext());
+                    derivedGenericTypeVars.Add(g);
+                }
+            }
+
+            SetGenericTypeVars(derivedGenericTypeVars);
         }
 
-        	/**
-	 * make a SHALLOW copy of this descriptor.
-	 */
-
+        
+        /// <summary>
+        /// make a SHALLOW copy of this descriptor.
+        /// </summary>
+        /// <returns></returns>
         public FieldDescriptor Clone()
 	    {
 		    FieldDescriptor cloned = null;
@@ -1127,9 +1180,6 @@ namespace Simpl.Serialization
         {
             return "";
         }
-
-
-        private LazyCache<ScalarType> thisScalarType;
        
 
         /// <summary>

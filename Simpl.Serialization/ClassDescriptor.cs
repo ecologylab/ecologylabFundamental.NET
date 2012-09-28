@@ -7,7 +7,6 @@ using System.Reflection;
 using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.Serializers;
-using ecologylab.serialization;
 using Simpl.Serialization.PlatformSpecifics;
 
 namespace Simpl.Serialization
@@ -621,7 +620,6 @@ namespace Simpl.Serialization
             args[2] = wrapperTag;
 
             return ReflectionTools.GetInstance<FieldDescriptor>(fieldDescriptorClass, args);
-            
         }
 
         /// <summary>
@@ -669,7 +667,7 @@ namespace Simpl.Serialization
         /// <summary>
         ///     Gets the tagName of the class
         /// </summary>
-        public string TagName
+        public new string TagName
         {
             get { return _tagName; }
         }
@@ -842,6 +840,23 @@ namespace Simpl.Serialization
 		    return genericTypeVars;
 	    }
 
+        public static List<GenericTypeVar> GetGenericTypeVars(Type parameterizedType, List<GenericTypeVar> scope)
+        {
+            Type[] types = parameterizedType.GetGenericArguments();
+
+            if (types.Length <= 0)
+                return null;
+
+            List<GenericTypeVar> returnValue = new List<GenericTypeVar>();
+            foreach (Type t in types)
+            {
+                GenericTypeVar g = GenericTypeVar.GetGenericTypeVarRef(t, scope);
+                returnValue.Add(g);
+            }
+
+            return returnValue;
+        }
+
         /// <summary>
         /// lazy-evaluation method. 
         /// </summary>
@@ -849,7 +864,7 @@ namespace Simpl.Serialization
 	    {
 		    if (superClassGenericTypeVars == null)
 		    {
-			    deriveSuperGenericTypeVariables();
+			    DeriveSuperGenericTypeVariables();
 		    }
 
 		    return superClassGenericTypeVars;
@@ -862,9 +877,19 @@ namespace Simpl.Serialization
 	    }
 	
 	    // This method is modified, refer to FundamentalPlatformSpecific package -Fei
-	    private void deriveSuperGenericTypeVariables()
+	    private void DeriveSuperGenericTypeVariables()
 	    {
-		    FundamentalPlatformSpecifics.Get().DeriveSuperClassGenericTypeVars(this);
+            Type describedClass = DescribedClass;
+
+            if (describedClass == null)
+                return;
+
+            Type superClassType = describedClass.BaseType;
+
+            if (superClassType != null && superClassType.IsGenericType)
+            {
+                SuperClassGenericTypeVars = GetGenericTypeVars(superClassType, GetGenericTypeVars());
+            }
 	    }
 
 	    private void DeriveGenericTypeVariables()
@@ -872,7 +897,7 @@ namespace Simpl.Serialization
 		    if (_describedClass != null) // for generated descriptors, describedClass == null
 		    {
 			    Type[] typeVariables = _describedClass.GetGenericArguments();
-			    if (typeVariables != null && typeVariables.Length > 0)
+			    if (typeVariables.Length > 0)
 			    {
 				    foreach (Type typeVariable in typeVariables)
 				    {
@@ -913,7 +938,7 @@ namespace Simpl.Serialization
 
         public object GetInstance()
         {
-            Console.WriteLine(this.DescribedClass.Name);
+            Debug.WriteLine(this.DescribedClass.Name);
             return XmlTools.GetInstance(_describedClass);
         }
 

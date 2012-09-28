@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using LitJson;
+//using LitJson;
+using Newtonsoft.Json;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Types.Element;
 
@@ -68,7 +69,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void ConfigureInput(String inputString)
         {
 //            test = inputString;
-            ConfigureInput(new MemoryStream(Encoding.ASCII.GetBytes(inputString)));
+            ConfigureInput(new MemoryStream(Encoding.UTF8.GetBytes(inputString)));
         }
 
 
@@ -78,7 +79,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputStream"></param>
         private void ConfigureInput(Stream inputStream)
         {
-            _jsonReader = new JsonReader(new StreamReader(inputStream));
+            _jsonReader = new JsonTextReader(new StreamReader(inputStream));
         }
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private object Parse()
         {
             _jsonReader.Read();
-            if (_jsonReader.Token != JsonToken.ObjectStart)
+            if (_jsonReader.TokenType != JsonToken.StartObject)
             {
                 Debug.WriteLine("JSON Translation ERROR: not a valid JSON object. It should start with {");
             }
@@ -122,7 +123,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="rootClassDescriptor"></param>
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor)
         {
-            while (_jsonReader.Token != JsonToken.ObjectEnd)
+            while (_jsonReader.TokenType != JsonToken.EndObject)
             {
                 object jsonReaderValue = _jsonReader.Value;
 
@@ -133,7 +134,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 {
                     String ignoredTag = jsonReaderValue.ToString();
                     IgnoreCurrentTag();
-                    Console.WriteLine("WARNING: ignoring tag " + ignoredTag);
+                    Debug.WriteLine("WARNING: ignoring tag " + ignoredTag);
                     continue;
                 }
 
@@ -187,14 +188,14 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             _jsonReader.Read();
 
-            switch (_jsonReader.Token)
+            switch (_jsonReader.TokenType)
             {
-                case JsonToken.ObjectStart:
+                case JsonToken.StartObject:
                     Stack<JsonToken> objectStarts = new Stack<JsonToken>();
-                    objectStarts.Push(JsonToken.ObjectStart);
+                    objectStarts.Push(JsonToken.StartObject);
                     while (_jsonReader.Read())
                     {
-                        if (_jsonReader.Token == JsonToken.ObjectEnd)
+                        if (_jsonReader.TokenType == JsonToken.EndObject)
                         {
                             objectStarts.Pop();
                             if (objectStarts.Count <= 0)
@@ -204,18 +205,18 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                             }
 
                         }
-                        if (_jsonReader.Token == JsonToken.ObjectStart)
+                        if (_jsonReader.TokenType == JsonToken.StartObject)
                         {
-                            objectStarts.Push(JsonToken.ObjectStart);
+                            objectStarts.Push(JsonToken.StartObject);
                         }
                     }
                     break;
-                case JsonToken.ArrayStart:
+                case JsonToken.StartArray:
                     Stack<JsonToken> arrayStart = new Stack<JsonToken>();
-                    arrayStart.Push(JsonToken.ArrayStart);
+                    arrayStart.Push(JsonToken.StartArray);
                     while (_jsonReader.Read())
                     {
-                        if (_jsonReader.Token == JsonToken.ArrayEnd)
+                        if (_jsonReader.TokenType == JsonToken.EndArray)
                         {
                             arrayStart.Pop();
                             if (arrayStart.Count <= 0)
@@ -225,17 +226,17 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                             }
 
                         }
-                        if (_jsonReader.Token == JsonToken.ArrayStart)
+                        if (_jsonReader.TokenType == JsonToken.StartArray)
                         {
-                            arrayStart.Push(JsonToken.ArrayStart);
+                            arrayStart.Push(JsonToken.StartArray);
                         }
                     }
 
                     break;
                 case JsonToken.String:
-                case JsonToken.Double:
-                case JsonToken.Int:
-                case JsonToken.Long:
+                case JsonToken.Float:
+                case JsonToken.Integer:
+                //case JsonToken.Long:
                     _jsonReader.Read();
                     break;
                 default:
@@ -262,7 +263,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     _jsonReader.Read();
                 }
 
-                while (_jsonReader.Token != JsonToken.ArrayEnd)
+                while (_jsonReader.TokenType != JsonToken.EndArray)
                 {
                     _jsonReader.Read();
                     String tagName = _jsonReader.Value.ToString();
@@ -285,7 +286,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
             else
             {
-                while (_jsonReader.Read() && _jsonReader.Token != JsonToken.ArrayEnd)
+                while (_jsonReader.Read() && _jsonReader.TokenType != JsonToken.EndArray)
                 {
                     subRoot = GetSubRoot(currentFieldDescriptor, arrayTag);
                     if (subRoot is IMappable<Object>)
@@ -321,7 +322,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     _jsonReader.Read();
                 }
 
-                while (_jsonReader.Token != JsonToken.ArrayEnd)
+                while (_jsonReader.TokenType != JsonToken.EndArray)
                 {
                     _jsonReader.Read();
                     String tagName = _jsonReader.Value.ToString();
@@ -338,7 +339,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             }
             else
             {
-                while (_jsonReader.Read() && _jsonReader.Token != JsonToken.ArrayEnd)
+                while (_jsonReader.Read() && _jsonReader.TokenType != JsonToken.EndArray)
                 {
                     subRoot = GetSubRoot(currentFieldDescriptor, arrayTag);
                     IList collection = (IList) currentFieldDescriptor
@@ -358,7 +359,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeScalarCollection(object root, FieldDescriptor currentFieldDescriptor)
         {
             _jsonReader.Read();
-            while (_jsonReader.Read() && _jsonReader.Token != JsonToken.ArrayEnd)
+            while (_jsonReader.Read() && _jsonReader.TokenType != JsonToken.EndArray)
             {
                 currentFieldDescriptor.AddLeafNodeToCollection(root, _jsonReader.Value.ToString(), translationContext);
             }
@@ -391,7 +392,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             _jsonReader.Read();
             Object subRoot = null;
 
-            if (_jsonReader.Token == JsonToken.PropertyName)
+            if (_jsonReader.TokenType == JsonToken.PropertyName)
             {
                 if(_jsonReader.Value.ToString().Equals(TranslationContext.JsonSimplRef))
                 {

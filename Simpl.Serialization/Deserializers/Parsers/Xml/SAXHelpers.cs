@@ -1,7 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace ecologylab.serialization.sax
+namespace Simpl.Serialization.Deserializers.Parsers.Xml
 {
     /// <summary>
     /// 
@@ -160,15 +161,15 @@ namespace ecologylab.serialization.sax
         /// <summary>
         /// 
         /// </summary>
-        public ArrayList attArray = new ArrayList();
+        public List<object> AttArray= new List<object>();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int getLength()
+        public int GetLength()
         {
-            return attArray.Count;
+            return AttArray.Count;
         }
 
         /// <summary>
@@ -176,9 +177,9 @@ namespace ecologylab.serialization.sax
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string getQName(int index)
+        public string GetQName(int index)
         {
-            SaxAttribute saxAtt = (SaxAttribute)attArray[index];
+            SaxAttribute saxAtt = (SaxAttribute)AttArray[index];
             return saxAtt.Name;
         }
 
@@ -187,9 +188,9 @@ namespace ecologylab.serialization.sax
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public string getValue(int index)
+        public string GetValue(int index)
         {
-            SaxAttribute saxAtt = (SaxAttribute)attArray[index];
+            SaxAttribute saxAtt = (SaxAttribute)AttArray[index];
             return saxAtt.Value;
         }
 
@@ -199,7 +200,7 @@ namespace ecologylab.serialization.sax
         /// <returns></returns>
         public Attributes TrimArray()
         {
-            attArray.TrimToSize();
+            //AttArray.TrimToSize();
             return this;
         }
     }

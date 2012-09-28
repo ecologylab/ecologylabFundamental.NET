@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LitJson;
+//using LitJson;
 using System.IO;
+using Newtonsoft.Json;
 
-namespace ecologylab.serialization.json
+namespace Simpl.Serialization.Deserializers.Parsers.Json
 {
     /// <summary>
     /// 
     /// </summary>
-    class JSONParser
+    class JsonParser
     {
         /// <summary>
         /// 
         /// </summary>
-        private IJSONContentHandler handler;
+        private IJsonContentHandler handler;
 
         /// <summary>
         /// 
         /// </summary>
-        private IJSONErrorHandler   errorHandler;
+        private IJsonErrorHandler   errorHandler;
 
         /// <summary>
         /// 
@@ -32,39 +33,42 @@ namespace ecologylab.serialization.json
         /// </summary>
         /// <param name="handler"></param>
         /// <param name="errorHandler"></param>
-        public JSONParser(IJSONContentHandler handler, IJSONErrorHandler errorHandler)
+        public JsonParser(IJsonContentHandler handler, IJsonErrorHandler errorHandler)
         {
             this.handler = handler;
             this.errorHandler = errorHandler;
             this.inArray = new List<Boolean>();
         }
 
-        public JSONParser()
+        public JsonParser()
         {
             this.inArray = new List<Boolean>();
         }
 
-        public void setContentHandler(IJSONContentHandler contentHandler)
+        public void setContentHandler(IJsonContentHandler contentHandler)
         {
             this.handler = contentHandler;
         }
-        public void setErrorHandler(IJSONErrorHandler errorHandler)
+        public void setErrorHandler(IJsonErrorHandler errorHandler)
         {
             this.errorHandler = errorHandler;
         }
 
         public void parse(StreamReader inputStream, String jsonText = null)
         {
-            JSONParseException exception = new JSONParseException();
+            JsonParseException exception = new JsonParseException();
             try
             {
                 JsonReader reader = null;
                 if (inputStream != null)
-                    reader = new JsonReader(inputStream);
+                    reader = new JsonTextReader(inputStream);
                 else if (jsonText != null)
-                    reader = new JsonReader(jsonText);
+                {
+                    reader = new JsonTextReader(new StringReader(jsonText));
+                }
 
-                handler.StartJSON();
+
+                handler.StartJson();
 
                 bool registerObjectEntryEnd = false;
 
@@ -79,13 +83,13 @@ namespace ecologylab.serialization.json
 
                     registerObjectEntryEnd = false;
 
-                    switch (reader.Token)
+                    switch (reader.TokenType)
                     {
-                        case JsonToken.ObjectStart:
+                        case JsonToken.StartObject:
                             push(false);
                             handler.StartObject();
                             break;
-                        case JsonToken.ObjectEnd:
+                        case JsonToken.EndObject:
                             pop();
                             handler.EndObject();
                             registerObjectEntryEnd = true;
@@ -93,31 +97,31 @@ namespace ecologylab.serialization.json
                         case JsonToken.PropertyName:
                             handler.StartObjectEntry(reader.Value.ToString());
                             break;
-                        case JsonToken.Int:
-                        case JsonToken.Long:
-                        case JsonToken.Double:
+                        case JsonToken.Integer:
+                        //case JsonToken.Long:
+                        case JsonToken.Float:
                         case JsonToken.Boolean:
                         case JsonToken.String:
                             handler.Primitive(reader.Value);
                             registerObjectEntryEnd = true;
                             break;
-                        case JsonToken.ArrayStart:
+                        case JsonToken.StartArray:
                             handler.StartArray();
                             push(true);
                             break;
-                        case JsonToken.ArrayEnd:
+                        case JsonToken.EndArray:
                             handler.EndArray();
                             pop();
                             registerObjectEntryEnd = true;
                             break;
                     }
                 }
-                handler.EndJSON();
+                handler.EndJson();
             }
             catch (Exception ex)
             {
                 exception.Message = ex.ToString();
-                errorHandler.error(exception);
+                errorHandler.Error(exception);
             }
         }
        

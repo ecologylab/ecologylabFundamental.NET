@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-using ecologylab.serialization.sax;
-using System.Web;
+using Simpl.Fundamental.PlatformSpecifics;
+using Simpl.Serialization.Deserializers.Parsers.Xml;
 using System.IO;
+using Simpl.Serialization.Deserializers.PullHandlers.StringFormats;
+using Simpl.Serialization.PlatformSpecifics;
 
-namespace ecologylab.serialization.sax
+namespace Simpl.Serialization.Deserializers.Parsers.Xml
 {
     /// <summary>
     ///    The SaxParser class build a SAX push model from the pull model found
@@ -40,33 +43,39 @@ namespace ecologylab.serialization.sax
         /// <param name="url"></param>
         public void parse(String url)
         {
-            FileStream fileStream = File.OpenRead(url);
-            parse(fileStream);
+            StreamReader fileStreamReader = FundamentalPlatformSpecifics.Get().GenerateStreamReaderFromFile(url);
+            parse(fileStreamReader);
         }       
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="inputStream"></param>
-        public void parse(Stream inputStream)
+        public void parse(TextReader textReader)
         {
             int buflen = 500;
             char[] buffer = new char[buflen];
-            Stack nsstack = new Stack();
+            Stack<object> nsstack = new Stack<object>();
             Locator locator = new Locator();
             SAXParseException saxException = new SAXParseException();
             Attributes atts;
-            XmlTextReader reader = null;
+            XmlReader reader = null;
+            IXmlLineInfo info = null;
             try
             {
-                reader = new XmlTextReader(inputStream);
+                reader = SerializationPlatformSpecifics.Get().CreateReader(textReader);
                 object nsuri = reader.NameTable.Add("http://www.w3.org/2000/xmlns/");
                 Handler.startDocument();
                 while (reader.Read())
                 {
                     string prefix;
-                    locator.LineNumber = reader.LineNumber;
-                    locator.ColumnNumber = reader.LinePosition;
+                    info = reader as IXmlLineInfo;
+
+                    if (info != null)
+                    {
+                        locator.LineNumber = info.LineNumber;
+                        locator.ColumnNumber = info.LinePosition;
+                    }
                     Handler.setDocumentLocator(locator);
                     switch (reader.NodeType)
                     {
@@ -92,7 +101,7 @@ namespace ecologylab.serialization.sax
                                     newAtt.Name = reader.Name;
                                     newAtt.NamespaceURI = reader.NamespaceURI;
                                     newAtt.Value = reader.Value;
-                                    atts.attArray.Add(newAtt);
+                                    atts.AttArray.Add(newAtt);
                                 }
                             }
                             reader.MoveToElement();
@@ -144,7 +153,8 @@ namespace ecologylab.serialization.sax
             } //try
             catch (Exception exception)
             {
-                saxException.LineNumber = reader.LineNumber.ToString();
+                if (info != null)
+                    saxException.LineNumber = info.LineNumber.ToString();
                 saxException.SystemID = "";
                 saxException.Message = exception.GetBaseException().ToString();
                 errorHandler.error(saxException);
@@ -153,7 +163,7 @@ namespace ecologylab.serialization.sax
             {
                 if (reader.ReadState != ReadState.Closed)
                 {
-                    reader.Close();
+                    reader.Dispose();
                 }
             }
         }

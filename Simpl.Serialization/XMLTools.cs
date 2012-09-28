@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Collections;
 using Simpl.Fundamental.Generic;
 using Simpl.Serialization.Attributes;
-using ecologylab.serialization;
 
 namespace Simpl.Serialization
 {
@@ -47,6 +47,57 @@ namespace Simpl.Serialization
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffy"></param>
+        /// <param name="stringToEscape"></param>
+        public static void EscapeXml(StringBuilder buffy, String stringToEscape)
+        {
+            if (NoCharsNeedEscaping(stringToEscape.ToCharArray()))
+            {
+                buffy.Append(stringToEscape);
+            }
+            else
+            {
+                int length = stringToEscape.Length;
+                for (int i = 0; i< length; ++i)
+                {
+                    char c = stringToEscape[i];
+                    string escaped = EscapeTable[c];
+
+                    if (escaped != null)
+                        buffy.Append(escaped);
+                    else
+                    {
+                        switch (c)
+                        {
+                            case TAB:
+                            case CR:
+                                buffy.Append(c);
+                                break;
+                            default:
+                                if (c >= 255)
+                                {
+                                    int cInt = (int)c;
+                                    buffy.Append('&').Append('#').Append(cInt).Append(';');
+                                }
+                                else if (c >= 0x20)
+                                    buffy.Append(c);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static string EscapeXml(String s)
+        {
+            StringBuilder sb = new StringBuilder();
+            EscapeXml(sb, s);
+            return sb.ToString();
         }
 
         public static String EscapeJson(String s)
@@ -428,15 +479,7 @@ namespace Simpl.Serialization
             return (hintAnnotation == null) ? Hint.XmlAttribute : hintAnnotation.Value[0];
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffy"></param>
-        /// <param name="instaceString"></param>
-        public static void EscapeXML(StringBuilder buffy, String instaceString)
-        {
 
-        }
 
         public static bool IsCompositeAsScalarValue(FieldInfo field)
 	    {
@@ -489,7 +532,7 @@ namespace Simpl.Serialization
         {
             if (IsEnum(field))
             {
-                Array enumArray = field.FieldType.GetEnumValues();
+                var enumArray = field.FieldType.GetEnumValues();
 
                 foreach (Enum enumObj in enumArray)
                 {

@@ -4,14 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Simpl.Fundamental.Net;
+using Simpl.Fundamental.PlatformSpecifics;
 using Simpl.Serialization.Context;
 using Simpl.Serialization.Deserializers.PullHandlers;
 using Simpl.Serialization.Deserializers.PullHandlers.StringFormats;
+using Simpl.Serialization.PlatformSpecifics;
 using Simpl.Serialization.Serializers;
 using Simpl.Serialization.Serializers.StringFormats;
-using ecologylab.collections;
+using Ecologylab.Collections;
 using System.IO;
-using ecologylab.serialization;
 
 namespace Simpl.Serialization
 {
@@ -495,8 +496,8 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public object DeserializeFile(string filename, Format format, Encoding encoding = null)
         {
-            FileInfo f = new FileInfo(filename);
-            return Deserialize(f, format);
+            object file = FundamentalPlatformSpecifics.Get().CreateFile(filename);
+            return Deserialize(file, format);
         }
 
         /// <summary>
@@ -506,7 +507,7 @@ namespace Simpl.Serialization
         /// <param name="format"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public object Deserialize(FileInfo file, Format format, Encoding encoding = null)
+        public object Deserialize(object file, Format format, Encoding encoding = null)
         {
             return Deserialize(file, new TranslationContext(file), null, format, encoding);
         }
@@ -520,13 +521,13 @@ namespace Simpl.Serialization
         /// <param name="format"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public object Deserialize(FileInfo file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format, Encoding encoding = null)
+        public object Deserialize(object file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format, Encoding encoding = null)
         {
             if (encoding == null)
-                encoding = Encoding.ASCII;
+                encoding = Encoding.UTF8;
 
-            StreamReader fileStream = new StreamReader(file.OpenRead(), encoding);
-            return Deserialize(fileStream.BaseStream, translationContext, deserializationHookStrategy, format);
+            Stream readStream = FundamentalPlatformSpecifics.Get().OpenFileReadStream(file, encoding);
+            return Deserialize(readStream, translationContext, deserializationHookStrategy, format);
         }
 
 
@@ -592,7 +593,7 @@ namespace Simpl.Serialization
         /// <param name="obj"></param>
         /// <param name="file"></param>
         /// <param name="format"></param>
-        public static void Serialize(object obj, FileInfo file, Format format)
+        public static void Serialize(object obj, object file, Format format)
         {
             Serialize(obj, file, new TranslationContext(), format);
         }
@@ -604,9 +605,10 @@ namespace Simpl.Serialization
         /// <param name="file"></param>
         /// <param name="translationContext"></param>
         /// <param name="format"></param>
-        public static void Serialize(object obj, FileInfo file, TranslationContext translationContext, Format format)
+        public static void Serialize(object obj, object file, TranslationContext translationContext, Format format)
         {
-            Serialize(obj, file.OpenWrite(), translationContext, format);
+            Stream writeStream = FundamentalPlatformSpecifics.Get().OpenFileWriteStream(file);
+            Serialize(obj, writeStream, translationContext, format);
         }
 
         /// <summary>

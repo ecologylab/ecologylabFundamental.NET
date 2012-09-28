@@ -91,6 +91,8 @@ namespace Simpl.Serialization.Types
                 nameSpaceName = cSharpType.Namespace;
 
             this.dbTypeName = dbTypeName;
+
+            TypeRegistry.RegisterSimplType(this);
         }
 
         /// <summary>
