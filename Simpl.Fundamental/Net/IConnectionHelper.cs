@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Simpl.Fundamental.PlatformSpecifics;
 
 namespace Simpl.Fundamental.Net
 {
@@ -19,7 +20,7 @@ namespace Simpl.Fundamental.Net
         /// connect() will return null in this special case.
         /// </summary>
         /// <param name="file"></param>
-        void HandleFileDirectory(FileInfo file);
+        void HandleFileDirectory(object file);
 
         /// <summary>
         /// Tells the connect() method that it should go ahead and

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -98,7 +99,7 @@ namespace Simpl.Fundamental.Generic
             catch (Exception e)
             {
 	            result = BadAccess;
-	            Console.Error.WriteLine(e.Message);
+	            Debug.WriteLine(e.Message);
             }
             
             return result;
@@ -122,7 +123,7 @@ namespace Simpl.Fundamental.Generic
 	        }
             catch (Exception e)
 	        {
-		       Console.Error.WriteLine(e.Message);
+		       Debug.WriteLine(e.Message);
 	        }
 
 	        return result;
@@ -144,7 +145,7 @@ namespace Simpl.Fundamental.Generic
             {
                 try
                 {
-                    if (args.Length == 0)
+                    if (args.Length > 0)
                     {
                         return (T)Activator.CreateInstance(thatClass, args);
                     }
@@ -182,9 +183,9 @@ namespace Simpl.Fundamental.Generic
   			    {
   			        result		 		= (T) Activator.CreateInstance(thatClass.GetType(), parameterTypes);
   			    }
-  			    catch (MissingMethodException e)
+  			    catch (Exception e)
   			    {
-  				    Console.Error.WriteLine(e.Message);
+  				    Debug.WriteLine(e.Message);
   			    } 
   		    }
   		    return result;
@@ -211,6 +212,18 @@ namespace Simpl.Fundamental.Generic
             {
             }
             return result;
+        }
+
+        public static List<Enum> GetEnumValues(this Type type)
+        {
+            if (!type.IsEnum)
+                throw new ArgumentException("Type '" + type.Name + "' is not an enum");
+
+            return (
+              from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
+              where field.IsLiteral
+              select (Enum)field.GetValue(null)
+            ).ToList(); 
         }
     }
 }

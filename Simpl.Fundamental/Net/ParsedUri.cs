@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.IO;
+using Simpl.Fundamental.PlatformSpecifics;
 
 namespace Simpl.Fundamental.Net
 {
@@ -19,7 +20,7 @@ namespace Simpl.Fundamental.Net
         String _domain;
         String _suffix;
         String _stripped;
-        FileInfo _file;
+        object _file;
 
         #endregion
 
@@ -32,7 +33,7 @@ namespace Simpl.Fundamental.Net
         public ParsedUri(ParsedUri baseUri, String uri)
             :base(baseUri, uri)
         {
-
+            
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace Simpl.Fundamental.Net
                 String result = _domain;
                 if (result == null)
                 {
-                    if (!Host.Contains('.'))
+                    if (!Host.Contains("."))
                         result = Host;
                     else
                     {
@@ -106,7 +107,7 @@ namespace Simpl.Fundamental.Net
                 string result = _stripped;
                 if (result == null)
                 {
-                    result = GetLeftPart(UriPartial.Path);
+                    result = FundamentalPlatformSpecifics.Get().GetUriLeftPart(this);
                     _stripped = result;
                 }
 
@@ -114,14 +115,14 @@ namespace Simpl.Fundamental.Net
             }
         }
 
-        public FileInfo File
+        public object File
         {
             get
             {
-                FileInfo result = _file;
+                object result = _file;
                 if (result == null && this.IsFile)
                 {
-                    result = new FileInfo(this.LocalPath);
+                    result = FundamentalPlatformSpecifics.Get().CreateFile(this.LocalPath); 
                     _file = result;
                 }
                 return result;

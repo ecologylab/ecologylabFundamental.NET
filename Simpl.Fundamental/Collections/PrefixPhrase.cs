@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -90,7 +91,7 @@ namespace Simpl.Fundamental.Collections
 		    }
 		    else
 		    {
-			    Console.WriteLine("help! wrong block!!!");
+			    Debug.WriteLine("help! wrong block!!!");
 			    // last segment
 			    return null;
 		    }

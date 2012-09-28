@@ -13,7 +13,7 @@ namespace Simpl.Fundamental.Collections
         readonly Dictionary<K, LinkedListNode<LRUCacheItem<K, V>>> cacheMap;
         readonly LinkedList<LRUCacheItem<K, V>> lruList;
 
-
+        private readonly object _syncLock = new object();
 
         public LRUCache(int capacity = CACHE_SIZE)
         {
@@ -22,34 +22,40 @@ namespace Simpl.Fundamental.Collections
             this.capacity = capacity;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
+        //[MethodImpl(MethodImplOptions.Synchronized)]
         public V Get(K key)
         {
-            LinkedListNode<LRUCacheItem<K, V>> node;
-            if (cacheMap.TryGetValue(key, out node))
+            lock(_syncLock)
             {
-                //System.Console.WriteLine("Cache HIT " + key);
-                V value = node.Value.value;
+                LinkedListNode<LRUCacheItem<K, V>> node;
+                if (cacheMap.TryGetValue(key, out node))
+                {
+                    //System.Console.WriteLine("Cache HIT " + key);
+                    V value = node.Value.value;
 
-                lruList.Remove(node);
-                lruList.AddLast(node);
-                return value;
+                    lruList.Remove(node);
+                    lruList.AddLast(node);
+                    return value;
+                }
+                //System.Console.WriteLine("Cache MISS " + key);
+                return default(V);
             }
-            //System.Console.WriteLine("Cache MISS " + key);
-            return default(V);
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
+        //[MethodImpl(MethodImplOptions.Synchronized)]
         public void Add(K key, V val)
         {
-            if (cacheMap.Count >= capacity)
+            lock(_syncLock)
             {
-                removeFirst();
+                if (cacheMap.Count >= capacity)
+                {
+                    removeFirst();
+                }
+                LRUCacheItem<K, V> cacheItem = new LRUCacheItem<K, V>(key, val);
+                LinkedListNode<LRUCacheItem<K, V>> node = new LinkedListNode<LRUCacheItem<K, V>>(cacheItem);
+                lruList.AddLast(node);
+                cacheMap.Add(key, node);
             }
-            LRUCacheItem<K, V> cacheItem = new LRUCacheItem<K, V>(key, val);
-            LinkedListNode<LRUCacheItem<K, V>> node = new LinkedListNode<LRUCacheItem<K, V>>(cacheItem);
-            lruList.AddLast(node);
-            cacheMap.Add(key, node);
         }
 
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 // ReSharper disable CheckNamespace
-namespace ecologylab.collections
+namespace Ecologylab.Collections
 // ReSharper restore CheckNamespace
 {
     /// <summary>

@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
+using Simpl.Fundamental.PlatformSpecifics;
 
 namespace Simpl.Fundamental.Net
 {
@@ -32,15 +36,17 @@ namespace Simpl.Fundamental.Net
 
         public ParsedUri PURL { get; private set; }
 
-        private FileInfo file;
+        private object _file;
 
-        public FileInfo File
+        //public object File { get { return null; } }
+
+        public object File
         {
-            get { return file ?? (file = new FileInfo(PURL.PathAndQuery.Replace('/', Path.DirectorySeparatorChar))); }
+            get { return _file ?? (_file = FundamentalPlatformSpecifics.Get().CreateFile(PURL.PathAndQuery.Replace('/', '\\'))); }
         }
 
 
-        private string mimeType;
+        private string _mimeType;
 
         /// <summary>
         /// Find the mime type returned by the web server to the URLConnection, in its header.
@@ -50,40 +56,40 @@ namespace Simpl.Fundamental.Net
         {
             get
             {
-                if (mimeType == null)
+                if (_mimeType == null)
                 {
                     string contentType = Response.ContentType;
                     int i = contentType.IndexOf(';');
                     if (i > 0)
-                        mimeType = contentType.Substring(0, i);
+                        _mimeType = contentType.Substring(0, i);
                 }
-                return mimeType;
+                return _mimeType;
             }
-            private set { mimeType = value; }
+            private set { _mimeType = value; }
         }
 
-        public Stream Stream { get; private set; }
+        public Stream Stream { get; set; }
 
-        public HttpWebRequest Request { get; private set; }
+        public HttpWebRequest Request { get; set; }
 
-        public HttpWebResponse Response { get; private set; }
+        public HttpWebResponse Response { get; set; }
 
         /// <summary>
         /// If true, a timeout occurred during Connect().
         /// </summary>
         public bool Timeout { get; private set; }
 
-        public bool Good { get; private set; }
+        public bool Good { get; set; }
 
-        private ParsedUri responsePURL;
+        private ParsedUri _responsePurl;
 
         public ParsedUri ResponsePURL
         {
             get
             {
-                if (responsePURL == null && Response != null)
-                    responsePURL = new ParsedUri(Response.ResponseUri.AbsoluteUri);
-                return responsePURL;
+                if (_responsePurl == null && Response != null)
+                    _responsePurl = new ParsedUri(Response.ResponseUri.AbsoluteUri);
+                return _responsePurl;
             }
         }
 
@@ -92,41 +98,12 @@ namespace Simpl.Fundamental.Net
                             int connectionTimeout, int readTimeout)
         {
             // get an InputStream, and set the mimeType, if not bad
-            if (PURL.IsFile)
-            {
-                FileAttributes attributes = File.Attributes;
-                if (attributes.HasFlag(FileAttributes.Directory))
-                {
-                    connectionHelper.HandleFileDirectory(File);
-                }
-                else
-                {
-                    string suffix = PURL.Suffix;
-                    if (suffix != null)
-                    {
-                        if (connectionHelper.ParseFilesWithSuffix(suffix))
-                        {
-                            try
-                            {
-                                FileConnect();
-                            }
-                            catch (FileNotFoundException e)
-                            {
-                                Console.WriteLine("ERROR: Can't open because FileNotFoundException");
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                NetworkConnectAndCatch(connectionHelper, userAgent, connectionTimeout, readTimeout);
-            }
+            FundamentalPlatformSpecifics.Get().Connect(connectionHelper, userAgent, connectionTimeout, readTimeout, this);
         }
 
         public void FileConnect()
         {
-            Stream = File.Open(FileMode.Open, FileAccess.Read);
+            Stream = FundamentalPlatformSpecifics.Get().OpenFileReadStream(File);
             Good = true;
         }
 
@@ -154,62 +131,12 @@ namespace Simpl.Fundamental.Net
                                    int connectionTimeout = ParsedUri.CONNECT_TIMEOUT,
                                    int readTimeout = ParsedUri.READ_TIMEOUT)
         {
-            Uri url = PURL;
-            Request = WebRequest.CreateDefault(url) as HttpWebRequest;
-            if (Request != null)
-            {
-                Request.UserAgent = userAgent;
-                Request.Timeout = connectionTimeout;
-                Request.ReadWriteTimeout = readTimeout;
-
-                try
-                {
-                    Response = (HttpWebResponse)Request.GetResponse();
-                }
-                catch (WebException e)
-                {
-                    Console.WriteLine("Web Exception ::" + e.Message);
-                }
-                if (Response != null)
-                {
-                    // TODO check charset (using mime type) and display error message if charset not supported.
-
-                    Uri responseUrl = Response.ResponseUri;
-                    if (responseUrl != url) // follow redirects!
-                    {
-                        string requestPath = url.AbsolutePath;
-                        string responsePath = responseUrl.AbsolutePath;
-                        if (requestPath.IndexOf("http://") < 0 && responsePath.IndexOf("http://") < 0)
-                        {
-                            if (connectionHelper.ProcessRedirect(responseUrl))
-                                Stream = Response.GetResponseStream();
-                            Good = true;
-                        }
-                        else
-                        {
-                            Console.WriteLine("WEIRD: skipping double stuffed URL: " + responseUrl);
-                        }
-                    }
-                    else
-                    {
-                        Stream = Response.GetResponseStream();
-                        Good = true;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("ERROR: failure to get response from " + url);
-                }
-            }
-            else
-            {
-                Console.WriteLine("ERROR: cannot create a connection to " + url);
-            }
+            FundamentalPlatformSpecifics.Get().NetworkConnect(connectionHelper, userAgent, this, connectionTimeout, readTimeout);
         }
 
         private void CleanUp(Exception e)
         {
-            Console.WriteLine("PURLConnection.CleanUp(): " + e.Message);
+            Debug.WriteLine("PURLConnection.CleanUp(): " + e.Message);
             Close();
         }
 
@@ -226,11 +153,11 @@ namespace Simpl.Fundamental.Net
             {
                 try
                 {
-                    Stream = File.Open(FileMode.Open, FileAccess.Read);
+                    Stream = FundamentalPlatformSpecifics.Get().OpenFileReadStream(File);
                 }
                 catch (FileNotFoundException e)
                 {
-                    Console.WriteLine("ERROR: " + e);
+                    Debug.WriteLine("ERROR: " + e);
                 }
             }
         }
@@ -241,7 +168,7 @@ namespace Simpl.Fundamental.Net
             // (this is a known problem w java.net.HttpURLConnection)
             if (Stream != null)
             {
-                Stream.Close();
+                Stream.Dispose();
                 Stream = null;
             }
             if (Request != null)
@@ -251,7 +178,7 @@ namespace Simpl.Fundamental.Net
             }
             if (Response != null)
             {
-                Response.Close();
+                Response.Dispose();
                 Response = null;
             }
             MimeType = null;
@@ -264,7 +191,7 @@ namespace Simpl.Fundamental.Net
 
         public bool IsNoAlpha()
         {
-            return MimeType != null && NoAlphaMimeSet.Contains(mimeType);
+            return MimeType != null && NoAlphaMimeSet.Contains(_mimeType);
         }
     }
 }
