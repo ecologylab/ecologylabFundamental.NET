@@ -42,12 +42,39 @@ namespace Simpl.Fundamental.PlatformSpecifics
 
         public string[] GetFilesFromDirectory(string dir, string fileType)
         {
-            throw new NotImplementedException();
+            var folder = StorageFolder.GetFolderFromPathAsync(dir).GetResults();
+            if (folder != null)
+            {
+                var files = folder.GetFilesAsync().GetResults();
+                List<StorageFile> filesWithType = files.Where(f => f.Path.EndsWith(fileType)).ToList();
+                if (filesWithType.Count > 0)
+                {
+                    string[] result = new string[filesWithType.Count];
+                    for(int i = 0; i< filesWithType.Count; i++)
+                    {
+                        result[i] = filesWithType[i].Path;
+                    }
+                }
+            }
+            return null;
         }
 
         public string[] GetDirectoriesFromDirectory(string dir)
         {
-            throw new NotImplementedException();
+            var folder = StorageFolder.GetFolderFromPathAsync(dir).GetResults();
+            if (folder != null)
+            {
+                var folders = folder.GetFoldersAsync().GetResults();
+                
+                if (folders.Count > 0)
+                {
+                    string[] foldernames = new string[folders.Count];
+                    for (int i = 0; i < folders.Count; ++i)
+                        foldernames[i] = folders[i].Path;
+                    return foldernames;
+                } 
+            }
+            return null;
         }
 
         public void Connect(IConnectionHelper connectionHelper, string userAgent, int connectionTimeout, int readTimeout, PURLConnection purlConnection)
