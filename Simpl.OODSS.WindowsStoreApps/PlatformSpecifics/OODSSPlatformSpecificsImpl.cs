@@ -6,8 +6,10 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using Windows.System.Threading;
 using Windows.Web;
 
 namespace Simpl.OODSS.PlatformSpecifics
@@ -115,7 +117,9 @@ namespace Simpl.OODSS.PlatformSpecifics
 
         public void CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token)
         {
-            throw new NotImplementedException();
+            ThreadPool.RunAsync(delegate { sender.Invoke(); });
+            ThreadPool.RunAsync(delegate { sender.Invoke(); });
+            ThreadPool.RunAsync(delegate { sender.Invoke(); });
         }
 
         private void Closed(IWebSocket sender, WebSocketClosedEventArgs args)
