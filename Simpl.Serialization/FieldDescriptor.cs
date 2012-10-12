@@ -168,13 +168,13 @@ namespace Simpl.Serialization
             fieldType = field.FieldType.Name;
 
             //generics
-            if (field.FieldType.IsGenericParameter || field.FieldType.IsGenericType)
+            if (field.FieldType.IsGenericParameter || field.FieldType.GetTypeInfo().IsGenericType)
             {
                 Type realFieldType = field.FieldType;
 
                 while (realFieldType.IsGenericParameter)
                 {
-                    Type[] realFieldTypeConstraints = realFieldType.GetGenericParameterConstraints();
+                    Type[] realFieldTypeConstraints = realFieldType.GetTypeInfo().GetGenericParameterConstraints();
 
                     if (realFieldTypeConstraints == null || realFieldTypeConstraints.Length == 0)
                     {
@@ -187,7 +187,7 @@ namespace Simpl.Serialization
 
                 fieldType = realFieldType.Name;
 
-                if (realFieldType.IsGenericType)//can also be a generic parameter that extends a generic type
+                if (realFieldType.GetTypeInfo().IsGenericType)//can also be a generic parameter that extends a generic type
                 {
                     int pos = fieldType.IndexOf('`');
                     fieldType = fieldType.Substring(0, pos);
@@ -217,7 +217,7 @@ namespace Simpl.Serialization
 
             //generics
             Type genericType = field.DeclaringType;
-		    isGeneric = genericType.IsGenericType || genericType.IsGenericParameter;
+            isGeneric = genericType.GetTypeInfo().IsGenericType || genericType.IsGenericParameter;
         }
 
         private int DeriveNestedSerialization(FieldInfo thatField, int annotationType)
@@ -263,7 +263,7 @@ namespace Simpl.Serialization
                     compositeTagName = compositeTag;
                     break;
                 case FieldTypes.CollectionElement:
-                    if (!(typeof(IList).IsAssignableFrom(thatField.FieldType)))
+                    if (!(typeof(IList).GetTypeInfo().IsAssignableFrom(thatField.FieldType.GetTypeInfo())))
                     {
                         String msg = "In " + declaringClassDescriptor.DescribedClass + "\n\tCan't translate  "
                                      + "[SimplCollection] " + field.Name
@@ -332,7 +332,7 @@ namespace Simpl.Serialization
                     break;
 
                 case FieldTypes.MapElement:
-                    if (!(typeof(IDictionary).IsAssignableFrom(thatField.FieldType)))
+                    if (!(typeof(IDictionary).GetTypeInfo().IsAssignableFrom(thatField.FieldType.GetTypeInfo())))
                     {
                         String msg = "In " + declaringClassDescriptor.DescribedClass + "\n\tCan't translate  "
                                      + "[SimplMap] " + field.Name
@@ -418,14 +418,14 @@ namespace Simpl.Serialization
 
             Type[] typeArgs;
 
-            Type realFieldType = field.FieldType;
+            TypeInfo realFieldTypeInfo = field.FieldType.GetTypeInfo();
 
-            while (!realFieldType.IsGenericType)
+            while (!realFieldTypeInfo.IsGenericType)
             {
-                realFieldType = realFieldType.BaseType;
+                realFieldTypeInfo = realFieldTypeInfo.BaseType.GetTypeInfo();
             }
 
-            typeArgs = realFieldType.GetGenericArguments();
+            typeArgs = realFieldTypeInfo.GenericTypeArguments;
 
 
             if (typeArgs != null)
@@ -434,13 +434,14 @@ namespace Simpl.Serialization
                 if (i > max)
                     i = max;
                 Type typeArg0 = typeArgs[i];
+                TypeInfo typeInfo = typeArg0.GetTypeInfo();
 
                 // case 1: arg is a concrete class
-                if (!typeArg0.IsGenericParameter && !typeArg0.IsGenericType)
+                if (!typeArg0.IsGenericParameter && !typeInfo.IsGenericType)
                 {
                     result = typeArg0;
                 }
-                else if (typeArg0.IsGenericType)
+                else if (typeInfo.IsGenericType)
                 {
                     // nested parameterized type
 
@@ -448,7 +449,7 @@ namespace Simpl.Serialization
                 }
                 else if (typeArg0.IsGenericParameter)
                 {
-                    Type[] tviBounds = typeArg0.GetGenericParameterConstraints();
+                    Type[] tviBounds = typeInfo.GetGenericParameterConstraints();
                     result = tviBounds[0];
                     Debug.WriteLine("yo! " + result);
                 }
@@ -954,7 +955,10 @@ namespace Simpl.Serialization
             }
 
             if (polymorphClassDescriptors.ContainsKey(currentTagName))
+            {
+                ClassDescriptor result = polymorphClassDescriptors[currentTagName];
                 return polymorphClassDescriptors[currentTagName];
+            }
 
             return null;
         }
@@ -1065,17 +1069,21 @@ namespace Simpl.Serialization
                 GenericTypeVar g = GenericTypeVar.GetGenericTypeVarRef(genericType, GetGenericTypeVarsContext());
                 derivedGenericTypeVars.Add(g);
             }
-            else if (genericType.IsGenericType)
+            else
             {
-                Type[] types = genericType.GetGenericArguments();
-
-                if (types == null | types.Length <= 0)
-                    return;
-
-                foreach (Type t in types)
+                TypeInfo typeInfo = genericType.GetTypeInfo();
+                if (typeInfo.IsGenericType)
                 {
-                    GenericTypeVar g = GenericTypeVar.GetGenericTypeVarRef(t, GetGenericTypeVarsContext());
-                    derivedGenericTypeVars.Add(g);
+                    Type[] types = typeInfo.GenericTypeArguments;
+
+                    if (types == null | types.Length <= 0)
+                        return;
+
+                    foreach (Type t in types)
+                    {
+                        GenericTypeVar g = GenericTypeVar.GetGenericTypeVarRef(t, GetGenericTypeVarsContext());
+                        derivedGenericTypeVars.Add(g);
+                    }
                 }
             }
 
@@ -1167,7 +1175,7 @@ namespace Simpl.Serialization
             {
                 Type declaringType = Field.DeclaringType;
                 if (declaringType != null)
-                    Field = declaringType.MakeGenericType(superClassGenericArguments).GetField(Field.Name);
+                    Field = declaringType.MakeGenericType(superClassGenericArguments).GetTypeInfo().GetDeclaredField(Field.Name);
             }
         }
 

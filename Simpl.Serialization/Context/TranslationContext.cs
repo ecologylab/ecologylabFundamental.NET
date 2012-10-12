@@ -229,21 +229,17 @@ namespace Simpl.Serialization.Context
             return _needsAttributeHashCode.Contains(obj.GetHashCode(), obj) != -1;
         }
 
-        public ParsedUri UriContext()
+        public ParsedUri UriContext
         {
-            return _baseDirPurl;
-        }
-
-        public void SetUriContext(ParsedUri purl)
-        {
-            _baseDirPurl = purl;
+            set { _baseDirPurl = value; }
+            get { return _baseDirPurl; }
         }
 
         public object GetFromMap(string key)
         {
-//            if (_unmarshalledObjects.ContainsKey(key))
+            if (_unmarshalledObjects.ContainsKey(key))
                 return _unmarshalledObjects[key];
-//            else return null;
+            else return null;
         }
 
         public void MarkAsUnmarshalled(String value, Object elementState)

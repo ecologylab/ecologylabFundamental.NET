@@ -103,8 +103,12 @@ namespace Simpl.Fundamental.Net
 
         public void FileConnect()
         {
-            Stream = FundamentalPlatformSpecifics.Get().OpenFileReadStream(File);
-            Good = true;
+            Task<Stream> streamTask = FundamentalPlatformSpecifics.Get().OpenFileReadStream(File);
+            streamTask.ContinueWith((task) =>
+                                        {
+                                            Stream = task.Result;
+                                            Good = true;
+                                        });
         }
 
         public void NetworkConnectAndCatch(IConnectionHelper connectionHelper, String userAgent,
@@ -153,7 +157,11 @@ namespace Simpl.Fundamental.Net
             {
                 try
                 {
-                    Stream = FundamentalPlatformSpecifics.Get().OpenFileReadStream(File);
+                    Task<Stream> streamTask = FundamentalPlatformSpecifics.Get().OpenFileReadStream(File);
+                    streamTask.ContinueWith((task) =>
+                                                {
+                                                    Stream = task.Result;
+                                                });
                 }
                 catch (FileNotFoundException e)
                 {

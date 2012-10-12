@@ -214,9 +214,8 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static Boolean IsAnnotationPresent(Type thatClass, Type attributeType)
         {
-            Object[] attributes = thatClass.GetCustomAttributes(attributeType, true);
-            if (attributes != null && attributes.Length > 0) return true;
-            else return false;
+            IEnumerable<Attribute> attributes = thatClass.GetTypeInfo().GetCustomAttributes(attributeType, true);
+            return attributes.Any();
         }
 
 
@@ -228,9 +227,8 @@ namespace Simpl.Serialization
         
         public static Boolean IsAnnotationPresent(FieldInfo thatField, Type attributeType)
         {
-            Object[] attributes = thatField.GetCustomAttributes(attributeType, true);
-            if (attributes.Length > 0) return true;
-            else return false;
+            IEnumerable<Attribute> attributes = thatField.GetCustomAttributes(attributeType, true);
+            return attributes.Any();
         }
 
 
@@ -242,10 +240,11 @@ namespace Simpl.Serialization
 
         public static Attribute GetAnnotation(FieldInfo thatField, Type attributeType)
         {
-            Object[] attributes = thatField.GetCustomAttributes(attributeType, true);
-            if (attributes.Length > 0)
+            IEnumerable<Attribute> attributes = thatField.GetCustomAttributes(attributeType, true);
+            var enumerable = attributes as List<Attribute> ?? attributes.ToList();
+            if (attributes != null && enumerable.Any())
             {
-                return (Attribute)attributes[0];
+                return enumerable.First();
             }
             else
             {
@@ -261,10 +260,10 @@ namespace Simpl.Serialization
         
         public static Attribute GetAnnotation(Type thatClass, Type attributeType, bool considerInheritedAnnotations = false)
         {
-            Object[] attributes = thatClass.GetCustomAttributes(attributeType, considerInheritedAnnotations);
-            if (attributes != null && attributes.Length > 0)
+            IEnumerable<Attribute> attributes = thatClass.GetTypeInfo().GetCustomAttributes(attributeType, considerInheritedAnnotations);
+            if (attributes != null && attributes.Any())
             {
-                return (Attribute)attributes[0];
+                return attributes.First();
             }
             else
             {
@@ -281,17 +280,9 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static String[] OtherTags(Type thisClass)
         {
-            SimplOtherTags otherTagsAnnotation = null;
-            object[] attributes = thisClass.GetCustomAttributes(false);
+            IEnumerable<Attribute> attributes = thisClass.GetTypeInfo().GetCustomAttributes(false);
 
-            foreach (Attribute attribute in attributes)
-            {
-                if (attribute is SimplOtherTags)
-                {
-                    otherTagsAnnotation = (SimplOtherTags)attribute;
-                    break;
-                }
-            }
+            SimplOtherTags otherTagsAnnotation = attributes.OfType<SimplOtherTags>().FirstOrDefault();
 
             return otherTagsAnnotation == null ? null : OtherTags(otherTagsAnnotation);
         }
@@ -435,7 +426,17 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static Object GetInstance(Type describedClass)
         {
-            return Activator.CreateInstance(describedClass);
+            try
+            {
+                Object result = Activator.CreateInstance(describedClass);
+                return result;
+            }
+            catch(Exception e)
+            {
+                
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -465,7 +466,7 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public static bool IsEnum(Type fieldType)
         {
-            return fieldType.IsEnum;
+            return fieldType.GetTypeInfo().IsEnum;
         }
 
         /// <summary>

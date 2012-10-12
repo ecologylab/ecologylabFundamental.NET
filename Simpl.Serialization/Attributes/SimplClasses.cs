@@ -15,7 +15,7 @@ namespace Simpl.Serialization.Attributes
         /// 
         /// </summary>
         /// <param name="classes"></param>
-        public SimplClasses(Type[] classes)
+        public SimplClasses(params Type[] classes)
         {
             this._classes = classes;
         }

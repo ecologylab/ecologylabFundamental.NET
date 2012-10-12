@@ -32,17 +32,17 @@
         /// <returns>True if so (If the targetType is assignable from the current type, the current type is assignable TO the target type)</returns>
         public static bool IsAssignableTo<TargetType>(this Type currentType)
         {
-            return typeof(TargetType).IsAssignableFrom(currentType);
+            return typeof(TargetType).GetTypeInfo().IsAssignableFrom(currentType.GetTypeInfo());
         }
 
         private static IEnumerable<Type> GetDependentTypesWithDuplicates(Type currentType, Func<MemberInfo, bool> matchesPredicate)
         {
             // Check over all Properties first. 
 
-            BindingFlags bindingParameters = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
+            //BindingFlags bindingParameters = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
 
 
-            foreach (var propInfo in currentType.GetProperties(bindingParameters))
+            foreach (var propInfo in currentType.GetTypeInfo().DeclaredProperties)
             {
                 if (matchesPredicate(propInfo))
                 {
@@ -52,7 +52,7 @@
 
             // check over all fields next
 
-            foreach (var fieldInfo in currentType.GetFields(bindingParameters))
+            foreach (var fieldInfo in currentType.GetTypeInfo().DeclaredFields)
             {
                 if (matchesPredicate(fieldInfo))
                 {

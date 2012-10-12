@@ -8,6 +8,6 @@ namespace Simpl.Serialization.Context
     /// </summary>
     public interface IScalarUnmarshallingContext
     {
-        ParsedUri UriContext();
+        ParsedUri UriContext { get; set; }
     }
 }

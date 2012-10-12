@@ -35,7 +35,16 @@ namespace Simpl.Serialization.Types.Scalar
         /// <returns></returns>
         public override object GetInstance(string value, string[] formatStrings, IScalarUnmarshallingContext scalarUnmarshallingContext)
         {
-            return Convert.ToDateTime(value);
+            try
+            {
+                var result = Convert.ToDateTime(value);
+                return result;
+            }
+            catch(FormatException e)
+            {
+                return null;
+            }
+            
         }
 
         public override string Marshall(object instance, TranslationContext context = null)

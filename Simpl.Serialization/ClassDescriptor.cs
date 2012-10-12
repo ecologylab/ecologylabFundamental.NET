@@ -146,7 +146,7 @@ namespace Simpl.Serialization
             _describedClassPackageName = thatClass.Namespace;
 
             //generics
-            if (thatClass.IsGenericType)
+            if (thatClass.GetTypeInfo().IsGenericType)
             {
                 int index = _describedClassSimpleName.IndexOf('`');
                 String simpleName = _describedClassSimpleName.Substring(0, index);
@@ -216,9 +216,9 @@ namespace Simpl.Serialization
 
 
             //generics
-            while (thatClass.IsGenericParameter)//e.g. where X : Media \n where I : X \n ... List<I> field;  
+            while (thatClass.GetTypeInfo().IsGenericParameter)//e.g. where X : Media \n where I : X \n ... List<I> field;  
             {
-                Type[] thatClassConstraints = thatClass.GetGenericParameterConstraints();
+                Type[] thatClassConstraints = thatClass.GetTypeInfo().GetGenericParameterConstraints();
 
                 if (thatClassConstraints == null || thatClassConstraints.Length == 0)
                 {
@@ -232,7 +232,7 @@ namespace Simpl.Serialization
                 className = thatClass.FullName;
             }
 
-            if (thatClass.IsGenericType)//can also be a generic parameter that extends a generic type
+            if (thatClass.GetTypeInfo().IsGenericType)//can also be a generic parameter that extends a generic type
             {
                 if (thatClass.FullName == null)
                 {
@@ -283,14 +283,13 @@ namespace Simpl.Serialization
         {        
             if (XmlTools.IsAnnotationPresent<SimplInherit>(thatClass))
             {
-                Type[] superClassGenericArguments = thatClass.BaseType.GetGenericArguments();
-                ClassDescriptor superClassDescriptor = GetClassDescriptor(thatClass.BaseType);
+                TypeInfo classTypeInfo = thatClass.GetTypeInfo();
+                Type[] superClassGenericArguments = classTypeInfo.BaseType.GenericTypeArguments;
+                ClassDescriptor superClassDescriptor = GetClassDescriptor(classTypeInfo.BaseType);
                 ReferFieldDescriptorsFrom(superClassDescriptor, superClassGenericArguments);
             }
 
-            FieldInfo[] fields =
-                thatClass.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-                                    BindingFlags.DeclaredOnly);
+            IEnumerable<FieldInfo> fields = thatClass.GetTypeInfo().DeclaredFields;
             
             // Iterate through all fields for the type
             foreach (FieldInfo thatField in fields)
@@ -431,7 +430,7 @@ namespace Simpl.Serialization
 		    if (declaredGenericTypeVarNames == null && _describedClass != null)
 		    {
 			    List<String> result = new List<String>();
-			    Type[] typeParams = _describedClass.GetGenericArguments();
+			    Type[] typeParams = _describedClass.GenericTypeArguments;
 			    if (typeParams != null && typeParams.Length > 0)
 			    {
 				    foreach (Type typeParam in typeParams)
@@ -467,20 +466,21 @@ namespace Simpl.Serialization
 	    {
 		    if (genericType != null)
 		    {
-			    if (genericType.IsGenericParameter)
+		        TypeInfo genericTypeInfo = genericType.GetTypeInfo();
+		        if (genericType.IsGenericParameter)
 			    {
-				    if (names.Contains(genericType.Name) || genericType.GetGenericParameterConstraints().Length > 0 && IsTypeUsingGenericNames(genericType.GetGenericParameterConstraints()[0], names))
+                    if (names.Contains(genericType.Name) || genericTypeInfo.GetGenericParameterConstraints().Length > 0 && IsTypeUsingGenericNames(genericTypeInfo.GetGenericParameterConstraints()[0], names))
 					    return true;
 			    }
-			    else if (genericType.IsGenericType)
+                else if (genericTypeInfo.IsGenericType)
 			    {
-				    Type[] args = genericType.GetGenericArguments();
+                    Type[] args = genericTypeInfo.GenericTypeArguments;
 				    foreach (Type arg in args)
 					    if (IsTypeUsingGenericNames(arg, names))
 						    return true;
 			    }
 		    }
-		    return false;
+	        return false;
 	    }
 
         protected List<FieldDescriptor> UnresolvedScopeAnnotationFDs
@@ -800,7 +800,7 @@ namespace Simpl.Serialization
             get
             {
                 return DescribedClass != null
-                           ? (!DescribedClass.IsGenericType 
+                           ? (!DescribedClass.GetTypeInfo().IsGenericType 
                                 ? DescribedClass.Name
                                 //generics
                                 : DescribedClass.Name.Substring(0,DescribedClass.Name.IndexOf('`')))
@@ -811,9 +811,9 @@ namespace Simpl.Serialization
         //generics
 	    private void AddGenericTypeVariables()
 	    {
-            if (_describedClass.IsGenericType)
+            if (_describedClass.GetTypeInfo().IsGenericType)
             {
-                Type[] typeArguments = _describedClass.GetGenericArguments();
+                Type[] typeArguments = _describedClass.GetTypeInfo().GenericTypeArguments;
 
                 foreach (Type tParam in typeArguments)
                 {
@@ -842,7 +842,7 @@ namespace Simpl.Serialization
 
         public static List<GenericTypeVar> GetGenericTypeVars(Type parameterizedType, List<GenericTypeVar> scope)
         {
-            Type[] types = parameterizedType.GetGenericArguments();
+            Type[] types = parameterizedType.GenericTypeArguments;
 
             if (types.Length <= 0)
                 return null;
@@ -884,9 +884,9 @@ namespace Simpl.Serialization
             if (describedClass == null)
                 return;
 
-            Type superClassType = describedClass.BaseType;
+            Type superClassType = describedClass.GetTypeInfo().BaseType;
 
-            if (superClassType != null && superClassType.IsGenericType)
+            if (superClassType != null && superClassType.GetTypeInfo().IsGenericType)
             {
                 SuperClassGenericTypeVars = GetGenericTypeVars(superClassType, GetGenericTypeVars());
             }
@@ -896,7 +896,7 @@ namespace Simpl.Serialization
 	    {
 		    if (_describedClass != null) // for generated descriptors, describedClass == null
 		    {
-			    Type[] typeVariables = _describedClass.GetGenericArguments();
+                Type[] typeVariables = _describedClass.GetTypeInfo().GenericTypeArguments;
 			    if (typeVariables.Length > 0)
 			    {
 				    foreach (Type typeVariable in typeVariables)
@@ -938,7 +938,6 @@ namespace Simpl.Serialization
 
         public object GetInstance()
         {
-            Debug.WriteLine(this.DescribedClass.Name);
             return XmlTools.GetInstance(_describedClass);
         }
 

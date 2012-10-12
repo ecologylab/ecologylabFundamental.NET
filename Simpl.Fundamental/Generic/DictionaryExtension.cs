@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 
 namespace Simpl.Fundamental.Generic
 {
@@ -65,7 +66,7 @@ namespace Simpl.Fundamental.Generic
                 TKey key,
                 TValue value)
         {
-            if ( (!typeof(TKey).IsValueType && key == null) || (!typeof(TKey).IsValueType && value == null))
+            if ((!typeof(TKey).GetTypeInfo().IsValueType && key == null) || (!typeof(TKey).GetTypeInfo().IsValueType && value == null))
                 return;
 
             if(!dictionary.ContainsKey(key))
@@ -91,7 +92,7 @@ namespace Simpl.Fundamental.Generic
                 TKey key,
                 TValue value)
         {
-            if ((!typeof(TKey).IsValueType && key == null) || (!typeof(TKey).IsValueType && value == null))
+            if ((!typeof(TKey).GetTypeInfo().IsValueType && key == null) || (!typeof(TKey).GetTypeInfo().IsValueType && value == null))
                 return;
 
             if (!dictionary.ContainsKey(key) || !dictionary[key].Contains(value))

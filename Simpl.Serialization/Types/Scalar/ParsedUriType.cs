@@ -33,11 +33,9 @@ namespace Simpl.Serialization.Types.Scalar
             {
                 ParsedUri baseUri = null;
                 if(scalarUnmarshallingContext != null)
-                    baseUri = scalarUnmarshallingContext.UriContext();
-                if (baseUri != null)
-                    result = new ParsedUri(baseUri, value);
-                else
-                    result = new ParsedUri(value);
+                    baseUri = scalarUnmarshallingContext.UriContext;
+
+                result = baseUri != null ? new ParsedUri(baseUri, value) : new ParsedUri(value);
             }
             catch (ArgumentNullException){ }
             catch (ArgumentException){ }

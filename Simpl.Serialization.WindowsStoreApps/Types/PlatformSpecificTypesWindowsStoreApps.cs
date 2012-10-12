@@ -16,7 +16,8 @@ namespace Simpl.Serialization.Types
                 return new List<ScalarType>
                            {
                                new FileType(),
-                               new RectType()
+                               new RectType(),
+                               new ColorType()
                            };
 
             }

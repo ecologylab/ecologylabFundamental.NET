@@ -21,7 +21,7 @@ namespace Simpl.Fundamental.Generic
         /// <returns> A type array of parametized types.</returns>
         public static Type[] GetParameterizedTypeTokens(FieldInfo field)
 	    {
-	        return field.FieldType.GetGenericArguments();
+	        return field.FieldType.GenericTypeArguments;
 	    }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Simpl.Fundamental.Generic
 
   		    try
 		    {
-			    result = context.GetMethod(name, types);
+			    result = context.GetTypeInfo().GetDeclaredMethod(name);
 		    }
             catch (AmbiguousMatchException)
 		    {
@@ -63,7 +63,7 @@ namespace Simpl.Fundamental.Generic
             
             try
             {
-                result = thatClass.GetField(fieldName);
+                result = thatClass.GetTypeInfo().GetDeclaredField(fieldName);
             } 
             catch (ArgumentNullException)
             {
@@ -141,7 +141,7 @@ namespace Simpl.Fundamental.Generic
         /// </returns>
   	    public static T GetInstance<T>(Type thatClass, params object[] args) where T : class
   	    {
-            if(typeof(T).IsAssignableFrom(thatClass))
+            if(typeof(T).GetTypeInfo().IsAssignableFrom(thatClass.GetTypeInfo()))
             {
                 try
                 {
@@ -203,7 +203,7 @@ namespace Simpl.Fundamental.Generic
             PropertyInfo result = null;
             try
             {
-                result = context.GetProperty(name);
+                result = context.GetTypeInfo().GetDeclaredProperty(name);
             }
             catch (AmbiguousMatchException e)
             {
@@ -216,11 +216,11 @@ namespace Simpl.Fundamental.Generic
 
         public static List<Enum> GetEnumValues(this Type type)
         {
-            if (!type.IsEnum)
+            if (!type.GetTypeInfo().IsEnum)
                 throw new ArgumentException("Type '" + type.Name + "' is not an enum");
 
             return (
-              from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
+              from field in type.GetTypeInfo().DeclaredFields.Where(e => e.IsPublic || e.IsStatic)
               where field.IsLiteral
               select (Enum)field.GetValue(null)
             ).ToList(); 

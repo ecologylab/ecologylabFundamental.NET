@@ -45,7 +45,7 @@ namespace Simpl.Serialization.Types
         protected ScalarType(Type cSharpType, String javaTypeName, String objectiveCTypeName, String dbTypeName)
             : base(cSharpType, true, javaTypeName, objectiveCTypeName, dbTypeName)
         {
-            _isPrimitive = cSharpType.IsPrimitive;
+            _isPrimitive = cSharpType.GetTypeInfo().IsPrimitive;
         }
 
         /// <summary>

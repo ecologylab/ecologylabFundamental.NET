@@ -9,20 +9,33 @@ using System.Threading.Tasks;
 using Simpl.Fundamental.Net;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.Storage.Streams;
 
 namespace Simpl.Fundamental.PlatformSpecifics
 {
     class FundamentalPlatformSpecificsImpl : IFundamentalPlatformSpecifics
     {
-        public object CreateFile(string uri)
+        public async Task<object> CreateFile(string uri)
         {
             try
             {
-                var operation =  StorageFile.GetFileFromPathAsync(uri);
-                return operation.GetResults();
+                return await StorageFile.GetFileFromPathAsync(uri);
             }
             catch(IOException e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+            return null;
+        }
+
+        public async Task<object> CreateDirectory(string uri)
+        {
+            try
+            {
+                return await StorageFolder.GetFolderFromPathAsync(uri);
+            }
+            catch (IOException e)
             {
                 Debug.WriteLine(e.Message);
             }
@@ -40,28 +53,29 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new IOException();
         }
 
-        public string[] GetFilesFromDirectory(string dir, string fileType)
+        public async Task<string[]> GetFilesFromDirectory(string dir, string fileType)
         {
-            var folder = StorageFolder.GetFolderFromPathAsync(dir).GetResults();
+            string[] result = null;
+            var folder = await StorageFolder.GetFolderFromPathAsync(dir);
             if (folder != null)
             {
-                var files = folder.GetFilesAsync().GetResults();
+                var files = await folder.GetFilesAsync(CommonFileQuery.OrderByName);
                 List<StorageFile> filesWithType = files.Where(f => f.Path.EndsWith(fileType)).ToList();
                 if (filesWithType.Count > 0)
                 {
-                    string[] result = new string[filesWithType.Count];
+                    result = new string[filesWithType.Count];
                     for(int i = 0; i< filesWithType.Count; i++)
                     {
                         result[i] = filesWithType[i].Path;
                     }
                 }
             }
-            return null;
+            return result;
         }
 
-        public string[] GetDirectoriesFromDirectory(string dir)
+        public async Task<string[]> GetDirectoriesFromDirectory(string dir)
         {
-            var folder = StorageFolder.GetFolderFromPathAsync(dir).GetResults();
+            var folder = await StorageFolder.GetFolderFromPathAsync(dir);
             if (folder != null)
             {
                 var folders = folder.GetFoldersAsync().GetResults();
@@ -111,9 +125,9 @@ namespace Simpl.Fundamental.PlatformSpecifics
             }
         }
 
-        public Stream OpenFileReadStream(object file)
+        public async Task<Stream> OpenFileReadStream(object file)
         {
-            return OpenFileReadStreamAsync(file).Result;
+            return await OpenFileReadStreamAsync(file);
         }
 
         private async Task<Stream> OpenFileReadStreamAsync(object file)
@@ -127,9 +141,9 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new IOException();
         }
 
-        public Stream OpenFileReadStream(object file, Encoding encoding)
+        public async Task<Stream> OpenFileReadStream(object file, Encoding encoding)
         {
-            var stream = OpenFileReadStreamAsync(file).Result;
+            var stream = await OpenFileReadStreamAsync(file);
             if (stream != null)
             {
                 StreamReader fileStream = new StreamReader(stream, encoding);
@@ -150,15 +164,15 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new IOException();
         }
 
-        public Stream OpenFileWriteStream(object file)
+        public async Task<Stream> OpenFileWriteStream(object file)
         {
-            return OpenFileWriteStreamAsync(file).Result;
+            return await OpenFileWriteStreamAsync(file);
         }
 
-        public StreamReader GenerateStreamReaderFromFile(string url)
+        public async Task<StreamReader> GenerateStreamReaderFromFile(string url)
         {
             var file = CreateFile(url);
-            var stream = OpenFileReadStream(file);
+            var stream = await OpenFileReadStream(file);
             return new StreamReader(stream);
         }
 

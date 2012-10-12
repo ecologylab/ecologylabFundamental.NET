@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Collections;
 using Simpl.Fundamental.PlatformSpecifics;
@@ -43,8 +44,9 @@ namespace Simpl.Serialization.Deserializers.Parsers.Xml
         /// <param name="url"></param>
         public void parse(String url)
         {
-            StreamReader fileStreamReader = FundamentalPlatformSpecifics.Get().GenerateStreamReaderFromFile(url);
-            parse(fileStreamReader);
+            Task<StreamReader> streamReaderTask = FundamentalPlatformSpecifics.Get().GenerateStreamReaderFromFile(url);
+            streamReaderTask.ContinueWith((task) => parse(task.Result));
+            
         }       
 
         /// <summary>

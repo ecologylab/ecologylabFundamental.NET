@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Simpl.Fundamental.Net;
 using Simpl.Fundamental.PlatformSpecifics;
 using Simpl.Serialization.Context;
@@ -430,7 +432,7 @@ namespace Simpl.Serialization
                     foreach (ClassDescriptor classDescriptor in EntriesByClassName.Values)
                     {
                         Type thatClass = classDescriptor.DescribedClass;
-                        if (superClassCriterion.IsAssignableFrom(thatClass))
+                        if (superClassCriterion.GetTypeInfo().IsAssignableFrom(thatClass.GetTypeInfo()))
                             result.AddTranslation(thatClass);
                     }
                 }
@@ -451,7 +453,7 @@ namespace Simpl.Serialization
                     foreach (ClassDescriptor classDescriptor in EntriesByClassName.Values)
                     {
                         Type thatClass = classDescriptor.DescribedClass;
-                        if (!superClassCriterion.IsAssignableFrom(thatClass))
+                        if (!superClassCriterion.GetTypeInfo().IsAssignableFrom(thatClass.GetTypeInfo()))
                             result.AddTranslation(thatClass);
                     }
                 }
@@ -494,9 +496,10 @@ namespace Simpl.Serialization
         /// <param name="format"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public object DeserializeFile(string filename, Format format, Encoding encoding = null)
+        public async Task<object> DeserializeFile(string filename, Format format, Encoding encoding = null)
         {
-            object file = FundamentalPlatformSpecifics.Get().CreateFile(filename);
+            Task<object> fileTask = FundamentalPlatformSpecifics.Get().CreateFile(filename);
+            object file = await fileTask;
             return Deserialize(file, format);
         }
 
@@ -521,12 +524,12 @@ namespace Simpl.Serialization
         /// <param name="format"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public object Deserialize(object file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format, Encoding encoding = null)
+        public async Task<object> Deserialize(object file, TranslationContext translationContext, IDeserializationHookStrategy deserializationHookStrategy, Format format, Encoding encoding = null)
         {
             if (encoding == null)
                 encoding = Encoding.UTF8;
 
-            Stream readStream = FundamentalPlatformSpecifics.Get().OpenFileReadStream(file, encoding);
+            Stream readStream = await FundamentalPlatformSpecifics.Get().OpenFileReadStream(file, encoding);
             return Deserialize(readStream, translationContext, deserializationHookStrategy, format);
         }
 
@@ -605,9 +608,9 @@ namespace Simpl.Serialization
         /// <param name="file"></param>
         /// <param name="translationContext"></param>
         /// <param name="format"></param>
-        public static void Serialize(object obj, object file, TranslationContext translationContext, Format format)
+        public async static void Serialize(object obj, object file, TranslationContext translationContext, Format format)
         {
-            Stream writeStream = FundamentalPlatformSpecifics.Get().OpenFileWriteStream(file);
+            Stream writeStream = await FundamentalPlatformSpecifics.Get().OpenFileWriteStream(file);
             Serialize(obj, writeStream, translationContext, format);
         }
 

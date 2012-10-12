@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Simpl.Serialization.Attributes;
 
 namespace Simpl.Serialization.Types
@@ -61,7 +62,7 @@ namespace Simpl.Serialization.Types
         protected SimplType(Type cSharpType, Boolean isScalar, String javaTypeName, String objectiveCTypeName,
                             String dbTypeName) :
             this(
-                                cSharpType.IsPrimitive
+                                cSharpType.GetTypeInfo().IsPrimitive
                                     ? cSharpType.FullName
                                     : DeriveCrossPlatformName(cSharpType, isScalar), cSharpType, javaTypeName,
                                 objectiveCTypeName, dbTypeName)
@@ -87,7 +88,7 @@ namespace Simpl.Serialization.Types
             this.javaTypeName = javaTypeName;
             this.objectiveCTypeName = objectiveCTypeName;
 
-            if (!cSharpType.IsPrimitive)
+            if (!cSharpType.GetTypeInfo().IsPrimitive)
                 nameSpaceName = cSharpType.Namespace;
 
             this.dbTypeName = dbTypeName;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Simpl.Serialization.Attributes;
 using Simpl.Serialization.PlatformSpecifics;
@@ -195,7 +196,7 @@ namespace Simpl.Serialization
             g.name = typeVariable.Name;
 
             // resolve constraints
-            ResolveGenericTypeVarDefinitionConstraints(g, typeVariable.GetGenericParameterConstraints());
+            ResolveGenericTypeVarDefinitionConstraints(g, typeVariable.GetTypeInfo().GetGenericParameterConstraints());
 
             g.scope = null;
             return g;
@@ -211,7 +212,7 @@ namespace Simpl.Serialization
             g.scope = scope;
 
             // case 1: arg is a concrete class
-            if (!type.IsGenericParameter && !type.IsGenericType)
+            if (!type.IsGenericParameter && !type.GetTypeInfo().IsGenericType)
             {
                 g.classDescriptor = ClassDescriptor.GetClassDescriptor(type);
                 return g;
@@ -309,11 +310,12 @@ namespace Simpl.Serialization
         
         public static void CheckBoundParameterizedTypeImpl (GenericTypeVar g, Type bound)
         {
-            if (bound.IsGenericType)
+            TypeInfo typeInfo = bound.GetTypeInfo();
+            if (typeInfo.IsGenericType)
             {
                 g.ConstraintClassDescriptor = ClassDescriptor.GetClassDescriptor(bound);
 
-                Type[] types = bound.GetGenericArguments();
+                Type[] types = typeInfo.GenericTypeArguments;
 
                 foreach (Type type in types)
                 {
@@ -321,14 +323,15 @@ namespace Simpl.Serialization
                 }
             }
         }
-		
+
         public static void CheckTypeParameterizedTypeImpl(GenericTypeVar g, Type type)
         {
-            if (type.IsGenericType)
+            TypeInfo typeInfo = type.GetTypeInfo();
+            if (typeInfo.IsGenericType)
             {
                 g.ClassDescriptor = ClassDescriptor.GetClassDescriptor(type);
 
-                Type[] types = type.GetGenericArguments();
+                Type[] types = typeInfo.GenericTypeArguments;
 
                 foreach (Type t in types)
                 {
@@ -336,7 +339,7 @@ namespace Simpl.Serialization
                 }
             }
         }
-        
+
         public bool IsDef()
         {
             return name != null && name.Length > 0 && (constraintClassDescriptor != null || constraintGenericTypeVar != null) && referredGenericTypeVar == null;

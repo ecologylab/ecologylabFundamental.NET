@@ -210,7 +210,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 switch (_xmlReader.NodeType)
                 {
                     case XmlNodeType.Element:
-                        if (CurrentTag.Equals(tag))
+                        if (CurrentTag.Equals(tag) && !_xmlReader.IsEmptyElement)
                             startElements.Push(tag);
                         break;
                     case XmlNodeType.EndElement:
@@ -432,8 +432,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeScalar(object root, FieldDescriptor currentFieldDescriptor)
         {
-            String value = _xmlReader.ReadString();
+            String value = _xmlReader.Value;
             currentFieldDescriptor.SetFieldToScalar(root, value, translationContext);
+
+            NextEvent();
         }
 
         /// <summary>
@@ -480,14 +482,18 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private Boolean NextEvent()
         {
             Boolean returnValue;
-            while ((returnValue = _xmlReader.Read()) && (_xmlReader.NodeType != XmlNodeType.Element
+            do
+            {
+                returnValue = _xmlReader.Read();
+                //Debug.WriteLine("<" + ((_xmlReader.NodeType == XmlNodeType.EndElement) ? "/" : "") + _xmlReader.Name + ">");
+            }
+            while (returnValue && (_xmlReader.NodeType != XmlNodeType.Element
                    && _xmlReader.NodeType != XmlNodeType.EndElement
                    && _xmlReader.NodeType != XmlNodeType.CDATA
                    && _xmlReader.NodeType != XmlNodeType.Text
-                   ))
-            {
-            }
+                   ));
 
+            
             return returnValue;
         }
 
