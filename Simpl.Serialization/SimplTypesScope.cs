@@ -500,7 +500,7 @@ namespace Simpl.Serialization
         {
             Task<object> fileTask = FundamentalPlatformSpecifics.Get().CreateFile(filename);
             object file = await fileTask;
-            return Deserialize(file, format);
+            return await Deserialize(file, format);
         }
 
         /// <summary>
@@ -510,9 +510,9 @@ namespace Simpl.Serialization
         /// <param name="format"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public object Deserialize(object file, Format format, Encoding encoding = null)
+        public async Task<object> Deserialize(object file, Format format, Encoding encoding = null)
         {
-            return Deserialize(file, new TranslationContext(file), null, format, encoding);
+            return await Deserialize(file, new TranslationContext(file), null, format, encoding);
         }
 
         /// <summary>
