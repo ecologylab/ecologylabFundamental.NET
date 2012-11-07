@@ -948,6 +948,12 @@ namespace Simpl.Serialization
             if (!IsPolymorphic)
                 return _elementClassDescriptor;
 
+            if (polymorphClassDescriptors == null)
+            {
+                ResolveUnresolvedClassesAnnotation();
+                ResolveUnresolvedScopeAnnotation();
+            }
+
             if(polymorphClassDescriptors == null)
             {
                 Debug.WriteLine("The " + this.Name + " field is declared polymorphic, but its polymorphic ClassDescriptor don't exist! Check annotation and is simplTypesScopes defined?");

@@ -56,12 +56,7 @@ namespace Simpl.Fundamental.Generic
             return _currentIterator != null && _currentIterator.MoveNext();
         }
 
-        public bool HasNext()
-        {
-            return _firstIterator.MoveNext() || CollectionHasNext();
-        }
-
-	    public virtual bool MoveNext() 
+        public virtual bool MoveNext() 
 	    {
 		    if (_firstIterator.MoveNext())
             {

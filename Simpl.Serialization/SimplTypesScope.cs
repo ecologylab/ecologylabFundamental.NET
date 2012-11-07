@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -498,9 +499,22 @@ namespace Simpl.Serialization
         /// <returns></returns>
         public async Task<object> DeserializeFile(string filename, Format format, Encoding encoding = null)
         {
-            Task<object> fileTask = FundamentalPlatformSpecifics.Get().CreateFile(filename);
-            object file = await fileTask;
+            object file = await FundamentalPlatformSpecifics.Get().CreateFile(filename);
             return await Deserialize(file, format);
+        }
+
+        public async Task<object> DeserializeUri(ParsedUri uri, Format format = Format.Xml, Encoding encoding = null)
+        {
+            object result = null;
+            
+            var request = WebRequest.Create(uri);
+            if (request != null)
+            {
+                WebResponse response = await request.GetResponseAsync();
+                result = Deserialize(response.GetResponseStream(), format);
+            }
+
+            return result;
         }
 
         /// <summary>
