@@ -432,6 +432,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeScalar(object root, FieldDescriptor currentFieldDescriptor)
         {
+            NextEvent();
+
             String value = _xmlReader.Value;
             currentFieldDescriptor.SetFieldToScalar(root, value, translationContext);
 

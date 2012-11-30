@@ -17,7 +17,7 @@ namespace Simpl.Serialization.Attributes
         /// 
         /// </summary>
          /// <param name="pHints"></param>
-         public SimplHints(Hint[] pHints)
+         public SimplHints(params Hint[] pHints)
         {
             this.hints = pHints;
         }

@@ -100,6 +100,7 @@ namespace Simpl.Fundamental.Generic
         public I Current
         {
             get { return _current; }
+            protected set { _current = value; }
         }
 
         public void Reset()
