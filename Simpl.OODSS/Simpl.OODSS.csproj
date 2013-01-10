@@ -69,22 +69,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <Content Include="Libs\log4net.dll" />
-    <Content Include="Libs\SuperSocket.ClientEngine.Common.dll" />
-    <Content Include="Libs\SuperSocket.ClientEngine.Core.dll" />
-    <Content Include="Libs\SuperSocket.ClientEngine.Protocol.dll" />
-    <Content Include="Libs\SuperSocket.ClientEngine.Proxy.dll" />
-    <Content Include="Libs\SuperSocket.Common.dll" />
-    <Content Include="Libs\SuperSocket.Facility.dll" />
-    <Content Include="Libs\SuperSocket.Management.Server.dll" />
-    <Content Include="Libs\SuperSocket.Management.Shared.dll" />
-    <Content Include="Libs\SuperSocket.SocketBase.dll" />
-    <Content Include="Libs\SuperSocket.SocketEngine.dll" />
-    <Content Include="Libs\SuperWebSocket.dll" />
-    <Content Include="Libs\WebSocket4Net.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Distributed\Client\BaseClient.cs" />
     <Compile Include="Distributed\Client\ClientStatusListener.cs" />
     <Compile Include="Distributed\Client\OODSSMessageQueueObject.cs" />
