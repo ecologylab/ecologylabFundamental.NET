@@ -90,7 +90,7 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
         }
 
-        public async Task ReceiveMessageFromWebSocketClientAsync(object webSocketClient, byte[] buffer, CancellationToken token)
+        public async Task<byte[]> ReceiveMessageFromWebSocketClientAsync(object webSocketClient, byte[] buffer, CancellationToken token)
         {
             var websocket = webSocketClient as ClientWebSocket;
             if (websocket == null)
@@ -99,8 +99,17 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
             try
             {
+                // TODO: make sure it is the same as the WinRT streamWebSocket
                 await websocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
                 Debug.WriteLine("receive message");
+                var lengthByte = new byte[4];
+                Array.Copy(buffer, lengthByte, 4);
+                if (BitConverter.IsLittleEndian)
+                    Array.Reverse(lengthByte);
+                var length = BitConverter.ToInt32(lengthByte, 0);
+                var incomingData = new byte[length];
+                Array.Copy(buffer, 4, incomingData, 0, length);
+                return incomingData;
             }
             catch (Exception ex)
             {

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simpl.OODSS.Distributed.Common
 {
-    static class NetworkConstants
+    public static class NetworkConstants
     {
         /// <summary>
         /// the maximum size of message acceptable by server in encoded CHARs

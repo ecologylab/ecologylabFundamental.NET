@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -24,7 +25,9 @@ namespace Simpl.OODSS.PlatformSpecifics
         /// 
         /// 
         private StreamWebSocket _streamWebSocket;
-        
+
+        private StreamWebSocket _streamWebSocketServer;
+
         public object CreateWebSocketClientObject()
         {
             StreamWebSocket webSocket =  new StreamWebSocket();
@@ -95,7 +98,7 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
         }
 
-        public async Task ReceiveMessageFromWebSocketClientAsync(object webSocketClient, byte[] buffer, CancellationToken token)
+        public async Task<byte[]> ReceiveMessageFromWebSocketClientAsync(object webSocketClient, byte[] buffer, CancellationToken token)
         {
             var websocket = webSocketClient as StreamWebSocket;
             if (websocket == null)
@@ -104,8 +107,40 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
             try
             {
-                IInputStream readStream = websocket.InputStream;
-                await readStream.ReadAsync(buffer.AsBuffer(), Convert.ToUInt16(buffer.Length), InputStreamOptions.Partial);
+
+                Stream readStream = websocket.InputStream.AsStreamForRead();
+                //await readStream.ReadAsync(buffer.AsBuffer(), Convert.ToUInt16(buffer.Length), InputStreamOptions.Partial);
+                while(true)
+                {
+                    int bytesReceived = 0;
+                    int read = await readStream.ReadAsync(buffer, 0, buffer.Length);
+                    bytesReceived += read;
+                    bytesReceived -= 4;
+                    if (read < 4) continue; // TODO: potential problem? 
+
+                    var lengthByte = new byte[4];
+                    Array.Copy(buffer, lengthByte, 4);
+                    if (BitConverter.IsLittleEndian)
+                        Array.Reverse(lengthByte);
+                    var length = BitConverter.ToInt32(lengthByte, 0);
+                    if (length == 0) continue; // TODO: empty message? 
+
+                    byte[] incomingData = new byte[length];
+                    Array.Copy(buffer, 4, incomingData, 0, read - 4);
+                    int index = read - 4;
+                    var rest = length - (read - 4);
+
+                    while (rest > 0)
+                    {
+                        read = await readStream.ReadAsync(buffer, 0, buffer.Length);
+                        bytesReceived += read;
+                        rest -= read;
+                        Array.Copy(buffer, 0, incomingData, index, read);
+                        index += read;
+                    }
+
+                    return incomingData;
+                }
             }
             catch (Exception ex)
             {

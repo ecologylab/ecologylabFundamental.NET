@@ -61,7 +61,7 @@ namespace Simpl.OODSS.Distributed.Client
         private object _webSocketClient;
 
         //TODO:  a large enough buffer, should be more careful about how to use buffer
-        private byte[] _readBuffer = new byte[100000];
+        private byte[] _readBuffer = new byte[40000];   // 40000 is a emperial number that works well with streamsocket
         private Uri _serverUri;
         const string WebSocketPrefix = "ws://";
 
@@ -391,12 +391,12 @@ namespace Simpl.OODSS.Distributed.Client
              while (_isRunning)
              {
                  // websocket client receive data from stream
-                 await
+                 byte[] incomingData = await
                      OODSSPlatformSpecifics.Get().ReceiveMessageFromWebSocketClientAsync(_webSocketClient, _readBuffer,
                                                                                          _cancellationTokenSource.Token);
                  // process the byte data
-                 long uid = BitConverter.ToInt64(_readBuffer, 0);
-                 string message = Encoding.UTF8.GetString(_readBuffer, 8, _readBuffer.Length-8).TrimEnd('\0');
+                 long uid = BitConverter.ToInt64(incomingData, 0);
+                 string message = Encoding.UTF8.GetString(incomingData, 8, incomingData.Length - 8);
                  Debug.WriteLine("Got the message: " + message + " uid: " + uid);
 
                  ProcessString(message, uid);
