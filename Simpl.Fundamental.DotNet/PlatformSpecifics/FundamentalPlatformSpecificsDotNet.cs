@@ -12,9 +12,14 @@ namespace Simpl.Fundamental.PlatformSpecifics
 {
     class FundamentalPlatformSpecificsImpl : IFundamentalPlatformSpecifics
     {
-        public object CreateFile(string uri)
+        public async Task<object> CreateFile(string uri)
         {
             return new FileInfo(uri);
+        }
+
+        public async Task<object> CreateDirectory(string uri)
+        {
+            return Directory.CreateDirectory(uri);
         }
 
         public string GetDirFullNameFromFile(object file)
@@ -26,12 +31,12 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new FileNotFoundException();
         }
 
-        public string[] GetFilesFromDirectory(string dir, string fileTypePostfix)
+        public async Task<string[]> GetFilesFromDirectory(string dir, string fileTypePostfix)
         {
             return Directory.GetFiles(dir, fileTypePostfix);
         }
 
-        public string[] GetDirectoriesFromDirectory(string dir)
+        public async Task<string[]> GetDirectoriesFromDirectory(string dir)
         {
             return Directory.GetDirectories(dir);
         }
@@ -70,7 +75,7 @@ namespace Simpl.Fundamental.PlatformSpecifics
             }
         }
 
-        public Stream OpenFileReadStream(object file)
+        public async Task<Stream> OpenFileReadStream(object file)
         {
             var fileinfo = file as FileInfo;
             if (fileinfo != null)
@@ -79,7 +84,7 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new IOException();
         }
 
-        public Stream OpenFileReadStream(object file, Encoding encoding)
+        public async Task<Stream> OpenFileReadStream(object file, Encoding encoding)
         {
             var fileinfo = file as FileInfo;
             if (fileinfo != null)
@@ -91,7 +96,7 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new IOException();
         }
 
-        public Stream OpenFileWriteStream(object file)
+        public async Task<Stream> OpenFileWriteStream(object file)
         {
             var fileinfo = file as FileInfo;
             if (fileinfo != null)
@@ -100,7 +105,7 @@ namespace Simpl.Fundamental.PlatformSpecifics
             throw new IOException();
         }
 
-        public StreamReader GenerateStreamReaderFromFile(string url)
+        public async Task<StreamReader> GenerateStreamReaderFromFile(string url)
         {
             return new StreamReader(url);
         }
