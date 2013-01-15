@@ -20,11 +20,11 @@ namespace Simpl.Fundamental.Collections
         /// <summary>
         /// Ancestors of this scope
         /// </summary>
-        private List<Dictionary<string, T>> ancestors;
+        private List<IDictionary<string, T>> ancestors;
 
         private LRUCache<string, T> queryCache;
 
-        public MultiAncestorScope(params Dictionary<string, T>[] ancestors)
+        public MultiAncestorScope(params IDictionary<string, T>[] ancestors)
         {
             AddAncestors(ancestors);
         }
@@ -32,11 +32,11 @@ namespace Simpl.Fundamental.Collections
 
         public T Get(string key)
         {
-            var visited = new HashSet<Dictionary<string, T>>();
+            var visited = new HashSet<IDictionary<string, T>>();
             return GetHelper(key, visited);
         }
 
-        private T GetHelper(string key, HashSet<Dictionary<string, T>> visited)
+        private T GetHelper(string key, HashSet<IDictionary<string, T>> visited)
         {
             T result = null;
 
@@ -154,27 +154,27 @@ namespace Simpl.Fundamental.Collections
         /// <summary>
         /// Ancestors of this scope
         /// </summary>
-        public List<Dictionary<string, T>> Ancestors
+        public List<IDictionary<string, T>> Ancestors
         {
-            get { return ancestors ?? (ancestors = new List<Dictionary<string, T>>()); }
+            get { return ancestors ?? (ancestors = new List<IDictionary<string, T>>()); }
             set { ancestors = value; }
         }
 
-        private void AddAncestors(IEnumerable<Dictionary<string, T>> additionalAncestors)
+        private void AddAncestors(IEnumerable<IDictionary<string, T>> additionalAncestors)
         {
             if (additionalAncestors != null)
                 foreach (var ancestor in additionalAncestors)
                     AddAncestor(ancestor);
         }
 
-        public void AddAncestor(Dictionary<string, T> ancestor)
+        public void AddAncestor(IDictionary<string, T> ancestor)
         {
             if (ancestor == null || containsSame(Ancestors, ancestor))
                 return;
             ancestors.Add(ancestor);
         }
 
-        private static bool containsSame(IEnumerable<Dictionary<string, T>> list, Dictionary<string, T> ancestor)
+        private static bool containsSame(IEnumerable<IDictionary<string, T>> list, IDictionary<string, T> ancestor)
         {
             return list.Any(a => a == ancestor);
         }

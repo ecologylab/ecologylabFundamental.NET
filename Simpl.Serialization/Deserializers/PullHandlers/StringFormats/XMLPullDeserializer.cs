@@ -138,7 +138,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
                 if (currentFieldDescriptor == null)
                 {
-                    Debug.WriteLine("ignoring tag " + CurrentTag);
+                    //Debug.WriteLine("ignoring tag " + CurrentTag);
                     currentFieldDescriptor = FieldDescriptor.MakeIgnoredFieldDescriptor(CurrentTag);
 
                     if (!_xmlReader.IsEmptyElement)
@@ -370,7 +370,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             if(subRootClassDescriptor == null)
             {
                 Debug.WriteLine("ignoring element: " + currentTagName);
-                _xmlReader.Skip();
+                //_xmlReader.Skip();
                 return null;
             }
 

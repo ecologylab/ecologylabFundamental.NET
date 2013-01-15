@@ -391,6 +391,22 @@ namespace Simpl.Serialization
             return result;
         }
 
+        public ClassDescriptor GetClassDescriptorBySimpleName(string classSimpleName)
+        {
+            ClassDescriptor result = null;
+            if (classSimpleName != null)
+                EntriesByClassSimpleName.TryGetValue(classSimpleName, out result);
+            return result;
+        }
+
+        public ClassDescriptor GetClassDescriptorByClassName(string className)
+        {
+            ClassDescriptor result = null;
+            if (className != null)
+                EntriesByClassName.TryGetValue(className, out result);
+            return result;
+        }
+
         /// <summary>
         /// Gets the Type of the tag
         /// </summary>
@@ -401,7 +417,6 @@ namespace Simpl.Serialization
             ClassDescriptor entry = GetClassDescriptorByTag(tag);
             return entry == null ? null : entry.DescribedClass;
         }
-
 
         /// <summary>
         /// 

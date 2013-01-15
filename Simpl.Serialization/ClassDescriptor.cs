@@ -63,7 +63,7 @@ namespace Simpl.Serialization
         ///     annotations for the class described by this <c>ClassDescriptor</c> 
         ///     or its super classes.
         /// </summary>
-        private Boolean _isGetAndOrganizeComplete;
+        private bool _isGetAndOrganizeComplete;
 
 
         /// <summary>
@@ -100,16 +100,13 @@ namespace Simpl.Serialization
         private FieldDescriptor _scalarValueFieldDescriptor;
 
         //generics
-        [SimplCollection("generic_type_variable")]
-	    private List<String> genericTypeVariables = new List<String>();
+        [SimplCollection("generic_type_variable")] private List<String> genericTypeVariables = new List<String>();
 
-	    [SimplCollection("generic_type_var")]
-	    private List<GenericTypeVar> genericTypeVars = null;
+        [SimplCollection("generic_type_var")] private List<GenericTypeVar> genericTypeVars = null;
 
-	    private List<String> declaredGenericTypeVarNames	= null;
-	
-	    [SimplCollection("super_class_generic_type_var")]
-	    private List<GenericTypeVar> superClassGenericTypeVars = null;
+        private List<String> declaredGenericTypeVarNames = null;
+
+        [SimplCollection("super_class_generic_type_var")] private List<GenericTypeVar> superClassGenericTypeVars = null;
 
         /// <summary>
         /// defines whether a strict object graph is required based on the equality operator
@@ -119,6 +116,8 @@ namespace Simpl.Serialization
         [SimplScalar] private Type fieldDescriptorClass;
         [SimplScalar] private Type classDescriptorClass;
 
+        private EventHandler<EventArgs> FieldDescriptorsDerived;
+
         /// <summary>
         /// Whether a strict object graph is required
         /// </summary>
@@ -126,6 +125,12 @@ namespace Simpl.Serialization
         {
             get { return _strictObjectGraphRequired; }
             set { _strictObjectGraphRequired = value; }
+        }
+
+        public bool IsGetAndOrganizeComplete
+        {
+            get { return _isGetAndOrganizeComplete; }
+            set { _isGetAndOrganizeComplete = value; }
         }
 
         /// <summary>
@@ -154,28 +159,32 @@ namespace Simpl.Serialization
                 name = simpleName;
                 _describedClassSimpleName = simpleName;
 
-                index = _tagName.IndexOf('`'); 
+                index = _tagName.IndexOf('`');
                 if (index != -1)
                 {
                     String tagName = _tagName.Substring(0, index);
 
                     this._tagName = tagName;
                 }
-            }            
-            
+            }
+
             if (XmlTools.IsAnnotationPresent<SimplUseEqualsEquals>(thatClass))
             {
                 _strictObjectGraphRequired = true;
             }
 
-            SimplDescriptorClasses descriptorsClassesAttribute = XmlTools.GetAnnotation<SimplDescriptorClasses>(thatClass);
-            
-            if(descriptorsClassesAttribute != null)
+            SimplDescriptorClasses descriptorsClassesAttribute =
+                XmlTools.GetAnnotation<SimplDescriptorClasses>(thatClass);
+
+            if (descriptorsClassesAttribute != null)
             {
                 classDescriptorClass = descriptorsClassesAttribute.Classes[0];
                 fieldDescriptorClass = descriptorsClassesAttribute.Classes[1];
             }
-            
+
+            if (XmlTools.IsAnnotationPresent(thatClass, typeof (SimplInherit)))
+                this.SuperClass = GetClassDescriptor(thatClass.GetTypeInfo().BaseType);
+
             //generics
             AddGenericTypeVariables();
         }
@@ -212,17 +221,18 @@ namespace Simpl.Serialization
         /// </returns>
         public static ClassDescriptor GetClassDescriptor(Type thatClass)
         {
-            String className = thatClass.FullName;// for generic classes, className could be null!
+            String className = thatClass.FullName; // for generic classes, className could be null!
 
 
             //generics
-            while (thatClass.GetTypeInfo().IsGenericParameter)//e.g. where X : Media \n where I : X \n ... List<I> field;  
+            while (thatClass.GetTypeInfo().IsGenericParameter)
+                //e.g. where X : Media \n where I : X \n ... List<I> field;  
             {
                 Type[] thatClassConstraints = thatClass.GetTypeInfo().GetGenericParameterConstraints();
 
                 if (thatClassConstraints == null || thatClassConstraints.Length == 0)
                 {
-                    thatClass = typeof(Object);
+                    thatClass = typeof (Object);
                 }
                 else
                 {
@@ -232,7 +242,7 @@ namespace Simpl.Serialization
                 className = thatClass.FullName;
             }
 
-            if (thatClass.GetTypeInfo().IsGenericType)//can also be a generic parameter that extends a generic type
+            if (thatClass.GetTypeInfo().IsGenericType) //can also be a generic parameter that extends a generic type
             {
                 if (thatClass.FullName == null)
                 {
@@ -240,31 +250,64 @@ namespace Simpl.Serialization
                 }
             }
 
-            ClassDescriptor result;
-
-            if (!GlobalClassDescriptorsMap.TryGetValue(className, out result))
+            ClassDescriptor result = null;
+            if (!GlobalClassDescriptorsMap.TryGetValue(className, out result) || !result.IsGetAndOrganizeComplete)
             {
-                var descriptorsAnnotation = XmlTools.GetAnnotation<SimplDescriptorClasses>(thatClass, considerInheritedAnnotations: true);
-
-                if (descriptorsAnnotation == null)
+                lock (GlobalClassDescriptorsMap)
                 {
-                    result = new ClassDescriptor(thatClass);
-                }
-                else
-                {
-                    //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
-                    Type classDescriptorClass = descriptorsAnnotation.Classes[0];
-                    result = ReflectionTools.GetInstance<ClassDescriptor>(classDescriptorClass, new object[] { thatClass });
-                    result.fieldDescriptorClass = descriptorsAnnotation.Classes[1];
-                }
+                    if (!GlobalClassDescriptorsMap.TryGetValue(className, out result))
+                    {
+                        var descriptorsAnnotation = XmlTools.GetAnnotation<SimplDescriptorClasses>(thatClass,
+                                                                                                   considerInheritedAnnotations
+                                                                                                       : true);
 
-                GlobalClassDescriptorsMap.Add(className, result);
+                        if (descriptorsAnnotation == null)
+                        {
+                            result = new ClassDescriptor(thatClass);
+                        }
+                        else
+                        {
+                            //First class is the type of the class descriptor, the second the type of the fieldDescriptor.
+                            Type classDescriptorClass = descriptorsAnnotation.Classes[0];
+                            result = ReflectionTools.GetInstance<ClassDescriptor>(classDescriptorClass,
+                                                                                  new object[] {thatClass});
+                            result.fieldDescriptorClass = descriptorsAnnotation.Classes[1];
+                        }
 
-                result.DeriveAndOrganizeFieldsRecursive(thatClass);
-                result._isGetAndOrganizeComplete = true;
+                        GlobalClassDescriptorsMap[className] = result;
+
+                        ClassDescriptor superCD = result.SuperClass;
+                        if (superCD == null || superCD.IsGetAndOrganizeComplete)
+                        {
+                            result.DeriveAndOrganizeFieldsRecursive(thatClass);
+                            result.IsGetAndOrganizeComplete = true;
+                            result.HandleFieldDescriptorsDerivedEvent();
+                        }
+                        else
+                        {
+                            ClassDescriptor resultFinalCopy = result;
+                            superCD.FieldDescriptorsDerived += (sender, args) =>
+                                {
+                                    resultFinalCopy.DeriveAndOrganizeFieldsRecursive(thatClass);
+                                    resultFinalCopy.IsGetAndOrganizeComplete = true;
+                                    resultFinalCopy.HandleFieldDescriptorsDerivedEvent(); 
+                                };
+
+                        }
+                    }
+                }
             }
 
             return result;
+        }
+
+     
+        private void HandleFieldDescriptorsDerivedEvent()
+        {
+            if (FieldDescriptorsDerived != null)
+            {
+               FieldDescriptorsDerived(this, new EventArgs());
+            }
         }
 
         /// <summary>
@@ -280,7 +323,7 @@ namespace Simpl.Serialization
         ///     for the first time. 
         /// </param>
         public void DeriveAndOrganizeFieldsRecursive(Type thatClass)
-        {        
+        {
             if (XmlTools.IsAnnotationPresent<SimplInherit>(thatClass))
             {
                 TypeInfo classTypeInfo = thatClass.GetTypeInfo();
@@ -290,14 +333,14 @@ namespace Simpl.Serialization
             }
 
             IEnumerable<FieldInfo> fields = thatClass.GetTypeInfo().DeclaredFields;
-            
+
             // Iterate through all fields for the type
             foreach (FieldInfo thatField in fields)
             {
                 // We don't serialize static values in S.im.pl, continue on to the next field
                 if ((thatField.IsStatic)) continue;
 
-                
+
                 Int16 fieldType = FieldTypes.UnsetType;
 
                 if (XmlTools.IsScalar(thatField))
@@ -326,7 +369,7 @@ namespace Simpl.Serialization
 
                 //generics
                 fieldDescriptor.GenericTypeVarsContextCD = this;
- 
+
                 if (fieldDescriptor.FdType == FieldTypes.Scalar)
                 {
                     Hint xmlHint = fieldDescriptor.XmlHint;
@@ -396,13 +439,16 @@ namespace Simpl.Serialization
             foreach (String key in superClassDescriptor.FieldDescriptorByFieldName.Keys)
             {
                 _fieldDescriptorsByFieldName.Put(key,
-                    PerhapsCloneGenericField(superClassDescriptor.FieldDescriptorByFieldName[key], bookkeeper));
+                                                 PerhapsCloneGenericField(
+                                                     superClassDescriptor.FieldDescriptorByFieldName[key], bookkeeper));
             }
 
             foreach (String key in superClassDescriptor.AllFieldDescriptorsByTagNames.Keys)
             {
                 _allFieldDescriptorsByTagNames.Put(key,
-                    PerhapsCloneGenericField(superClassDescriptor.AllFieldDescriptorsByTagNames[key], bookkeeper));
+                                                   PerhapsCloneGenericField(
+                                                       superClassDescriptor.AllFieldDescriptorsByTagNames[key],
+                                                       bookkeeper));
             }
 
             foreach (FieldDescriptor fd in superClassDescriptor.ElementFieldDescriptors)
@@ -425,63 +471,66 @@ namespace Simpl.Serialization
         }
 
         //generics
-	    private void InitDeclaredGenericTypeVarNames()
-	    {
-		    if (declaredGenericTypeVarNames == null && _describedClass != null)
-		    {
-			    List<String> result = new List<String>();
-			    Type[] typeParams = _describedClass.GenericTypeArguments;
-			    if (typeParams != null && typeParams.Length > 0)
-			    {
-				    foreach (Type typeParam in typeParams)
-					    result.Add(typeParam.Name);
-			    }
-			    if (result.Count > 0)
-				    declaredGenericTypeVarNames = result;
-		    }
-	    }
+        private void InitDeclaredGenericTypeVarNames()
+        {
+            if (declaredGenericTypeVarNames == null && _describedClass != null)
+            {
+                List<String> result = new List<String>();
+                Type[] typeParams = _describedClass.GenericTypeArguments;
+                if (typeParams != null && typeParams.Length > 0)
+                {
+                    foreach (Type typeParam in typeParams)
+                        result.Add(typeParam.Name);
+                }
+                if (result.Count > 0)
+                    declaredGenericTypeVarNames = result;
+            }
+        }
 
-        private FieldDescriptor PerhapsCloneGenericField(FieldDescriptor fd, Dictionary<FieldDescriptor, FieldDescriptor> bookkeeper)
-	    {
-		    if (declaredGenericTypeVarNames == null || fd.Field == null)
-			    return fd;
-		
-		    if (bookkeeper.ContainsKey(fd))
-			    return bookkeeper[fd];
+        private FieldDescriptor PerhapsCloneGenericField(FieldDescriptor fd,
+                                                         Dictionary<FieldDescriptor, FieldDescriptor> bookkeeper)
+        {
+            if (declaredGenericTypeVarNames == null || fd.Field == null)
+                return fd;
+
+            if (bookkeeper.ContainsKey(fd))
+                return bookkeeper[fd];
 
             FieldDescriptor result = fd;
-		    Type genericType = fd.Field.FieldType;
+            Type genericType = fd.Field.FieldType;
 
-		    if (IsTypeUsingGenericNames(genericType, declaredGenericTypeVarNames))
-		    {
+            if (IsTypeUsingGenericNames(genericType, declaredGenericTypeVarNames))
+            {
                 result = fd.Clone();
-			    result.SetGenericTypeVars(null);
-			    result.GenericTypeVarsContextCD = this;
-		    }
-		    bookkeeper.Add(fd, result);
-		    return result;
-	    }
+                result.SetGenericTypeVars(null);
+                result.GenericTypeVarsContextCD = this;
+            }
+            bookkeeper.Add(fd, result);
+            return result;
+        }
 
-	    private Boolean IsTypeUsingGenericNames(Type genericType, List<String> names)
-	    {
-		    if (genericType != null)
-		    {
-		        TypeInfo genericTypeInfo = genericType.GetTypeInfo();
-		        if (genericType.IsGenericParameter)
-			    {
-                    if (names.Contains(genericType.Name) || genericTypeInfo.GetGenericParameterConstraints().Length > 0 && IsTypeUsingGenericNames(genericTypeInfo.GetGenericParameterConstraints()[0], names))
-					    return true;
-			    }
+        private Boolean IsTypeUsingGenericNames(Type genericType, List<String> names)
+        {
+            if (genericType != null)
+            {
+                TypeInfo genericTypeInfo = genericType.GetTypeInfo();
+                if (genericType.IsGenericParameter)
+                {
+                    if (names.Contains(genericType.Name) ||
+                        genericTypeInfo.GetGenericParameterConstraints().Length > 0 &&
+                        IsTypeUsingGenericNames(genericTypeInfo.GetGenericParameterConstraints()[0], names))
+                        return true;
+                }
                 else if (genericTypeInfo.IsGenericType)
-			    {
+                {
                     Type[] args = genericTypeInfo.GenericTypeArguments;
-				    foreach (Type arg in args)
-					    if (IsTypeUsingGenericNames(arg, names))
-						    return true;
-			    }
-		    }
-	        return false;
-	    }
+                    foreach (Type arg in args)
+                        if (IsTypeUsingGenericNames(arg, names))
+                            return true;
+                }
+            }
+            return false;
+        }
 
         protected List<FieldDescriptor> UnresolvedScopeAnnotationFDs
         {
@@ -519,7 +568,7 @@ namespace Simpl.Serialization
             return result;
         }
 
-        
+
 
         public IEnumerable<FieldDescriptor> GetAllFields()
         {
@@ -596,7 +645,7 @@ namespace Simpl.Serialization
             args[0] = this;
             args[1] = thatField;
             args[2] = annotationType;
-            
+
             //TODO: WAT? 
             if (annotationType == 6)
             {
@@ -672,7 +721,7 @@ namespace Simpl.Serialization
             get { return _tagName; }
         }
 
-       
+
         /// <summary>
         ///     Gets the Pseudo FieldDescriptor
         /// </summary>
@@ -800,45 +849,45 @@ namespace Simpl.Serialization
             get
             {
                 return DescribedClass != null
-                           ? (!DescribedClass.GetTypeInfo().IsGenericType 
-                                ? DescribedClass.Name
-                                //generics
-                                : DescribedClass.Name.Substring(0,DescribedClass.Name.IndexOf('`')))
+                           ? (!DescribedClass.GetTypeInfo().IsGenericType
+                                  ? DescribedClass.Name
+                                  //generics
+                                  : DescribedClass.Name.Substring(0, DescribedClass.Name.IndexOf('`')))
                            : _describedClassPackageName + "." + DescribedClassSimpleName;
             }
         }
-       
+
         //generics
-	    private void AddGenericTypeVariables()
-	    {
+        private void AddGenericTypeVariables()
+        {
             if (_describedClass.GetTypeInfo().IsGenericType)
             {
                 Type[] typeArguments = _describedClass.GetTypeInfo().GenericTypeArguments;
 
                 foreach (Type tParam in typeArguments)
                 {
-                    if (tParam.IsGenericParameter)//true only for generic type parameters
+                    if (tParam.IsGenericParameter) //true only for generic type parameters
                     {
                         String typeClassName = tParam.Name;
-				        genericTypeVariables.Add(typeClassName);
+                        genericTypeVariables.Add(typeClassName);
                     }
                 }
-             }
-	    }
+            }
+        }
 
         /// <summary>
         /// lazy-evaluation method. 
         /// </summary>
-	    public List<GenericTypeVar> GetGenericTypeVars()
-	    {
-		    if (genericTypeVars == null)
-		    {
+        public List<GenericTypeVar> GetGenericTypeVars()
+        {
+            if (genericTypeVars == null)
+            {
                 genericTypeVars = new List<GenericTypeVar>();
-			    DeriveGenericTypeVariables();
-		    }
+                DeriveGenericTypeVariables();
+            }
 
-		    return genericTypeVars;
-	    }
+            return genericTypeVars;
+        }
 
         public static List<GenericTypeVar> GetGenericTypeVars(Type parameterizedType, List<GenericTypeVar> scope)
         {
@@ -861,24 +910,24 @@ namespace Simpl.Serialization
         /// lazy-evaluation method. 
         /// </summary>
         public List<GenericTypeVar> GetSuperClassGenericTypeVars()
-	    {
-		    if (superClassGenericTypeVars == null)
-		    {
-			    DeriveSuperGenericTypeVariables();
-		    }
+        {
+            if (superClassGenericTypeVars == null)
+            {
+                DeriveSuperGenericTypeVariables();
+            }
 
-		    return superClassGenericTypeVars;
-	    }
+            return superClassGenericTypeVars;
+        }
 
-	    // added a setter to enable environment specific implementation -Fei
-	    public List<GenericTypeVar> SuperClassGenericTypeVars
-	    {
+        // added a setter to enable environment specific implementation -Fei
+        public List<GenericTypeVar> SuperClassGenericTypeVars
+        {
             set { superClassGenericTypeVars = value; }
-	    }
-	
-	    // This method is modified, refer to FundamentalPlatformSpecific package -Fei
-	    private void DeriveSuperGenericTypeVariables()
-	    {
+        }
+
+        // This method is modified, refer to FundamentalPlatformSpecific package -Fei
+        private void DeriveSuperGenericTypeVariables()
+        {
             Type describedClass = DescribedClass;
 
             if (describedClass == null)
@@ -890,25 +939,25 @@ namespace Simpl.Serialization
             {
                 SuperClassGenericTypeVars = GetGenericTypeVars(superClassType, GetGenericTypeVars());
             }
-	    }
+        }
 
-	    private void DeriveGenericTypeVariables()
-	    {
-		    if (_describedClass != null) // for generated descriptors, describedClass == null
-		    {
+        private void DeriveGenericTypeVariables()
+        {
+            if (_describedClass != null) // for generated descriptors, describedClass == null
+            {
                 Type[] typeVariables = _describedClass.GetTypeInfo().GenericTypeArguments;
-			    if (typeVariables.Length > 0)
-			    {
-				    foreach (Type typeVariable in typeVariables)
-				    {
-					    GenericTypeVar g = GenericTypeVar.GetGenericTypeVarDef(typeVariable, this.genericTypeVars);
-					    this.genericTypeVars.Add(g);
-				    }
-			    }
-		    }
-	    }
-       
- 
+                if (typeVariables.Length > 0)
+                {
+                    foreach (Type typeVariable in typeVariables)
+                    {
+                        GenericTypeVar g = GenericTypeVar.GetGenericTypeVarDef(typeVariable, this.genericTypeVars);
+                        this.genericTypeVars.Add(g);
+                    }
+                }
+            }
+        }
+
+
         // TODO: WAT?
         public string BibtexType
         {
@@ -944,6 +993,12 @@ namespace Simpl.Serialization
         public FieldDescriptor GetFieldDescriptorByTlvId(int blockType)
         {
             throw new NotImplementedException();
+        }
+
+        public ClassDescriptor SuperClass
+        {
+            get { return _superClass; }
+            private set { _superClass = value; }
         }
 
         #region Implementation of IEnumerable
