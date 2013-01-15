@@ -33,7 +33,7 @@ namespace Simpl.Fundamental.PlatformSpecifics
 
         public async Task<string[]> GetFilesFromDirectory(string dir, string fileTypePostfix)
         {
-            return Directory.GetFiles(dir, fileTypePostfix);
+            return Directory.GetFiles(dir, "*" + fileTypePostfix);
         }
 
         public async Task<string[]> GetDirectoriesFromDirectory(string dir)
