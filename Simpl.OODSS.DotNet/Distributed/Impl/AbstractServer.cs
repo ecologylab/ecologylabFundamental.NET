@@ -65,13 +65,9 @@ namespace Simpl.OODSS.Distributed.Impl
                                                                      Scope<Object> globalScope);
 
 
-        public void Start()
-        {
-        }
+        public abstract bool Start();
 
-        public void Stop()
-        {
-        }
+        public abstract void Stop();
 
     }
 }

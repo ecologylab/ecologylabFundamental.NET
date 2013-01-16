@@ -63,8 +63,8 @@ namespace Simpl.OODSS.Distributed.Server
         /// <param name="idleConnectionTimeout"></param>
         /// <param name="maxMessageSize"></param>
         public WebSocketOODSSServer(SimplTypesScope serverTranslationScope, Scope<object> applicationObjectScope,
-			int idleConnectionTimeout=-1, int maxMessageSize=-1)
-            : base(0, Dns.GetHostAddresses(Dns.GetHostName()), serverTranslationScope, applicationObjectScope, 
+			int idleConnectionTimeout=-1, int maxMessageSize=-1, int port=0)
+            : base(port, Dns.GetHostAddresses(Dns.GetHostName()), serverTranslationScope, applicationObjectScope, 
             idleConnectionTimeout, maxMessageSize)
         {
             MaxMessageSize = maxMessageSize + NetworkConstants.MaxHttpHeaderLength;
@@ -77,13 +77,12 @@ namespace Simpl.OODSS.Distributed.Server
 
             _serverInstance = this;
 
-            SetUpWebSocketServer();
-            StartServer();
+            SetUpWebSocketServer(port);
         }
         #endregion Constructor
 
         #region WebSocketServer
-        private void SetUpWebSocketServer()
+        private void SetUpWebSocketServer(int port)
         {
             WebSocketServer = new WebSocketServer();
             WebSocketServer.NewDataReceived += WebSocketServer_NewDataReceived;
@@ -93,7 +92,7 @@ namespace Simpl.OODSS.Distributed.Server
 
             WebSocketServer.Setup(new RootConfig(), new ServerConfig
             {
-                Port = 2018,
+                Port = port,
                 Ip = "Any",
                 MaxConnectionNumber = 100,
                 MaxCommandLength = 100000,
@@ -140,15 +139,15 @@ namespace Simpl.OODSS.Distributed.Server
         /// <summary>
         /// start server
         /// </summary>
-        protected void StartServer()
+        public override bool Start()
         {
-            WebSocketServer.Start();
+            return WebSocketServer.Start();
         }
 
         /// <summary>
         ///  stop server
         /// </summary>
-        public void StopServer()
+        public override void Stop()
         {
             WebSocketServer.Stop();
         }
