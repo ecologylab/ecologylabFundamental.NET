@@ -95,7 +95,7 @@ namespace Simpl.OODSS.Distributed.Server
                 Port = port,
                 Ip = "Any",
                 MaxConnectionNumber = 100,
-                MaxCommandLength = 100000,
+                MaxCommandLength = 10000000,
                 Mode = SocketMode.Async,
                 Name = "SuperWebSocket Server"
             }, SocketServerFactory.Instance);
@@ -286,7 +286,7 @@ namespace Simpl.OODSS.Distributed.Server
         /// <param name="incomingSessionId">received sesion id information</param>
         /// <param name="newSessionManager">a new session manager</param>
         /// <returns>whether the session can be restored</returns>
-        public bool RestoreContextManagerFromSessionId(string incomingSessionId, BaseSessionManager newSessionManager)
+        public bool RestoreContextManagerFromSessionId(string incomingSessionId, string newSessionId, BaseSessionManager newSessionManager)
         {
             WebSocketClientSessionManager oldSessionManager;
             lock(ClientSessionManagerMap)
@@ -297,10 +297,12 @@ namespace Simpl.OODSS.Distributed.Server
             {
                 return false;
             }
-            oldSessionManager.Session = ((WebSocketClientSessionManager) newSessionManager).Session;
+            //should restore any useful information from the oldsessionmanager to the new one. but what information? local scope? 
+            //1/16/2013 fei
+
             lock(ClientSessionManagerMap)
             {
-                ClientSessionManagerMap.Remove(newSessionManager.SessionId);
+                ClientSessionManagerMap.Remove(incomingSessionId);
             }
             return true;
         }

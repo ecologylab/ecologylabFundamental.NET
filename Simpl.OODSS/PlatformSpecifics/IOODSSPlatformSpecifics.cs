@@ -22,7 +22,7 @@ namespace Simpl.OODSS.PlatformSpecifics
         /// </summary>
         /// <param name="webSocketClient"></param>
         /// <returns></returns>
-        void DisconnectWebSocketClient(object webSocketClient);
+        Task DisconnectWebSocketClientAsync(object webSocketClient);
 
         /// <summary>
         /// Check whether websocket client is connected

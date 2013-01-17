@@ -29,14 +29,14 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
         }
 
-        public void DisconnectWebSocketClient(object webSocketClient)
+        public async Task DisconnectWebSocketClientAsync(object webSocketClient)
         {
             var websocket = webSocketClient as ClientWebSocket;
             if (websocket == null)
             {
                 throw new InvalidCastException("Cannot cast webSocketClient object to ClientWebSocket");
             }
-            websocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+            await websocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);;
         }
 
         public bool WebSocketIsConnected(object webSocketClient)
@@ -100,7 +100,7 @@ namespace Simpl.OODSS.PlatformSpecifics
             try
             {
                 // TODO: make sure it is the same as the WinRT streamWebSocket
-                await websocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+                WebSocketReceiveResult receiveResult = await websocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
                 Debug.WriteLine("receive message");
                 var lengthByte = new byte[4];
                 Array.Copy(buffer, lengthByte, 4);
@@ -108,7 +108,19 @@ namespace Simpl.OODSS.PlatformSpecifics
                     Array.Reverse(lengthByte);
                 var length = BitConverter.ToInt32(lengthByte, 0);
                 var incomingData = new byte[length];
-                Array.Copy(buffer, 4, incomingData, 0, length);
+                Debug.WriteLine("message length: {0}", length);
+
+                int received = receiveResult.Count - 4;
+                Array.Copy(buffer, 4, incomingData, 0, receiveResult.Count - 4);
+
+                while (!receiveResult.EndOfMessage)
+                {
+                    receiveResult = await websocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+                    Array.Copy(buffer, 0, incomingData, received, receiveResult.Count);
+                    received += receiveResult.Count;
+                }
+
+                Debug.WriteLine(received);
                 return incomingData;
             }
             catch (Exception ex)
