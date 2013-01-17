@@ -57,7 +57,7 @@ namespace Simpl.OODSS.Test
             bool clientConnected = await _testServiceClient.StartConnection();
             Assert.AreEqual(true, clientConnected);
 
-            const int length = 20000;
+            const int length = 100000;
             var charArray = new char[length];
             charArray[0] = 'a';
             for (int i = 1; i < length-1; ++i) charArray[i] = 'b';
