@@ -8,9 +8,10 @@
     mc:Ignorable="d">
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="TestConnectionButton" Content="Connection Test" HorizontalAlignment="Left" Margin="164,164,0,0" FontSize="36" VerticalAlignment="Top" Click="TestConnectionButton_OnClick"/>
+        <Button x:Name="TestConnectionButton" Content="Connection Test" HorizontalAlignment="Left" Margin="164,164,0,0" FontSize="36" VerticalAlignment="Top" Click="TestConnectionButton_OnClick" Width="426"/>
         <Button x:Name ="TestLargeSizeMessageButton" Content="Large Size Message Test" HorizontalAlignment="Left" Margin="164,263,0,0" FontSize="36" VerticalAlignment="Top" Click ="TestLargeSizeMessageButton_OnClick"/>
-        <Button x:Name ="TestReconnectionButton" Content="Reconnection Test" HorizontalAlignment="Left" Margin="164,376,0,0" FontSize="36" VerticalAlignment="Top" Click="TestReconnectionButton_OnClick"/>
+        <Button x:Name ="TestReconnectionButton" Content="Reconnection Test" HorizontalAlignment="Left" Margin="164,376,0,0" FontSize="36" VerticalAlignment="Top" Click="TestReconnectionButton_OnClick" Width="426"/>
         <TextBlock x:Name="InfoLabel" HorizontalAlignment="Left" Margin="164,493,0,0" TextWrapping="Wrap" Text="Click on a button to run test" FontSize="36" VerticalAlignment="Top"/>
+        <Button x:Name="TestMultiClientButton" Content="Multiple Client Test" HorizontalAlignment="Left" Margin="736,164,0,0" FontSize="36" VerticalAlignment="Top" Click="TestMultiClientButton_OnClick"  Width="426"/>
     </Grid>
 </Page>

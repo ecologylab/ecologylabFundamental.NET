@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Simpl.OODSS.TestClientAndMessage.Client;
 using Simpl.OODSS.TestClientAndMessage.Messages;
 using Windows.Foundation;
@@ -104,5 +105,44 @@ namespace Simpl.OODSS.WinRT.Test
             _testServiceClient.StopClient();
         }
 
+        private async void TestMultiClientButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            InfoLabel.Text = "Running...";
+            const int numClients = 5;
+            TestServiceClient[] clients = new TestServiceClient[numClients];
+            for (int i = 0; i < numClients; ++i)
+            {
+                clients[i] = new TestServiceClient(_serverAddress, _port);
+                bool clientConnected = await clients[i].StartConnection();
+                if (!clientConnected)
+                {
+                    InfoLabel.Text = "Fail";
+                    return;
+                }
+            }
+
+            for (int i = 0; i < numClients; ++i)
+            {
+                bool success = await SendAndReceive(clients[i], i);
+                if (!success)
+                {
+                    InfoLabel.Text = "Fail";
+                    return;
+                }
+            }
+
+            for (int i = 0; i < numClients; ++i)
+            {
+                clients[i].StopClient();
+            }
+            InfoLabel.Text = "Pass";
+        }
+
+        private async Task<bool> SendAndReceive(TestServiceClient client, int i)
+        {
+            string testString = i.ToString();
+            var response = (await client.SendMessage(testString)) as TestServiceResponse;
+            return response != null && response.Message.Equals(TestServiceConstants.ServicePrefix + testString);
+        }
     }
 }
