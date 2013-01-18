@@ -48,6 +48,6 @@ namespace Simpl.OODSS.PlatformSpecifics
         Task<byte[]> ReceiveMessageFromWebSocketClientAsync(object webSocketClient, byte[] buffer, CancellationToken token);
 
 
-        void CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token);
+        Task CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token);
     }
 }

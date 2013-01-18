@@ -134,6 +134,11 @@ namespace Simpl.OODSS.Distributed.Server
         private void WebSocketServer_SessionClosed(WebSocketSession session, CloseReason reason)
         {
             Console.WriteLine("Session "+ session.SocketSession.RemoteEndPoint +" closed because: " + reason);
+            //remove the session from the map.
+            lock(ClientSessionManagerMap)
+            {
+                ClientSessionManagerMap.Remove(session.SocketSession.SessionID);
+            }
         }
 
         /// <summary>

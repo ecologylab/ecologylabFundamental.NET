@@ -1,15 +1,14 @@
-using System;
 using System.Threading.Tasks;
-using Simpl.OODSS.Test.Messages;
-using Simpl.OODSS.Distributed.Client;
 using Ecologylab.Collections;
-using Simpl.OODSS.Test.TypesScope;
-using Simpl.Serialization;
+using Simpl.OODSS.Distributed.Client;
 using Simpl.OODSS.Messages;
+using Simpl.OODSS.TestClientAndMessage.Messages;
+using Simpl.OODSS.TestClientAndMessage.TypesScope;
+using Simpl.Serialization;
 
-namespace Simpl.OODSS.Test.Client
+namespace Simpl.OODSS.TestClientAndMessage.Client
 {
-    class TestServiceClient : ITestServiceUpdateListener
+    public class TestServiceClient : ITestServiceUpdateListener
     {
         private readonly string _serviceAddress;
         private readonly int _port;
@@ -22,7 +21,7 @@ namespace Simpl.OODSS.Test.Client
         {
             _serviceAddress = serviceAddress;
             _port = port;
-            _testTypesScope = TestTypesScope.Get();
+            _testTypesScope = TestClientTypesScope.Get();
             _clientScope = new Scope<object>();
             _clientScope.Add(TestServiceConstants.ServiceUpdateListener, this);
             _client = new WebSocketOODSSClient(_serviceAddress, _port, _testTypesScope, _clientScope);

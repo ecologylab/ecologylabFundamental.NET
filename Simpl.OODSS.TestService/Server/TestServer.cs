@@ -1,21 +1,21 @@
 using Ecologylab.Collections;
 using Simpl.OODSS.Distributed.Server;
-using Simpl.OODSS.Messages;
-using Simpl.OODSS.Test.TypesScope;
+using Simpl.OODSS.TestClientAndMessage.TypesScope;
+using Simpl.OODSS.TestService.TypesScope;
 using Simpl.Serialization;
 
-namespace Simpl.OODSS.Test.Server
+namespace Simpl.OODSS.TestService.Server
 {
-    class TestService
+    public class TestServer
     {
         private Scope<object> _applicationObjectScope;
         private SimplTypesScope _serviceTypesScope;
         private WebSocketOODSSServer _webSocketOODSSServer;
 
-        public TestService(int port)
+        public TestServer(int port)
         {
             _applicationObjectScope = new Scope<object>();
-            _serviceTypesScope = TestTypesScope.Get(); 
+            _serviceTypesScope = TestServiceTypesScope.Get(); 
             _webSocketOODSSServer = new WebSocketOODSSServer(_serviceTypesScope, _applicationObjectScope, -1, -1, port);
         }
 

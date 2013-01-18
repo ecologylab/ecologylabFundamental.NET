@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Simpl.OODSS.Test.Client;
-using Simpl.OODSS.Test.Messages;
+using System;
 using Simpl.OODSS.Messages;
+using Simpl.OODSS.TestClientAndMessage.Messages;
 using Simpl.Serialization;
 
-namespace Simpl.OODSS.Test.TypesScope
+namespace Simpl.OODSS.TestClientAndMessage.TypesScope
 {
-    class TestTypesScope
+    public class TestClientTypesScope
     {
         public const string TypesScopeName = "TestTypesScope";
 

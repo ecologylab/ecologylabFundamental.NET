@@ -130,7 +130,7 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
         }
 
-        public void CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token)
+        public Task CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token)
         {
             Thread senderThread = new Thread(new ThreadStart(sender));
             Thread receiverThread = new Thread(new ThreadStart(receiver));
@@ -141,6 +141,7 @@ namespace Simpl.OODSS.PlatformSpecifics
             senderThread.Start();
             receiverThread.Start();
             dataReceiverThread.Start();
+            return null;
         }
     }
 }

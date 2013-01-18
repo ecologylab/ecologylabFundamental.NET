@@ -1,14 +1,9 @@
-﻿using Simpl.OODSS.Messages;
+using Simpl.OODSS.Messages;
 using Simpl.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Simpl.OODSS.Test.Messages
+namespace Simpl.OODSS.TestClientAndMessage.Messages
 {
-    class TestServiceResponse : ResponseMessage
+    public class TestServiceResponse : ResponseMessage
     {
         [SimplScalar] private string message;
 

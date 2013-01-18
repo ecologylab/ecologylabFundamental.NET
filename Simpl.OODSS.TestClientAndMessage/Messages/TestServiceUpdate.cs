@@ -1,15 +1,11 @@
-﻿using Ecologylab.Collections;
+using System;
+using Ecologylab.Collections;
 using Simpl.OODSS.Messages;
 using Simpl.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Simpl.OODSS.Test.Messages
+namespace Simpl.OODSS.TestClientAndMessage.Messages
 {
-    class TestServiceUpdate : UpdateMessage
+    public class TestServiceUpdate : UpdateMessage
     {
         [SimplScalar] private string message;
 

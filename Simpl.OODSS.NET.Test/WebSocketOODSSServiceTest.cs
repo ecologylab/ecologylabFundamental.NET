@@ -5,12 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Simpl.OODSS.Distributed.Server;
-using Simpl.OODSS.Test.Client;
-using Simpl.OODSS.Test.Messages;
-using Simpl.OODSS.Test.Server;
 using Simpl.OODSS.Messages;
-using Simpl.OODSS.Test.TypesScope;
+using Simpl.OODSS.TestClientAndMessage.Messages;
+using Simpl.OODSS.TestService.Server;
 using Simpl.Serialization;
+using Simpl.OODSS.TestClientAndMessage.Client;
 
 namespace Simpl.OODSS.Test
 {
@@ -20,13 +19,13 @@ namespace Simpl.OODSS.Test
         private int _port = 2018;
         private string _serverAddress = "localhost";
 
-        private TestService _testService;
+        private TestServer _testService;
         private TestServiceClient _testServiceClient;
 
         [TestMethod]
         public async Task TestWebSocketOODSSService()
         {
-            _testService = new TestService(_port);
+            _testService = new TestServer(_port);
             Assert.AreEqual(true, _testService.StartService());
 
             _testServiceClient = new TestServiceClient(_serverAddress, _port);
@@ -50,7 +49,7 @@ namespace Simpl.OODSS.Test
         [TestMethod]
         public async Task TestLargeSizeMessage()
         {
-            _testService = new TestService(_port);
+            _testService = new TestServer(_port);
             Assert.AreEqual(true, _testService.StartService());
 
             _testServiceClient = new TestServiceClient(_serverAddress, _port);
@@ -78,7 +77,7 @@ namespace Simpl.OODSS.Test
         [TestMethod]
         public async Task TestMultipleClients()
         {
-            _testService = new TestService(_port);
+            _testService = new TestServer(_port);
             Assert.AreEqual(true, _testService.StartService());
 
             const int numClients = 5;
@@ -111,7 +110,7 @@ namespace Simpl.OODSS.Test
         [TestMethod]
         public async Task TestClientReConnect()
         {
-            _testService = new TestService(_port);
+            _testService = new TestServer(_port);
             Assert.AreEqual(true, _testService.StartService());
 
             // first connection
