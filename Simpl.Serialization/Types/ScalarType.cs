@@ -285,6 +285,11 @@ namespace Simpl.Serialization.Types
                 return false;
             }
         }
+
+        public virtual ScalarType OperativeScalarType
+        {
+            get { return this; }
+        }
     }
 
 }

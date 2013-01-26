@@ -82,7 +82,7 @@ namespace Simpl.Serialization.Types
             : base(name)
         {
             _cSharpType = cSharpType;
-            simpleName = cSharpType.Name;
+            simpleName = javaTypeName;
             cSharpTypeName = cSharpType.Name;
 
             this.javaTypeName = javaTypeName;
