@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D16C9FE7-B1B4-436A-A7EB-66C757A56193}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Simpl.OODSS.Test</RootNamespace>
+    <AssemblyName>Simpl.OODSS.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="WebSocketOODSSServiceTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simpl.Fundamental.DotNet\Simpl.Fundamental.DotNet.csproj">
+      <Project>{cab84a50-f2bb-475d-875c-c928c0a206f8}</Project>
+      <Name>Simpl.Fundamental.DotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.Fundamental\Simpl.Fundamental.csproj">
+      <Project>{10287dd6-0c07-4737-9469-0aa21b7723bf}</Project>
+      <Name>Simpl.Fundamental</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.OODSS.DotNet\Simpl.OODSS.DotNet.csproj">
+      <Project>{15834bb9-1743-40b3-a2ab-e5ce87fa2753}</Project>
+      <Name>Simpl.OODSS.DotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.OODSS.TestClientAndMessage\Simpl.OODSS.TestClientAndMessage.csproj">
+      <Project>{2ac7b9da-5364-4fd7-a97a-747951f25b26}</Project>
+      <Name>Simpl.OODSS.TestClientAndMessage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.OODSS.TestService\Simpl.OODSS.TestService.csproj">
+      <Project>{71cba717-3e20-4785-b153-86b1ba0d7a09}</Project>
+      <Name>Simpl.OODSS.TestService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.OODSS\Simpl.OODSS.csproj">
+      <Project>{4f3bf780-cc24-4eba-9238-5d99b83d1e27}</Project>
+      <Name>Simpl.OODSS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.Serialization.DotNet\Simpl.Serialization.DotNet.csproj">
+      <Project>{b3cf19e7-32c1-410a-950d-5b92850854e8}</Project>
+      <Name>Simpl.Serialization.DotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simpl.Serialization\Simpl.Serialization.csproj">
+      <Project>{16c61dd8-68b1-4509-8e18-6f7e80b605a3}</Project>
+      <Name>Simpl.Serialization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

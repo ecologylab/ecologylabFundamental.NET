@@ -8,6 +8,6 @@ namespace Simpl.OODSS.Distributed.Server
 {
     public interface ServerProcessor
     {
-        bool RestoreContextManagerFromSessionId(string incomingSessionId, BaseSessionManager baseSessionManager);
+        bool RestoreContextManagerFromSessionId(string incomingSessionId, string newSessionId, BaseSessionManager baseSessionManager);
     }
 }

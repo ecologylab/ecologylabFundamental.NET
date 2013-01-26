@@ -45,7 +45,7 @@ namespace Simpl.OODSS.Distributed.Client
 
         private CancellationTokenSource _cancellationTokenSource;
 
-        private bool _isRunning = true;
+        private volatile bool _isRunning = false;
 
         private static ManualResetEventSlim SendDone = new ManualResetEventSlim(false);
         //private static ManualResetEventSlim ReceiveDone = new ManualResetEventSlim(false);
@@ -64,6 +64,8 @@ namespace Simpl.OODSS.Distributed.Client
         private byte[] _readBuffer = new byte[40000];   // 40000 is a emperial number that works well with streamsocket
         private Uri _serverUri;
         const string WebSocketPrefix = "ws://";
+
+        private readonly object syncLock = new object();
 
         // background working thread
 
@@ -100,10 +102,12 @@ namespace Simpl.OODSS.Distributed.Client
         /// <summary>
         /// Starting the client, setting up the websocketclient
         /// </summary>
-        public async void StartAsync()
+        public async Task<bool> StartAsync()
         {
+            _isRunning = true;
+
             _cancellationTokenSource = new CancellationTokenSource();
-            _cancellationTokenSource.Token.Register(PerformDisconnect);
+            //_cancellationTokenSource.Token.Register(PerformDisconnect);
             
             String uri = WebSocketPrefix + ServerAddress + ":" + PortNumber;
             // create and connect
@@ -112,29 +116,26 @@ namespace Simpl.OODSS.Distributed.Client
             await OODSSPlatformSpecifics.Get().ConnectWebSocketClientAsync(_webSocketClient, new Uri(uri),
                                                                      _cancellationTokenSource.Token);
 
-            //// start background sending task
-            //Task.Factory.StartNew(SendMessageWorker, _cancellationTokenSource.Token);
-            
-            //// start background receiving task
-            //Task.Factory.StartNew(ReceiveMessageWorker, _cancellationTokenSource.Token);
-
-            //// start background websocket data receiver
-            //Task.Factory.StartNew(WebSocketDataReceiver, _cancellationTokenSource.Token);
             OODSSPlatformSpecifics.Get().CreateWorkingThreadAndStart(SendMessageWorker, ReceiveMessageWorker, WebSocketDataReceiver, _cancellationTokenSource.Token);
 
-            await ConnectOODSSServerAsync();
+            return await ConnectOODSSServerAsync();
         }
 
-        public void StopClient()
+        public async Task StopClient()
         {
-            _isRunning = false;
+            lock(syncLock)
+            {
+                _isRunning = false;
+            }
+            PerformDisconnect();
             _cancellationTokenSource.Cancel();
+            
         }
 
-        public void PerformDisconnect()
+        private void PerformDisconnect()
         {
             Debug.WriteLine("Performing Disconnect");
-            OODSSPlatformSpecifics.Get().DisconnectWebSocketClient(_webSocketClient);
+            OODSSPlatformSpecifics.Get().DisconnectWebSocketClientAsync(_webSocketClient);
         }
 
         private void UnableToRestorePreviousConnection(string sessionId, string newId)
@@ -315,10 +316,10 @@ namespace Simpl.OODSS.Distributed.Client
         /// <summary>
         /// background worker getting request from the blocking queue and send it out.
         /// </summary>
-        private void SendMessageWorker()
+        private async void SendMessageWorker()
         {
             Debug.WriteLine("Entering OODSS Send Message Loop");
-            while (_isRunning)
+            while (_isRunning && !_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
@@ -329,15 +330,15 @@ namespace Simpl.OODSS.Distributed.Client
                     Debug.WriteLine("Trying to send the string: {0}", q.Uid);
                     
                     //SendDone = new ManualResetEventSlim(false);
-                    CreatePacketFromMessageAndSend(q);
+                    await CreatePacketFromMessageAndSend(q);
                     //SendDone.Wait(_cancellationTokenSource.Token);
 
                     Debug.WriteLine("---sent Request: {0}", q.Uid);
-
                 }
                 catch(OperationCanceledException e)
                 {
-                    Debug.WriteLine("The operation was cancelled." + e.CancellationToken);
+                    Debug.WriteLine("SendWorker: The operation was cancelled." + e.CancellationToken);
+                    break;
                 }
                 catch (Exception e)
                 {
@@ -352,7 +353,7 @@ namespace Simpl.OODSS.Distributed.Client
         private void ReceiveMessageWorker()
         {
             Debug.WriteLine("Entering OODSS Receive Message Loop");
-            while (_isRunning)
+            while (_isRunning && !_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
@@ -377,7 +378,8 @@ namespace Simpl.OODSS.Distributed.Client
                 }
                 catch(OperationCanceledException e)
                 {
-                    Debug.WriteLine("The operation was cancelled." + e.CancellationToken);
+                    Debug.WriteLine("Receiving worker: The operation was cancelled." + e.CancellationToken);
+                    break;
                 }
                 catch (Exception e)
                 {
@@ -388,18 +390,33 @@ namespace Simpl.OODSS.Distributed.Client
 
         private async void WebSocketDataReceiver()
         {
-             while (_isRunning)
+             while (_isRunning && !_cancellationTokenSource.Token.IsCancellationRequested)
              {
-                 // websocket client receive data from stream
-                 byte[] incomingData = await
-                     OODSSPlatformSpecifics.Get().ReceiveMessageFromWebSocketClientAsync(_webSocketClient, _readBuffer,
-                                                                                         _cancellationTokenSource.Token);
-                 // process the byte data
-                 long uid = BitConverter.ToInt64(incomingData, 0);
-                 string message = Encoding.UTF8.GetString(incomingData, 8, incomingData.Length - 8);
-                 Debug.WriteLine("Got the message: " + message + " uid: " + uid);
+                 try
+                 {
+                     // websocket client receive data from stream
+                     byte[] incomingData = await
+                                           OODSSPlatformSpecifics.Get()
+                                                                 .ReceiveMessageFromWebSocketClientAsync(
+                                                                     _webSocketClient, _readBuffer,
+                                                                     _cancellationTokenSource.Token);
+                     // process the byte data
+                     long uid = BitConverter.ToInt64(incomingData, 0);
+                     string message = Encoding.UTF8.GetString(incomingData, 8, incomingData.Length - 8);
+                     Debug.WriteLine("Got the message: " + message + " uid: " + uid);
 
-                 ProcessString(message, uid);
+                     ProcessString(message, uid);
+                 }
+                 catch (OperationCanceledException e)
+                 {
+                     Debug.WriteLine("DataReceiver: The operation was cancelled." + e.CancellationToken);
+                     break;
+                 }
+                 catch (Exception e)
+                 {
+                     Debug.WriteLine("DataReceiver: The operation was cancelled.");
+                     break;
+                 }
              }
         }
 

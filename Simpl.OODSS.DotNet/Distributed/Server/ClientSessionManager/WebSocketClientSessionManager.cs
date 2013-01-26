@@ -14,6 +14,8 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
     public class WebSocketClientSessionManager: BaseSessionManager
     {
 
+        private readonly object syncLock = new object();
+
         public WebSocketSession Session { get; set; }
 
         public WebSocketClientSessionManager(string sessionId, SimplTypesScope translationScope, Scope<object> applicationObjectScope, ServerProcessor frontend)
@@ -70,10 +72,10 @@ namespace Simpl.OODSS.Distributed.Server.ClientSessionManager
                         else
                         {
                             // client is expecting an old ContextManager
-                            response = FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, this) ? new InitConnectionResponse(incomingSessionId) : new InitConnectionResponse(SessionId);
+                            FrontEnd.RestoreContextManagerFromSessionId(incomingSessionId, SessionId, this);
+                            response = new InitConnectionResponse(SessionId);
                         }
-
-                        Initialized = true;
+                        Initialized = true;    
                     }
                 }
                 else

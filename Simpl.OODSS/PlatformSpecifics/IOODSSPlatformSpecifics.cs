@@ -22,7 +22,7 @@ namespace Simpl.OODSS.PlatformSpecifics
         /// </summary>
         /// <param name="webSocketClient"></param>
         /// <returns></returns>
-        void DisconnectWebSocketClient(object webSocketClient);
+        Task DisconnectWebSocketClientAsync(object webSocketClient);
 
         /// <summary>
         /// Check whether websocket client is connected
@@ -48,6 +48,6 @@ namespace Simpl.OODSS.PlatformSpecifics
         Task<byte[]> ReceiveMessageFromWebSocketClientAsync(object webSocketClient, byte[] buffer, CancellationToken token);
 
 
-        void CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token);
+        Task CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token);
     }
 }

@@ -24,19 +24,19 @@ namespace Simpl.OODSS.PlatformSpecifics
         /// <returns></returns>
         /// 
         /// 
-        private StreamWebSocket _streamWebSocket;
-
-        private StreamWebSocket _streamWebSocketServer;
+//        private StreamWebSocket _streamWebSocket;
+//
+//        private StreamWebSocket _streamWebSocketServer;
 
         public object CreateWebSocketClientObject()
         {
             StreamWebSocket webSocket =  new StreamWebSocket();
-            _streamWebSocket = webSocket;
-            webSocket.Closed += Closed;
+            //_streamWebSocket = webSocket;
+            //webSocket.Closed += Closed;
             return webSocket;
         }
 
-        public void DisconnectWebSocketClient(object webSocketClient)
+        public Task DisconnectWebSocketClientAsync(object webSocketClient)
         {
             var websocket = webSocketClient as StreamWebSocket;
             if (websocket == null)
@@ -44,6 +44,8 @@ namespace Simpl.OODSS.PlatformSpecifics
                 throw new InvalidCastException("cannot cast webSocketClient object to StreamWebSocket");
             }
             websocket.Close(1000, "GoodBye");
+            websocket.Dispose();
+            return null;
         }
 
         public bool WebSocketIsConnected(object webSocketClient)
@@ -61,13 +63,16 @@ namespace Simpl.OODSS.PlatformSpecifics
         {
             // Make a local copy to avoid races with the Closed event.
             StreamWebSocket webSocket = webSocketClient as StreamWebSocket;
+            //var _streamWebSocket = new StreamWebSocket();
             if (webSocket == null)
             {
                 throw new InvalidCastException("cannot cast webSocketClient object to StreamWebSocket");
             }
             try
             {
-                await _streamWebSocket.ConnectAsync(uri);
+                await ((StreamWebSocket) webSocketClient).ConnectAsync(uri);
+                //await _streamWebSocket.ConnectAsync(uri);
+                //webSocketClient = _streamWebSocket;
             }
             catch (Exception ex)
             {
@@ -87,6 +92,7 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
             try
             {
+                var info = websocket.Information;
                 IOutputStream writeStream = websocket.OutputStream;
                 await writeStream.WriteAsync(outMessage.AsBuffer());
             }
@@ -113,7 +119,8 @@ namespace Simpl.OODSS.PlatformSpecifics
                 while(true)
                 {
                     int bytesReceived = 0;
-                    int read = await readStream.ReadAsync(buffer, 0, buffer.Length);
+                    Debug.WriteLine("local address: " + websocket.Information.LocalAddress);
+                    int read = await readStream.ReadAsync(buffer, 0, buffer.Length, token);
                     bytesReceived += read;
                     bytesReceived -= 4;
                     if (read < 4) continue; // TODO: potential problem? 
@@ -150,26 +157,27 @@ namespace Simpl.OODSS.PlatformSpecifics
             }
         }
 
-        public void CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token)
+        public Task CreateWorkingThreadAndStart(Action sender, Action receiver, Action dataReceiver, CancellationToken token)
         {
             ThreadPool.RunAsync(delegate { sender.Invoke(); });
-            ThreadPool.RunAsync(delegate { sender.Invoke(); });
-            ThreadPool.RunAsync(delegate { sender.Invoke(); });
+            ThreadPool.RunAsync(delegate { receiver.Invoke(); });
+            ThreadPool.RunAsync(delegate { dataReceiver.Invoke(); });
+            return null;
         }
 
-        private void Closed(IWebSocket sender, WebSocketClosedEventArgs args)
-        {
-            // You can add code to log or display the code and reason
-            // for the closure (stored in args.code and args.reason)
-
-            // This is invoked on another thread so use Interlocked 
-            // to avoid races with the Start/Stop/Reset methods.
-            StreamWebSocket webSocket = Interlocked.Exchange(ref _streamWebSocket, null);
-            if (webSocket != null)
-            {
-                webSocket.Dispose();
-            }
-
-        }
+//        private void Closed(IWebSocket sender, WebSocketClosedEventArgs args)
+//        {
+//            // You can add code to log or display the code and reason
+//            // for the closure (stored in args.code and args.reason)
+//
+//            // This is invoked on another thread so use Interlocked 
+//            // to avoid races with the Start/Stop/Reset methods.
+//            StreamWebSocket webSocket = Interlocked.Exchange(ref _streamWebSocket, null);
+//            if (webSocket != null)
+//            {
+//                webSocket.Dispose();
+//            }
+//
+//        }
     }
 }

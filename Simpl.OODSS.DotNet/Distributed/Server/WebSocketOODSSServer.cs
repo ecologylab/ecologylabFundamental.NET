@@ -63,8 +63,8 @@ namespace Simpl.OODSS.Distributed.Server
         /// <param name="idleConnectionTimeout"></param>
         /// <param name="maxMessageSize"></param>
         public WebSocketOODSSServer(SimplTypesScope serverTranslationScope, Scope<object> applicationObjectScope,
-			int idleConnectionTimeout=-1, int maxMessageSize=-1)
-            : base(0, Dns.GetHostAddresses(Dns.GetHostName()), serverTranslationScope, applicationObjectScope, 
+			int idleConnectionTimeout=-1, int maxMessageSize=-1, int port=0)
+            : base(port, Dns.GetHostAddresses(Dns.GetHostName()), serverTranslationScope, applicationObjectScope, 
             idleConnectionTimeout, maxMessageSize)
         {
             MaxMessageSize = maxMessageSize + NetworkConstants.MaxHttpHeaderLength;
@@ -77,13 +77,12 @@ namespace Simpl.OODSS.Distributed.Server
 
             _serverInstance = this;
 
-            SetUpWebSocketServer();
-            StartServer();
+            SetUpWebSocketServer(port);
         }
         #endregion Constructor
 
         #region WebSocketServer
-        private void SetUpWebSocketServer()
+        private void SetUpWebSocketServer(int port)
         {
             WebSocketServer = new WebSocketServer();
             WebSocketServer.NewDataReceived += WebSocketServer_NewDataReceived;
@@ -93,10 +92,10 @@ namespace Simpl.OODSS.Distributed.Server
 
             WebSocketServer.Setup(new RootConfig(), new ServerConfig
             {
-                Port = 2018,
+                Port = port,
                 Ip = "Any",
                 MaxConnectionNumber = 100,
-                MaxCommandLength = 100000,
+                MaxCommandLength = 10000000,
                 Mode = SocketMode.Async,
                 Name = "SuperWebSocket Server"
             }, SocketServerFactory.Instance);
@@ -135,20 +134,25 @@ namespace Simpl.OODSS.Distributed.Server
         private void WebSocketServer_SessionClosed(WebSocketSession session, CloseReason reason)
         {
             Console.WriteLine("Session "+ session.SocketSession.RemoteEndPoint +" closed because: " + reason);
+            //remove the session from the map.
+            lock(ClientSessionManagerMap)
+            {
+                ClientSessionManagerMap.Remove(session.SocketSession.SessionID);
+            }
         }
 
         /// <summary>
         /// start server
         /// </summary>
-        protected void StartServer()
+        public override bool Start()
         {
-            WebSocketServer.Start();
+            return WebSocketServer.Start();
         }
 
         /// <summary>
         ///  stop server
         /// </summary>
-        public void StopServer()
+        public override void Stop()
         {
             WebSocketServer.Stop();
         }
@@ -287,7 +291,7 @@ namespace Simpl.OODSS.Distributed.Server
         /// <param name="incomingSessionId">received sesion id information</param>
         /// <param name="newSessionManager">a new session manager</param>
         /// <returns>whether the session can be restored</returns>
-        public bool RestoreContextManagerFromSessionId(string incomingSessionId, BaseSessionManager newSessionManager)
+        public bool RestoreContextManagerFromSessionId(string incomingSessionId, string newSessionId, BaseSessionManager newSessionManager)
         {
             WebSocketClientSessionManager oldSessionManager;
             lock(ClientSessionManagerMap)
@@ -298,10 +302,12 @@ namespace Simpl.OODSS.Distributed.Server
             {
                 return false;
             }
-            oldSessionManager.Session = ((WebSocketClientSessionManager) newSessionManager).Session;
+            //should restore any useful information from the oldsessionmanager to the new one. but what information? local scope? 
+            //1/16/2013 fei
+
             lock(ClientSessionManagerMap)
             {
-                ClientSessionManagerMap.Remove(newSessionManager.SessionId);
+                ClientSessionManagerMap.Remove(incomingSessionId);
             }
             return true;
         }

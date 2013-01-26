@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{16C61DD8-68B1-4509-8E18-6F7E80B605A3}</ProjectGuid>
@@ -72,9 +72,13 @@
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <Content Include="Lib\AsyncCtpLibrary.dll" />
-    <Content Include="Lib\AsyncCtpLibrary.xml" />
+    <Content Include="Lib\AsyncCtpLibrary.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Lib\AsyncCtpLibrary_Silverlight.dll" />
-    <Content Include="Lib\AsyncCtpLibrary_Silverlight.xml" />
+    <Content Include="Lib\AsyncCtpLibrary_Silverlight.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Lib\LitJson.dll" />
     <Content Include="Lib\Newtonsoft.Json.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
