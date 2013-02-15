@@ -112,6 +112,7 @@
     <Compile Include="Types\PlatformSpecificTypesWindowsStoreApps.cs" />
     <Compile Include="Types\Scalar\ColorType.cs" />
     <Compile Include="Types\Scalar\FileType.cs" />
+    <Compile Include="Types\Scalar\PointType.cs" />
     <Compile Include="Types\Scalar\RectType.cs" />
   </ItemGroup>
   <ItemGroup />

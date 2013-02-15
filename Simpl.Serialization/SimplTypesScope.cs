@@ -134,7 +134,9 @@ namespace Simpl.Serialization
         public SimplTypesScope(String name, SimplTypesScope[] _inheritedSimplTypesScopes, Type[] translations)
             : this(name, _inheritedSimplTypesScopes)
         {   
-	         AddTranslations(translations);
+	        AddTranslations(translations);
+
+            AddTranslationScope(name);
         }
 
         /// <summary>

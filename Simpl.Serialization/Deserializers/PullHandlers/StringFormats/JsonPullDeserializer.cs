@@ -123,63 +123,105 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="rootClassDescriptor"></param>
         private void CreateObjectModel(object root, ClassDescriptor rootClassDescriptor)
         {
+            FieldDescriptor currentFieldDescriptor = null;
+            bool insideWrapped = false;
+
             while (_jsonReader.TokenType != JsonToken.EndObject)
             {
-                object jsonReaderValue = _jsonReader.Value;
+                //                object jsonReaderValue = _jsonReader.Value;
+                //
+                //                FieldDescriptor currentFieldDescriptor =
+                //                    rootClassDescriptor.GetFieldDescriptorByTag(jsonReaderValue.ToString());
+                //
+                //                if(currentFieldDescriptor == null)
+                //                {
+                //                    String ignoredTag = jsonReaderValue.ToString();
+                //                    IgnoreCurrentTag();
+                //                    Debug.WriteLine("WARNING: ignoring tag " + ignoredTag);
+                //                    continue;
+                //                }
 
-                FieldDescriptor currentFieldDescriptor =
-                    rootClassDescriptor.GetFieldDescriptorByTag(jsonReaderValue.ToString());
-
-                if(currentFieldDescriptor == null)
+                var currentTag = (_jsonReader.Value != null) ? _jsonReader.Value.ToString() : null;
+                if (!HandleSimplId(currentTag, root))
                 {
-                    String ignoredTag = jsonReaderValue.ToString();
-                    IgnoreCurrentTag();
-                    Debug.WriteLine("WARNING: ignoring tag " + ignoredTag);
-                    continue;
-                }
+                    currentFieldDescriptor = currentFieldDescriptor != null && currentFieldDescriptor.FdType== FieldTypes.Wrapper
+                        ? currentFieldDescriptor.WrappedFd
+                        : rootClassDescriptor.GetFieldDescriptorByTag(currentTag);
 
-                switch (currentFieldDescriptor.FdType)
-                {
-                    case FieldTypes.Scalar:
-                        DeserializeScalar(root, currentFieldDescriptor);
-                        break;
-                    case FieldTypes.CompositeElement:
-                        DeserializeComposite(root, currentFieldDescriptor);
-                        break;
-                    case FieldTypes.CollectionScalar:
-                        DeserializeScalarCollection(root, currentFieldDescriptor);
-                        break;
-                    case FieldTypes.CollectionElement:
-                        DeserializeCompositeCollection(root, currentFieldDescriptor);
-                        break;
-                    case FieldTypes.MapElement:
-                        DeserializeCompositeMap(root, currentFieldDescriptor);
-                        break;
-                    case FieldTypes.Wrapper:
-                        if (!currentFieldDescriptor.WrappedFd.IsPolymorphic)
-                            _jsonReader.Read();
+                    if (currentFieldDescriptor == null)
+                    {
+                        currentFieldDescriptor = FieldDescriptor.MakeIgnoredFieldDescriptor(currentTag);
+                    }
 
-                        _jsonReader.Read();
+                    switch (currentFieldDescriptor.FdType)
+                    {
+                        case FieldTypes.Scalar:
+                            DeserializeScalar(root, currentFieldDescriptor);
+                            break;
+                        case FieldTypes.CompositeElement:
+                            DeserializeComposite(root, currentFieldDescriptor);
+                            if (insideWrapped)
+                            {
+                                insideWrapped = false;
+                                _jsonReader.Read();
+                            }
+                            break;
+                        case FieldTypes.CollectionScalar:
+                            DeserializeScalarCollection(root, currentFieldDescriptor);
+                            break;
+                        case FieldTypes.CollectionElement:
+                            DeserializeCompositeCollection(root, currentFieldDescriptor);
+                            break;
+                        case FieldTypes.MapElement:
+                            DeserializeCompositeMap(root, currentFieldDescriptor);
+                            break;
+                        case FieldTypes.Wrapper:
+                            if (!currentFieldDescriptor.WrappedFd.IsPolymorphic)
+                                _jsonReader.Read();
 
-                        currentFieldDescriptor = currentFieldDescriptor.WrappedFd;
-                        if (currentFieldDescriptor.FdType == FieldTypes.CompositeElement)
-                            goto case FieldTypes.CompositeElement;
-                        if (currentFieldDescriptor.FdType == FieldTypes.CollectionScalar)
-                            goto case FieldTypes.CollectionScalar;
-                        if (currentFieldDescriptor.FdType == FieldTypes.CollectionElement)
-                            goto case FieldTypes.CollectionElement;
-                        if (currentFieldDescriptor.FdType == FieldTypes.MapElement)
-                            goto case FieldTypes.MapElement;
+                            insideWrapped = true;
 
-                        break;
+                            //                        currentFieldDescriptor = currentFieldDescriptor.WrappedFd;
+                            //                        if (currentFieldDescriptor.FdType == FieldTypes.CompositeElement)
+                            //                            goto case FieldTypes.CompositeElement;
+                            //                        if (currentFieldDescriptor.FdType == FieldTypes.CollectionScalar)
+                            //                            goto case FieldTypes.CollectionScalar;
+                            //                        if (currentFieldDescriptor.FdType == FieldTypes.CollectionElement)
+                            //                            goto case FieldTypes.CollectionElement;
+                            //                        if (currentFieldDescriptor.FdType == FieldTypes.MapElement)
+                            //                            goto case FieldTypes.MapElement;
+
+                            break;
+                    }
                 }
                 _jsonReader.Read();
             }
-
             DeserializationPostHook(root, translationContext);
 		    if (deserializationHookStrategy != null)
 			    deserializationHookStrategy.DeserializationPostHook(root, null);
         }
+
+        /**
+	     * Function used for handling graph's simpl.id tag. If the tag is present the current ElementState
+	     * object is marked as unmarshalled. Therefore, later simpl.ref can be used to extract this
+	     * instance
+	     * 
+	     * @param tagName
+	     * @param root
+	     * @return
+	     * @throws JsonParseException
+	     * @throws IOException
+	     */
+	    private bool HandleSimplId(String tagName, Object root)
+	    {
+            if (TranslationContext.SimplId.Equals(tagName))
+		    {
+		        _jsonReader.Read();
+			    translationContext.MarkAsUnmarshalled(_jsonReader.Value.ToString(), root);
+			    return true;
+		    }
+		    return false;
+	    }
 
         /// <summary>
         /// 
@@ -325,7 +367,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 while (_jsonReader.TokenType != JsonToken.EndArray)
                 {
                     _jsonReader.Read();
-                    String tagName = _jsonReader.Value.ToString();
+                    String tagName = _jsonReader.Value != null ? _jsonReader.Value.ToString() : null;
 
                     _jsonReader.Read();
 
@@ -372,7 +414,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeComposite(object root, FieldDescriptor currentFieldDescriptor)
         {
-            String tagName = _jsonReader.Value.ToString();
+            //while (_jsonReader.Value == null && _jsonReader.TokenType != JsonToken.EndObject)
+            _jsonReader.Read();
+
+            String tagName = (_jsonReader.Value != null) ? _jsonReader.Value.ToString() : null;
 
             _jsonReader.Read();
             

@@ -17,7 +17,8 @@ namespace Simpl.Serialization.Types
                            {
                                new FileType(),
                                new RectType(),
-                               new ColorType()
+                               new ColorType(),
+                               new PointType(),
                            };
 
             }

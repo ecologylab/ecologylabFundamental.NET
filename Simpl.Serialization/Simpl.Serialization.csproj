@@ -236,6 +236,7 @@
     <Compile Include="Types\Scalar\IntType.cs" />
     <Compile Include="Types\Scalar\LongType.cs" />
     <Compile Include="Types\Scalar\ParsedUriType.cs" />
+    <Compile Include="Types\Scalar\PointTypeBase.cs" />
     <Compile Include="Types\Scalar\RectTypeBase.cs" />
     <Compile Include="Types\Scalar\ReferenceType.cs" />
     <Compile Include="Types\Scalar\RegexType.cs" />
