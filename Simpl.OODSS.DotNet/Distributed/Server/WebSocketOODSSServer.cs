@@ -29,7 +29,7 @@ namespace Simpl.OODSS.Distributed.Server
         protected string CurrentMessage { get; private set; }
         protected byte[] CurrentData { get; private set; }
 
-        private DictionaryList<object, WebSocketClientSessionManager>
+        protected DictionaryList<object, WebSocketClientSessionManager>
             ClientSessionManagerMap = new DictionaryList<object, WebSocketClientSessionManager>();
 
         private static readonly Encoding EncodedCharSet = NetworkConstants.Charset;
@@ -115,7 +115,7 @@ namespace Simpl.OODSS.Distributed.Server
             byte[] messageBytes = new byte[messageBytesLength];
             Buffer.BlockCopy(CurrentData, 8, messageBytes, 0, messageBytesLength);
             CurrentMessage = Encoding.UTF8.GetString(messageBytes);
-            Console.WriteLine("Got the message: " + CurrentMessage);
+            //Console.WriteLine("Got the message: " + CurrentMessage);
             ProcessRead(session, uid, CurrentMessage);
         }
 
@@ -131,14 +131,15 @@ namespace Simpl.OODSS.Distributed.Server
             Console.WriteLine("Session connected: " + session.SocketSession.RemoteEndPoint);
         }
 
-        private void WebSocketServer_SessionClosed(WebSocketSession session, CloseReason reason)
+        protected void WebSocketServer_SessionClosed(WebSocketSession session, CloseReason reason)
         {
             Console.WriteLine("Session "+ session.SocketSession.RemoteEndPoint +" closed because: " + reason);
-            //remove the session from the map.
-            lock(ClientSessionManagerMap)
-            {
-                ClientSessionManagerMap.Remove(session.SocketSession.SessionID);
-            }
+            processSessionClosed(session.SocketSession.SessionID);
+        }
+
+        // extented class should provide proper logic to handle session close. 
+        public virtual void processSessionClosed(string sessionid)
+        {   
         }
 
         /// <summary>
@@ -194,7 +195,10 @@ namespace Simpl.OODSS.Distributed.Server
 
 
                 ResponseMessage responseMessage = cm.ProcessString(message, uid);
-
+                
+                if (responseMessage == null) 
+                    return;
+                
                 // send responseMessage back.
                 CreatePacketFromMessageAndSend(uid, responseMessage, session);            
             }
@@ -229,7 +233,7 @@ namespace Simpl.OODSS.Distributed.Server
             StringBuilder responseMessageStringBuilder = new StringBuilder();
             SimplTypesScope.Serialize(message, responseMessageStringBuilder, StringFormat.Xml);
             string req = responseMessageStringBuilder.ToString();        
-            Console.WriteLine("send message: "+ req + " uid "+uid);
+            //Console.WriteLine("send message: "+ req + " uid "+uid);
 
             byte[] uidBytes = BitConverter.GetBytes(uid);
             byte[] messageBytes = Encoding.UTF8.GetBytes(req);
@@ -243,7 +247,7 @@ namespace Simpl.OODSS.Distributed.Server
             Buffer.BlockCopy(messageBytes, 0, outMessage, lengthBytes.Length + uidBytes.Length, messageBytes.Length);
             
             session.SendResponse(outMessage);
-            //session.SendResponse(Encoding.UTF8.GetString(outMessage));
+            //session.SendResponseAsync(Encoding.UTF8.GetString(outMessage));
         }
 
         /// <summary>

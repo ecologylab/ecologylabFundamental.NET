@@ -59,7 +59,7 @@ namespace Simpl.OODSS.WinRT.Test
             _testServiceClient = new TestServiceClient(_serverAddress, _port);
             bool clientConnected = await _testServiceClient.StartConnection();
 
-            const int length = 100000;
+            const int length = 30000;
             var charArray = new char[length];
             charArray[0] = 'a';
             for (int i = 1; i < length - 1; ++i) charArray[i] = 'b';
