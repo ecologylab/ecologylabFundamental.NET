@@ -62,9 +62,9 @@ namespace Simpl.Serialization.Serializers.StringFormats
 
             WriteObjectStart(rootObjectFieldDescriptor, textWriter, withTag);
            
-            IEnumerable<FieldDescriptor> allFieldDescriptors = GetClassDescriptor(obj).AllFieldDescriptors;
+            ClassDescriptor cd = GetClassDescriptor(obj);
 
-            SerializeFields(obj, textWriter, translationContext, allFieldDescriptors.ToList());
+            SerializeFields(obj, textWriter, translationContext, cd);
 
             WriteClose(textWriter);
 
@@ -80,19 +80,28 @@ namespace Simpl.Serialization.Serializers.StringFormats
         /// <param name="textWriter"></param>
         /// <param name="translationContext"></param>
         /// <param name="allFieldDescriptors"></param>
-        private void SerializeFields(object obj, TextWriter textWriter, TranslationContext translationContext, IList<FieldDescriptor> allFieldDescriptors)
+        private void SerializeFields(object obj, TextWriter textWriter, TranslationContext translationContext, ClassDescriptor cd)
         {
-            int numOfFields = 0;
+            List<FieldDescriptor> allFieldDescriptors = cd.AllFieldDescriptors.ToList();
 
             if(SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
             {
                 if(translationContext.NeedsHashCode(obj))
                 {
-                    WriteSimplIdAttribute(obj, textWriter, allFieldDescriptors.Count() <= 0, translationContext);
+                    WriteSimplIdAttribute(obj, textWriter, allFieldDescriptors.Count <= 0, translationContext);
                 }
             }
 
-            foreach (FieldDescriptor fd in allFieldDescriptors)
+            List<FieldDescriptor> attributeFieldDescriptors = cd.AttributeFieldDescriptors as List<FieldDescriptor>;
+		    int numOfFields = SerializeFieldsHelper(textWriter, obj, translationContext, attributeFieldDescriptors, 0);
+		    List<FieldDescriptor> elementFieldDescriptors = cd.ElementFieldDescriptors;
+		    SerializeFieldsHelper(textWriter, obj, translationContext, elementFieldDescriptors,numOfFields);
+        }
+
+        private int SerializeFieldsHelper(TextWriter textWriter, object obj, TranslationContext translationContext,
+			List<FieldDescriptor> fieldDescriptorList, int numOfFields) 
+        {
+            foreach (FieldDescriptor fd in fieldDescriptorList)
             {
                 if(IsSerializable(fd, obj))
                 {
@@ -122,6 +131,8 @@ namespace Simpl.Serialization.Serializers.StringFormats
                     }
                 }
             }
+
+            return numOfFields;
         }
 
         private void SerializeCompositeCollection(object obj, TextWriter textWriter, TranslationContext translationContext, FieldDescriptor fd)
@@ -224,12 +235,14 @@ namespace Simpl.Serialization.Serializers.StringFormats
 
         private void SerializeComposite(object obj, TextWriter textWriter, TranslationContext translationContext, FieldDescriptor fd)
         {
-            Object compositeObject = fd.GetObject(obj);
+            Object compositeObject = fd.GetValue(obj);
             FieldDescriptor compositeObjectFieldDescriptor = fd.IsPolymorphic
                                                                  ? GetClassDescriptor(
                                                                      compositeObject).PseudoFieldDescriptor
                                                                  : fd;
+            WriteWrap(fd, textWriter, false);
             Serialize(compositeObject, compositeObjectFieldDescriptor, textWriter, translationContext, true);
+            WriteWrap(fd, textWriter, true);
         }
 
         private static void SerializeScalar(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
