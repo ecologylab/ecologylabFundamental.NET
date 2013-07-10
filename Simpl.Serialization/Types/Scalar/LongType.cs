@@ -32,6 +32,7 @@ namespace Simpl.Serialization.Types.Scalar
         public LongType(Type type)
             : base(type, CLTypeConstants.JavaLong, CLTypeConstants.ObjCLong, null)
         {
+            _needJsonSerializationQuotation = false;
         }
 
         /// <summary>

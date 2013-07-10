@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Simpl.Serialization.Context;
+using Simpl.Serialization.Types;
 
 namespace Simpl.Serialization.Serializers.StringFormats
 {
@@ -247,13 +248,23 @@ namespace Simpl.Serialization.Serializers.StringFormats
 
         private static void SerializeScalar(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
         {
+            // check wether we need quotation marks to surround the value.
+            bool needQuotationMarks = true;
+            ScalarType st = fd.ScalarType;
+            if (st != null)
+            {
+                needQuotationMarks = st.needJsonSerializationQuotation();
+            }
+
             textWriter.Write('"');
             textWriter.Write(fd.TagName);
             textWriter.Write('"');
             textWriter.Write(':');
-            textWriter.Write('"');
+            if (needQuotationMarks)
+                textWriter.Write('"');
             fd.AppendValue(textWriter, obj, translationContext, Format.Json);
-            textWriter.Write('"');
+            if (needQuotationMarks)
+                textWriter.Write('"');
         }
 
         private static bool IsSerializable(FieldDescriptor fd, object obj)

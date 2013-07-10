@@ -25,6 +25,9 @@ namespace Simpl.Serialization.Types
 
         [SimplScalar] private Boolean _isPrimitive;
 
+        [SimplScalar]
+        protected Boolean _needJsonSerializationQuotation = true;
+
         /// <summary>
         ///     Default value for reference type objects is considered to be null
         /// </summary>
@@ -289,6 +292,11 @@ namespace Simpl.Serialization.Types
         public virtual ScalarType OperativeScalarType
         {
             get { return this; }
+        }
+
+        public Boolean needJsonSerializationQuotation()
+        {
+            return _needJsonSerializationQuotation;
         }
     }
 

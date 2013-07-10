@@ -31,6 +31,7 @@ namespace Simpl.Serialization.Types.Scalar
         public DoubleType(Type type)
             : base(type, CLTypeConstants.JavaDouble, CLTypeConstants.ObjCDouble, null)
         {
+            _needJsonSerializationQuotation = false;
         }
 
         /// <summary>

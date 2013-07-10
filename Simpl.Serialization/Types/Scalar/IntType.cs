@@ -24,6 +24,7 @@ namespace Simpl.Serialization.Types.Scalar
         public IntType(Type type)
             : base(type, CLTypeConstants.JavaInteger, CLTypeConstants.ObjCInteger, null)
         {
+            _needJsonSerializationQuotation = false;
         }
 
 

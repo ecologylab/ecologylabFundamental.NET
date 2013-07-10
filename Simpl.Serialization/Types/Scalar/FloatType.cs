@@ -30,6 +30,7 @@ namespace Simpl.Serialization.Types.Scalar
         public FloatType(Type type)
             : base(type, CLTypeConstants.JavaFloat, CLTypeConstants.ObjCFloat, null)
         {
+            _needJsonSerializationQuotation = false;
         }
 
         /// <summary>
