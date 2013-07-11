@@ -107,7 +107,7 @@ namespace Simpl.OODSS.Distributed.Server
             // process the message
             CurrentData = e;
             //obtain Uid.
-            Console.WriteLine("this computer is little endian: {0}", BitConverter.IsLittleEndian);
+            //Console.WriteLine("this computer is little endian: {0}", BitConverter.IsLittleEndian);
             long uid = BitConverter.ToInt64(CurrentData, 0);
 
             //obtain message.
