@@ -1139,14 +1139,14 @@ namespace Simpl.Serialization
         {
             Object resultObject = null;
             FieldInfo childField = this.Field;
-            //try
-            //{
+            try
+            {
                 resultObject = childField.GetValue(context);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.Out.WriteLine("Can't access " + childField.Name);
-            //}
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Can't access " + childField.Name);
+            }
             return resultObject;
         }
 
