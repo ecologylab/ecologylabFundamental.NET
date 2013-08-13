@@ -9,8 +9,9 @@ namespace Simpl.Serialization.Types.Scalar
 {
     public class DateTimeType : ReferenceType
     {
-        public new static readonly DateTime DefaultValue = DateTime.Now;
-        public new const String DefaultValueString = "0";
+        public static readonly DateTime UtcEpoch            = new DateTime(1970, 1, 1);
+        public new static readonly DateTime DefaultValue    = DateTime.Now;
+        public new const String DefaultValueString          = "0";
 
         /// <summary>
         ///      Calls the parent constructor for int type
@@ -37,7 +38,16 @@ namespace Simpl.Serialization.Types.Scalar
         {
             try
             {
-                var result = Convert.ToDateTime(value);
+                DateTime result;
+                try
+                {
+                   result = Convert.ToDateTime(value);
+                }
+                catch (FormatException e)
+                {
+                    result = UtcEpoch.AddSeconds(Convert.ToInt64(value));
+                }
+               
                 return result;
             }
             catch(FormatException e)
@@ -49,7 +59,8 @@ namespace Simpl.Serialization.Types.Scalar
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
-            return ((DateTime) instance).ToString();
+            var unixTime = Convert.ToInt64((((DateTime) instance).ToUniversalTime() - UtcEpoch).TotalSeconds);
+            return unixTime.ToString();
         }
 
         /// <summary>
@@ -68,5 +79,11 @@ namespace Simpl.Serialization.Types.Scalar
         {
             return base.GenericSimplEquals<DateTime>(left, right);
         }
+
+        public override bool NeedsJsonQuotationWrap()
+        {
+            return false;
+        }
+
     }
 }

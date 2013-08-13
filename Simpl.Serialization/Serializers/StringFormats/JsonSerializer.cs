@@ -142,8 +142,9 @@ namespace Simpl.Serialization.Serializers.StringFormats
             ICollection compositeCollection = XmlTools.GetCollection(collectionObject);
             int numberOfItems = 0;
 
-            WriteWrap(fd, textWriter, false);
-            WriteCollectionStart(fd, textWriter);
+            //WriteWrap(fd, textWriter, false);
+            var tagName = fd.IsWrapped ? fd.TagName : fd.CollectionOrMapTagName;
+            WriteCollectionStart(tagName, textWriter);
             foreach (Object collectionComposite in compositeCollection)
             {
                 FieldDescriptor collectionObjectFieldDescriptor = fd.IsPolymorphic
@@ -166,10 +167,10 @@ namespace Simpl.Serialization.Serializers.StringFormats
             textWriter.Write(']');
         }
 
-        private void WriteCollectionStart(FieldDescriptor fd, TextWriter textWriter)
+        private void WriteCollectionStart(String collectionFieldTag, TextWriter textWriter)
         {
             textWriter.Write('"');
-            textWriter.Write(fd.ElementStart);
+            textWriter.Write(collectionFieldTag);
             textWriter.Write('"');
             textWriter.Write(':');
             textWriter.Write('[');
@@ -181,7 +182,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
             ICollection compositeCollection = XmlTools.GetCollection(collectionObject);
             int numberOfItems = 0;
 
-            WritePolymorphicCollectionStart(fd, textWriter);
+            WriteCollectionStart(fd.TagName, textWriter);
             foreach (Object collectionComposite in compositeCollection)
             {
                 FieldDescriptor collectionObjectFieldDescriptor = fd.IsPolymorphic
@@ -215,8 +216,8 @@ namespace Simpl.Serialization.Serializers.StringFormats
             ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
             int numberOfItems = 0;
 
-            WriteWrap(fd, textWriter, false);
-            WriteCollectionStart(fd, textWriter);
+            //WriteWrap(fd, textWriter, false);
+            WriteCollectionStart(fd.TagName, textWriter);
             foreach (Object collectionObject in scalarCollection)
             {
                 WriteCollectionScalar(collectionObject, fd, textWriter, translationContext);
@@ -229,9 +230,11 @@ namespace Simpl.Serialization.Serializers.StringFormats
 
         private void WriteCollectionScalar(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
         {
-            textWriter.Write('"');
+            if (fd.ScalarType.NeedsJsonQuotationWrap())
+                textWriter.Write('"');
             fd.AppendCollectionScalarValue(textWriter, obj, translationContext, Format.Json);
-            textWriter.Write('"');
+            if (fd.ScalarType.NeedsJsonQuotationWrap())
+                textWriter.Write('"');
         }
 
         private void SerializeComposite(object obj, TextWriter textWriter, TranslationContext translationContext, FieldDescriptor fd)
@@ -253,7 +256,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
             ScalarType st = fd.ScalarType;
             if (st != null)
             {
-                needQuotationMarks = st.needJsonSerializationQuotation();
+                needQuotationMarks = st.NeedsJsonQuotationWrap();
             }
 
             textWriter.Write('"');

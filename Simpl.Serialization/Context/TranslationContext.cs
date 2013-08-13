@@ -9,6 +9,7 @@ using Simpl.Fundamental.PlatformSpecifics;
 using Simpl.Serialization.Graph;
 using System.IO;
 using Simpl.Serialization.PlatformSpecifics;
+using Simpl.Serialization.Types.Element;
 
 namespace Simpl.Serialization.Context
 {
@@ -17,6 +18,12 @@ namespace Simpl.Serialization.Context
     /// </summary>
     public class TranslationContext : IScalarUnmarshallingContext
     {
+        protected class RefResolver
+        {
+            public Object WhereToSet { get; set; }
+            public Object Parent { get; set; }
+        }
+
         public const String SimplNamespace = "xmlns:simpl";
 
         public const String SimplNamespaceAttribute =
@@ -24,16 +31,20 @@ namespace Simpl.Serialization.Context
 
         public const String SimplId = "simpl:id";
         public const String SimplRef = "simpl:ref";
+        public const String SimplOrderedIdRefs = "simpl:ordered_id_refs";
         public const String JsonSimplRef = "simpl.ref";
         public const String JsonSimplId = "simpl.id";
+        public const String JsonSimplOrderedIdRefs = "simpl.ordered_id_refs";
+
 
         private MultiMap<Int32> _marshalledObjects = new MultiMap<Int32>();
         private MultiMap<Int32> _needsAttributeHashCode = new MultiMap<Int32>();
         private Dictionary<String, Object> _unmarshalledObjects = new Dictionary<String, Object>();
         private MultiMap<Int32> _visitedElements = new MultiMap<Int32>();
+        private readonly Dictionary<string, List<RefResolver>> _refsNeedingResolve = new Dictionary<string, List<RefResolver>>(); 
 
         private ParsedUri   _baseDirPurl;
-        private object    _baseDirFile;
+        private object      _baseDirFile;
         private String      _delimiter = ",";
 
 
@@ -240,6 +251,45 @@ namespace Simpl.Serialization.Context
             if (_unmarshalledObjects.ContainsKey(key))
                 return _unmarshalledObjects[key];
             else return null;
+        }
+
+        public void RefObjectNeedsIdResolve(Object parentObject, Object whereToSet, String simplId)
+        {
+            if (SimplTypesScope.graphSwitch == SimplTypesScope.GRAPH_SWITCH.ON)
+            {
+                List<RefResolver> pairs;
+                var found = _refsNeedingResolve.TryGetValue(simplId, out pairs);
+                if (!found)
+                {
+                    pairs = new List<RefResolver>();
+                    _refsNeedingResolve.Add(simplId, pairs);
+                }
+
+                pairs.Add(new RefResolver {WhereToSet = whereToSet, Parent = parentObject});
+            }
+        }
+
+        public void ResolveIdsForRefObjects()
+        {
+            foreach (String simplId in _refsNeedingResolve.Keys)
+            {
+                var simplObject = GetFromMap(simplId);
+                List<RefResolver> pairs;
+                var found = _refsNeedingResolve.TryGetValue(simplId, out pairs);
+                if (found)
+                {
+                    foreach (RefResolver pair in pairs)
+                    {
+                        if (pair.WhereToSet is FieldDescriptor)
+                            ((FieldDescriptor) pair.WhereToSet).SetFieldToComposite(pair.Parent, simplObject);
+                        else if (simplObject is IMappable<Object>)
+                            ((IDictionary) pair.Parent).Add(((IMappable<Object>) simplObject).Key(), simplObject);
+                        else 
+                            ((IList) pair.Parent).Insert((int) pair.WhereToSet, simplObject);
+                    }
+                }
+            }
+            _refsNeedingResolve.Clear();
         }
 
         public void MarkAsUnmarshalled(String value, Object elementState)

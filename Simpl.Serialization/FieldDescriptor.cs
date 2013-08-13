@@ -526,13 +526,13 @@ namespace Simpl.Serialization
             {
                 unresolvedClassesAnnotation = classesAttributeValue;
                 declaringClassDescriptor.RegisterUnresolvedScopeAnnotationFD(this);
-                //InitPolymorphicClassDescriptorsList(classesAttributeValue.Length);
-                //foreach (Type thatType in classesAttributeValue)
-                //{
-                //    ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatType);
-                //    RegisterPolymorphicDescriptor(classDescriptor);
-                //    polymorphClasses.Put(classDescriptor.TagName, classDescriptor.DescribedClass);
-                //}
+                InitPolymorphicClassDescriptorsList(classesAttributeValue.Length);
+                foreach (Type thatType in classesAttributeValue)
+                {
+                    ClassDescriptor classDescriptor = ClassDescriptor.GetClassDescriptor(thatType);
+                    RegisterPolymorphicDescriptor(classDescriptor);
+                    polymorphClasses.Put(classDescriptor.TagName, classDescriptor.DescribedClass);
+                }
             }
         }
 
@@ -779,13 +779,13 @@ namespace Simpl.Serialization
 
         public String ElementStart
         {
-            get { return IsCollection ? _collectionOrMapTagName : IsNested ? compositeTagName : _tagName; }
+            get { return IsCollection ? _collectionOrMapTagName : IsComposite ? compositeTagName : _tagName; }
         }
 
         /// <summary>
         /// True if this type is a CompositeElement
         /// </summary>
-        public Boolean IsNested
+        public Boolean IsComposite
         {
             get { return type == FieldTypes.CompositeElement; }
         }
@@ -1209,7 +1209,7 @@ namespace Simpl.Serialization
 
             if(leftSideDescribedValue.GetType().Equals(rightSideDescribedValue.GetType()))
             {
-                if(this.IsNested)
+                if(this.IsComposite)
                 {
                     var compositetype = new CompositeType(leftSideDescribedValue.GetType());
                     return compositetype.SimplEquals(leftSideDescribedValue, rightSideDescribedValue);

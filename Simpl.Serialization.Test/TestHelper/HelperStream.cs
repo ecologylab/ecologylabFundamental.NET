@@ -32,7 +32,7 @@ namespace Simpl.Serialzation.Tests.TestHelper
         /// </summary>
         public String StringData
         {
-            get { return Encoding.Default.GetString(base.ToArray()); }
+            get { return Encoding.UTF8.GetString(base.ToArray()); }
         }
 
         /// <summary>

@@ -28,7 +28,7 @@
         {
             HelperStream hStream = new HelperStream();
             SimplTypesScope.Serialize(obj, hStream, format);
-            switch (format)
+            /*switch (format)
             {
                 case Format.Tlv:
                     PrettyPrint.PrintBinary(hStream.BinaryData, format);
@@ -36,7 +36,8 @@
                 default:
                     PrettyPrint.PrintString(hStream.StringData, format);
                     break;
-            }
+            }*/
+            Console.WriteLine(Encoding.UTF8.GetString(hStream.ToArray()));
             return new HelperStream(hStream.BinaryData);
         }
 
@@ -184,7 +185,7 @@
                         continue;
                     }
 
-                    if (fieldDescriptor.IsNested)
+                    if (fieldDescriptor.IsComposite)
                     {
                         // Catches a self-reference
                         if (Object.ReferenceEquals(originalDescribedObject, originalObject) || Object.ReferenceEquals(deserializedDescribedObject, deserializedObject))

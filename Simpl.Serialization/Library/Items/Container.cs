@@ -10,7 +10,6 @@ namespace Simpl.Serialization.Library.Items
         [SimplCollection] 
         private List<ItemBase> itemCollection1;
 
-        [SimplWrap]
         [SimplScope("itemScope2")]
         [SimplCollection] 
         private List<ItemBase> itemCollection2;

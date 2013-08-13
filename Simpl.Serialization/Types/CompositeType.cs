@@ -62,7 +62,7 @@ namespace Simpl.Serialization.Types
                     var leftDescribedValue = fieldDescriptor.GetValue(left);    
                     var rightDescribedValue = fieldDescriptor.GetValue(right);
 
-                    if (fieldDescriptor.IsNested)
+                    if (fieldDescriptor.IsComposite)
                     {
                      
                         if (object.ReferenceEquals(leftDescribedValue, left) || Object.ReferenceEquals(rightDescribedValue,right))

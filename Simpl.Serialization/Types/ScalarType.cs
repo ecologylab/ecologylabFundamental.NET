@@ -23,10 +23,10 @@ namespace Simpl.Serialization.Types
             return !CollectionType.CanBeCreatedFrom(aType);
         }
 
-        [SimplScalar] private Boolean _isPrimitive;
+        [SimplScalar] private bool _isPrimitive;
 
         [SimplScalar]
-        protected Boolean _needJsonSerializationQuotation = true;
+        protected bool _needJsonSerializationQuotation = true;
 
         /// <summary>
         ///     Default value for reference type objects is considered to be null
@@ -294,7 +294,7 @@ namespace Simpl.Serialization.Types
             get { return this; }
         }
 
-        public Boolean needJsonSerializationQuotation()
+        public virtual bool NeedsJsonQuotationWrap()
         {
             return _needJsonSerializationQuotation;
         }
