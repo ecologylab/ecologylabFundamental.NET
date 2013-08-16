@@ -118,6 +118,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             // complete the object model from root and recursively of the fields it is composed of
             DeserializeObjectFields(root, rootClassDescriptor);
 
+            translationContext.ResolveIdsForRefObjects();
+
             return root;
         }
 
@@ -147,6 +149,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     if (currentFieldDescriptor == null)
                     {
                         currentFieldDescriptor = FieldDescriptor.MakeIgnoredFieldDescriptor(currentTag);
+                        Debug.WriteLine("ignoring " + currentTag);
+                        _jsonReader.Skip();
                     }
 
                     switch (currentFieldDescriptor.FdType)
@@ -215,7 +219,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 	     */
 	    private bool HandleSimplId(String tagName, Object root)
 	    {
-            if (TranslationContext.SimplId.Equals(tagName))
+            if (TranslationContext.JsonSimplId.Equals(tagName))
 		    {
 		        _jsonReader.Read();
 			    translationContext.MarkAsUnmarshalled(_jsonReader.Value.ToString(), root);
@@ -434,7 +438,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             object subRoot = GetSubRoot(currentFieldDescriptor, tagName, out simplId);
             if (subRoot != null)
                 collection.Add(subRoot);
-            else
+            else if (simplId != null)
                 translationContext.RefObjectNeedsIdResolve(collection, actualCollectionSizeIncludingRefs, simplId);
         }
 

@@ -45,7 +45,7 @@ namespace Simpl.Serialization.Types.Scalar
                 }
                 catch (FormatException e)
                 {
-                    result = UtcEpoch.AddSeconds(Convert.ToInt64(value));
+                    result = UtcEpoch.AddMilliseconds(Convert.ToInt64(value));
                 }
                
                 return result;
@@ -59,7 +59,7 @@ namespace Simpl.Serialization.Types.Scalar
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
-            var unixTime = Convert.ToInt64((((DateTime) instance).ToUniversalTime() - UtcEpoch).TotalSeconds);
+            var unixTime = Convert.ToInt64((((DateTime) instance).ToUniversalTime() - UtcEpoch).TotalMilliseconds);
             return unixTime.ToString();
         }
 
