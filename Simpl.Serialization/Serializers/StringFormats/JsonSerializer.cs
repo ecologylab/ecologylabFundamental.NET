@@ -159,7 +159,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
                     textWriter.Write(',');
             }
             WriteCollectionEnd(textWriter);
-            WriteWrap(fd, textWriter, true);
+            //WriteWrap(fd, textWriter, true);
         }
 
         private void WriteCollectionEnd(TextWriter textWriter)
@@ -225,7 +225,7 @@ namespace Simpl.Serialization.Serializers.StringFormats
                     textWriter.Write(',');
             }
             WriteCollectionEnd(textWriter);
-            WriteWrap(fd, textWriter, true);
+            //WriteWrap(fd, textWriter, true);
         }
 
         private void WriteCollectionScalar(object obj, FieldDescriptor fd, TextWriter textWriter, TranslationContext translationContext)
