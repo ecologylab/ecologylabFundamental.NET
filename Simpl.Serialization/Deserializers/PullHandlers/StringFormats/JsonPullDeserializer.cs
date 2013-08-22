@@ -359,6 +359,18 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 translationContext.RefObjectNeedsIdResolve(collection, null, simplId);
         }
 
+        private bool HandleBackwardsCompatabilityForDoubleWrappedCollections()
+        {
+            var oldFormat = (_jsonReader.TokenType != JsonToken.StartArray);
+            if (oldFormat)
+            {
+                _jsonReader.Read();
+                _jsonReader.Read();
+            }
+
+            return oldFormat;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -366,10 +378,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="currentFieldDescriptor"></param>
         private void DeserializeCompositeCollection(object root, FieldDescriptor currentFieldDescriptor)
         {
-           // String arrayTag = _jsonReader.Value != null ? _jsonReader.Value.ToString() : null;
-
             // advance to StartArray token
             _jsonReader.Read();
+
+            var oldFormat = HandleBackwardsCompatabilityForDoubleWrappedCollections();
+
             int collectionCountIncludingRefs = 0;
 
             // advance to first StartObject token
@@ -399,35 +412,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
             }
 
-            /*if (currentFieldDescriptor.IsPolymorphic)
-            {
-                // advance to first s
+            if (oldFormat)
                 _jsonReader.Read();
-
-                while (_jsonReader.TokenType != JsonToken.EndArray)
-                {
-                    _jsonReader.Read();
-                    var tagName = _jsonReader.Value != null ? _jsonReader.Value.ToString() : null;
-
-                    _jsonReader.Read();
-
-                    DeserializeAndAddToCollection(root, currentFieldDescriptor, tagName, collectionCountIncludingRefs);
-                    collectionCountIncludingRefs++;
-
-                    _jsonReader.Read();
-                    _jsonReader.Read();
-                }
-            }
-            else
-            {
-                while (_jsonReader.Read() && _jsonReader.TokenType != JsonToken.EndArray)
-                {
-                    DeserializeAndAddToCollection(root, currentFieldDescriptor, arrayTag, collectionCountIncludingRefs);
-                    collectionCountIncludingRefs++;
-                }
-                //if (currentFieldDescriptor.IsWrapped)
-                    _jsonReader.Read();
-            }*/
         }
 
         private void DeserializeAndAddToCollection(object root, FieldDescriptor currentFieldDescriptor, string tagName, int actualCollectionSizeIncludingRefs)
@@ -450,10 +436,16 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeScalarCollection(object root, FieldDescriptor currentFieldDescriptor)
         {
             _jsonReader.Read();
+
+            var oldFormat = HandleBackwardsCompatabilityForDoubleWrappedCollections();
+
             while (_jsonReader.Read() && _jsonReader.TokenType != JsonToken.EndArray)
             {
                 currentFieldDescriptor.AddLeafNodeToCollection(root, _jsonReader.Value.ToString(), translationContext);
             }
+
+            if (oldFormat)
+                _jsonReader.Read();
         }
 
         /// <summary>
