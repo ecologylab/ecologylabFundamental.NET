@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -38,14 +39,22 @@ namespace Simpl.Serialization.Types.Scalar
         {
             try
             {
-                DateTime result;
+                DateTime? result = null;
                 try
                 {
-                   result = Convert.ToDateTime(value);
+                   result = UtcEpoch.AddMilliseconds(Convert.ToInt64(value));
                 }
-                catch (FormatException e)
+                catch (FormatException notUTC)
                 {
-                    result = UtcEpoch.AddMilliseconds(Convert.ToInt64(value));
+                   Debug.WriteLine("date not in UTC epoch. trying builtin DateTime conversion.");
+                    try
+                    {
+                        result = Convert.ToDateTime(value);
+                    }
+                    catch (FormatException notDateTime)
+                    {
+                        Debug.WriteLine("Date not properly formated. Skipping. Value = " + value.ToString());
+                    }
                 }
                
                 return result;
