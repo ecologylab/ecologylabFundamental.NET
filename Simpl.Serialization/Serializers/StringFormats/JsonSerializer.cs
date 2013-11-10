@@ -347,12 +347,12 @@ namespace Simpl.Serialization.Serializers.StringFormats
             textWriter.Write(TranslationContext.JsonSimplId);
             textWriter.Write('"');
             textWriter.Write(':');
-            textWriter.Write('"');
+            //textWriter.Write('"');
             textWriter.Write(translationContext.GetSimplId(obj));
 
             if (!last)
             {
-                textWriter.Write('"');
+                //textWriter.Write('"');
                 textWriter.Write(',');
             }
         }

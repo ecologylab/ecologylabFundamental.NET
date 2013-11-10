@@ -36,6 +36,11 @@ namespace Simpl.Fundamental.Net
             
         }
 
+        public ParsedUri(Uri uri) : base(uri.ToString())
+        {
+            
+        }
+
         /// <summary>
         /// 
         /// </summary>

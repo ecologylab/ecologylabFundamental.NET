@@ -41,7 +41,7 @@ namespace Simpl.Serialization.Types.Scalar
         public override string Marshall(object instance, TranslationContext context = null)
         {
             Color color = instance is Color ? (Color) instance : new Color();
-            return "#" + color.ToString();
+            return color.ToString();
         }
     }
 }

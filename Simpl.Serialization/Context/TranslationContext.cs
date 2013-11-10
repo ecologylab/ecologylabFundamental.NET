@@ -53,6 +53,11 @@ namespace Simpl.Serialization.Context
 
         }
 
+        public TranslationContext(ParsedUri baseUri)
+        {
+            _baseDirPurl = baseUri;
+        }
+
         public TranslationContext(object fileDirContext)
         {
             if (fileDirContext != null)

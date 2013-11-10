@@ -182,6 +182,17 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                             {
                                 _jsonReader.Read();
                                 _jsonReader.Read();
+
+                                if (_jsonReader.TokenType != JsonToken.PropertyName)
+                                {
+                                    // expecting property name, but found something else. not a properly wrapped composite.
+                                    while(_jsonReader.TokenType != JsonToken.EndObject)
+                                        _jsonReader.Skip();
+
+                                    _jsonReader.Read();
+                                    continue;
+                                }
+
                                 insideWrapped = true;
                             }
 
@@ -198,7 +209,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                             break;
                     }
                 }
-                if (currentFieldDescriptor.FdType != FieldTypes.Wrapper)
+                // if simpl.id or non-wrapper field descriptor, advance to next token.
+                if (currentFieldDescriptor == null || currentFieldDescriptor.FdType != FieldTypes.Wrapper)
                     _jsonReader.Read();
             }
             DeserializationPostHook(theObject, translationContext);
@@ -220,8 +232,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 	    private bool HandleSimplId(String tagName, Object root)
 	    {
             if (TranslationContext.JsonSimplId.Equals(tagName))
-		    {
-		        _jsonReader.Read();
+            {
+                _jsonReader.Read();
 			    translationContext.MarkAsUnmarshalled(_jsonReader.Value.ToString(), root);
 			    return true;
 		    }
@@ -398,6 +410,15 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     _jsonReader.Read();
                     tagName = _jsonReader.Value.ToString();
 
+                    ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
+                    if (subRootClassDescriptor == null)
+                    {
+                        Debug.WriteLine("skipping tag: " + tagName + ". not assignable to " + currentFieldDescriptor.Name);
+                        _jsonReader.Skip();
+                        _jsonReader.Read();
+                        continue;
+                    }
+
                     // advance past wrap tag to StartObject token
                     _jsonReader.Read();
                 }
@@ -459,16 +480,22 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             //_jsonReader.Read();
 
             String tagName = (_jsonReader.Value != null) ? _jsonReader.Value.ToString() : null;
-
+            ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
             _jsonReader.Read();
-
-            string simplId;
-            var subRoot = GetSubRoot(currentFieldDescriptor, tagName, out simplId);
-            if (subRoot != null)
-                currentFieldDescriptor.SetFieldToComposite(root, subRoot);
+            if (subRootClassDescriptor != null)
+            {
+                string simplId;
+                var subRoot = GetSubRoot(currentFieldDescriptor, tagName, out simplId);
+                if (subRoot != null)
+                    currentFieldDescriptor.SetFieldToComposite(root, subRoot);
+                else if (simplId != null)
+                {
+                    translationContext.RefObjectNeedsIdResolve(root, currentFieldDescriptor, simplId);
+                }
+            }
             else
             {
-                translationContext.RefObjectNeedsIdResolve(root, currentFieldDescriptor, simplId);
+                Debug.WriteLine("ignore tag: " + tagName + ". expected different tag while deserializing composite.");
             }
         }
 
@@ -485,32 +512,37 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             Object subRoot  = null;
             simplId         = null;
 
-            if (_jsonReader.TokenType == JsonToken.PropertyName)
+            if(_jsonReader.Value != null && _jsonReader.Value.ToString().Equals(TranslationContext.JsonSimplRef))
             {
-                if(_jsonReader.Value.ToString().Equals(TranslationContext.JsonSimplRef))
+                _jsonReader.Read();
+                simplId = _jsonReader.Value.ToString();
+                var referencedObject = translationContext.GetFromMap(simplId);
+                if (referencedObject != null)
                 {
-                    _jsonReader.Read();
-                    simplId = _jsonReader.Value.ToString();
-                    var referencedObject = translationContext.GetFromMap(simplId);
-                    if (referencedObject != null)
-                    {
-                        subRoot = referencedObject;
-                    }
-                    _jsonReader.Read();
+                    subRoot = referencedObject;
                 }
-                else
+                _jsonReader.Read();
+            }
+            else
+            {
+                ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
+                if (subRootClassDescriptor != null)
                 {
-                    ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
                     subRoot = subRootClassDescriptor.GetInstance();
 
                     DeserializationPreHook(subRoot, translationContext);
-			        if (deserializationHookStrategy != null)
-				        deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
+                    if (deserializationHookStrategy != null)
+                        deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
 
                     DeserializeObjectFields(subRoot, subRootClassDescriptor);    
                 }
+                else
+                {
+                    Debug.WriteLine("skipping tag: " + tagName + ". not assignable to " + currentFieldDescriptor.Name);
+                }
+                    
             }
-
+            
             return subRoot;
         }
 

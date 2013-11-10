@@ -520,7 +520,7 @@ namespace Simpl.Serialization
             return await Deserialize(file, format);
         }
 
-        public async Task<object> DeserializeUri(ParsedUri uri, Format format = Format.Xml, Encoding encoding = null)
+        public async Task<object> DeserializeUri(ParsedUri uri, Format format = Format.Xml, TranslationContext context = null, IDeserializationHookStrategy deserializationHookStrategy = null)
         {
             object result = null;
             
@@ -528,7 +528,7 @@ namespace Simpl.Serialization
             if (request != null)
             {
                 WebResponse response = await request.GetResponseAsync();
-                result = Deserialize(response.GetResponseStream(), format);
+                result = Deserialize(response.GetResponseStream(), context, deserializationHookStrategy, format);
             }
 
             return result;
@@ -639,7 +639,7 @@ namespace Simpl.Serialization
         /// <param name="file"></param>
         /// <param name="translationContext"></param>
         /// <param name="format"></param>
-        public async static void Serialize(object obj, object file, TranslationContext translationContext, Format format)
+        public async static Task Serialize(object obj, object file, TranslationContext translationContext, Format format)
         {
             Stream writeStream = await FundamentalPlatformSpecifics.Get().OpenFileWriteStream(file);
             Serialize(obj, writeStream, translationContext, format);
