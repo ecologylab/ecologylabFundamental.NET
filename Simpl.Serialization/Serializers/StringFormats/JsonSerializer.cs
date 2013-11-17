@@ -384,9 +384,9 @@ namespace Simpl.Serialization.Serializers.StringFormats
             textWriter.Write(TranslationContext.JsonSimplRef);
             textWriter.Write('"');
             textWriter.Write(':');
-            textWriter.Write('"');
+            //textWriter.Write('"');
             textWriter.Write(translationContext.GetSimplId(obj));
-            textWriter.Write('"');
+            //textWriter.Write('"');
         }
 
         /// <summary>

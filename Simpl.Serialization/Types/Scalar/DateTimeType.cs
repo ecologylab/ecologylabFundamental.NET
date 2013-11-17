@@ -11,7 +11,7 @@ namespace Simpl.Serialization.Types.Scalar
     public class DateTimeType : ReferenceType
     {
         public static readonly DateTime UtcEpoch            = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        public new static readonly DateTime DefaultValue    = DateTime.Now.ToUniversalTime();
+        public new static readonly DateTime DefaultValue    = DateTime.UtcNow;
         public new const String DefaultValueString          = "0";
 
         /// <summary>
