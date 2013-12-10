@@ -75,5 +75,10 @@
                 return false;
             }
         }
+
+        public override bool NeedsJsonQuotationWrap()
+        {
+            return false;
+        }
     }
 }

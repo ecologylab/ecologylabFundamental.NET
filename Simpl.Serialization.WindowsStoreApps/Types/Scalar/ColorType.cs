@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Media;
 using Simpl.Serialization.Context;
 using Windows.UI;
+using System.Reflection;
 
 namespace Simpl.Serialization.Types.Scalar
 {
@@ -23,20 +25,34 @@ namespace Simpl.Serialization.Types.Scalar
             string hex = value.Replace("#", "");
 
             bool hasAlpha = (hex.Length >= 8);
-            var intValue = Convert.ToUInt32(hex, 16);
-            if (!hasAlpha)
-                intValue += 0xff000000;
-            
-            //var a = hasAlpha ? Convert.ToByte(hex.Substring(0, 2), 16) : Byte.MaxValue;
-            //int i = hasAlpha ? 2 : 0;
-            //var r = Convert.ToByte(hex.Substring(i, 2), 16);
-            //i += 2;
-            //var g = Convert.ToByte(hex.Substring(i, 2), 16);
-            //i += 2;
-            //var b = Convert.ToByte(hex.Substring(i, 2), 16);
+            try
+            {
+                var intValue = Convert.ToUInt32(hex, 16);
+                if (!hasAlpha)
+                    intValue += 0xff000000;
 
-            return Color.FromArgb(Convert.ToByte((intValue & 0xff000000) >> 24), Convert.ToByte((intValue & 0x00ff0000 >> 16)), Convert.ToByte((intValue & 0x0000ff00) >> 8), Convert.ToByte(intValue & 0x000000ff));
+                return Color.FromArgb(Convert.ToByte((intValue & 0xff000000) >> 24), Convert.ToByte((intValue & 0x00ff0000 >> 16)), Convert.ToByte((intValue & 0x0000ff00) >> 8), Convert.ToByte(intValue & 0x000000ff));
+            }
+            catch (Exception)
+            {
+                return ColorStringToBrush(value);
+            }
         }
+
+        public Color? ColorStringToBrush(string name)
+        {
+            if (name.Length > 1)
+            {
+                name = char.ToUpper(name[0]) + name.Substring(1);
+                var property = typeof (Colors).GetRuntimeProperty(name);
+                if (property != null)
+                {
+                    return (Color) property.GetValue(null);
+                }
+            }
+            return null;
+        }
+            
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
