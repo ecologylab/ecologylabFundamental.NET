@@ -50,7 +50,7 @@
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
-            return ((bool) instance).ToString();
+            return ((bool) instance).ToString().ToLower();
         }
 
         /// <summary>

@@ -496,6 +496,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             else
             {
                 Debug.WriteLine("ignore tag: " + tagName + ". expected different tag while deserializing composite.");
+                _jsonReader.Skip();
             }
         }
 

@@ -35,8 +35,15 @@ namespace Simpl.Serialization.Types.Scalar
             }
             catch (Exception)
             {
-                return ColorStringToBrush(value);
+                return (value.StartsWith("rgb")) ? RgbToBrush(value) : ColorStringToBrush(value);
             }
+        }
+
+        private Color? RgbToBrush(string value)
+        {
+            var values = value.Split(',', '(', ')');
+            return (values.Length > 3) ? Color.FromArgb(255, byte.Parse(values[1]), byte.Parse(values[2]), byte.Parse(values[3])) : Colors.Black;
+
         }
 
         public Color? ColorStringToBrush(string name)
