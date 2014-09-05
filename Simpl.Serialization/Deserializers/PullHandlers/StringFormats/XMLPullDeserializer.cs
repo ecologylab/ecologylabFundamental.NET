@@ -237,14 +237,17 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 IDictionary dictionary = (IDictionary) fd.AutomaticLazyGetCollectionOrMap(root);
                 Object key = (subRoot is IMappable<Object>) ? ((IMappable<Object>)subRoot).Key() :
                                                     fd.GetMapKeyFieldValue(subRoot);
-                if (dictionary.Contains(key))
+                if (key != null)
                 {
-                    //Note: overriding a key in map, duplicate data in xml. 
-                    dictionary[key] = subRoot;
-                }
-                else
-                {
-                    dictionary.Add(key, subRoot);
+                    if (dictionary.Contains(key))
+                    {
+                        //Note: overriding a key in map, duplicate data in xml. 
+                        dictionary[key] = subRoot;
+                    }
+                    else
+                    {
+                        dictionary.Add(key, subRoot);
+                    }
                 }
             }
         }
