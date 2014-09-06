@@ -1192,7 +1192,9 @@ namespace Simpl.Serialization
 
         public override string ToString()
         {
-            return "";
+            String className = declaringClassDescriptor == null ? null : declaringClassDescriptor.Name;
+            String fieldName = Field == null ? Name : Field.Name;
+            return this.GetType().Name + "[" + fieldName + ", type=" + FdType + "]";
         }
        
 
@@ -1232,7 +1234,6 @@ namespace Simpl.Serialization
                 return false;
             }
         }
-
 
     }
 }

@@ -1049,5 +1049,19 @@ namespace Simpl.Serialization
                 return false;
             }
         }
+
+        public override string ToString()
+        {
+            String name = null;
+            if (DescribedClass != null)
+            {
+                name = DescribedClass.Name;
+            }
+            if (name == null)
+            {
+                name = DescribedClassName;
+            }
+            return this.GetType().Name + "[" + name + "]";
+        }
     }
 }

@@ -335,6 +335,8 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             Object subRoot = GetSubRoot(currentFieldDescriptor, CurrentTag, root);
             if (subRoot != null)
                 currentFieldDescriptor.SetFieldToComposite(root, subRoot);
+            else
+                Debug.WriteLine("subRoot is null: " + root + "." + currentFieldDescriptor.Name + ", tag=" + CurrentTag);
         }
 
         /// <summary>
@@ -367,6 +369,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             if ((simplReference = GetSimplReference()) != null)
             {
                 subRoot = translationContext.GetFromMap(simplReference);
+                if (subRoot == null)
+                {
+                    Debug.WriteLine("Cannot find simpl:ref " + simplReference);
+                }
                 return subRoot;
             }
 
