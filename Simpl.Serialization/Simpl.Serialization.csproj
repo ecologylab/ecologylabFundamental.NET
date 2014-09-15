@@ -71,14 +71,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <Content Include="Lib\AsyncCtpLibrary.dll" />
-    <Content Include="Lib\AsyncCtpLibrary.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Lib\AsyncCtpLibrary_Silverlight.dll" />
-    <Content Include="Lib\AsyncCtpLibrary_Silverlight.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Lib\LitJson.dll" />
     <Content Include="Lib\Newtonsoft.Json.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -89,9 +81,6 @@
     <Content Include="Lib\SuperWebSocket.dll" />
     <Content Include="Lib\System.Threading.Tasks.Dataflow.dll" />
     <Content Include="Lib\System.Threading.Tasks.Dataflow.xml" />
-    <Content Include="Lib\System.Windows.Controls.Toolkit.dll" />
-    <Content Include="Lib\System.Windows.Controls.Toolkit.Internals.dll" />
-    <Content Include="Lib\System.Windows.Controls.Toolkit.xml" />
     <Content Include="Lib\WebSocket4Net.dll" />
   </ItemGroup>
   <ItemGroup>
