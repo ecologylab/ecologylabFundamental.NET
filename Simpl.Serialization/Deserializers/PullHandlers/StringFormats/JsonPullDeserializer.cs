@@ -555,7 +555,10 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         private void DeserializeScalar(object root, FieldDescriptor currentFieldDescriptor)
         {
             _jsonReader.Read();
-            currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
+            if (_jsonReader.Value != null)
+                currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
+            else if (_jsonReader.TokenType == JsonToken.StartObject)
+                _jsonReader.Skip();
         }
     }
 }
