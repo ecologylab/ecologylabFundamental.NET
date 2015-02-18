@@ -137,8 +137,11 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             {
                 var currentJsonProperty = _jsonReader.Value;
                 if (currentJsonProperty == null || _jsonReader.TokenType != JsonToken.PropertyName)
-                    throw new SimplTranslationException("should have found PropertyName, but instead found " + _jsonReader.TokenType.ToString());
-                
+                {
+                    Debug.WriteLine("should have found PropertyName, but instead found " +_jsonReader.TokenType);
+                    _jsonReader.Skip();
+                }
+
                 var currentTag = _jsonReader.Value.ToString();
                 if (!HandleSimplId(currentTag, theObject))
                 {
@@ -444,7 +447,18 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
 
             object subRoot = GetSubRoot(currentFieldDescriptor, tagName, out simplId);
             if (subRoot != null)
-                collection.Add(subRoot);
+            {
+                try
+                {
+                    collection.Add(subRoot);
+                }
+                catch (ArgumentException e)
+                {
+                    // type of subroot does not match collection.
+                    Debug.WriteLine(e.Message);
+                }
+               
+            }
             else if (simplId != null)
                 translationContext.RefObjectNeedsIdResolve(collection, actualCollectionSizeIncludingRefs, simplId);
         }
@@ -482,7 +496,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
             String tagName = (_jsonReader.Value != null) ? _jsonReader.Value.ToString() : null;
             ClassDescriptor subRootClassDescriptor = currentFieldDescriptor.ChildClassDescriptor(tagName);
             _jsonReader.Read();
-            if (subRootClassDescriptor != null)
+            if (subRootClassDescriptor != null && _jsonReader.TokenType == JsonToken.StartObject)
             {
                 string simplId;
                 var subRoot = GetSubRoot(currentFieldDescriptor, tagName, out simplId);
@@ -531,11 +545,20 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                 {
                     subRoot = subRootClassDescriptor.GetInstance();
 
-                    DeserializationPreHook(subRoot, translationContext);
-                    if (deserializationHookStrategy != null)
-                        deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
+                    if (subRoot != null)
+                    {
+                        DeserializationPreHook(subRoot, translationContext);
+                        if (deserializationHookStrategy != null)
+                            deserializationHookStrategy.DeserializationPreHook(subRoot, currentFieldDescriptor);
 
-                    DeserializeObjectFields(subRoot, subRootClassDescriptor);    
+                        DeserializeObjectFields(subRoot, subRootClassDescriptor);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Skipping tag: " + tagName + ". Failed to create a new instance of  " + currentFieldDescriptor.Name);
+                        while(_jsonReader.TokenType != JsonToken.EndObject)
+                            _jsonReader.Read();
+                    }
                 }
                 else
                 {

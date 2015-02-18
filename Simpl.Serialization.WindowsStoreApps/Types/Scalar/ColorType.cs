@@ -31,7 +31,7 @@ namespace Simpl.Serialization.Types.Scalar
                 if (!hasAlpha)
                     intValue += 0xff000000;
 
-                return Color.FromArgb(Convert.ToByte((intValue & 0xff000000) >> 24), Convert.ToByte((intValue & 0x00ff0000 >> 16)), Convert.ToByte((intValue & 0x0000ff00) >> 8), Convert.ToByte(intValue & 0x000000ff));
+                return Color.FromArgb(Convert.ToByte((intValue & 0xff000000) >> 24), Convert.ToByte((intValue & 0x00ff0000) >> 16), Convert.ToByte((intValue & 0x0000ff00) >> 8), Convert.ToByte(intValue & 0x000000ff));
             }
             catch (Exception)
             {
@@ -64,7 +64,11 @@ namespace Simpl.Serialization.Types.Scalar
         public override string Marshall(object instance, TranslationContext context = null)
         {
             Color color = instance is Color ? (Color) instance : new Color();
-            return color.ToString();
+            var result = color.ToString();
+            if (color.A == 255)
+                result = result.Remove(1, 2);
+
+            return result;
         }
     }
 }
