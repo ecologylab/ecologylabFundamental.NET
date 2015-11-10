@@ -48,6 +48,16 @@ namespace Simpl.Serialization.Types.Scalar
 
         public override string Marshall(object instance, TranslationContext context = null)
         {
+            if (context != null && context.BaseUri != null)
+            {
+                var uri = instance as ParsedUri;
+                if (uri != null)
+                {
+                    var relativeUri = context.BaseUri.MakeRelativeUri(uri);
+                    return relativeUri.ToString();
+                }
+            }
+            
             return ((ParsedUri) instance).ToString();
         }
 

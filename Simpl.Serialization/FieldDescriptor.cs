@@ -855,7 +855,7 @@ namespace Simpl.Serialization
 
         public void AppendValue(TextWriter textWriter, object obj, TranslationContext translationContext, Format format)
         {
-            ScalarType.AppendValue(textWriter, this, obj, format);
+            ScalarType.AppendValue(textWriter, this, obj, format, translationContext);
         }
 
         public bool IsDefaultValueFromContext(object context)

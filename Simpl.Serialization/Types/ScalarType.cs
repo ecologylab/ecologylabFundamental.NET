@@ -197,10 +197,10 @@ namespace Simpl.Serialization.Types
         /// <param name="context"></param>
         /// <param name="format"></param>
         public void AppendValue(TextWriter textWriter, FieldDescriptor fieldDescriptor, Object context,
-                                Format format)
+                                Format format, TranslationContext translationContext = null)
         {
             Object instance = fieldDescriptor.Field.GetValue(context);
-            AppendValue(instance, textWriter, !fieldDescriptor.IsCdata, format);
+            AppendValue(instance, textWriter, !fieldDescriptor.IsCdata, format, translationContext);
         }
 
         /// <summary>
@@ -210,9 +210,9 @@ namespace Simpl.Serialization.Types
         /// <param name="buffy"></param>
         /// <param name="needsEscaping"></param>
         /// <param name="format">Format serializing to, each one has their own escaping requirements.</param>
-        public void AppendValue(object instance, TextWriter textWriter, Boolean needsEscaping, Format format)
+        public void AppendValue(object instance, TextWriter textWriter, Boolean needsEscaping, Format format, TranslationContext translationContext = null)
         {
-            String marshalled = Marshall(instance, null);
+            String marshalled = Marshall(instance, translationContext);
             if (!needsEscaping)
                 textWriter.Write(marshalled);
             else

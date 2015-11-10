@@ -74,6 +74,11 @@ namespace Simpl.Serialization.Context
             }             
         }
 
+        public ParsedUri BaseUri
+        {
+            get { return _baseDirPurl; }
+        }
+
         /// <summary>
         /// Return whether it is a graph
         /// </summary>
