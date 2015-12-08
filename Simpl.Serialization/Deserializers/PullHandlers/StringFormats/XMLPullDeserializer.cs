@@ -78,7 +78,7 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         /// <param name="inputStream"></param>
         private void ConfigureInput(Stream inputStream)
         {
-            _xmlReader = XmlReader.Create(inputStream);
+            _xmlReader = XmlReader.Create(inputStream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore });
         }
 
         /// <summary>
