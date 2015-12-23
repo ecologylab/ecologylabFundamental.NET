@@ -556,8 +556,18 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
                     else
                     {
                         Debug.WriteLine("Skipping tag: " + tagName + ". Failed to create a new instance of  " + currentFieldDescriptor.Name);
-                        while(_jsonReader.TokenType != JsonToken.EndObject)
+                        
+                        var newObject = 1;
+                        while (_jsonReader.TokenType != JsonToken.EndObject || newObject > 0)
+                        {
                             _jsonReader.Read();
+
+                            if (_jsonReader.TokenType == JsonToken.StartObject)
+                                newObject++;
+                            else if (_jsonReader.TokenType == JsonToken.EndObject)
+                                newObject--;
+                            
+                        }
                     }
                 }
                 else
@@ -579,7 +589,18 @@ namespace Simpl.Serialization.Deserializers.PullHandlers.StringFormats
         {
             _jsonReader.Read();
             if (_jsonReader.Value != null)
-                currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
+            {
+                try
+                {
+                    currentFieldDescriptor.SetFieldToScalar(root, _jsonReader.Value.ToString(), translationContext);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Simpl Error. Failed to set scalar field: " + currentFieldDescriptor.Name + ". Skipping. Error: " + e.Message);
+                    //_jsonReader.Skip();
+                }
+               
+            }
             else if (_jsonReader.TokenType == JsonToken.StartObject)
                 _jsonReader.Skip();
         }

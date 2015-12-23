@@ -37,9 +37,7 @@ namespace Simpl.Serialization.Types.Scalar
 
                 result = baseUri != null ? new ParsedUri(baseUri, value) : new ParsedUri(value);
             }
-            catch (ArgumentNullException){ }
-            catch (ArgumentException){ }
-            catch (FormatException e)
+            catch (Exception e)
             {
                 Debug.WriteLine(e.Message + " :: " + value);
             }

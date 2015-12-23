@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Reflection;
@@ -433,7 +434,7 @@ namespace Simpl.Serialization
             }
             catch(Exception e)
             {
-                
+                Debug.WriteLine("Simpl Error. Failed to create intance of " + describedClass.Name);
             }
 
             return null;
