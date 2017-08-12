@@ -95,8 +95,8 @@ namespace Simpl.Fundamental.PlatformSpecifics
         {
             if (purlConnection.PURL.IsFile)
             {
-                FileAttributes attributes = ((StorageFile) purlConnection.File).Attributes;
-                if (attributes.HasFlag(FileAttributes.Directory))
+                Windows.Storage.FileAttributes attributes = ((StorageFile) purlConnection.File).Attributes;
+                if (attributes.HasFlag(Windows.Storage.FileAttributes.Directory))
                 {
                     connectionHelper.HandleFileDirectory(purlConnection.File);
                 }
