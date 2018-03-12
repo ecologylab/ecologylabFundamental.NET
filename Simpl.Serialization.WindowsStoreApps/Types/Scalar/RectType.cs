@@ -22,6 +22,8 @@ namespace Simpl.Serialization.Types.Scalar
             {
                 double x = 0, y = 0, width = 0, height = 0;
                 string[] values = value.Split(' ');
+                if (values.Length < 4)
+                    values = value.Split(',');
 
                 if (values.Length > 1)
                 {

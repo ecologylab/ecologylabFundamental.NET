@@ -128,6 +128,10 @@ namespace Simpl.Serialization.Serializers.StringFormats
                             else
                                 SerializeCompositeCollection(obj, textWriter, translationContext, fd);
                             break;
+                        default:
+                            if (numOfFields > 0)
+                                numOfFields = numOfFields;
+                            break;
 
                     }
                 }
@@ -293,6 +297,11 @@ namespace Simpl.Serialization.Serializers.StringFormats
                     ICollection scalarCollection = XmlTools.GetCollection(scalarCollectionObject);
                     if (scalarCollection == null || scalarCollection.Count <= 0)
                         return false;
+                    break;
+                case FieldTypes.IgnoredElement:
+                case FieldTypes.IgnoredAttribute:
+                    return false;
+                default:
                     break;
             }
 
